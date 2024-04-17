@@ -1,10 +1,67 @@
 # dummy-code-gen-plugin
-
-run:
-mvn clean install
+run: 
+- mvn clean install
 
 swagger api location:
-src/main/resources/api.yaml
+- src/main/resources/api.yaml
 
 generated code location:
-target/generated-sources/openapi/src/gen/java/main
+- target/generated-sources/openapi/src/gen/java/main
+
+# Ideas
+masturment:
+	
+- perfo: e2e testing - talán	
+- semantic && syntactyc:
+  - sonar report - ez jó
+  - Longest Common Subsequence and Levenshtein Edit Distance - ez körülményes
+- humaneval - nem jó
+
+To Try:
+- code gpt
+- code lama - local
+- code alpaka
+- gemini
+- code gemma
+- together.ai: https://www.together.ai/
+- codex
+- devin
+- fine tuned models
+- prompt engineering with llama 2
+
+VS
+
+- openapi generator
+
+# test dataset, database?
+- from github
+
+# possible res questions:
+
+- benefits of legacy or ai code gen
+- performance differenc between legacy and ai code gen
+- productivity changes?
+- is it still ok to use legacy code gen?
+- combo?
+
+# background
+- what is ai
+- what is code gen
+- what is llm
+- what is code llm
+- how to use ai to generate code
+
+# used technology
+- what i did and how i did
+- test bench setup
+- how i mesured perfofmace of legacy code gen vs ai code gen
+
+# mesurments 
+- perfo
+- quality
+- bug count:
+
+# Feladat
+Meghívni:
+- manyi@ms.sapientia.ro
+- megoldott feladathoz hogyan viszonyul
