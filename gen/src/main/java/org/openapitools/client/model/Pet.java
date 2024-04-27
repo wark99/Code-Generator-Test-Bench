@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   Pet.JSON_PROPERTY_TAGS,
   Pet.JSON_PROPERTY_STATUS
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-04-27T17:20:44.018198777Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-04-27T17:23:20.540097202Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class Pet {
   public static final String JSON_PROPERTY_ID = "id";
   private Long id;
