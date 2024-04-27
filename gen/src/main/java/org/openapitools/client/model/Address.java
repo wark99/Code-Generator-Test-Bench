@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   Address.JSON_PROPERTY_STATE,
   Address.JSON_PROPERTY_ZIP
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-04-27T18:30:38.038687679Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-04-27T18:31:49.272458494Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class Address {
   public static final String JSON_PROPERTY_STREET = "street";
   private String street;
