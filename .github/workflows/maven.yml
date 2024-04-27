@@ -2,17 +2,19 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master", "develop" ]
+    branches: [ "master", "develop", "*" ]
   pull_request:
-    branches: [ "master", "develop" ]
+    branches: [ "master", "develop" , "*"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
@@ -21,3 +23,14 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn clean install
+    - name: Copy generated files
+      run: cp -r ./target/generated-sources/openapi/src/gen/* ./src/gen
+    - name: List copied files
+      run: ls ./src/gen
+    - name: Commit and push changes
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        git add ./src/gen/*
+        git commit -m "Update generated files"
+        git push
