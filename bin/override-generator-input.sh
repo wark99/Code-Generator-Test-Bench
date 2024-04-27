@@ -6,8 +6,8 @@ if [ $# -ne 1 ]; then
   exit 0
 fi
 
-apt-get update
-apt-get install -y xmledit
+sudo apt-get update
+sudo apt-get install -y xmledit
 
 # New filepath provided as the first argument
 new_filepath="./src/main/resources/$1"
