@@ -7,4 +7,4 @@ if [ $# -ne 1 ]; then
     filepath="./src/main/resources/$1"
 fi
 
-mvn clean install package -Dgenerator_inputfile="$filepath"
+mvn package -Dgenerator_inputfile="$filepath"
