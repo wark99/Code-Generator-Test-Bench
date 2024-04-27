@@ -7,7 +7,7 @@ if [ $# -ne 1 ]; then
 fi
 
 # New filepath provided as the first argument
-new_filepath="$1"
+new_filepath="./src/main/resources/$1"
 
 # Update the XML file using xmlstarlet
 xmlstarlet ed -i "//properties/generator.inputfile" --value "$new_filepath" ./pom.xml
