@@ -2,8 +2,8 @@
 
 # Check if exactly one argument is provided
 if [ $# -ne 1 ]; then
-  echo "Error: Please provide exactly one argument: the new filepath for generator.inputfile."
-  exit 1
+  echo "Info: Please provide exactly one argument: the new filepath for generator.inputfile."
+  exit 0
 fi
 
 # New filepath provided as the first argument
