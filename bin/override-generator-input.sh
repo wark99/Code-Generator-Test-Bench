@@ -2,7 +2,7 @@
 
 # Check if exactly one argument is provided
 if [ $# -ne 1 ]; then
-  echo "Info: Please provide exactly one argument: the new filepath for generator.inputfile."
+  echo "Skipping generator.inputfile update."
   exit 0
 fi
 
