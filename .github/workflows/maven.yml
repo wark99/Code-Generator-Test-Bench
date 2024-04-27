@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
@@ -31,4 +35,4 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git add .
         git commit -m "update generated files"
-        git push
+        git push origin/${{ steps.extract_branch.outputs.branch }}
