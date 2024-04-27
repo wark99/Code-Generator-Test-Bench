@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK
@@ -20,4 +18,16 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn clean install
+      run: ./bin/generate.sh
+    - name: pwd
+      run: pwd
+    - name: list generated files
+      run: ls -la ./target/generated-sources/openapi/src/gen
+    - name: copy generated files
+      run: cp -r ./target/generated-sources/openapi/src/gen/* ./src
+    - name: Commit changes
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        git add .
+        git commit -m "update generated files"
