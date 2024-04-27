@@ -4,7 +4,7 @@ Swagger Petstore - OpenAPI 3.0
 
 - API version: 1.0.11
 
-- Build date: 2024-04-27T17:27:56.463704427Z[Etc/UTC]
+- Build date: 2024-04-27T17:28:49.318131180Z[Etc/UTC]
 
 - Generator version: 7.4.0
 
