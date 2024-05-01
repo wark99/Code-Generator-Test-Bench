@@ -71,6 +71,4 @@ VS
 - bug count:
 
 # Feladat
-Meghívni:
-- manyi@ms.sapientia.ro
 - megoldott feladathoz hogyan viszonyul
