@@ -35,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   Customer.JSON_PROPERTY_USERNAME,
   Customer.JSON_PROPERTY_ADDRESS
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-01T07:31:33.526829165Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-04T15:01:22.602233667Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class Customer {
   public static final String JSON_PROPERTY_ID = "id";
   private Long id;
