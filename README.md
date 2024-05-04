@@ -36,7 +36,7 @@ To Try:
 - codex (same as code gpt)
 - devin (no access yet)
 - fine tuned models
-- prompt engineering with llama 2
+- prompt engineering with llama 2 (highly useable) https://learn.deeplearning.ai/courses/prompt-engineering-with-llama-2/lesson/5/prompt-engineering-techniques
 
 VS
 
