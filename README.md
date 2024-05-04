@@ -33,7 +33,7 @@ To Try:
 - gemini (same as gemma)
 - code gemma (runable)
 - together.ai: https://www.together.ai/
-- codex
+- codex (same as code gpt)
 - devin (no access yet)
 - fine tuned models
 - prompt engineering with llama 2
