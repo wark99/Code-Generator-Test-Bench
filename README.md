@@ -27,14 +27,14 @@ masturment:
 - humaneval - nem jó
 
 To Try:
-- code gpt
-- code lama - local
-- code alpaka
-- gemini
-- code gemma
+- code gpt (runable, u have to pay)
+- code lama - local (runable)
+- code alpaka ()
+- gemini (same as gemma)
+- code gemma (runable)
 - together.ai: https://www.together.ai/
 - codex
-- devin
+- devin (no access yet)
 - fine tuned models
 - prompt engineering with llama 2
 
