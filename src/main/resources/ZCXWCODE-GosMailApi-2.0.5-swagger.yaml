@@ -1,0 +1,444 @@
+openapi: 3.1.0
+info:
+  title: GosuMailAPI
+  description: |+
+    <img src="https://i.imgur.com/ddJowmh.jpeg" width="100"/>
+    <br/>
+    # API лучшего сервиса отправки писем во входящие!
+    <br/>
+    ## Удачного использования!
+    <br/>
+    <br/>
+    **Во всех запросах указывайте параметр** key
+    <br/>
+    **Пример:** POST /api/send?key=ВАШ_ТОКЕН
+    <br/>
+    <br/>
+    **Пример отправки на пару популярных языках:**
+    > **NodeJs**
+    ```
+    const axios = require('axios');
+      let data = JSON.stringify([
+        {
+          "url": "https://url.com",
+          "to": "mail@mail.com",
+          "country_code": "cz",
+          "service_code": "post",
+          "product": "test",
+          "is_delay": false,
+          "notify_id": 1234 // Telegram ID user 
+        }
+      ]);
+
+      let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://azmail.link/api/send?key=TOKEN',
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Accept': 'application/json'
+        },
+        data : data
+      };
+
+      axios.request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    ```
+    > **Python**
+    ```
+    import requests
+    import json
+
+    url = "https://azmail.link/api/send?key=TOKEN"
+
+    payload = json.dumps([
+        {
+          "url": "https://url.com",
+          "to": "mail@mail.com",
+          "country_code": "cz",
+          "service_code": "post",
+          "product": "test",
+          "is_delay": false,
+          "notify_id": 1234 // Telegram ID user 
+        }
+    ])
+    headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    print(response.json())
+    ```
+
+  version: 2.0.5
+paths:
+  /api/country:
+    get:
+      tags:
+        - Countries Routing
+      summary: Get Country
+      operationId: get_country_api_country_get
+      security:
+        - TokenAuth: []
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+            title: Code
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountriesGetExampleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/country/all:
+    get:
+      tags:
+        - Countries Routing
+      summary: Get All
+      operationId: get_all_api_country_all_get
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountriesGetAllExampleResponse'
+      security:
+        - TokenAuth: []
+  /api/service:
+    get:
+      tags:
+        - Services Routing
+      summary: Get Service
+      operationId: get_service_api_service_get
+      security:
+        - TokenAuth: []
+      parameters:
+        - name: country_code
+          in: query
+          required: true
+          schema:
+            type: string
+            title: Country Code
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicesGetExampleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/service/all:
+    get:
+      tags:
+        - Services Routing
+      summary: Get All
+      operationId: get_all_api_service_all_get
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicesGetAllExampleResponse'
+      security:
+        - TokenAuth: []
+  /api/send:
+    post:
+      tags:
+        - Send mail Routing
+      summary: Send Mail
+      description: описание
+      operationId: send_mail_api_send_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - items:
+                    $ref: '#/components/schemas/SendParams'
+                  type: array
+                - $ref: '#/components/schemas/SendParams'
+              title: Items
+        required: true
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendResultExampleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - TokenAuth: []
+  /api/send/status:
+    get:
+      tags:
+        - Send mail Routing
+      summary: Send Get Status
+      operationId: send_get_status_api_send_status_get
+      security:
+        - TokenAuth: []
+      parameters:
+        - name: tag
+          in: query
+          required: true
+          schema:
+            type: string
+            title: Tag
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendGetResultExampleResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    CountriesGetAllExampleResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+          example: success
+        result:
+          items: {}
+          type: array
+          title: Result
+          example:
+            - code: cz
+              full_code: czech
+              name: Чехия
+            - code: de
+              full_code: germany
+              name: Германия
+      type: object
+      required:
+        - status
+        - result
+      title: CountriesGetAllExampleResponse
+    CountriesGetExampleResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+          example: success
+        result:
+          type: object
+          title: Result
+          example:
+            code: cz
+            full_code: czech
+            name: Чехия
+      type: object
+      required:
+        - status
+        - result
+      title: CountriesGetExampleResponse
+    HTTPValidationError:
+      properties:
+        status:
+          type: string
+          title: Status
+          example: error
+        error_message:
+          type: string
+          title: Error Message
+          example: Текст Ошибки
+        error_type:
+          type: object
+          title: Error Type
+          example: Тип Ошибки
+      type: object
+      required:
+        - status
+        - error_message
+        - error_type
+      title: ErrorResponseDefinition
+    SendGetResultExampleResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+          example: success
+        result:
+          type: object
+          title: Result
+          example:
+            country_code: cz
+            send_id: 10213
+            send_status: success
+            service_code: vinted
+            to: example@example.com
+      type: object
+      required:
+        - status
+        - result
+      title: SendGetResultExampleResponse
+    SendParams:
+      properties:
+        url:
+          type: string
+          title: Url
+          example: https://example.com
+        to:
+          type: string
+          title: To
+          example: example@gmail.com
+        country_code:
+          type: string
+          title: Country Code
+          example: cz
+        service_code:
+          type: string
+          title: Service Code
+          example: vinted
+        product:
+          type: string
+          title: Product
+          example: Название товара (может встречаться в письме)
+        is_delay:
+          type: boolean
+          title: Is Delay
+          default: false
+          example: письмо для отлеги или нет? (необязательный параметр)
+        notify_id:
+          type: integer
+          title: Notify Id
+          default: 0
+          example: >-
+            ID телеграм чата / пользователя. На который направлять результат
+            перехода по ссылке (необязательный параметр)
+        url_img:
+          type: string
+          title: Url Img
+          example: >-
+            https://example.com/image.jpg (необязательный параметр, кроме
+            сервиса booking (страна: all_world, сервис: booking))
+      type: object
+      required:
+        - url
+        - to
+        - country_code
+        - service_code
+      title: SendParams
+    SendResultExampleResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+          example: success
+        result:
+          type: object
+          title: Result
+          example:
+            send_status: wait
+            tags:
+              - tag: tag1
+                to: example@example.com
+              - tag: tag2
+                to: example2@example.com
+      type: object
+      required:
+        - status
+        - result
+      title: SendResultExampleResponse
+    ServicesGetAllExampleResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+          example: success
+        result:
+          items: {}
+          type: array
+          title: Result
+          example:
+            - code: olx
+              country_code: cz
+              name: OLX
+            - code: vinted
+              country_code: de
+              name: Vinted
+      type: object
+      required:
+        - status
+        - result
+      title: ServicesGetAllExampleResponse
+    ServicesGetExampleResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+          example: success
+        result:
+          type: object
+          title: Result
+          example:
+            code: olx
+            country_code: cz
+            name: OLX
+      type: object
+      required:
+        - status
+        - result
+      title: ServicesGetExampleResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+  securitySchemes:
+    TokenAuth:
+      type: apiKey
+      in: query
+      name: key
