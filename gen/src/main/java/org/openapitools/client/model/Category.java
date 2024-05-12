@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   Category.JSON_PROPERTY_ID,
   Category.JSON_PROPERTY_NAME
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-12T13:44:01.335014861Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-12T16:57:48.157077067Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class Category {
   public static final String JSON_PROPERTY_ID = "id";
   private Long id;

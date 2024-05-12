@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   ModelApiResponse.JSON_PROPERTY_MESSAGE
 })
 @JsonTypeName("ApiResponse")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-12T13:44:01.335014861Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-12T16:57:48.157077067Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ModelApiResponse {
   public static final String JSON_PROPERTY_CODE = "code";
   private Integer code;
