@@ -1,14 +1,14 @@
 
 
-# SkillSet
+# DepartmentAccessLevelPostDTO
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**kind** | **String** |  |  |
-|**skills** | **List&lt;String&gt;** |  |  |
+|**accessLevelName** | **String** |  |  |
+|**accessLevel** | **Integer** |  |  |
 
 
 

@@ -1,13 +1,14 @@
 
 
-# Url
+# UserRolePostDTO
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**url** | **String** |  |  |
+|**roleName** | **String** |  |  |
+|**roleCode** | **Integer** |  |  |
 
 
 

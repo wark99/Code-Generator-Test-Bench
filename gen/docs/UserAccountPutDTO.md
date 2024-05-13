@@ -1,14 +1,13 @@
 
 
-# EducationGet200Response
+# UserAccountPutDTO
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**title** | **String** |  |  |
-|**content** | [**List&lt;Degree&gt;**](Degree.md) |  |  |
+|**userPassword** | **Integer** |  |  |
 
 
 

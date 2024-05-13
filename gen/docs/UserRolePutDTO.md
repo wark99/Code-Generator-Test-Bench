@@ -1,14 +1,14 @@
 
 
-# GeneralGet200Response
+# UserRolePutDTO
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**title** | **String** |  |  |
-|**content** | [**General**](General.md) |  |  |
+|**roleName** | **String** |  |  |
+|**roleCode** | **Integer** |  |  |
 
 
 
