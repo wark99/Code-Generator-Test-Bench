@@ -1,50 +1,62 @@
 openapi: 3.1.0
 info:
-  description: Documentation for the Public API
-  title: Syntax Public API
-  version: 1.0.0
+  contact:
+    name: Brukerstøtte
+    url: https://www.skatteetaten.no/deling/kontakt/
+  description: Tjenesten leverer informasjon om en virksomhets aksjonærer pr. 31.12
+    sist kalenderår.
+  termsOfService: https://www.skatteetaten.no/deling/bruksvilkar-for-delingstjenester
+  title: Aksjonær i virksomhet API
+  version: 1.1.0
+externalDocs:
+  description: Dokumentasjon på Skatteetatens GitHub
+  url: https://skatteetaten.github.io/api-dokumentasjon/api/aksjonaer
 servers:
-- url: /
+- description: Ekstern deling (Test)
+  url: https://aksjonaerivirksomhet.api.skatteetaten-test.no/v1
+- description: Produksjon (Prod)
+  url: https://aksjonaerivirksomhet.api.skatteetaten.no/v1
 paths:
-  /public-api/v1/users/{userid}:
+  /{rettighetspakke}/aksjonaerer/{organisasjonsnummer}:
     get:
-      description: Retrieve user information by user ID.
+      description: Informasjon om en virksomhets aksjonærer pr. 31.12 sist kalenderår
+      operationId: hentAksjonaerIVirksomhet
       parameters:
-      - description: The ID of the user.
+      - description: "Datakonsumenter plasseres i en rettighetspakke (per datasett)\
+          \ basert på en juridisk vurdering. Rettighetspakken styrer skjermingsregler,\
+          \ filtrering og detaljering som benyttes når det gis innsyn i data i datasett."
         explode: false
         in: path
-        name: userid
+        name: rettighetspakke
         required: true
         schema:
-          type: integer
+          type: string
         style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_users__userid__get_200_response'
-          description: Successful operation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_users__userid__get_400_response'
-          description: User Not Found
-      summary: Get User by ID
-      tags:
-      - Get User Info
-      x-accepts: application/json
-  /public-api/v1/users/{username}:
-    get:
-      description: Retrieve user information by username.
-      parameters:
-      - description: The username of the user.
+      - description: Organisasjonsnummer for virksomhet
         explode: false
         in: path
-        name: username
+        name: organisasjonsnummer
         required: true
         schema:
+          type: string
+        style: simple
+      - description: Kalenderåret det skal hentes opplysninger fra. Returnerer siste
+          tilgjengelige dersom ikke oppgitt.
+        explode: true
+        in: query
+        name: kalenderaar
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Korrelasjonsid, unik identifikator for den tekniske forespø\
+          rselen. Må være på UUID-format"
+        explode: false
+        in: header
+        name: Korrelasjonsid
+        required: false
+        schema:
+          format: uuid
           type: string
         style: simple
       responses:
@@ -52,889 +64,212 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_public_api_v1_users__userid__get_200_response'
-          description: Successful operation
-        "400":
+                $ref: '#/components/schemas/Aksjeselskap'
+          description: Gyldig respons
+        default:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_public_api_v1_users__userid__get_400_response'
-          description: User Not Found
-      summary: Get User by Username
+                $ref: '#/components/schemas/Feil'
+          description: "Diverse feilmeldinger, se egen dokumentasjon"
+      summary: Hent aksjonærer i en virksomhet
       tags:
-      - Get User Info
-      x-accepts: application/json
-  /public-api/v1/asset/{assetid}:
-    get:
-      description: Retrieve asset information by asset ID.
-      parameters:
-      - description: The ID of the asset.
-        explode: false
-        in: path
-        name: assetid
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_asset__assetid__get_200_response'
-          description: Successful operation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_asset__assetid__get_400_response'
-          description: Asset Not Found
-      summary: Get Asset by ID
-      tags:
-      - Get Asset Info
-      x-accepts: application/json
-  /public-api/v1/inventory/collectibles/{userid}:
-    get:
-      description: Retrieve a user's collectibles.
-      parameters:
-      - description: The ID of the user.
-        explode: false
-        in: path
-        name: userid
-        required: true
-        schema:
-          type: integer
-        style: simple
-      - description: The page number (optional).
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_inventory_collectibles__userid__get_200_response'
-          description: Successful operation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_users__userid__get_400_response'
-          description: User Not Found
-      summary: Get User's Collectibles
-      tags:
-      - Inventory and Collectibles
-      x-accepts: application/json
-  /public-api/v1/inventory/assets/{userid}/{assettypeid}:
-    get:
-      description: Retrieve a user's assets of a specific type.
-      parameters:
-      - description: The ID of the user.
-        explode: false
-        in: path
-        name: userid
-        required: true
-        schema:
-          type: integer
-        style: simple
-      - description: "The ID of the asset type. Refer to the [Roblox Documentation](https://create.roblox.com/docs/reference/engine/enums/AssetType)\
-          \ for valid values."
-        explode: false
-        in: path
-        name: assettypeid
-        required: true
-        schema:
-          type: integer
-        style: simple
-      - description: The page number (optional).
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_inventory_assets__userid___assettypeid__get_200_response'
-          description: Successful operation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_users__userid__get_400_response'
-          description: User Not Found
-      summary: Get User's Assets by Type
-      tags:
-      - Inventory and Collectibles
-      x-accepts: application/json
-  /public-api/v1/economy/my-balance:
-    get:
-      description: Retrieve the balance of the authenticated user.
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_200_response'
-          description: Successful operation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_400_response'
-          description: Not Logged In
-      summary: Get My Balance
-      tags:
-      - Economy
-      x-accepts: application/json
-  /public-api/v1/users/my-profile:
-    get:
-      description: Retrieve the profile for the authenticated user.
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_users_my_profile_get_200_response'
-          description: Successful operation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_400_response'
-          description: Not Logged In
-      summary: Get My Profile
-      tags:
-      - Get User Info
-      x-accepts: application/json
-  /public-api/v1/trade/list:
-    get:
-      description: List trades for the authenticated user.
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade_list_get_200_response'
-          description: Successful operation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_400_response'
-          description: Not Logged In
-      summary: List Trades
-      tags:
-      - Trading
-      x-accepts: application/json
-  /public-api/v1/trade/{tradeid}:
-    get:
-      description: Retrieve trade information by trade ID.
-      parameters:
-      - description: The ID of the trade.
-        explode: false
-        in: path
-        name: tradeid
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                data:
-                  created_at: Unix Timestamp
-                  expires_at: Unix Timestamp
-                  id: Trade ID
-                  recipient_items:
-                  - asset:
-                      asset_rap: Asset Rap
-                      asset_type: Asset Type
-                      asset_type_value: Asset Type Value
-                      created_at: Unix Timestamp
-                      creator_id: Asset Creator ID
-                      creator_type: Type of Creator (group or user)
-                      description: Will the test be successful? Or go up in flames?!
-                      id: Asset ID
-                      is_for_sale: Asset Status
-                      is_limited: Asset Limted
-                      is_limited_unique: Asset Limited U
-                      name: Asset Name
-                      price_robux: Asset Price (R)
-                      price_tickets: Asset Price (T)
-                      sales: Amount Of Sales
-                      updated_at: Unix Timestamp
-                    price: Resell Price
-                    serial: Serial Owned
-                    uaid: User Asset ID
-                  recipient_robux: Robux Offered
-                  recipient_userid: User ID
-                  sender_items:
-                  - asset:
-                      asset_rap: Asset Rap
-                      asset_type: Asset Type
-                      asset_type_value: Asset Type Value
-                      created_at: Unix Timestamp
-                      creator_id: Asset Creator ID
-                      creator_type: Type of Creator (group or user)
-                      description: Asset Description
-                      id: Asset ID
-                      is_for_sale: Asset Status
-                      is_limited: Asset Limited
-                      is_limited_unique: Asset Limited U
-                      name: Asset Name
-                      price_robux: Asset Price (R)
-                      price_tickets: Asset Price (T)
-                      sales: Amount Of Sales
-                      updated_at: Unix Timestamp
-                    price: Resell Price
-                    serial: Serial Owned
-                    uaid: User Asset ID
-                  sender_robux: Robux Offered
-                  sender_userid: User ID
-                  status: Trade Status
-                message: ""
-                success: true
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade__tradeid__get_200_response'
-          description: Successful operation
-      summary: Get Trade by ID
-      tags:
-      - Trading
-      x-accepts: application/json
-  /public-api/v1/trade/create/{recipient_userid}:
-    parameters:
-    - description: The ID of the recipient user.
-      explode: false
-      in: path
-      name: recipient_userid
-      required: true
-      schema:
-        type: integer
-      style: simple
-    post:
-      description: Create a trade request with the specified recipient user.
-      parameters:
-      - description: The ID of the recipient user.
-        explode: false
-        in: path
-        name: recipient_userid
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_public_api_v1_trade_create__recipient_userid__post_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                success: true
-                message: ""
-                tradeId: 1
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade_create__recipient_userid__post_200_response'
-          description: Trade request was successful
-        "400":
-          content:
-            application/json:
-              example:
-                success: false
-                message: error
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade_create__recipient_userid__post_400_response'
-          description: Bad request or error in trade creation
-      summary: Create Trade
-      tags:
-      - Trading
-      x-content-type: application/json
-      x-accepts: application/json
-  /public-api/v1/trade/accept/{tradeid}:
-    parameters:
-    - description: The ID of the trade.
-      explode: false
-      in: path
-      name: tradeid
-      required: true
-      schema:
-        type: integer
-      style: simple
-    post:
-      description: Accept a trade with the specified trade ID.
-      parameters:
-      - description: The ID of the trade.
-        explode: false
-        in: path
-        name: tradeid
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                success: true
-                message: success
-                data: null
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
-          description: Trade acceptance was successful
-        "400":
-          content:
-            application/json:
-              example:
-                success: false
-                message: error
-                data: null
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
-          description: Bad request or error in trade acceptance
-      summary: Accept Trade
-      tags:
-      - Trading
-      x-content-type: application/json
-      x-accepts: application/json
-  /public-api/v1/trade/decline/{tradeid}:
-    parameters:
-    - description: The ID of the trade.
-      explode: false
-      in: path
-      name: tradeid
-      required: true
-      schema:
-        type: integer
-      style: simple
-    post:
-      description: Accept a trade with the specified trade ID.
-      parameters:
-      - description: The ID of the trade.
-        explode: false
-        in: path
-        name: tradeid
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                success: true
-                message: success
-                data: null
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
-          description: Trade acceptance was successful
-        "400":
-          content:
-            application/json:
-              example:
-                success: false
-                message: error
-                data: null
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
-          description: Bad request or error in trade acceptance
-      summary: Accept Trade
-      tags:
-      - Trading
-      x-accepts: application/json
-  /public-api/v1/trade/cancel/{tradeid}:
-    parameters:
-    - description: The ID of the trade.
-      explode: false
-      in: path
-      name: tradeid
-      required: true
-      schema:
-        type: integer
-      style: simple
-    post:
-      description: Accept a trade with the specified trade ID.
-      parameters:
-      - description: The ID of the trade.
-        explode: false
-        in: path
-        name: tradeid
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                success: true
-                message: success
-                data: null
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
-          description: Trade acceptance was successful
-        "400":
-          content:
-            application/json:
-              example:
-                success: false
-                message: error
-                data: null
-              schema:
-                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
-          description: Bad request or error in trade acceptance
-      summary: Accept Trade
-      tags:
-      - Trading
+      - aksjonaerIVirksomhet
       x-accepts: application/json
 components:
   schemas:
-    _public_api_v1_users__userid__get_200_response_data:
-      properties:
-        created_at:
-          type: integer
-        description:
-          type: string
-        id:
-          type: integer
-        is_banned:
-          type: boolean
-        last_online:
-          type: integer
-        membership:
-          type: string
-        username:
-          type: string
-    _public_api_v1_economy_my_balance_get_200_response_data:
-      properties:
-        robux:
-          description: The amount of Robux in the user's account.
-          type: integer
-        tickets:
-          description: The amount of Tickets in the user's account.
-          type: integer
-    _public_api_v1_asset__assetid__get_400_response:
+    Feil:
+      description: Feilstruktur for alle feilmeldinger.
       example:
-        data: null
-        message: Asset not found
-        success: false
+        melding: melding
+        kode: kode
+        korrelasjonsid: korrelasjonsid
       properties:
-        description:
+        kode:
+          description: "Feilkode, for maskinell håndtering"
           type: string
-    _public_api_v1_inventory_collectibles__userid__get_200_response_data_inner:
-      properties:
-        asset:
-          $ref: '#/components/schemas/_public_api_v1_inventory_collectibles__userid__get_200_response_data_inner_asset'
-        price:
-          type: integer
-        serial:
-          type: integer
-        uaid:
-          type: integer
-    _public_api_v1_trade_accept__tradeid__post_request:
-      properties:
-        TOTPCode:
-          type: integer
-    _public_api_v1_trade__tradeid__get_200_response_data:
+        melding:
+          description: Beskrivelse av feilen som har oppstått
+          type: string
+        korrelasjonsid:
+          description: Korrelasjonsid
+          type: string
+    Aksjeselskap:
+      description: ""
       example:
-        recipient_items:
-        - asset: "{}"
-        - asset: "{}"
-        sender_items:
-        - asset: "{}"
-        - asset: "{}"
+        identifikator: identifikator
+        kalenderaar: kalenderaar
+        aksjonaerer:
+        - aksjer:
+          - antallAksjer: 0
+            aksjeklasse: aksjeklasse
+            isinnummer: isinnummer
+          - antallAksjer: 0
+            aksjeklasse: aksjeklasse
+            isinnummer: isinnummer
+          landkode: landkode
+          postnummer: postnummer
+          personidentifikator: personidentifikator
+          navn: navn
+          foedselsaar: foedselsaar
+          organisasjonsnummer: organisasjonsnummer
+        - aksjer:
+          - antallAksjer: 0
+            aksjeklasse: aksjeklasse
+            isinnummer: isinnummer
+          - antallAksjer: 0
+            aksjeklasse: aksjeklasse
+            isinnummer: isinnummer
+          landkode: landkode
+          postnummer: postnummer
+          personidentifikator: personidentifikator
+          navn: navn
+          foedselsaar: foedselsaar
+          organisasjonsnummer: organisasjonsnummer
+        totaltAntallAksjer: 6
       properties:
-        recipient_items:
+        aksjonaerer:
+          description: ""
           items:
-            $ref: '#/components/schemas/_public_api_v1_trade__tradeid__get_200_response_data_recipient_items_inner'
+            $ref: '#/components/schemas/Aksjonaer'
           type: array
-        sender_items:
+        totaltAntallAksjer:
+          description: mengde som utgjør eller kan uttrykkes i et visst tall (<a href='https://data.skatteetaten.no/begrep/20b2e145-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: int64
+          type: integer
+        identifikator:
+          description: (<a href='https://data.skatteetaten.no/begreper/dcfb4778-e484-11e6-9cb3-005056821322'>Begrepsreferanse</a>)
+          type: string
+        kalenderaar:
+          description: årstall er et tall som angir årets nummer i tidsregningen i
+            den gregorianske kalender (<a href='https://data.skatteetaten.no/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: year
+          type: string
+    Aksje:
+      description: ""
+      example:
+        antallAksjer: 0
+        aksjeklasse: aksjeklasse
+        isinnummer: isinnummer
+      properties:
+        isinnummer:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+        antallAksjer:
+          description: mengde som utgjør eller kan uttrykkes i et visst tall (<a href='https://data.skatteetaten.no/begrep/20b2e145-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: int64
+          type: integer
+        aksjeklasse:
+          description: "Lovlige verdier for kodelisten ligger her: https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml\
+            \ (<a href='https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml'>Kodelistereferanse</a>)"
+          type: string
+    Aksjonaer:
+      description: (<a href='https://data.skatteetaten.no/begrep/20b2e177-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      example:
+        aksjer:
+        - antallAksjer: 0
+          aksjeklasse: aksjeklasse
+          isinnummer: isinnummer
+        - antallAksjer: 0
+          aksjeklasse: aksjeklasse
+          isinnummer: isinnummer
+        landkode: landkode
+        postnummer: postnummer
+        personidentifikator: personidentifikator
+        navn: navn
+        foedselsaar: foedselsaar
+        organisasjonsnummer: organisasjonsnummer
+      properties:
+        personidentifikator:
+          description: "ellevesifret identifikasjonsnummer for personer bosatt i Norge,\
+            \ der de seks første sifrene angir fødselsdato og de fem siste personnummer.\
+            \ (<a href='https://data.skatteetaten.no/begrep/5138da10-be20-11e6-8004-005056825ca0'>Begrepsreferanse</a>)"
+          maxLength: 11
+          minLength: 11
+          pattern: "[0-9]+"
+          type: string
+        organisasjonsnummer:
+          description: 9 sifret nummer gitt de som er registrert i Enhetsregisteret.
+            (<a href='https://data.skatteetaten.no/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 9
+          minLength: 9
+          pattern: "[0-9]+"
+          type: string
+        navn:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+        foedselsaar:
+          description: årstall er et tall som angir årets nummer i tidsregningen i
+            den gregorianske kalender (<a href='https://data.skatteetaten.no/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: year
+          type: string
+        postnummer:
+          description: nummer på et poststed (<a href='https://data.skatteetaten.no/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4
+          minLength: 4
+          pattern: "([0-9]){4}"
+          type: string
+        aksjer:
+          description: ""
           items:
-            $ref: '#/components/schemas/_public_api_v1_trade__tradeid__get_200_response_data_recipient_items_inner'
+            $ref: '#/components/schemas/Aksje'
           type: array
-    _public_api_v1_users__userid__get_200_response:
-      example:
-        data:
-          created_at: Unix Timestamp
-          description: Example Description
-          id: Input ID
-          is_banned: Input Status
-          last_online: Unix Timestamp
-          membership: Input Membership
-          username: Input Username
-        message: ""
-        success: true
-      properties:
-        data:
-          $ref: '#/components/schemas/_public_api_v1_users__userid__get_200_response_data'
-        message:
+        landkode:
+          description: koder for land etter ISO 3166-1 Alpha-2 (<a href='https://data.skatteetaten.no/begrep/20b2e112-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 2
+          minLength: 2
+          pattern: "([A-Z]){2}"
           type: string
-        success:
-          type: boolean
-    _public_api_v1_trade_create__recipient_userid__post_400_response:
-      example:
-        success: true
-        message: message
-      properties:
-        success:
-          type: boolean
-        message:
-          type: string
-    _public_api_v1_trade__tradeid__get_200_response:
-      example:
-        data:
-          recipient_items:
-          - asset: "{}"
-          - asset: "{}"
-          sender_items:
-          - asset: "{}"
-          - asset: "{}"
-      properties:
-        data:
-          $ref: '#/components/schemas/_public_api_v1_trade__tradeid__get_200_response_data'
-    _public_api_v1_economy_my_balance_get_400_response:
-      example:
-        message: You are not logged in
-        success: false
-      properties:
-        description:
-          type: string
-    _public_api_v1_trade_list_get_200_response:
-      example:
-        data:
-        - created_at: Unix Timetamp
-          expires_at: Unix Timestamp
-          id: Trade ID
-          recipient_userid: User ID
-          sender_userid: Target User ID
-          status: Trade Status
-        message: ""
-        next_page: Next Page
-        page: Current Page
-        success: true
-        total_pages: Total Pages
-      properties:
-        data:
-          example:
-          - created_at: Unix Timestamp
-            expires_at: Unix Timestamp
-            id: Trade ID
-            recipient_userid: User ID
-            sender_userid: Target User ID
-            status: Trade Status
-          items:
-            $ref: '#/components/schemas/_public_api_v1_trade_list_get_200_response_data_inner'
-          type: array
-        message:
-          type: string
-        next_page:
-          type: integer
-        page:
-          type: integer
-        success:
-          type: boolean
-        total_pages:
-          type: integer
-    _public_api_v1_trade_create__recipient_userid__post_request:
-      properties:
-        RequesterOfferRobux:
-          type: integer
-        TargetOfferRobux:
-          type: integer
-        RequesterOfferUAIDs:
-          items:
-            type: integer
-          type: array
-        TargetOfferUAIDs:
-          items:
-            type: integer
-          type: array
-        TOTPCode:
-          type: integer
-    _public_api_v1_asset__assetid__get_200_response_data:
-      properties:
-        asset_rap:
-          type: integer
-          nullable: true
-        asset_type:
-          type: string
-        asset_type_value:
-          type: integer
-        created_at:
-          type: integer
-        creator:
-          $ref: '#/components/schemas/_public_api_v1_asset__assetid__get_200_response_data_creator'
-        creator_id:
-          type: integer
-        creator_type:
-          type: integer
-        description:
-          type: string
-        id:
-          type: integer
-        is_for_sale:
-          type: boolean
-        is_limited:
-          type: boolean
-        is_limited_unique:
-          type: boolean
-        name:
-          type: string
-        price_robux:
-          type: integer
-        price_tickets:
-          type: integer
-        sales:
-          type: integer
-        updated_at:
-          type: integer
-    _public_api_v1_inventory_collectibles__userid__get_200_response_data_inner_asset:
-      properties:
-        asset_rap:
-          type: integer
-          nullable: true
-        asset_type:
-          type: string
-        asset_type_value:
-          type: integer
-        created_at:
-          type: integer
-        creator_id:
-          type: integer
-        creator_type:
-          type: integer
-        description:
-          type: string
-        id:
-          type: integer
-        is_for_sale:
-          type: boolean
-        is_limited:
-          type: boolean
-        is_limited_unique:
-          type: boolean
-        name:
-          type: string
-        price_robux:
-          type: integer
-        price_tickets:
-          type: integer
-        sales:
-          type: integer
-        updated_at:
-          type: integer
-    _public_api_v1_trade_list_get_200_response_data_inner:
-      properties:
-        created_at:
-          type: integer
-        expires_at:
-          type: integer
-        id:
-          type: integer
-        recipient_userid:
-          type: integer
-        sender_userid:
-          type: integer
-        status:
-          type: string
-    _public_api_v1_users__userid__get_400_response:
-      example:
-        data: null
-        message: User not found
-        success: false
-      properties:
-        description:
-          type: string
-    _public_api_v1_users_my_profile_get_200_response:
-      example:
-        data:
-          created_at: Unix Timestamp
-          description: User Description
-          id: User ID
-          is_banned: User Status
-          last_online: Unix Timestamp
-          membership: User Memberhip
-          username: Username
-        message: ""
-        success: true
-      properties:
-        data:
-          $ref: '#/components/schemas/_public_api_v1_users__userid__get_200_response_data'
-    _public_api_v1_economy_my_balance_get_200_response:
-      example:
-        data:
-          robux: User Robux Amount
-          tickets: User Tickets Amount
-        message: ""
-        success: true
-      properties:
-        data:
-          $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_200_response_data'
-    _public_api_v1_trade_accept__tradeid__post_200_response:
-      example:
-        data: ""
-        success: true
-        message: message
-      properties:
-        success:
-          type: boolean
-        message:
-          type: string
-        data: {}
-    _public_api_v1_asset__assetid__get_200_response:
-      example:
-        data:
-          asset_rap: Rap of the item
-          asset_type: asset type
-          asset_type_value: asset type value
-          created_at: Unix Timestamp
-          creator:
-            creator_created_at: Unix Timestamp
-            creator_description: User Description
-            creator_id: User ID
-            creator_is_banned: User Status
-            creator_last_online: Unix Timestamp
-            creator_membership: User Membership
-            creator_username: Creator Name
-          creator_id: User ID
-          creator_type: Type of Creator (group or user)
-          description: Asset Description
-          id: Asset ID
-          is_for_sale: Asset Status
-          is_limited: Asset Limited
-          is_limited_unique: Asset Limited U
-          name: Asset Name
-          price_robux: Asset Price (R)
-          price_tickets: Asset Price (T)
-          sales: Amount Of Sales
-          updated_at: Unix Timestamp
-        message: ""
-        success: true
-      properties:
-        data:
-          $ref: '#/components/schemas/_public_api_v1_asset__assetid__get_200_response_data'
-    _public_api_v1_trade_create__recipient_userid__post_200_response:
-      example:
-        success: true
-        message: message
-        tradeId: 0
-      properties:
-        success:
-          type: boolean
-        message:
-          type: string
-        tradeId:
-          type: integer
-    _public_api_v1_inventory_assets__userid___assettypeid__get_200_response:
-      example:
-        data:
-        - asset:
-            asset_rap: Asset Rap
-            asset_type: Asset Type
-            asset_type_value: Asset Type Value
-            created_at: Unix Timestamp
-            creator_id: User ID
-            creator_type: Type of Creator (group or user)
-            description: Asset Description
-            id: Asset ID
-            is_for_sale: Asset Status
-            is_limited: Asset Limited
-            is_limited_unique: Asset Limted U
-            name: Asset Name
-            price_robux: Asset Price (R)
-            price_tickets: Asset Price (T)
-            sales: Amount Of Sales
-            updated_at: Unix Timestamp
-          price: Resell Price
-          serial: Serial Owner
-          uaid: User Asset ID
-        message: ""
-        next_page: Next Page
-        page: Current Page
-        success: true
-        total_pages: Total Pages
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/_public_api_v1_inventory_collectibles__userid__get_200_response_data_inner'
-          type: array
-    _public_api_v1_inventory_collectibles__userid__get_200_response:
-      example:
-        data:
-        - asset:
-            asset_rap: Asset Rap
-            asset_type: Asset Type
-            asset_type_value: Asset Type Value
-            created_at: Unix Timestamp
-            creator_id: User ID
-            creator_type: Type of Creator (group or user)
-            description: Asset Description
-            id: Asset ID
-            is_for_sale: Asset Status
-            is_limited: Asset Limited
-            is_limited_unique: Asset Limited U
-            name: Asset Name
-            price_robux: Asset Price (R)
-            price_tickets: Asset Price (T)
-            sales: Amount Of Sales
-            updated_at: Unis Timestamp
-          price: Resell Price
-          serial: Serial Owned
-          uaid: User Asset ID
-        message: ""
-        next_page: Next Page
-        page: Current Page
-        success: true
-        total_pages: Total Pages
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/_public_api_v1_inventory_collectibles__userid__get_200_response_data_inner'
-          type: array
-    _public_api_v1_asset__assetid__get_200_response_data_creator:
-      properties:
-        creator_created_at:
-          type: integer
-        creator_description:
-          type: string
-        creator_id:
-          type: integer
-        creator_is_banned:
-          type: boolean
-        creator_last_online:
-          type: integer
-        creator_membership:
-          type: string
-        creator_username:
-          type: string
-    _public_api_v1_trade__tradeid__get_200_response_data_recipient_items_inner:
-      example:
-        asset: "{}"
-      properties:
-        asset:
-          properties: {}
-          type: object
+    Antall:
+      description: mengde som utgjør eller kan uttrykkes i et visst tall (<a href='https://data.skatteetaten.no/begrep/20b2e145-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      format: int64
+      type: integer
+    NorskIdentifikator:
+      description: (<a href='https://data.skatteetaten.no/begreper/dcfb4778-e484-11e6-9cb3-005056821322'>Begrepsreferanse</a>)
+      type: string
+    Aarstall:
+      description: årstall er et tall som angir årets nummer i tidsregningen i den
+        gregorianske kalender (<a href='https://data.skatteetaten.no/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      format: year
+      type: string
+    Tekst:
+      description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+        tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 4000
+      type: string
+    Aksjeklasse:
+      description: "Lovlige verdier for kodelisten ligger her: https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml\
+        \ (<a href='https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml'>Kodelistereferanse</a>)"
+      type: string
+    Foedselsnummer:
+      description: "ellevesifret identifikasjonsnummer for personer bosatt i Norge,\
+        \ der de seks første sifrene angir fødselsdato og de fem siste personnummer.\
+        \ (<a href='https://data.skatteetaten.no/begrep/5138da10-be20-11e6-8004-005056825ca0'>Begrepsreferanse</a>)"
+      maxLength: 11
+      minLength: 11
+      pattern: "[0-9]+"
+      type: string
+    Organisasjonsnummer:
+      description: 9 sifret nummer gitt de som er registrert i Enhetsregisteret. (<a
+        href='https://data.skatteetaten.no/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 9
+      minLength: 9
+      pattern: "[0-9]+"
+      type: string
+    Postnummer:
+      description: nummer på et poststed (<a href='https://data.skatteetaten.no/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 4
+      minLength: 4
+      pattern: "([0-9]){4}"
+      type: string
+    Landkode:
+      description: koder for land etter ISO 3166-1 Alpha-2 (<a href='https://data.skatteetaten.no/begrep/20b2e112-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 2
+      minLength: 2
+      pattern: "([A-Z]){2}"
+      type: string
 
