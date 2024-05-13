@@ -1,14 +1,13 @@
 
 
-# Signup200ResponseData
+# MemberCourseUpdate400Response
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**accessToken** | **String** |  |  [optional] |
-|**refreshToken** | **String** |  |  [optional] |
+|**message** | **String** | Error message |  [optional] |
 
 
 

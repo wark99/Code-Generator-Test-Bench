@@ -1,14 +1,13 @@
 
 
-# Signin200ResponseData
+# Error
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**accessTokem** | **String** |  |  [optional] |
-|**refreshToken** | **String** |  |  [optional] |
+|**message** | **String** | Error message |  [optional] |
 
 
 
