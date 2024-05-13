@@ -1,583 +1,1093 @@
 openapi: 3.1.0
 info:
-  description: |-
-    # API Rules
-    * Null values are not sent / received.
-    * Object IDs are **always** sent in list methods, but are **ignored** in create / update methods.
-    * All request and response objects are at the root of the returned structure, if they contain only one entity.
-    * Response of multiple entities is returned as an object that contains the list of entities and a structure `pager`, if necessary.
-    ### Additional documentation:
-    * [Camera registration](../camera_registration/)
-    * [Camera communication](../camera_communication/)
-    ### HTTP Status
-    * 200 - OK, response contains data (usually the entire entity)
-    * 201 - OK, entry created; response contains data as required
-    * 204 - OK, no response
-    * 304 - Response has not been modified
-    * 400 - Invalid request / invalid input (SDK error)
-    * 401 - Endpoint is being accessed without credentials (SDK error)
-    * 403 - Request can't be served, usually due to insufficient rights (user error)
-    * 404 - Entity not found (user error or outdated data)
-    * 409 - Conflict with the state of target resource (user error)
-    * 50x - Server side error
-  title: connect-api
-  version: 0.22.0
-  x-logo:
-    url: ../logo.png
-    backgroundColor: '#FFFFFF'
-    altText: Prusa logo
+  description: CRM Cotización
+  title: CRM Cotización
+  version: 1.0.0
 servers:
-- description: Local development server
-  url: "http://{hostname}:{port}"
-  variables:
-    hostname:
-      default: localhost
-      description: Developer's hostname
-    port:
-      default: "8000"
-      description: Developer's port
-- description: Any working server
-  url: "http://{hostname}"
-  variables:
-    hostname:
-      default: localhost
-      description: Developer's hostname
-- description: Any working server
-  url: "https://{hostname}"
-  variables:
-    hostname:
-      default: localhost
-      description: Developer's hostname
-- description: Production environment
-  url: https://connect.prusa3d.com
-tags:
-- name: camera
-- name: cameras
+- url: /
 paths:
-  /app/printers/{printer_uuid}/camera:
+  /api/v1/login/token:
     post:
-      parameters:
-      - $ref: '#/components/parameters/printer_uuid_param'
-      - explode: true
-        in: query
-        name: origin
-        required: false
-        schema:
-          default: WEB
-          description: Use OTHER for camera registration via api. WEB is used when
-            registering camera via web qr code
-          enum:
-          - WEB
-          - OTHER
-          type: string
-        style: form
-      responses:
-        "200":
-          description: '**OK**'
-          headers:
-            Token:
-              explode: false
-              required: true
-              schema:
-                $ref: '#/components/schemas/token'
-              style: simple
-        "400":
-          $ref: '#/components/responses/400'
-        "401":
-          $ref: '#/components/responses/401-app'
-        "403":
-          $ref: '#/components/responses/403-app'
-        "503":
-          $ref: '#/components/responses/503'
-      security:
-      - Cookie: []
-      summary: Register camera to Connect by user.
-      tags:
-      - cameras
-      x-accepts: "application/json,text/plain"
-  /c/snapshot:
-    put:
+      operationId: login_for_access_token_api_v1_login_token_post
       requestBody:
         content:
-          image/jpg:
+          application/x-www-form-urlencoded:
             schema:
-              description: Max snapshot size is 16MB
-              format: binary
-              type: string
-        required: true
-      responses:
-        "204":
-          $ref: '#/components/responses/204'
-        "400":
-          $ref: '#/components/responses/400'
-        "401":
-          $ref: '#/components/responses/401-p'
-        "403":
-          $ref: '#/components/responses/403-p'
-        "404":
-          $ref: '#/components/responses/404'
-        "503":
-          $ref: '#/components/responses/503'
-      security:
-      - Token: []
-        Fingerprint: []
-      summary: Upload snapshot to Connect
-      tags:
-      - camera
-      x-content-type: image/jpg
-      x-accepts: "application/json,text/plain"
-  /c/info:
-    put:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/camera_request'
+              $ref: '#/components/schemas/Body_login_for_access_token_api_v1_login_token_post'
         required: true
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/camera_response'
-          description: '**OK**'
-        "400":
-          $ref: '#/components/responses/400'
-        "401":
-          $ref: '#/components/responses/401-p'
-        "403":
-          $ref: '#/components/responses/403-p'
-        "503":
-          $ref: '#/components/responses/503'
-      security:
-      - Token: []
-        Fingerprint: []
-      summary: Update camera attributes
+                $ref: '#/components/schemas/AuthResponse'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Login For Access Token
       tags:
-      - camera
+      - login
+      x-content-type: application/x-www-form-urlencoded
+      x-accepts: application/json
+  /api/v1/public/contact-form/{formId}:
+    post:
+      operationId: post_form_data_api_v1_public_contact_form__formId__post
+      parameters:
+      - explode: false
+        in: path
+        name: formId
+        required: true
+        schema:
+          title: Formid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Post Form Data
+      tags:
+      - public
       x-content-type: application/json
-      x-accepts: "application/json,text/plain"
+      x-accepts: application/json
+  /api/v1/public/contact-form/schema/{formId}:
+    get:
+      operationId: get_form_schema_api_v1_public_contact_form_schema__formId__get
+      parameters:
+      - explode: false
+        in: path
+        name: formId
+        required: true
+        schema:
+          title: Formid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Form Schema
+      tags:
+      - public
+      x-accepts: application/json
+  /api/v1/public/user/register:
+    post:
+      operationId: register_api_v1_public_user_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Register
+      tags:
+      - public
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/pipelines/:
+    post:
+      operationId: create_pipeline_api_v1_pipelines__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_create_pipeline_api_v1_pipelines__post'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Create Pipeline
+      tags:
+      - pipelines
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/pipelines/{pipelineId}/phases/:
+    get:
+      operationId: list_pipeline_phases_api_v1_pipelines__pipelineId__phases__get
+      parameters:
+      - explode: false
+        in: path
+        name: pipelineId
+        required: true
+        schema:
+          title: Pipelineid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: List Pipeline Phases
+      tags:
+      - pipelines
+      x-accepts: application/json
+  /api/v1/contacts/schema:
+    post:
+      operationId: create_contact_schema_api_v1_contacts_schema_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_create_contact_schema_api_v1_contacts_schema_post'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Create Contact Schema
+      tags:
+      - contacts
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/contacts/schema/{organizationId}:
+    get:
+      operationId: list_contact_schema_api_v1_contacts_schema__organizationId__get
+      parameters:
+      - explode: false
+        in: path
+        name: organizationId
+        required: true
+        schema:
+          title: Organizationid
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: populate
+        required: false
+        schema: {}
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: List Contact Schema
+      tags:
+      - contacts
+      x-accepts: application/json
+  /api/v1/contacts/schema/{schemaId}/fields:
+    get:
+      operationId: get_schema_fields_api_v1_contacts_schema__schemaId__fields_get
+      parameters:
+      - explode: false
+        in: path
+        name: schemaId
+        required: true
+        schema:
+          title: Schemaid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Get Schema Fields
+      tags:
+      - contacts
+      x-accepts: application/json
+  /api/v1/contacts/:
+    post:
+      operationId: create_contact_api_v1_contacts__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_create_contact_api_v1_contacts__post'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Create Contact
+      tags:
+      - contacts
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/contacts/{organizationId}:
+    get:
+      operationId: list_contacts_api_v1_contacts__organizationId__get
+      parameters:
+      - explode: false
+        in: path
+        name: organizationId
+        required: true
+        schema:
+          title: Organizationid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: List Contacts
+      tags:
+      - contacts
+      x-accepts: application/json
+  /api/v1/businesses/:
+    post:
+      operationId: create_bussines_api_v1_businesses__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_create_bussines_api_v1_businesses__post'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Create Bussines
+      tags:
+      - businesses
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/businesses/{businessId}/phase:
+    put:
+      operationId: change_business_phase_api_v1_businesses__businessId__phase_put
+      parameters:
+      - explode: false
+        in: path
+        name: businessId
+        required: true
+        schema:
+          title: Businessid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_change_business_phase_api_v1_businesses__businessId__phase_put'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Change Business Phase
+      tags:
+      - businesses
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/businesses/pipeline/{pipelineId}:
+    get:
+      operationId: get_business_in_pipeline_api_v1_businesses_pipeline__pipelineId__get
+      parameters:
+      - explode: false
+        in: path
+        name: pipelineId
+        required: true
+        schema:
+          title: Pipelineid
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: populate
+        required: false
+        schema:
+          default: false
+          title: Populate
+          type: boolean
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_get_business_in_pipeline_api_v1_businesses_pipeline__pipelineId__get'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Get Business In Pipeline
+      tags:
+      - businesses
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/businesses/{businessId}:
+    get:
+      operationId: get_business_api_v1_businesses__businessId__get
+      parameters:
+      - explode: false
+        in: path
+        name: businessId
+        required: true
+        schema:
+          title: Businessid
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: populate
+        required: false
+        schema:
+          default: false
+          title: Populate
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Get Business
+      tags:
+      - businesses
+      x-accepts: application/json
+  /api/v1/organizations/all:
+    get:
+      operationId: get_all_organizations_api_v1_organizations_all_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Get All Organizations
+      tags:
+      - organizations
+      x-accepts: application/json
+  /api/v1/organizations/:
+    post:
+      operationId: create_organization_api_v1_organizations__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrganzationDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Create Organization
+      tags:
+      - organizations
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/forms/:
+    get:
+      operationId: get_all_forms_api_v1_forms__get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Get All Forms
+      tags:
+      - forms
+      x-accepts: application/json
+    post:
+      operationId: create_form_api_v1_forms__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_create_form_api_v1_forms__post'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Create Form
+      tags:
+      - forms
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/forms/{formId}/iframe:
+    get:
+      operationId: get_form_iframe_api_v1_forms__formId__iframe_get
+      parameters:
+      - explode: false
+        in: path
+        name: formId
+        required: true
+        schema:
+          title: Formid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Get Form Iframe
+      tags:
+      - forms
+      x-accepts: application/json
 components:
-  headers:
-    Last-Modified:
-      explode: false
-      schema:
-        description: "Last modified time defined by RFC 7232, [section 2.2](https://tools.ietf.org/html/rfc7232#section-2.2)"
-        example: "Last-Modified: Wed, 14 Oct 2015 16:57:02 GMT"
-      style: simple
-    etag:
-      explode: false
-      schema:
-        description: An identifier for a specific version of a response
-        example: "etag: W/'98f4143a4a'"
-      style: simple
-  parameters:
-    printer_uuid_param:
-      explode: false
-      in: path
-      name: printer_uuid
-      required: true
-      schema:
-        $ref: '#/components/schemas/printer_uuid'
-      style: simple
-  responses:
-    "204":
-      description: |-
-        **No Content**
-        Data was accepted by the server.
-    "302":
-      description: |-
-        **Found**
-        Moved temporarily.
-    "303":
-      description: '**See other**'
-    "304":
-      description: '**Response not modified**'
-      headers:
-        Last-Modified:
-          $ref: '#/components/headers/Last-Modified'
-        etag:
-          $ref: '#/components/headers/etag'
-    "400":
-      description: |-
-        **Bad Request**
-        Some data received is not valid. Typically this happens for POST requests with incorrect structure or a path argument was sent that is not defined in the URL.
-    "401-app":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/status'
-      description: |-
-        **Unauthorized**
-        Missing security token or it is not valid.
-    "401-p":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/status'
-      description: |-
-        **Unauthorized**
-        Missing security token or it is not valid.
-    "403-app":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/status'
-      description: |-
-        **Forbidden**
-        Security token is not valid or is outdated. Or user doesn't has rights for perform action.
-    "403-p":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/status'
-      description: |-
-        **Forbidden**
-        Security token is not valid or is outdated.
-    "404":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/status'
-      description: '**Not Found** Entity not found or invalid auth token.'
-    "409":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/status'
-      description: |-
-        **Conflict**
-        Request could not be processed because the requested change would create a conflict in the database.
-    "413":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/status'
-      description: |-
-        **Payload too large**
-        Chunked request was too large.
-    "429":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/status'
-      description: '**Too many requests**'
-    "503":
-      content:
-        text/plain:
-          schema:
-            type: string
-        application/json:
-          schema:
-            $ref: '#/components/schemas/status'
-      description: |-
-        **Service Unavailable**
-        Service is unavailable at this moment. Try again later.
   schemas:
-    token:
-      example: T0nSPU2v05v0pJeKYFYV
-      maxLength: 20
-      minLength: 20
-      type: string
-    network_info:
-      description: Network information
+    AuthResponse:
       example:
-        wifi_ipv4: 192.168.1.6
-        lan_ipv6: 2e0a::1234:5678:abcd:efab/64
-        wifi_ssid: PublicWiFi
-        lan_ipv4: 192.168.1.5
-        wifi_mac: 0a:bc:12:34:ab:7f
-        lan_mac: 0a:bc:12:34:56:7f
-        wifi_ipv6: 2e0a::1234:5678:abcd:0123/64
+        access_token: access_token
+        token_type: token_type
+        user:
+          user_id: user_id
+          last_name: last_name
+          created_at: 2000-01-23T04:56:07.000+00:00
+          first_name: first_name
+          email: email
       properties:
-        lan_mac:
-          description: Hardware address of ethernet port.
-          example: 0a:bc:12:34:56:7f
+        access_token:
+          title: Access Token
           type: string
-        lan_ipv4:
-          description: IPv4 address of ethernet port.
-          example: 192.168.1.5
+        token_type:
+          title: Token Type
           type: string
-        lan_ipv6:
-          description: IPv6 address of ethernet port.
-          example: 2e0a::1234:5678:abcd:efab/64
-          type: string
-        wifi_mac:
-          description: Hardware address of Wi-Fi device.
-          example: 0a:bc:12:34:ab:7f
-          type: string
-        wifi_ipv4:
-          description: IPv4 address of Wi-Fi device.
-          example: 192.168.1.6
-          type: string
-        wifi_ipv6:
-          description: IPv6 address of Wi-Fi device.
-          example: 2e0a::1234:5678:abcd:0123/64
-          type: string
-        wifi_ssid:
-          description: SSID of Wi-Fi network which is used by Wi-Fi device.
-          example: PublicWiFi
-          type: string
-    camera_resolution:
-      example:
-        width: 640
-        height: 480
+        user:
+          $ref: '#/components/schemas/UserResponse'
+      required:
+      - access_token
+      - token_type
+      - user
+      title: AuthResponse
+    Body_change_business_phase_api_v1_businesses__businessId__phase_put:
       properties:
-        width:
-          example: 640
-          type: integer
-        height:
-          example: 480
-          type: integer
-    camera_capabilities:
-      items:
-        enum:
-        - trigger_scheme
-        - imaging
-        - resolution
-        - focus
-        type: string
-      type: array
-    camera_config:
-      description: Configuration of the camera
-      example:
-        trigger_scheme: THIRTY_SEC
-        path: /dev/video0
-        driver: V4L2
-        camera_id: camera_id
-        name: Olomouc
-        resolution:
-          width: 640
-          height: 480
-        network_info:
-          wifi_ipv4: 192.168.1.6
-          lan_ipv6: 2e0a::1234:5678:abcd:efab/64
-          wifi_ssid: PublicWiFi
-          lan_ipv4: 192.168.1.5
-          wifi_mac: 0a:bc:12:34:ab:7f
-          lan_mac: 0a:bc:12:34:56:7f
-          wifi_ipv6: 2e0a::1234:5678:abcd:0123/64
+        phaseId:
+          title: Phaseid
+          type: string
+        organizationId:
+          title: Organizationid
+          type: string
+      required:
+      - organizationId
+      - phaseId
+      title: Body_change_business_phase_api_v1_businesses__businessId__phase_put
+    Body_create_bussines_api_v1_businesses__post:
       properties:
-        camera_id:
+        bussines:
+          $ref: '#/components/schemas/CreateBusiness'
+        organizationId:
+          title: Organizationid
           type: string
-        path:
-          description: Path to the driver
-          example: /dev/video0
+      required:
+      - bussines
+      - organizationId
+      title: Body_create_bussines_api_v1_businesses__post
+    Body_create_contact_api_v1_contacts__post:
+      properties:
+        contact:
+          $ref: '#/components/schemas/CreateContactDTO'
+        organizationId:
+          title: Organizationid
           type: string
+      required:
+      - contact
+      - organizationId
+      title: Body_create_contact_api_v1_contacts__post
+    Body_create_contact_schema_api_v1_contacts_schema_post:
+      properties:
+        contact_schema:
+          $ref: '#/components/schemas/ContactSchemaDTO'
+        organizationId:
+          title: Organizationid
+          type: string
+      required:
+      - contact_schema
+      - organizationId
+      title: Body_create_contact_schema_api_v1_contacts_schema_post
+    Body_create_form_api_v1_forms__post:
+      properties:
+        form:
+          $ref: '#/components/schemas/CreateFormDTO'
+        organizationId:
+          title: Organizationid
+          type: string
+      required:
+      - form
+      - organizationId
+      title: Body_create_form_api_v1_forms__post
+    Body_create_pipeline_api_v1_pipelines__post:
+      properties:
+        pipeline:
+          $ref: '#/components/schemas/CreatePipeline'
+        organizationId:
+          title: Organizationid
+          type: string
+      required:
+      - organizationId
+      - pipeline
+      title: Body_create_pipeline_api_v1_pipelines__post
+    Body_get_business_in_pipeline_api_v1_businesses_pipeline__pipelineId__get:
+      properties:
+        organizationId: {}
+      required:
+      - organizationId
+      title: Body_get_business_in_pipeline_api_v1_businesses_pipeline__pipelineId__get
+    Body_login_for_access_token_api_v1_login_token_post:
+      properties:
+        grant_type:
+          $ref: '#/components/schemas/Grant_Type'
+        username:
+          title: Username
+          type: string
+        password:
+          title: Password
+          type: string
+        scope:
+          default: ""
+          title: Scope
+          type: string
+        client_id:
+          $ref: '#/components/schemas/Client_Id'
+        client_secret:
+          $ref: '#/components/schemas/Client_Secret'
+      required:
+      - password
+      - username
+      title: Body_login_for_access_token_api_v1_login_token_post
+    ContactSchemaDTO:
+      properties:
         name:
-          description: Name defined by user
-          example: Olomouc
-          maxLength: 64
+          title: Name
           type: string
-          nullable: true
-        driver:
-          example: V4L2
+        description:
+          $ref: '#/components/schemas/Description'
+        fields:
+          items:
+            $ref: '#/components/schemas/ContactSchemaFieldDTO'
+          type: array
+      required:
+      - fields
+      - name
+      title: ContactSchemaDTO
+    ContactSchemaFieldDTO:
+      properties:
+        isIndex:
+          title: Isindex
+          type: boolean
+        name:
+          title: Name
           type: string
-        trigger_scheme:
-          default: THIRTY_SEC
-          description: "Type of snapshot trigger scheme. Manual, layer, gcode only\
-            \ for LINK cameras"
-          enum:
-          - MANUAL
-          - EACH_LAYER
-          - FIFTH_LAYER
-          - GCODE
-          - TEN_SEC
-          - THIRTY_SEC
-          - SIXTY_SEC
-          - TEN_MIN
-          example: THIRTY_SEC
+        type:
+          $ref: '#/components/schemas/FormFieldTypeEnum'
+        required:
+          title: Required
+          type: boolean
+        order:
+          title: Order
+          type: integer
+        label:
+          title: Label
           type: string
-        resolution:
-          $ref: '#/components/schemas/camera_resolution'
-        network_info:
-          $ref: '#/components/schemas/network_info'
+        placeholder:
+          title: Placeholder
+          type: string
+        options:
+          $ref: '#/components/schemas/Options'
+        metadata:
+          title: Metadata
+          type: string
+      required:
+      - isIndex
+      - label
+      - name
+      - order
+      - required
+      - type
+      title: ContactSchemaFieldDTO
+    ContactSchemaOptionsFieldDTO:
+      properties:
+        value:
+          title: Value
+          type: string
+        label:
+          title: Label
+          type: string
+      required:
+      - label
+      - value
+      title: ContactSchemaOptionsFieldDTO
+    CreateBusiness:
+      properties:
+        name:
+          title: Name
+          type: string
+        description:
+          $ref: '#/components/schemas/Description'
+        pipelineId:
+          title: Pipelineid
+          type: string
+        pipelinePhaseId:
+          $ref: '#/components/schemas/Pipelinephaseid'
+        contactId:
+          title: Contactid
+          type: string
+        operatorId:
+          $ref: '#/components/schemas/Operatorid'
+      required:
+      - contactId
+      - name
+      - pipelineId
+      title: CreateBusiness
+    CreateContactDTO:
+      properties:
+        schemaId:
+          title: Schemaid
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/CreateContactDataDTO'
+          type: array
+      required:
+      - data
+      - schemaId
+      title: CreateContactDTO
+    CreateContactDataDTO:
+      properties:
+        fieldName:
+          title: Fieldname
+          type: string
+        value:
+          title: Value
+          type: string
+      required:
+      - fieldName
+      - value
+      title: CreateContactDataDTO
+    CreateFormDTO:
+      properties:
+        name:
+          title: Name
+          type: string
+        description:
+          title: Description
+          type: string
+        contactSchemaId:
+          title: Contactschemaid
+          type: string
+        selectedFieldsId:
+          items:
+            type: string
+          type: array
+        customFields:
+          $ref: '#/components/schemas/Customfields'
+        pipelineId:
+          title: Pipelineid
+          type: string
+      required:
+      - contactSchemaId
+      - description
+      - name
+      - pipelineId
+      - selectedFieldsId
+      title: CreateFormDTO
+    CreateOrganzationDTO:
+      example:
+        name: name
+        description: description
+        ownerId: ownerId
+      properties:
+        name:
+          title: Name
+          type: string
+        description:
+          title: Description
+          type: string
+        ownerId:
+          title: Ownerid
+          type: string
+      required:
+      - description
+      - name
+      - ownerId
+      title: CreateOrganzationDTO
+    CreatePipeline:
+      properties:
+        name:
+          title: Name
+          type: string
+        description:
+          $ref: '#/components/schemas/Description'
+        phases:
+          items:
+            $ref: '#/components/schemas/PipelinePhase'
+          type: array
+        config:
+          allOf:
+          - $ref: '#/components/schemas/PipelineConfig'
       required:
       - name
-    camera_options:
-      description: Configuration of the camera
-      example:
-        available_resolutions:
-        - width: 640
-          height: 480
-        - width: 640
-          height: 480
-      properties:
-        available_resolutions:
-          items:
-            $ref: '#/components/schemas/camera_resolution'
-          type: array
-    camera_origin:
-      description: Camera origin whether it is registered by web (WEB) or by printer
-        (LINK) or manually via camera api (OTHER)
+      - phases
+      title: CreatePipeline
+    FormFieldTypeEnum:
       enum:
-      - LINK
-      - WEB
-      - OTHER
+      - text
+      - select
+      - radio
+      - phone
+      - email
+      title: FormFieldTypeEnum
       type: string
-    camera_request:
-      properties:
-        config:
-          $ref: '#/components/schemas/camera_config'
-        options:
-          $ref: '#/components/schemas/camera_options'
-        capabilities:
-          items:
-            enum:
-            - trigger_scheme
-            - imaging
-            - resolution
-            - focus
-            type: string
-          type: array
-      required:
-      - config
-    camera_response:
+    HTTPValidationError:
       example:
-        capabilities:
-        - trigger_scheme
-        - trigger_scheme
-        deleted: 1
-        origin: null
-        name: Olomouc
-        options:
-          available_resolutions:
-          - width: 640
-            height: 480
-          - width: 640
-            height: 480
-        registered: true
-        id: 0
-        team_id: 0
-        config:
-          trigger_scheme: THIRTY_SEC
-          path: /dev/video0
-          driver: V4L2
-          camera_id: camera_id
-          name: Olomouc
-          resolution:
-            width: 640
-            height: 480
-          network_info:
-            wifi_ipv4: 192.168.1.6
-            lan_ipv6: 2e0a::1234:5678:abcd:efab/64
-            wifi_ssid: PublicWiFi
-            lan_ipv4: 192.168.1.5
-            wifi_mac: 0a:bc:12:34:ab:7f
-            lan_mac: 0a:bc:12:34:56:7f
-            wifi_ipv6: 2e0a::1234:5678:abcd:0123/64
-        sort_order: 5
-        printer_uuid: cfed5dce-86f4-4d7c-a198-9a81b176369f
-        token: T0nSPU2v05v0pJeKYFYV
+        detail:
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
       properties:
-        id:
-          type: integer
-        name:
-          description: Name defined by user
-          example: Olomouc
-          maxLength: 64
-          type: string
-          nullable: true
-        config:
-          $ref: '#/components/schemas/camera_config'
-        options:
-          $ref: '#/components/schemas/camera_options'
-        capabilities:
+        detail:
           items:
-            enum:
-            - trigger_scheme
-            - imaging
-            - resolution
-            - focus
-            type: string
+            $ref: '#/components/schemas/ValidationError'
           type: array
-        team_id:
-          description: Team id. 0 is reserved for anonymous.
-          minimum: 0
-          type: integer
-        printer_uuid:
-          description: Printer UUID - can be found in the url in printer detail or
-            in the printer settings tab
-          example: cfed5dce-86f4-4d7c-a198-9a81b176369f
-          pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-          type: string
-        token:
-          example: T0nSPU2v05v0pJeKYFYV
-          maxLength: 20
-          minLength: 20
-          type: string
-        origin:
-          $ref: '#/components/schemas/camera_origin'
-        deleted:
-          description: Timestamp of camera deletion. Deleted cameras are listed only
-            in job detail!
-          type: integer
-        registered:
-          description: True if the registration process of camera is finished
-          type: boolean
-        sort_order:
-          description: Sort order of the cameras per printer! For now it is not possible
-            to change the camera's sort order
-          type: integer
-      required:
-      - id
-      - origin
-      - printer_uuid
-      - registered
-      - team_id
-    status:
+      title: HTTPValidationError
+    PipelineConfig:
       properties:
-        code:
-          description: Error code
+        defaultMaxDays:
+          minimum: 0
+          title: Defaultmaxdays
+          type: integer
+        defaultPhase:
+          minimum: 0
+          title: Defaultphase
+          type: integer
+      required:
+      - defaultMaxDays
+      - defaultPhase
+      title: PipelineConfig
+    PipelinePhase:
+      properties:
+        name:
+          title: Name
           type: string
-        message:
-          description: Human readable error message
-          minLength: 1
+        description:
+          $ref: '#/components/schemas/Description'
+        order:
+          minimum: 0
+          title: Order
+          type: integer
+        status:
+          title: Status
           type: string
       required:
-      - code
-      - message
-    device_name:
-      description: Name defined by user
-      example: Olomouc
-      maxLength: 64
-      type: string
-      nullable: true
-    team_id:
-      description: Team id. 0 is reserved for anonymous.
-      minimum: 0
-      type: integer
-    printer_uuid:
-      description: Printer UUID - can be found in the url in printer detail or in
-        the printer settings tab
-      example: cfed5dce-86f4-4d7c-a198-9a81b176369f
-      pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-      type: string
+      - name
+      - order
+      - status
+      title: PipelinePhase
+    UserRegisterDTO:
+      example:
+        firstName: firstName
+        lastName: lastName
+        password: password
+        email: email
+      properties:
+        firstName:
+          title: Firstname
+          type: string
+        lastName:
+          title: Lastname
+          type: string
+        email:
+          format: email
+          title: Email
+          type: string
+        password:
+          format: password
+          maxLength: 128
+          minLength: 6
+          title: Password
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - firstName
+      - lastName
+      - password
+      title: UserRegisterDTO
+    UserResponse:
+      example:
+        user_id: user_id
+        last_name: last_name
+        created_at: 2000-01-23T04:56:07.000+00:00
+        first_name: first_name
+        email: email
+      properties:
+        user_id:
+          title: User Id
+          type: string
+        first_name:
+          title: First Name
+          type: string
+        last_name:
+          title: Last Name
+          type: string
+        email:
+          title: Email
+          type: string
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+      required:
+      - created_at
+      - email
+      - first_name
+      - last_name
+      - user_id
+      title: UserResponse
+    ValidationError:
+      example:
+        msg: msg
+        loc:
+        - ValidationError_loc_inner
+        - ValidationError_loc_inner
+        type: type
+      properties:
+        loc:
+          items:
+            $ref: '#/components/schemas/ValidationError_loc_inner'
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Grant_Type:
+      anyOf:
+      - pattern: password
+        type: string
+      - nullable: true
+      title: Grant Type
+    Client_Id:
+      anyOf:
+      - type: string
+      - nullable: true
+      title: Client Id
+    Client_Secret:
+      anyOf:
+      - type: string
+      - nullable: true
+      title: Client Secret
+    Description:
+      anyOf:
+      - type: string
+      - nullable: true
+      title: Description
+    Options:
+      anyOf:
+      - items:
+          $ref: '#/components/schemas/ContactSchemaOptionsFieldDTO'
+      - nullable: true
+      title: Options
+    Pipelinephaseid:
+      anyOf:
+      - type: string
+      - nullable: true
+      title: Pipelinephaseid
+    Operatorid:
+      anyOf:
+      - type: string
+      - nullable: true
+      title: Operatorid
+    Customfields:
+      anyOf:
+      - items:
+          $ref: '#/components/schemas/ContactSchemaFieldDTO'
+      - nullable: true
+      title: Customfields
+    ValidationError_loc_inner:
+      anyOf:
+      - type: string
+      - type: integer
   securitySchemes:
-    Token:
-      description: Camera token generated by Connect server.
-      in: header
-      name: Token
-      type: apiKey
-    Fingerprint:
-      description: Camera fingerprint generated by camera. It has to have at least
-        16 and maximum of 64 characters.
-      in: header
-      name: Fingerprint
-      type: apiKey
-    Cookie:
-      in: cookie
-      name: SESSID
-      type: apiKey
-x-tagGroups:
-- name: General
-  tags:
-  - version
-  - health
-- name: App
-  tags:
-  - cameras
-- name: Camera
-  tags:
-  - camera
+    OAuth2PasswordBearer:
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: token
+      type: oauth2
 
