@@ -1,289 +1,622 @@
 openapi: 3.1.0
 info:
-  contact:
-    email: arpan@hackclub.com
-    name: Arpan Pandey
-  description: An API for Jams services and an API gateway for other needed services.
-  title: JAMS API
-  version: 0.0.1
+  description: "API for managing customers, orders, products, and categories in an\
+    \ Inventory Management System."
+  title: Inventory Management System API
+  version: 1.0.0
 servers:
-- url: /
+- description: Main production server
+  url: https://api.InventoryManagementSysteminventory.com/v1
 paths:
-  /:
+  /customers:
     get:
-      operationId: root__get
       responses:
         "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-      summary: Root
-      x-accepts: application/json
-  /openai/models:
-    get:
-      description: Get the list of models available on OpenAI API
-      operationId: models_openai_models_get
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-      security:
-      - HTTPBearer: []
-      summary: Models
-      x-accepts: application/json
-  /openai/models/{model_name}:
-    get:
-      description: Get the details of a model available on OpenAI API
-      operationId: model_openai_models__model_name__get
-      parameters:
-      - explode: false
-        in: path
-        name: model_name
-        required: true
-        schema:
-          title: Model Name
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - HTTPBearer: []
-      summary: Model
+                $ref: '#/components/schemas/CustomerArray'
+          description: A list of customers is returned
+      summary: List all customers
       x-accepts: application/json
-  /openai/chat/completions:
     post:
-      description: Post a chat to OpenAI API
-      operationId: post_chat_completions_openai_chat_completions_post
       requestBody:
         content:
           application/json:
             schema:
-              title: Data
-              type: object
+              $ref: '#/components/schemas/Customer'
         required: true
       responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - HTTPBearer: []
-      summary: Post Chat Completions
+                $ref: '#/components/schemas/Customer'
+          description: The customer was created successfully
+      summary: Create a new customer
       x-content-type: application/json
       x-accepts: application/json
-  /openai/images/generations:
-    post:
-      description: Create an image on OpenAI API
-      operationId: create_image_openai_images_generations_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              title: Data
-              type: object
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - HTTPBearer: []
-      summary: Create Image
-      x-content-type: application/json
-      x-accepts: application/json
-  /openai/embeddings:
-    post:
-      description: Get the embeddings of a text on OpenAI API
-      operationId: embeddings_openai_embeddings_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              title: Data
-              type: object
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - HTTPBearer: []
-      summary: Embeddings
-      x-content-type: application/json
-      x-accepts: application/json
-  /submitJam/{jam_slug}/{finishedURL}/{title}:
-    get:
-      operationId: submit_jams_submitJam__jam_slug___finishedURL___title__get
-      parameters:
-      - explode: false
-        in: path
-        name: jam_slug
-        required: true
-        schema:
-          title: Jam Slug
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: finishedURL
-        required: true
-        schema:
-          title: Finishedurl
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: title
-        required: true
-        schema:
-          title: Title
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Submit Jams
-      x-accepts: application/json
-  /getSubmissions:
-    get:
-      operationId: get_submissions_getSubmissions_get
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-      summary: Get Submissions
-      x-accepts: application/json
-  /deleteSubmission:
+  /customers/{id}:
     delete:
-      operationId: delete_submission_deleteSubmission_delete
       parameters:
-      - explode: true
-        in: query
-        name: url
+      - explode: false
+        in: path
+        name: id
         required: true
         schema:
-          title: Url
-          type: string
-        style: form
-      - explode: true
-        in: query
-        name: password
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: The customer was deleted successfully
+      summary: Delete a customer by ID
+      x-accepts: application/json
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: id
         required: true
         schema:
-          title: Password
-          type: string
-        style: form
+          type: integer
+        style: simple
       responses:
         "200":
           content:
             application/json:
-              schema: {}
-          description: Successful Response
-        "422":
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: Detailed customer information is returned
+      summary: Get a customer by ID
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      style: simple
+    patch:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_customers__id__patch_request'
+        required: true
+      responses:
+        "200":
+          description: The customer's information was partially updated
+      summary: Partially update a customer's information by ID
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        required: true
+      responses:
+        "200":
+          description: The customer was updated successfully
+      summary: Update a customer's information by ID
+      x-content-type: application/json
+      x-accepts: application/json
+  /orders:
+    get:
+      responses:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Delete Submission
+                $ref: '#/components/schemas/OrderArray'
+          description: A list of orders is returned
+      summary: List all orders
+      x-accepts: application/json
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: The order was created successfully
+      summary: Create a new order
+      x-content-type: application/json
+      x-accepts: application/json
+  /orders/{id}:
+    delete:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: The order was deleted successfully
+      summary: Delete an order by ID
+      x-accepts: application/json
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: Detailed order information is returned
+      summary: Get an order by ID
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      style: simple
+    patch:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_orders__id__patch_request'
+        required: true
+      responses:
+        "200":
+          description: The order's information was partially updated
+      summary: Partially update an order's information by ID
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+        required: true
+      responses:
+        "200":
+          description: The order was updated successfully
+      summary: Update an order's information by ID
+      x-content-type: application/json
+      x-accepts: application/json
+  /products:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductArray'
+          description: A list of products is returned
+      summary: List all products
+      x-accepts: application/json
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: The product was created successfully
+      summary: Create a new product
+      x-content-type: application/json
+      x-accepts: application/json
+  /products/{id}:
+    delete:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: The product was deleted successfully
+      summary: Delete a product by ID
+      x-accepts: application/json
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: Detailed product information is returned
+      summary: Get a product by ID
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      style: simple
+    patch:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_products__id__patch_request'
+        required: true
+      responses:
+        "200":
+          description: The product's information was partially updated
+      summary: Partially update a product's information by ID
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        "200":
+          description: The product was updated successfully
+      summary: Update a product's information by ID
+      x-content-type: application/json
+      x-accepts: application/json
+  /categories:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryArray'
+          description: A list of categories is returned
+      summary: List all categories
+      x-accepts: application/json
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: The category was created successfully
+      summary: Create a new category
+      x-content-type: application/json
+      x-accepts: application/json
+  /categories/{id}:
+    delete:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: The category was deleted successfully
+      summary: Delete a category by ID
+      x-accepts: application/json
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: Detailed category information is returned
+      summary: Get a category by ID
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      style: simple
+    patch:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_categories__id__patch_request'
+        required: true
+      responses:
+        "200":
+          description: The category's information was partially updated
+      summary: Partially update a category's information by ID
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      responses:
+        "200":
+          description: The category was updated successfully
+      summary: Update a category's information by ID
+      x-content-type: application/json
       x-accepts: application/json
 components:
   schemas:
-    HTTPValidationError:
+    Customer:
       example:
-        detail:
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          type: type
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          type: type
+        Email: Email
+        CustomerID: 0
+        Name: Name
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-      title: HTTPValidationError
-    ValidationError:
-      example:
-        msg: msg
-        loc:
-        - ValidationError_loc_inner
-        - ValidationError_loc_inner
-        type: type
-      properties:
-        loc:
-          items:
-            $ref: '#/components/schemas/ValidationError_loc_inner'
-          type: array
-        msg:
-          title: Message
+        CustomerID:
+          description: Unique identifier for the customer
+          type: integer
+        Name:
+          description: Customer's name
           type: string
-        type:
-          title: Error Type
+        Email:
+          description: Customer's email address
+          format: email
           type: string
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ValidationError_loc_inner:
-      anyOf:
-      - type: string
-      - type: integer
-  securitySchemes:
-    HTTPBearer:
-      scheme: bearer
-      type: http
+      - Email
+      - Name
+    CustomerArray:
+      items:
+        $ref: '#/components/schemas/Customer'
+      type: array
+    Order:
+      example:
+        TotalPrice: 6.027456183070403
+        CustomerID: 1
+        OrderID: 0
+        Date: 2000-01-23
+      properties:
+        OrderID:
+          description: Unique identifier for the order
+          type: integer
+        Date:
+          description: Date when the order was placed
+          format: date
+          type: string
+        TotalPrice:
+          description: Total price of the order
+          type: number
+        CustomerID:
+          description: Identifier for the customer who placed the order
+          type: integer
+      required:
+      - CustomerID
+      - TotalPrice
+    OrderCreate:
+      example:
+        ProductIDs:
+        - 6
+        - 6
+        TotalPrice: 1.4658129805029452
+        CustomerID: 0
+        Date: 2000-01-23
+      properties:
+        CustomerID:
+          description: Identifier for the customer who is placing the order
+          type: integer
+        ProductIDs:
+          description: List of product identifiers for the order
+          items:
+            type: integer
+          type: array
+        Date:
+          description: Date when the order is placed
+          format: date
+          type: string
+        TotalPrice:
+          description: Total price of the order
+          type: number
+      required:
+      - CustomerID
+      - ProductIDs
+      - TotalPrice
+    OrderArray:
+      items:
+        $ref: '#/components/schemas/Order'
+      type: array
+    Product:
+      example:
+        CategoryID: 1
+        Description: Description
+        Price: 6.027456183070403
+        ProductID: 0
+        Name: Name
+      properties:
+        ProductID:
+          description: Unique identifier for the product
+          type: integer
+        Name:
+          description: Name of the product
+          type: string
+        Description:
+          description: Description of the product
+          type: string
+        Price:
+          description: Price of the product
+          type: number
+        CategoryID:
+          description: Identifier for the category to which the product belongs
+          type: integer
+      required:
+      - CategoryID
+      - Description
+      - Name
+      - Price
+    ProductArray:
+      items:
+        $ref: '#/components/schemas/Product'
+      type: array
+    Category:
+      example:
+        CategoryID: 0
+        Description: Description
+        Name: Name
+      properties:
+        CategoryID:
+          description: Unique identifier for the category
+          type: integer
+        Name:
+          description: Name of the category
+          type: string
+        Description:
+          description: Description of the category
+          type: string
+      required:
+      - Description
+      - Name
+    CategoryArray:
+      items:
+        $ref: '#/components/schemas/Category'
+      type: array
+    _customers__id__patch_request:
+      properties:
+        name:
+          type: string
+        email:
+          format: email
+          type: string
+      required:
+      - email
+    _orders__id__patch_request:
+      properties:
+        TotalPrice:
+          type: number
+        ProductIDs:
+          items:
+            type: integer
+          type: array
+      required:
+      - ProductIDs
+    _products__id__patch_request:
+      properties:
+        Price:
+          type: number
+        Description:
+          type: string
+      required:
+      - Price
+    _categories__id__patch_request:
+      properties:
+        Description:
+          type: string
+      required:
+      - Description
 

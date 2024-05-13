@@ -1,13 +1,14 @@
 
 
-# HTTPValidationError
+# ProductsIdPatchRequest
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**detail** | [**List&lt;ValidationError&gt;**](ValidationError.md) |  |  [optional] |
+|**price** | **BigDecimal** |  |  |
+|**description** | **String** |  |  [optional] |
 
 
 
