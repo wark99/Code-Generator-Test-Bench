@@ -1,81 +1,21 @@
-# DefaultApi
+# OtpRoutesApi
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *http://localhost:5001/v1*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**getModelNameModelNameGet**](DefaultApi.md#getModelNameModelNameGet) | **GET** /model_name | Get Model Name |
-| [**predictPredictPost**](DefaultApi.md#predictPredictPost) | **POST** /predict/ | Predict |
-| [**readRootGet**](DefaultApi.md#readRootGet) | **GET** / | Read Root |
-| [**uploadFileClassifyPost**](DefaultApi.md#uploadFileClassifyPost) | **POST** /classify/ | Upload File |
+| [**sendEmailOtp**](OtpRoutesApi.md#sendEmailOtp) | **POST** /otp/send-email-otp | send-email-otp |
+| [**sendSmsOtp**](OtpRoutesApi.md#sendSmsOtp) | **POST** /otp/send-sms-otp | send-sms-otp |
+| [**verifyEmailOtp**](OtpRoutesApi.md#verifyEmailOtp) | **POST** /otp/verify-email-otp | verify-email-otp |
+| [**verifySmsOtp**](OtpRoutesApi.md#verifySmsOtp) | **POST** /otp/verify-sms-otp | verify-sms-otp |
 
 
 
-## getModelNameModelNameGet
+## sendEmailOtp
 
-> Object getModelNameModelNameGet()
+> sendEmailOtp(sendEmailOtpRequest)
 
-Get Model Name
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        try {
-            Object result = apiInstance.getModelNameModelNameGet();
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#getModelNameModelNameGet");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-**Object**
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-
-
-## predictPredictPost
-
-> Object predictPredictPost(_file)
-
-Predict
+send-email-otp
 
 ### Example
 
@@ -85,20 +25,19 @@ import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
 import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
+import org.openapitools.client.api.OtpRoutesApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
+        defaultClient.setBasePath("http://localhost:5001/v1");
 
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        File _file = new File("/path/to/file"); // File | 
+        OtpRoutesApi apiInstance = new OtpRoutesApi(defaultClient);
+        SendEmailOtpRequest sendEmailOtpRequest = new SendEmailOtpRequest(); // SendEmailOtpRequest | 
         try {
-            Object result = apiInstance.predictPredictPost(_file);
-            System.out.println(result);
+            apiInstance.sendEmailOtp(sendEmailOtpRequest);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#predictPredictPost");
+            System.err.println("Exception when calling OtpRoutesApi#sendEmailOtp");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -113,11 +52,11 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **_file** | **File**|  | |
+| **sendEmailOtpRequest** | [**SendEmailOtpRequest**](SendEmailOtpRequest.md)|  | |
 
 ### Return type
 
-**Object**
+null (empty response body)
 
 ### Authorization
 
@@ -125,22 +64,21 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: multipart/form-data
-- **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: Not defined
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-| **422** | Validation Error |  -  |
+| **200** |  |  -  |
 
 
-## readRootGet
+## sendSmsOtp
 
-> Object readRootGet()
+> sendSmsOtp(sendSmsOtpRequest)
 
-Read Root
+send-sms-otp
 
 ### Example
 
@@ -150,80 +88,19 @@ import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
 import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
+import org.openapitools.client.api.OtpRoutesApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
+        defaultClient.setBasePath("http://localhost:5001/v1");
 
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
+        OtpRoutesApi apiInstance = new OtpRoutesApi(defaultClient);
+        SendSmsOtpRequest sendSmsOtpRequest = new SendSmsOtpRequest(); // SendSmsOtpRequest | 
         try {
-            Object result = apiInstance.readRootGet();
-            System.out.println(result);
+            apiInstance.sendSmsOtp(sendSmsOtpRequest);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#readRootGet");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-**Object**
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-
-
-## uploadFileClassifyPost
-
-> Object uploadFileClassifyPost(_file)
-
-Upload File
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        File _file = new File("/path/to/file"); // File | 
-        try {
-            Object result = apiInstance.uploadFileClassifyPost(_file);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#uploadFileClassifyPost");
+            System.err.println("Exception when calling OtpRoutesApi#sendSmsOtp");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -238,11 +115,11 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **_file** | **File**|  | |
+| **sendSmsOtpRequest** | [**SendSmsOtpRequest**](SendSmsOtpRequest.md)|  | |
 
 ### Return type
 
-**Object**
+null (empty response body)
 
 ### Authorization
 
@@ -250,13 +127,138 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: multipart/form-data
-- **Accept**: application/json
+- **Content-Type**: application/json
+- **Accept**: Not defined
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-| **422** | Validation Error |  -  |
+| **200** |  |  -  |
+
+
+## verifyEmailOtp
+
+> verifyEmailOtp(verifyEmailOtpRequest)
+
+verify-email-otp
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.OtpRoutesApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("http://localhost:5001/v1");
+
+        OtpRoutesApi apiInstance = new OtpRoutesApi(defaultClient);
+        VerifyEmailOtpRequest verifyEmailOtpRequest = new VerifyEmailOtpRequest(); // VerifyEmailOtpRequest | 
+        try {
+            apiInstance.verifyEmailOtp(verifyEmailOtpRequest);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling OtpRoutesApi#verifyEmailOtp");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **verifyEmailOtpRequest** | [**VerifyEmailOtpRequest**](VerifyEmailOtpRequest.md)|  | |
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** |  |  -  |
+
+
+## verifySmsOtp
+
+> verifySmsOtp(verifySmsOtpRequest)
+
+verify-sms-otp
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.OtpRoutesApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("http://localhost:5001/v1");
+
+        OtpRoutesApi apiInstance = new OtpRoutesApi(defaultClient);
+        VerifySmsOtpRequest verifySmsOtpRequest = new VerifySmsOtpRequest(); // VerifySmsOtpRequest | 
+        try {
+            apiInstance.verifySmsOtp(verifySmsOtpRequest);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling OtpRoutesApi#verifySmsOtp");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **verifySmsOtpRequest** | [**VerifySmsOtpRequest**](VerifySmsOtpRequest.md)|  | |
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** |  |  -  |
 
