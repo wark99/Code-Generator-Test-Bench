@@ -1,1066 +1,569 @@
 openapi: 3.1.0
 info:
-  contact:
-    email: vs4plus@vantagescore.com
-  description: This file describes the VS4+ APIs using the swagger notation.
-  title: VS4+ APIs
-  version: 0.1.0
-  x-providerName: vantagescore.com
+  description: "Документация к API проекта [sila-app](https://github.com/YuryVolynets/sila-app)"
+  title: sila-app
+  version: 1.0.0
 servers:
 - url: /
-security:
-- bearerAuth: []
 tags:
-- description: VS4+ API that analyses a consumer's financial information and returns
-    an augmented credit score.
-  name: Scoring API
-- description: "VS4+ API supports scoring requests that have a body up to 10MB. Some\
-    \ consumers may have account files that are tens or even hundreds of MBs in size.\
-    \ The Upload API allows them to upload their large consumer files to VS4+ system\
-    \ first, then submit the file path to the scoring API, to workaround the 10MB\
-    \ request size limit."
-  name: Upload API
-- description: "VS4+ checks the account holder information of the aggregator accounts\
-    \ and the credit report, and makes sure they belong to the same person, before\
-    \ scoring the file. The Verification API accepts a consumer file, and responds\
-    \ with a boolean indicating whether it the account holders look like the same\
-    \ person or not."
-  name: Verification API
+- description: Действия с пользователями
+  name: user
+- description: Действия с категориями
+  name: folder
+- description: Действия с товарами
+  name: product
+- description: Действия с корзиной
+  name: cart
+- description: Действия с заказами
+  name: order
 paths:
-  /score:
+  /api/user/register:
     post:
-      deprecated: false
-      description: "Calculates a weighted credit score for a consumer based on its\
-        \ accounts, transaction history and credit information, using VS4+'s proprietary\
-        \ model."
-      operationId: getScore
-      parameters:
-      - allowEmptyValue: true
-        description: The pseudonimized consumer ID.
-        explode: true
-        in: query
-        name: consumer_id
-        required: false
-        schema:
-          type: string
-        style: form
-      - allowEmptyValue: true
-        description: The date to send the scoring request.
-        explode: true
-        in: query
-        name: request_date
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - allowEmptyValue: true
-        description: ID of the upload session. Required when submitting consumer files
-          by uploading them to S3.
-        explode: true
-        in: query
-        name: upload_id
-        required: false
-        schema:
-          type: string
-        style: form
+      operationId: userRegister
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/getScore_request'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/getScore_request_1'
-        description: Consumer file and credit report data.
-        required: true
+        $ref: '#/components/requestBodies/userRegiser'
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScoreResponse'
-          description: VS4+ score is calculated successfully.
-        "206":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScoreResponse'
-          description: Consumer profile is valid but not qualified for VS4+ score
-            calculation.
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Invalid request.
-        "415":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Invalid content type.
-      summary: Get a VS4+ Score
+          $ref: '#/components/responses/user_200'
+        "422":
+          $ref: '#/components/responses/user_422'
+      summary: Регистрация пользователя
       tags:
-      - Scoring API
+      - user
       x-content-type: application/json
       x-accepts: application/json
-  /sandbox:
+  /api/user/login:
     post:
-      deprecated: false
-      description: Calculates a dummy credit score. Used in development for input
-        validation.
-      operationId: getSandboxScore
-      parameters:
-      - allowEmptyValue: true
-        description: The pseudonimized consumer ID.
-        explode: true
-        in: query
-        name: consumer_id
-        required: false
-        schema:
-          type: string
-        style: form
-      - allowEmptyValue: true
-        description: The date to send the scoring request.
-        explode: true
-        in: query
-        name: request_date
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - allowEmptyValue: true
-        description: ID of the upload session. Required when submitting consumer files
-          by uploading them to S3.
-        explode: true
-        in: query
-        name: upload_id
-        required: false
-        schema:
-          type: string
-        style: form
+      operationId: userLogin
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/getScore_request'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/getScore_request_1'
-        description: Consumer file and credit report data.
-        required: true
+        $ref: '#/components/requestBodies/userLogin'
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScoreResponse'
-          description: VS4+ score is calculated successfully.
-        "206":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScoreResponse'
-          description: Consumer profile is valid but not qualified for VS4+ score
-            calculation.
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Invalid request.
-        "415":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Invalid content type.
-      summary: Get a Dummy VS4+ Score
-      tags:
-      - Scoring API
-      x-content-type: application/json
-      x-accepts: application/json
-  /attributes:
-    post:
-      deprecated: false
-      description: "Returns all VS4+ attributes calculated for a consumer based on\
-        \ its accounts, transaction history and credit information, using VS4+'s proprietary\
-        \ model."
-      operationId: getAttributes
-      parameters:
-      - allowEmptyValue: true
-        description: The pseudonimized consumer ID.
-        explode: true
-        in: query
-        name: consumer_id
-        required: false
-        schema:
-          type: string
-        style: form
-      - allowEmptyValue: true
-        description: The date to send the scoring request.
-        explode: true
-        in: query
-        name: request_date
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - allowEmptyValue: true
-        description: ID of the upload session. Required when submitting consumer files
-          by uploading them to S3.
-        explode: true
-        in: query
-        name: upload_id
-        required: false
-        schema:
-          type: string
-        style: form
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/getScore_request'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/getScore_request_1'
-        description: Consumer file and credit report data.
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                response: OK
-                attributes:
-                  credit_score_model_value: VantageScore Version 4.0
-                  qc1101: 123
-                  qc1203: 12
-                  qc4103: 98765.43
-                  qc5101: 12345.67
-                  qd3103: 345
-                  qr5202: 5432.1
-                  qr5303: -1234.5
-                  qr5501: 3
-                  qr5902: 17
-              schema:
-                $ref: '#/components/schemas/AttributesResponse'
-          description: VS4+ attributes are calculated successfully.
-        "206":
-          content:
-            application/json:
-              example:
-                response: OK
-                attributes: {}
-              schema:
-                $ref: '#/components/schemas/AttributesResponse'
-          description: Consumer profile is valid but does not qualify VS4+ attributes
-            calculation.
-        "400":
-          content:
-            application/json:
-              example:
-                response: FAIL
-                errors:
-                - crc_file is missing.
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Invalid request.
-        "415":
-          content:
-            application/json:
-              example:
-                response: FAIL
-                errors:
-                - Invalid content type x/www-form-urlencoded
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Invalid content type.
-      summary: Get VS4+ attributes
-      tags:
-      - Scoring API
-      x-content-type: application/json
-      x-accepts: application/json
-  /upload/session:
-    post:
-      deprecated: false
-      description: Starts a new file upload session to upload aggregator files and
-        credit report for scoring purpose.
-      operationId: startUploadSession
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadSessionResponse'
-          description: Upload session started successfully.
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Validation error.
-      summary: Start upload session
-      tags:
-      - Upload API
-      x-accepts: application/json
-  /upload/generate-url:
-    post:
-      deprecated: false
-      description: Generates a unique and safe URL to upload file.
-      operationId: generateUploadURL
-      parameters:
-      - allowEmptyValue: false
-        description: ID of an active upload session.
-        explode: true
-        in: query
-        name: sessionID
-        required: false
-        schema:
-          type: string
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadURLResponse'
-          description: Upload path generated successfully.
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Validation error.
+          $ref: '#/components/responses/user_200'
         "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Upload session already expired.
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: Upload session not found.
-      summary: Generate upload URL
+          $ref: '#/components/responses/401'
+        "422":
+          $ref: '#/components/responses/user_422'
+      summary: Авторизация пользователя
       tags:
-      - Upload API
+      - user
+      x-content-type: application/json
       x-accepts: application/json
-  /verify:
-    post:
-      deprecated: false
-      description: Verifies the owner of accounts and credit files in a consumer file.
-      operationId: verifyConsumerFile
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConsumerFileForVerification'
-        description: Consumer file and credit report data.
-        required: true
+  /api/folder/tree:
+    get:
+      operationId: folderTree
       responses:
         "200":
           content:
             application/json:
-              example:
-                response: OK
               schema:
-                $ref: '#/components/schemas/VerificationResponse'
-          description: Consumer file is verified successfully.
-        "400":
+                $ref: '#/components/schemas/Folder'
+          description: OK
+      summary: Получить дерево категорий
+      tags:
+      - folder
+      x-accepts: application/json
+  /api/product/{slug}:
+    get:
+      operationId: productGet
+      parameters:
+      - description: ЧПУ товара
+        explode: false
+        in: path
+        name: slug
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
           content:
             application/json:
-              example:
-                response: FAIL
               schema:
-                $ref: '#/components/schemas/VerificationResponse'
-          description: Accounts and credit files seem to belong to different persons.
-      summary: Verify consumer file holder of a consumer file
+                $ref: '#/components/schemas/Product'
+          description: OK
+        "404":
+          $ref: '#/components/responses/404'
+      summary: Получить товар по ЧПУ
       tags:
-      - Verification API
+      - product
+      x-accepts: application/json
+  /api/product/filter:
+    post:
+      operationId: productFilter
+      requestBody:
+        $ref: '#/components/requestBodies/productFilter'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Product'
+                type: array
+          description: OK
+        "422":
+          $ref: '#/components/responses/user_422'
+      summary: Отфильтровать товары
+      tags:
+      - product
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/cart/{uuid}:
+    get:
+      operationId: cartGet
+      parameters:
+      - description: UUID корзины
+        explode: false
+        in: path
+        name: uuid
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+          description: OK
+        "404":
+          $ref: '#/components/responses/404'
+      summary: Получить корзину
+      tags:
+      - cart
+      x-accepts: application/json
+  /api/cart:
+    delete:
+      operationId: cartDelete
+      requestBody:
+        $ref: '#/components/requestBodies/cartDelete'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cartEdit_200_response'
+          description: OK
+        "422":
+          $ref: '#/components/responses/user_422'
+      summary: Удалить товар из корзины
+      tags:
+      - cart
+      x-content-type: application/json
+      x-accepts: application/json
+    post:
+      operationId: cartEdit
+      requestBody:
+        $ref: '#/components/requestBodies/cartEdit'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cartEdit_200_response'
+          description: OK
+        "422":
+          $ref: '#/components/responses/user_422'
+      summary: Изменить корзину
+      tags:
+      - cart
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/order/{uuid}:
+    get:
+      operationId: orderGet
+      parameters:
+      - description: UUID заказа
+        explode: false
+        in: path
+        name: uuid
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: OK
+        "404":
+          $ref: '#/components/responses/404'
+      summary: Получить заказ
+      tags:
+      - order
+      x-accepts: application/json
+  /api/order:
+    get:
+      operationId: ordersGet
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Order'
+                type: array
+          description: OK
+        "401":
+          $ref: '#/components/responses/401'
+      security:
+      - bearerAuth: []
+      summary: Получить заказы пользователя
+      tags:
+      - order
+      x-accepts: application/json
+    post:
+      operationId: orderMake
+      requestBody:
+        $ref: '#/components/requestBodies/orderMake'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cartEdit_200_response'
+          description: OK
+        "422":
+          $ref: '#/components/responses/user_422'
+      security:
+      - bearerAuth: []
+      summary: Создать заказ
+      tags:
+      - order
       x-content-type: application/json
       x-accepts: application/json
 components:
+  examples:
+    Folder:
+      value:
+        id: 1
+        name: folder_1
+        children:
+        - id: 2
+          name: folder_1_1
+          children: []
+  requestBodies:
+    userRegiser:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/userRegister_request'
+      required: true
+    userLogin:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/userLogin_request'
+      required: true
+    productFilter:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/productFilter_request'
+      required: true
+    cartEdit:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cartEdit_request'
+      required: true
+    cartDelete:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cartDelete_request'
+      required: true
+    orderMake:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/orderMake_request'
+      required: true
+  responses:
+    "401":
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+            required:
+            - message
+      description: Ошибка авторизации
+    "404":
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+            required:
+            - message
+      description: Не найдено
+    user_200:
+      content:
+        application/json:
+          schema:
+            properties:
+              status:
+                type: boolean
+              message:
+                type: string
+              token:
+                type: string
+            required:
+            - message
+            - status
+            - token
+      description: OK
+    user_422:
+      content:
+        application/json:
+          schema:
+            properties:
+              status:
+                type: boolean
+              message:
+                type: string
+              errors:
+                type: object
+            required:
+            - errors
+            - message
+            - status
+      description: Ошибка валидации
   schemas:
-    ConsumerFile:
+    Cart:
+      example:
+        uuid: uuid
+        products:
+        - number: 6
+          id: 0
+        - number: 6
+          id: 0
       properties:
-        aggregator:
-          description: The financial aggregator that exports accounts data.
-          enum:
-          - finicity
-          - mx
-          - yodlee
+        uuid:
           type: string
-        accounts:
-          description: Financial institution accounts.
+        products:
           items:
-            $ref: '#/components/schemas/Account'
-          type: array
-        bureau:
-          description: The credit bureau that exports credit report data.
-          enum:
-          - efx
-          - exp
-          - tu
-          type: string
-        credit:
-          $ref: '#/components/schemas/Credit'
-      required:
-      - accounts
-      - aggregator
-      - bureau
-      - credit
-      title: ConsumerFile
-    Account:
-      description: An account in a financial institution.
-      properties:
-        bank_id:
-          description: Aggregator-specific ID of the financial institution the account
-            is opened in.
-          example: bank-id-1234
-          type: string
-        account_id:
-          description: Pseudonymous ID of the account.
-          example: 12345678-1234-1234-1234-123456789012
-          type: string
-        product_type:
-          description: Aggregator-specific account type.
-          example: SAVINGS
-          type: string
-        open_date:
-          $ref: '#/components/schemas/Account_open_date'
-        balance:
-          description: Account balance at balance_date.
-          example: 30.0
-          type: number
-        balance_date:
-          $ref: '#/components/schemas/Account_balance_date'
-        transactions:
-          description: All transactions registered in the account.
-          items:
-            $ref: '#/components/schemas/Transaction'
+            $ref: '#/components/schemas/Cart_products_inner'
           type: array
       required:
-      - account_id
-      - balance
-      - balance_date
-      - bank_id
-      - product_type
-      - transactions
-      title: Account
-    Transaction:
-      description: A credit or debit transaction.
+      - products
+      - uuid
+    Folder:
+      example:
+        children:
+        - null
+        - null
+        name: name
+        id: 0
       properties:
-        account_id:
-          description: The account ID.
-          example: 12345678-1234-1234-1234-123456789012
-          type: string
-        transaction_type:
-          description: Nature of the transaction.
-          enum:
-          - credit
-          - debit
-          example: credit
-          type: string
-        transaction_amount:
-          description: Amount of the transaction.
-          example: 5.0
-          type: number
-        transaction_date:
-          $ref: '#/components/schemas/Transaction_transaction_date'
-      required:
-      - account_id
-      - transaction_amount
-      - transaction_date
-      - transaction_type
-      title: Transaction
-    Credit:
-      description: The credit score section of a credit report.
-      properties:
-        credit_score_date:
-          description: The date the credit score is calculated.
-          example: 2022-12-01
-          format: date
-          type: string
-        credit_score_facta_inquiries_indicator:
-          description: Indicates whether FACTA inquiries have happened.
-          example: true
-          type: boolean
-        credit_score_model_name_type:
-          description: Type of the credit score model used to calculate the score.
-          example: Custom
-          type: string
-        credit_score_model_name_description:
-          description: Name of the credit score model used to calculate the score.
-          example: VantageScoreEquifaxV4.0
-          type: string
-        credit_score_rank_percentile_value:
-          description: The percentile position of the credit score in the whole spectrum.
-            A small percentile represents a low score.
-          example: 35
-          maximum: 100
-          minimum: 1
+        id:
           type: integer
-        credit_score_value:
-          description: The actual credit score.
-          example: 479
-          maximum: 850
-          minimum: 300
-          type: integer
-        credit_score_factors:
-          description: List of factors that affect the credit score.
-          items:
-            $ref: '#/components/schemas/CreditScoreFactor'
-          type: array
-      required:
-      - credit_score_date
-      - credit_score_facta_inquiries_indicator
-      - credit_score_factors
-      - credit_score_model_name_description
-      - credit_score_model_name_type
-      - credit_score_rank_percentile_value
-      - credit_score_value
-      title: Credit
-    CreditScoreFactor:
-      description: A factor that affects credit score calculation.
-      properties:
-        credit_score_factor_code:
-          description: Credit bureau-specific code that identifies the factor.
-          example: FA
-          type: string
-        credit_score_factor_text:
-          description: Description of the factor.
-          example: Credit inquiry happened.
-          type: string
-      required:
-      - credit_score_factor_code
-      - credit_score_factor_text
-      title: CreditScoreFactor
-    ConsumerFileUpload:
-      description: Payload of a consumer file upload session.
-      properties:
-        aggregator:
-          description: The financial aggregator that exports accounts data.
-          enum:
-          - finicity
-          - mx
-          - yodlee
-          type: string
-        aggregator_files:
-          description: List of all uploaded aggregator files.
-          items:
-            format: uri
-            type: string
-          type: array
-        bureau:
-          description: The credit bureau that exports credit report data.
-          enum:
-          - efx
-          - exp
-          - tu
-          type: string
-        credit_file:
-          description: The uploaded credit report.
-          format: uri
-          type: string
-      required:
-      - aggregator
-      - aggregator_files
-      - bureau
-      - credit_file
-      title: ConsumerFileUpload
-    ScoreResponse:
-      example:
-        score: 344
-        reasonCodes:
-        - "{}"
-        - "{}"
-        response: OK
-      properties:
-        response:
-          description: Result of the scoring request.
-          enum:
-          - OK
-          - FAIL
-          type: string
-        score:
-          description: The VS4+ weighted credit score.
-          maximum: 850
-          minimum: 300
-          type: integer
-        reasonCodes:
-          description: List of all factors considered in the calculation of the VS4+
-            score.
-          items:
-            description: Map of factor code to its description.
-            type: object
-          type: array
-      required:
-      - response
-      title: ScoreResponse
-    AttributesResponse:
-      example:
-        response: OK
-        attributes:
-          qc5101: 5.962133916683182
-          qr5303: 7.061401241503109
-          qr5501: 0
-          qr5202: 2.3021358869347655
-          credit_score_model_value: credit_score_model_value
-          qr5902: 0
-          qd3103: 0
-          qc1203: 0
-          qc4103: 1.4658129805029452
-          qc1101: 0
-      properties:
-        response:
-          description: Result of the attributes request.
-          enum:
-          - OK
-          - FAIL
-          type: string
-        attributes:
-          $ref: '#/components/schemas/AttributesResponse_attributes'
-      required:
-      - response
-      title: AttributesResponse
-    GenericError:
-      description: "Generic error response, used in multiple API endpoints."
-      example:
-        response: FAIL
-        errors: null
-      properties:
-        response:
-          description: Result of the scoring request.
-          enum:
-          - OK
-          - FAIL
-          type: string
-        errors:
-          description: List of errors.
-          items:
-            $ref: '#/components/schemas/GenericError_errors_inner'
-          type: array
-      required:
-      - errors
-      - response
-      title: GenericError
-    UploadSessionResponse:
-      example:
-        session_id: session_id
-      properties:
-        session_id:
-          description: Unique ID that identifies an upload session.
-          type: string
-      required:
-      - session_id
-      title: UploadSessionResponse
-    UploadURLResponse:
-      example:
-        uploadURL: https://openapi-generator.tech
-        response: OK
-      properties:
-        response:
-          description: Result of the request.
-          enum:
-          - OK
-          - FAIL
-          type: string
-        uploadURL:
-          description: The URL to upload files to.
-          format: uri
-          type: string
-      required:
-      - response
-      - uploadURL
-      title: UploadURLResponse
-    ConsumerFileForVerification:
-      example:
-        accounts:
-        - owners:
-          - addresses:
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            name:
-              last_name: last_name
-              first_name: first_name
-          - addresses:
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            name:
-              last_name: last_name
-              first_name: first_name
-        - owners:
-          - addresses:
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            name:
-              last_name: last_name
-              first_name: first_name
-          - addresses:
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            name:
-              last_name: last_name
-              first_name: first_name
-        credit:
-          owner:
-            addresses:
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            - address_line: address_line
-              city: city
-              state: state
-              postal_code: postal_code
-            names:
-            - last_name: last_name
-              first_name: first_name
-            - last_name: last_name
-              first_name: first_name
-      properties:
-        accounts:
-          description: Financial institution accounts.
-          items:
-            $ref: '#/components/schemas/AccountForVerification'
-          type: array
-        credit:
-          $ref: '#/components/schemas/CreditForVerification'
-      required:
-      - accounts
-      - credit
-      title: ConsumerFileForVerification
-    AccountForVerification:
-      description: An account in a financial institution that contains holder information.
-      example:
-        owners:
-        - addresses:
-          - address_line: address_line
-            city: city
-            state: state
-            postal_code: postal_code
-          - address_line: address_line
-            city: city
-            state: state
-            postal_code: postal_code
-          name:
-            last_name: last_name
-            first_name: first_name
-        - addresses:
-          - address_line: address_line
-            city: city
-            state: state
-            postal_code: postal_code
-          - address_line: address_line
-            city: city
-            state: state
-            postal_code: postal_code
-          name:
-            last_name: last_name
-            first_name: first_name
-      properties:
-        owners:
-          description: List of owners of the account.
-          items:
-            $ref: '#/components/schemas/AccountOwner'
-          type: array
-      required:
-      - owners
-      title: AccountForVerification
-    AccountOwner:
-      description: Owner of an account.
-      example:
-        addresses:
-        - address_line: address_line
-          city: city
-          state: state
-          postal_code: postal_code
-        - address_line: address_line
-          city: city
-          state: state
-          postal_code: postal_code
         name:
-          last_name: last_name
-          first_name: first_name
-      properties:
-        name:
-          $ref: '#/components/schemas/AccountOwnerName'
-        addresses:
-          description: List of addresses belonging to the account owner.
+          type: string
+        children:
           items:
-            $ref: '#/components/schemas/AccountOwnerAddress'
+            $ref: '#/components/schemas/Folder'
           type: array
       required:
-      - addresses
+      - children
+      - id
       - name
-      title: AccountOwner
-    AccountOwnerName:
-      description: Name of an account owner.
+    Order:
       example:
-        last_name: last_name
-        first_name: first_name
+        phone: phone
+        uuid: uuid
+        email: email
+        products:
+        - number: 6
+          price: 0.8008281904610115
+          name: name
+        - number: 6
+          price: 0.8008281904610115
+          name: name
       properties:
-        first_name:
-          description: First name of an account owner.
+        uuid:
           type: string
-        last_name:
-          description: Last name of an account owner.
+        email:
           type: string
-      required:
-      - first_name
-      - last_name
-      title: AccountOwnerName
-    AccountOwnerAddress:
-      description: Address belonging to an account owner.
-      example:
-        address_line: address_line
-        city: city
-        state: state
-        postal_code: postal_code
-      properties:
-        address_line:
-          description: The major address line.
+        phone:
           type: string
-        city:
-          description: City of the address.
-          type: string
-        state:
-          description: State of the address.
-          type: string
-        postal_code:
-          description: Postal code of the address.
-          type: string
-      required:
-      - address_line
-      - city
-      title: AccountOwnerAddress
-    CreditForVerification:
-      description: A credit report that contains holder information.
-      example:
-        owner:
-          addresses:
-          - address_line: address_line
-            city: city
-            state: state
-            postal_code: postal_code
-          - address_line: address_line
-            city: city
-            state: state
-            postal_code: postal_code
-          names:
-          - last_name: last_name
-            first_name: first_name
-          - last_name: last_name
-            first_name: first_name
-      properties:
-        owner:
-          $ref: '#/components/schemas/CreditOwner'
-      required:
-      - owner
-      title: CreditForVerification
-    CreditOwner:
-      description: Owner of a credit report.
-      example:
-        addresses:
-        - address_line: address_line
-          city: city
-          state: state
-          postal_code: postal_code
-        - address_line: address_line
-          city: city
-          state: state
-          postal_code: postal_code
-        names:
-        - last_name: last_name
-          first_name: first_name
-        - last_name: last_name
-          first_name: first_name
-      properties:
-        names:
-          description: Name of a credit report owner.
+        products:
           items:
-            $ref: '#/components/schemas/CreditOwnerName'
-          type: array
-        addresses:
-          description: List of addresses belonging to a credit report owner.
-          items:
-            $ref: '#/components/schemas/CreditOwnerAddress'
+            $ref: '#/components/schemas/Order_products_inner'
           type: array
       required:
-      - addresses
-      - names
-      title: CreditOwner
-    CreditOwnerName:
-      description: Name of a credit report owner.
+      - products
+      - uuid
+    Product:
       example:
-        last_name: last_name
-        first_name: first_name
+        price: 1.4658129805029452
+        name: name
+        length: 5.962133916683182
+        width: 5.637376656633329
+        description: description
+        weight: 7.061401241503109
+        id: 0
+        folder_id: 6
+        slug: slug
+        height: 2.3021358869347655
       properties:
-        first_name:
-          description: First name of a credit report owner.
+        id:
+          type: integer
+        name:
           type: string
-        last_name:
-          description: Last name of a credit report owner.
+        description:
+          type: string
+        slug:
+          type: string
+        folder_id:
+          type: integer
+        price:
+          type: number
+        length:
+          type: number
+        width:
+          type: number
+        height:
+          type: number
+        weight:
+          type: number
+      required:
+      - folder_id
+      - id
+      - name
+      - price
+      - slug
+    userRegister_request:
+      properties:
+        name:
+          type: string
+        email:
+          format: email
+          type: string
+        phone:
+          type: string
+        password:
+          format: password
           type: string
       required:
-      - first_name
-      - last_name
-      title: CreditOwnerName
-    CreditOwnerAddress:
-      description: Address belonging to a credit report owner.
-      example:
-        address_line: address_line
-        city: city
-        state: state
-        postal_code: postal_code
+      - email
+      - name
+      - password
+    userLogin_request:
       properties:
-        address_line:
-          description: The major address line.
+        email:
+          format: email
           type: string
-        city:
-          description: City of the address.
-          type: string
-        state:
-          description: State of the address.
-          type: string
-        postal_code:
-          description: Postal code of the address.
+        password:
+          format: password
           type: string
       required:
-      - address_line
-      title: CreditOwnerAddress
-    VerificationResponse:
-      example:
-        response: OK
+      - email
+      - password
+    productFilter_request_price:
       properties:
-        response:
-          description: Result of the request.
-          enum:
-          - OK
-          - FAIL
+        min:
+          type: number
+        max:
+          type: number
+    productFilter_request_param:
+      properties:
+        length:
+          $ref: '#/components/schemas/productFilter_request_price'
+        width:
+          $ref: '#/components/schemas/productFilter_request_price'
+        height:
+          $ref: '#/components/schemas/productFilter_request_price'
+        weight:
+          $ref: '#/components/schemas/productFilter_request_price'
+    productFilter_request:
+      properties:
+        folders:
+          items:
+            type: integer
+          type: array
+        price:
+          $ref: '#/components/schemas/productFilter_request_price'
+        param:
+          $ref: '#/components/schemas/productFilter_request_param'
+    cartEdit_request_products_inner:
+      properties:
+        id:
+          type: integer
+        number:
+          type: integer
+      required:
+      - id
+      - number
+    cartEdit_request:
+      properties:
+        uuid:
+          type: string
+        products:
+          items:
+            $ref: '#/components/schemas/cartEdit_request_products_inner'
+          type: array
+      required:
+      - products
+    cartEdit_200_response:
+      example:
+        uuid: uuid
+      properties:
+        uuid:
           type: string
       required:
-      - response
-      title: VerificationResponse
-    getScore_request:
-      anyOf:
-      - $ref: '#/components/schemas/ConsumerFile'
-      - $ref: '#/components/schemas/ConsumerFileUpload'
-    getScore_request_1:
+      - uuid
+    cartDelete_request:
       properties:
-        consumer_file:
-          $ref: '#/components/schemas/ConsumerFile'
-    Account_open_date:
-      anyOf:
-      - type: string
-      - format: int32
-        type: integer
-      description: Account open date. YYYY-MM-DD for mx and yodlee. An epoch timestamp
-        for finicity.
-      example: 2020-01-23
-    Account_balance_date:
-      anyOf:
-      - type: string
-      - format: int32
-        type: integer
-      description: The date the account balance is exported to the consumer file.
-      example: 2023-01-23
-    Transaction_transaction_date:
-      anyOf:
-      - type: string
-      - format: int32
-        type: integer
-      description: The date the transaction is recorded in the account.
-      example: 2023-01-01
-    AttributesResponse_attributes:
-      description: All calculated VS4+ attributes.
-      example:
-        qc5101: 5.962133916683182
-        qr5303: 7.061401241503109
-        qr5501: 0
-        qr5202: 2.3021358869347655
-        credit_score_model_value: credit_score_model_value
-        qr5902: 0
-        qd3103: 0
-        qc1203: 0
-        qc4103: 1.4658129805029452
-        qc1101: 0
-      properties:
-        credit_score_model_value:
-          description: The scoring model of the consumer's credit file.
+        uuid:
           type: string
-        qc1101:
-          description: Total number of credits on all accounts within 30 days.
-          minimum: 0
+        products:
+          items:
+            type: integer
+          type: array
+      required:
+      - products
+      - uuid
+    orderMake_request:
+      properties:
+        cart_uuid:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+      required:
+      - cart_uuid
+    Cart_products_inner:
+      example:
+        number: 6
+        id: 0
+      properties:
+        id:
           type: integer
-        qc1203:
-          description: "Total number of credits higher than $1,500 on all accounts\
-            \ within 90 days."
-          minimum: 0
+        number:
           type: integer
-        qc4103:
-          description: Total credit amount on all accounts within 90 days.
+    Order_products_inner:
+      example:
+        number: 6
+        price: 0.8008281904610115
+        name: name
+      properties:
+        name:
+          type: string
+        price:
           type: number
-        qc5101:
-          description: Highest total credit amount on accounts within 30 days.
-          type: number
-        qd3103:
-          description: Highest number of debits on accounts within 90 days.
-          minimum: 0
+        number:
           type: integer
-        qr5202:
-          description: Highest adb per account within 60 days.
-          type: number
-        qr5303:
-          description: Lowest running daily balance on accounts within 90 days.
-          type: number
-        qr5501:
-          description: Total number of negative daily running balances on all accounts
-            within 30 days.
-          minimum: 0
-          type: integer
-        qr5902:
-          description: Total number of days having daily running balance >= $5000
-            within 60 days.
-          minimum: 0
-          type: integer
-    GenericError_errors_inner:
-      oneOf:
-      - type: string
-      - type: object
   securitySchemes:
     bearerAuth:
-      bearerFormat: JWT
       scheme: bearer
       type: http
 
