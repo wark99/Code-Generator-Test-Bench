@@ -1,441 +1,1294 @@
 openapi: 3.1.0
 info:
-  description: Registry for pets and their owners
-  title: Pet Owner Registry
-  version: 1.0.1
+  title: API ESG PMI - assessment
+  version: v1.0.2
 servers:
-- url: /
+- description: Staging Server
+  url: https://api-eseg.mindlogix.it
 tags:
-- description: All APIs related to pet owners
-  name: owner
-- description: All APIs related to pets
-  name: pet
+- description: Service endpoints
+  name: Service
+- description: Operations related to retrieve framework objects
+  name: Retrieve
+- description: Operations related to score
+  name: Score
 paths:
-  /owners:
+  /frameworks:
     get:
-      description: |
-        List all owners by the given page number and page size. The page parameters such as `last` and `first` must be used to check
-        the data set boundtries when paginating the owners list. Using invalid values such as out of boundary values will result in
-        `400` errors.
-      parameters:
-      - description: The page number to fetch.
-        explode: true
-        in: query
-        name: page
-        required: true
-        schema:
-          type: integer
-        style: form
-      - description: The page size to fetch.
-        explode: true
-        in: query
-        name: size
-        required: true
-        schema:
-          type: integer
-        style: form
+      deprecated: false
+      description: Endpoint to get all available framework
+      operationId: getAllFrameworks
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_owners_get_200_response'
-          description: The current requested page of owners
-        "400":
+                $ref: '#/components/schemas/AllFrameworkModel'
+          description: all frameworks available
+      tags:
+      - Retrieve
+      x-accepts: application/json
+  /framework/{id}:
+    get:
+      deprecated: false
+      description: Endpoint to get specific framework by ID. You find the right ID
+        with previous endpoint
+      operationId: getFramework
+      parameters:
+      - allowReserved: false
+        deprecated: false
+        description: ID of framework.
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
           content:
             application/json:
               schema:
-                description: The error message describing what went wrong with the
-                  request.
-                type: string
-          description: "If the page parameters are invalid, for example if the page\
-            \ number of out of boundary of maximum number of pages."
+                $ref: '#/components/schemas/FrameworkResponseModel'
+          description: framework
       tags:
-      - owner
+      - Retrieve
       x-accepts: application/json
+  /areas/{framework_id}:
+    get:
+      deprecated: false
+      description: Endpoint to get all areas
+      operationId: getAllAreas
+      parameters:
+      - allowReserved: false
+        deprecated: false
+        description: ID of a framework
+        explode: true
+        in: path
+        name: framework_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllAreasModel'
+          description: all areas available
+      tags:
+      - Retrieve
+      x-accepts: application/json
+  /area/{id}:
+    get:
+      deprecated: false
+      description: Endpoint to get specific area by ID. You find the right ID with
+        previous endpoint
+      operationId: getArea
+      parameters:
+      - allowReserved: false
+        deprecated: false
+        description: ID of area.
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaResponseModel'
+          description: all areas available
+      tags:
+      - Retrieve
+      x-accepts: application/json
+  /subareas/{area_id}:
+    get:
+      deprecated: false
+      description: Endpoint to get all subareas
+      operationId: getAllSubAreas
+      parameters:
+      - allowReserved: false
+        deprecated: false
+        description: ID of a framework
+        explode: true
+        in: path
+        name: area_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllSubAreasModel'
+          description: all areas available
+      tags:
+      - Retrieve
+      x-accepts: application/json
+  /subarea/{id}:
+    get:
+      deprecated: false
+      description: Endpoint to get specific subarea by ID. You find the right ID with
+        previous endpoint
+      operationId: getSubArea
+      parameters:
+      - allowReserved: false
+        deprecated: false
+        description: ID of subarea.
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubAreaResponseModel'
+          description: all areas available
+      tags:
+      - Retrieve
+      x-accepts: application/json
+  /facts/{subarea_id}/{nace}:
+    get:
+      deprecated: false
+      description: Endpoint to get all facts for a specific nace. If you dont provide
+        nace you will get all the facts
+      operationId: getAllFacts
+      parameters:
+      - allowReserved: false
+        deprecated: false
+        description: nace code. if provided gives all facts for the given nace. otherwise
+          gives you all facts
+        explode: true
+        in: path
+        name: nace
+        required: true
+        schema:
+          type: string
+        style: simple
+      - allowReserved: false
+        deprecated: false
+        description: subarea ID
+        explode: true
+        in: path
+        name: subarea_id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllFactsModel'
+          description: all facts available
+      tags:
+      - Retrieve
+      x-accepts: application/json
+  /fact/{id}:
+    get:
+      deprecated: false
+      description: Endpoint to get specific fact by ID. You find the right ID with
+        previous endpoint
+      operationId: getFact
+      parameters:
+      - allowReserved: false
+        deprecated: false
+        description: ID of fact.
+        explode: true
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FactResponseModel'
+          description: all areas available
+      tags:
+      - Retrieve
+      x-accepts: application/json
+  /ateco2nace/{ateco}:
+    get:
+      deprecated: false
+      operationId: getNaceFromAteco
+      parameters:
+      - allowReserved: false
+        deprecated: false
+        description: ateco code
+        explode: true
+        in: path
+        name: ateco
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtecoToNaceResponse'
+          description: nace code
+      tags:
+      - Service
+      x-accepts: application/json
+  /score:
     post:
-      description: Register a new owner in the registry.
+      deprecated: false
+      operationId: calculateScore
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OwnerRequest'
+              $ref: '#/components/schemas/ScoreBodyModel'
+        required: false
       responses:
         "200":
-          description: Successfully registered the owner.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoreResponseModel'
+          description: all areas available
       tags:
-      - owner
+      - Score
       x-content-type: application/json
-      x-accepts: application/json
-  /owners/{id}:
-    delete:
-      description: |
-        Unregister a owner will remove the connection with the current pets this owner has. All connected pets will
-        considered as ophant.
-      parameters:
-      - description: The owner id in the system.
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          format: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-          type: string
-        style: simple
-      responses:
-        "200":
-          description: Owner is successfully unregistered from the registry.
-      tags:
-      - owner
-      x-accepts: application/json
-    get:
-      description: Get information about a single owner identified by the system id
-      parameters:
-      - description: The owner id in the system.
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          format: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Owner'
-          description: The owner for the given system id.
-        "404":
-          description: A owner could not be identified by the given system id.
-      tags:
-      - owner
-      x-accepts: application/json
-  /pets:
-    get:
-      description: |
-        List all pets by the given page number and page size. The page parameters such as `last` and `first` must be used to check
-        the data set boundtries when paginating the pets list. Using invalid values such as out of boundary values will result in
-        `400` errors.
-      parameters:
-      - description: The page number to fetch.
-        explode: true
-        in: query
-        name: page
-        required: true
-        schema:
-          type: integer
-        style: form
-      - description: The page size to fetch.
-        explode: true
-        in: query
-        name: size
-        required: true
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_pets_get_200_response'
-          description: The current requested page of pets
-        "400":
-          content:
-            application/json:
-              schema:
-                description: The error message describing what went wrong with the
-                  request.
-                type: string
-          description: "If the page parameters are invalid, for example if the page\
-            \ number of out of boundary of maximum number of pages."
-      tags:
-      - pet
-      x-accepts: application/json
-    post:
-      description: Register a new pet in the registry.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PetRequest'
-      responses:
-        "200":
-          description: Successfully registered the pet.
-      tags:
-      - pet
-      x-content-type: application/json
-      x-accepts: application/json
-  /pets/{id}:
-    delete:
-      description: |
-        Unregister a pet incase of the pet is migrated or deceased.
-      parameters:
-      - description: The pet id in the system.
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          format: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-          type: string
-        style: simple
-      responses:
-        "200":
-          description: Pet is successfully unregistered from the registry.
-      tags:
-      - pet
-      x-accepts: application/json
-    get:
-      description: Get information about a single pet identified by the system id
-      parameters:
-      - description: The pet id in the system.
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          format: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: The pet for the given system id.
-        "404":
-          description: A pet could not be identified by the given system id.
-      tags:
-      - pet
       x-accepts: application/json
 components:
   schemas:
-    Address:
-      description: Address of a owner or a pet residence.
+    AllAreas:
       example:
-        streetNumber: streetNumber
-        city: city
-        street: street
-      properties:
-        streetNumber:
-          description: The street number of the residence.
-          type: string
-        street:
-          description: The street name of the residence.
-          type: string
-        city:
-          description: The city where the residence belongs to.
-          type: string
-    PetRequest:
-      description: Request for registering a new pet in the registry.
-      example:
-        address:
-          streetNumber: streetNumber
-          city: city
-          street: street
-        gender: make
         name: name
-        dateOfBirth: 2000-01-23
-        type: dog
-        breed: breed
-      properties:
-        name:
-          description: The name of the pet
-          type: string
-        breed:
-          description: Breed of the pet
-          type: string
-        type:
-          description: Simple type of the pet
-          enum:
-          - dog
-          - cat
-          - bird
-          type: string
-        gender:
-          description: Gender of the pet
-          enum:
-          - make
-          - female
-          type: string
-        dateOfBirth:
-          description: The date of birth of the pet
-          format: date
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-    Pet:
-      description: Registration information of the pet
-      example:
-        address:
-          streetNumber: streetNumber
-          city: city
-          street: street
-        gender: make
-        name: name
-        dateOfBirth: 2000-01-23
-        id: id
-        type: dog
-        breed: breed
+        id: 0
       properties:
         id:
-          description: The id of the pet in the system which can be used to uniquely
-            identify each pet.
-          format: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-          readOnly: true
-          type: string
+          title: Id
+          type: integer
         name:
-          description: The name of the pet
+          title: Name
           type: string
-        breed:
-          description: Breed of the pet
-          type: string
-        type:
-          description: Simple type of the pet
-          enum:
-          - dog
-          - cat
-          - bird
-          type: string
-        gender:
-          description: Gender of the pet
-          enum:
-          - make
-          - female
-          type: string
-        dateOfBirth:
-          description: The date of birth of the pet
-          format: date
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-    OwnerRequest:
-      description: Request for registering a new pet owner in the registry.
+      required:
+      - id
+      - name
+      title: AllAreas
+    AllAreasModel:
+      description: this model list all available areas
       example:
-        firstName: firstName
-        lastName: lastName
-        address:
-          streetNumber: streetNumber
-          city: city
-          street: street
-        nid: nid
+        areas:
+        - name: name
+          id: 0
+        - name: name
+          id: 0
       properties:
-        firstName:
-          description: The first name of the owner
-          type: string
-        lastName:
-          description: The last name of the owner
-          type: string
-        nid:
-          description: |
-            The national ID of the owner. This could be the passport ID in case there is no
-            nation ID for the owner.
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-    Owner:
-      description: Owner registration of the pets
+        areas:
+          items:
+            $ref: '#/components/schemas/AllAreas'
+          type: array
+      required:
+      - areas
+      title: AllAreasModel
+    AllFacts:
       example:
-        firstName: firstName
-        lastName: lastName
-        address:
-          streetNumber: streetNumber
-          city: city
-          street: street
-        nid: nid
-        id: id
+        name: name
+        id: 0
       properties:
         id:
-          description: The id of the owner in the system which can be used to uniquely
-            identify each owner.
-          format: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-          readOnly: true
+          title: Id
+          type: integer
+        name:
+          title: Name
           type: string
-        firstName:
-          description: The first name of the owner
-          type: string
-        lastName:
-          description: The last name of the owner
-          type: string
-        nid:
-          description: |
-            The national ID of the owner. This could be the passport ID in case there is no
-            nation ID for the owner.
-          type: string
-        address:
-          $ref: '#/components/schemas/Address'
-    _owners_get_200_response:
+      required:
+      - id
+      - name
+      title: AllFacts
+    AllFactsModel:
+      description: this model list all available subareas
       example:
-        last: true
-        first: true
-        content:
-        - firstName: firstName
-          lastName: lastName
-          address:
-            streetNumber: streetNumber
-            city: city
-            street: street
-          nid: nid
-          id: id
-        - firstName: firstName
-          lastName: lastName
-          address:
-            streetNumber: streetNumber
-            city: city
-            street: street
-          nid: nid
-          id: id
+        facts:
+        - name: name
+          id: 0
+        - name: name
+          id: 0
       properties:
-        last:
-          description: If this is the last page
-          type: boolean
-        first:
-          description: If this is the first page
-          type: boolean
-        content:
-          description: Content of the page
+        facts:
           items:
-            $ref: '#/components/schemas/Owner'
+            $ref: '#/components/schemas/AllFacts'
           type: array
-    _pets_get_200_response:
+      required:
+      - facts
+      title: AllFactsModel
+    AllFrameworkModel:
+      description: this model list all available frameworks
       example:
-        last: true
-        first: true
-        content:
-        - address:
-            streetNumber: streetNumber
-            city: city
-            street: street
-          gender: make
-          name: name
-          dateOfBirth: 2000-01-23
-          id: id
-          type: dog
-          breed: breed
-        - address:
-            streetNumber: streetNumber
-            city: city
-            street: street
-          gender: make
-          name: name
-          dateOfBirth: 2000-01-23
-          id: id
-          type: dog
-          breed: breed
+        frameworks:
+        - name: name
+          id: 0
+        - name: name
+          id: 0
       properties:
-        last:
-          description: If this is the last page
-          type: boolean
-        first:
-          description: If this is the first page
-          type: boolean
-        content:
-          description: Content of the page
+        frameworks:
           items:
-            $ref: '#/components/schemas/Pet'
+            $ref: '#/components/schemas/AllFrameworks'
           type: array
+      required:
+      - frameworks
+      title: AllFrameworkModel
+    AllFrameworks:
+      example:
+        name: name
+        id: 0
+      properties:
+        id:
+          title: Id
+          type: integer
+        name:
+          title: Name
+          type: string
+      required:
+      - id
+      - name
+      title: AllFrameworks
+    AllSubAreas:
+      example:
+        name: name
+        id: 0
+      properties:
+        id:
+          title: Id
+          type: integer
+        name:
+          title: Name
+          type: string
+      required:
+      - id
+      - name
+      title: AllSubAreas
+    AllSubAreasModel:
+      description: this model list all available subareas
+      example:
+        subareas:
+        - name: name
+          id: 0
+        - name: name
+          id: 0
+      properties:
+        subareas:
+          items:
+            $ref: '#/components/schemas/AllSubAreas'
+          type: array
+      required:
+      - subareas
+      title: AllSubAreasModel
+    AreaResponseModel:
+      description: this model describe area structure
+      example:
+        code: code
+        maximum_area_score: 5.962133916683182
+        ls_area_weights: 1.4658129805029452
+        name: name
+        framework_id: 6
+        description: Area type
+        language: null
+        id: 0
+      properties:
+        id:
+          title: Id
+          type: integer
+        framework_id:
+          title: Framework Id
+          type: integer
+        name:
+          title: Name
+          type: string
+        description:
+          default: Area type
+          description: Governance
+          title: Governance
+          type: string
+        code:
+          title: Code
+          type: string
+        language:
+          $ref: '#/components/schemas/Language'
+        ls_area_weights:
+          title: Ls Area Weights
+          type: number
+        maximum_area_score:
+          title: Maximum Area Score
+          type: number
+      required:
+      - code
+      - framework_id
+      - id
+      - language
+      - ls_area_weights
+      - maximum_area_score
+      - name
+      title: Area
+    AreaScore:
+      example:
+        score_area_max: 9.301444243932576
+        score_area: 7.061401241503109
+        delta_critical_issues_area: 4.145608029883936
+        area_code: area_code
+        improvements_area: improvements_area
+        score_area_ToBe: 3.616076749251911
+        delta_improvements_area: 2.027123023002322
+        critical_issues_area: critical_issues_area
+      properties:
+        area_code:
+          title: Area Code
+          type: string
+        score_area:
+          title: Score Area
+          type: number
+        score_area_max:
+          title: Score Area Max
+          type: number
+        score_area_ToBe:
+          title: Score Area Tobe
+          type: number
+        delta_improvements_area:
+          title: Delta Improvements Area
+          type: number
+        delta_critical_issues_area:
+          title: Delta Critical Issues Area
+          type: number
+        improvements_area:
+          title: Improvements Area
+          type: string
+        critical_issues_area:
+          title: Critical Issues Area
+          type: string
+      required:
+      - area_code
+      - critical_issues_area
+      - delta_critical_issues_area
+      - delta_improvements_area
+      - improvements_area
+      - score_area
+      - score_area_ToBe
+      - score_area_max
+      title: AreaScore
+    AtecoToNaceResponse:
+      example:
+        nace_code: nace_code
+      properties:
+        nace_code:
+          title: Nace Code
+          type: string
+      required:
+      - nace_code
+      title: AtecoToNaceResponse
+    FactResponseModel:
+      description: this model describe area structure
+      example:
+        code: code
+        framework_id: 6
+        description: Area type
+        language: null
+        area_id: 1
+        subarea_id: 5
+        name: name
+        fact_weight: 7.061401241503109
+        fact_cost: 9.301444243932576
+        id: 0
+        indicator_id: 5
+        maximum_fact_score: 2.3021358869347655
+        kpis:
+        - code: code
+          depends_on:
+            kpi_code: kpi_code
+            kpi_id: 1
+          fact_id: 1
+          tooltip: tooltip
+          answers:
+            text: text
+            value: 1.4894159098541704
+          framework_id: 2
+          description: Area type
+          language: null
+          area_id: 4
+          type: null
+          consistency_check: ""
+          relevance: 7
+          sequence: 6
+          file:
+            have_file: true
+            file_description: file_description
+          subarea_id: 7
+          unit_measure: unit_measure
+          name: name
+          id: 3
+          indicator_id: 1
+        - code: code
+          depends_on:
+            kpi_code: kpi_code
+            kpi_id: 1
+          fact_id: 1
+          tooltip: tooltip
+          answers:
+            text: text
+            value: 1.4894159098541704
+          framework_id: 2
+          description: Area type
+          language: null
+          area_id: 4
+          type: null
+          consistency_check: ""
+          relevance: 7
+          sequence: 6
+          file:
+            have_file: true
+            file_description: file_description
+          subarea_id: 7
+          unit_measure: unit_measure
+          name: name
+          id: 3
+          indicator_id: 1
+      properties:
+        id:
+          title: Id
+          type: integer
+        framework_id:
+          title: Framework Id
+          type: integer
+        area_id:
+          title: Area Id
+          type: integer
+        subarea_id:
+          title: Subarea Id
+          type: integer
+        indicator_id:
+          title: Indicator Id
+          type: integer
+        name:
+          title: Name
+          type: string
+        description:
+          default: Area type
+          description: Governance
+          title: Governance
+          type: string
+        code:
+          title: Code
+          type: string
+        language:
+          $ref: '#/components/schemas/Language'
+        maximum_fact_score:
+          title: Maximum Fact Score
+          type: number
+        fact_weight:
+          title: Fact Weight
+          type: number
+        fact_cost:
+          title: Fact Cost
+          type: number
+        kpis:
+          items:
+            $ref: '#/components/schemas/KpiResponseModel'
+          type: array
+      required:
+      - area_id
+      - code
+      - fact_cost
+      - fact_weight
+      - framework_id
+      - id
+      - indicator_id
+      - kpis
+      - language
+      - maximum_fact_score
+      - name
+      - subarea_id
+      title: Area
+    FrameworkResponseModel:
+      description: this model describe framework output structure
+      example:
+        fl_ESG_score_max: 6.027456183070403
+        name: name
+        description: Based on GRI
+        language: null
+        id: 0
+        transform_Likert_KPI: true
+      properties:
+        id:
+          title: Id
+          type: integer
+        name:
+          title: Name
+          type: string
+        description:
+          default: Based on GRI
+          description: Based on GRI
+          title: GRI
+          type: string
+        fl_ESG_score_max:
+          title: Fl Esg Score Max
+          type: number
+        transform_Likert_KPI:
+          title: Transform Likert Kpi
+          type: boolean
+        language:
+          $ref: '#/components/schemas/Language'
+      required:
+      - fl_ESG_score_max
+      - id
+      - language
+      - name
+      - transform_Likert_KPI
+      title: Framework
+    GlobalScore:
+      example:
+        global_esg: 4.965218492984954
+      properties:
+        global_esg:
+          title: Global Esg
+          type: number
+      required:
+      - global_esg
+      title: GlobalScore
+    IndicatoriScore:
+      example:
+        delta_improvements_ind: 1.4894159098541704
+        indicator_code: indicator_code
+        indicator_cost: 1.1730742509559433
+        delta_critical_issues_ind: 6.84685269835264
+        critical_issues_ind: critical_issues_ind
+        questionnaire_values_list: ""
+        ESG_KPI_score_ToBe_list: ""
+        score_indicator: 7.386281948385884
+        ESG_KPI_score_list: ""
+        type_KPI_list: ""
+        score_indicator_ToBe: 1.0246457001441578
+        weight_KPI_list: ""
+        score_indicator_max: 1.2315135367772556
+        questionnaire_values_ToBe_list: ""
+        indicator_weight: 7.457744773683766
+        improvements_ind: improvements_ind
+        cod_KPI_list: ""
+      properties:
+        indicator_code:
+          title: Indicator Code
+          type: string
+        score_indicator:
+          title: Score Indicator
+          type: number
+        score_indicator_max:
+          title: Score Indicator Max
+          type: number
+        score_indicator_ToBe:
+          title: Score Indicator Tobe
+          type: number
+        delta_improvements_ind:
+          title: Delta Improvements Ind
+          type: number
+        delta_critical_issues_ind:
+          title: Delta Critical Issues Ind
+          type: number
+        improvements_ind:
+          title: Improvements Ind
+          type: string
+        critical_issues_ind:
+          title: Critical Issues Ind
+          type: string
+        indicator_weight:
+          title: Indicator Weight
+          type: number
+        indicator_cost:
+          title: Indicator Cost
+          type: number
+        type_KPI_list: {}
+        cod_KPI_list: {}
+        weight_KPI_list: {}
+        questionnaire_values_list: {}
+        questionnaire_values_ToBe_list: {}
+        ESG_KPI_score_list: {}
+        ESG_KPI_score_ToBe_list: {}
+      required:
+      - ESG_KPI_score_ToBe_list
+      - ESG_KPI_score_list
+      - cod_KPI_list
+      - critical_issues_ind
+      - delta_critical_issues_ind
+      - delta_improvements_ind
+      - improvements_ind
+      - indicator_code
+      - indicator_cost
+      - indicator_weight
+      - questionnaire_values_ToBe_list
+      - questionnaire_values_list
+      - score_indicator
+      - score_indicator_ToBe
+      - score_indicator_max
+      - type_KPI_list
+      - weight_KPI_list
+      title: IndicatoriScore
+    KpiAnswerModel:
+      example:
+        text: text
+        value: 1.4894159098541704
+      properties:
+        text:
+          title: Text
+          type: string
+        value:
+          title: Value
+          type: number
+      required:
+      - text
+      - value
+      title: KpiAnswerModel
+    KpiDependOnModel:
+      example:
+        kpi_code: kpi_code
+        kpi_id: 1
+      properties:
+        kpi_id:
+          title: Kpi Id
+          type: integer
+        kpi_code:
+          title: Kpi Code
+          type: string
+      required:
+      - kpi_code
+      - kpi_id
+      title: KpiDependOnModel
+    KpiFileModel:
+      example:
+        have_file: true
+        file_description: file_description
+      properties:
+        have_file:
+          title: Have File
+          type: boolean
+        file_description:
+          title: File Description
+          type: string
+      required:
+      - file_description
+      - have_file
+      title: KpiFileModel
+    KpiResponseModel:
+      description: this model describe area structure
+      example:
+        code: code
+        depends_on:
+          kpi_code: kpi_code
+          kpi_id: 1
+        fact_id: 1
+        tooltip: tooltip
+        answers:
+          text: text
+          value: 1.4894159098541704
+        framework_id: 2
+        description: Area type
+        language: null
+        area_id: 4
+        type: null
+        consistency_check: ""
+        relevance: 7
+        sequence: 6
+        file:
+          have_file: true
+          file_description: file_description
+        subarea_id: 7
+        unit_measure: unit_measure
+        name: name
+        id: 3
+        indicator_id: 1
+      properties:
+        id:
+          title: Id
+          type: integer
+        framework_id:
+          title: Framework Id
+          type: integer
+        area_id:
+          title: Area Id
+          type: integer
+        subarea_id:
+          title: Subarea Id
+          type: integer
+        indicator_id:
+          title: Indicator Id
+          type: integer
+        fact_id:
+          title: Fact Id
+          type: integer
+        name:
+          title: Name
+          type: string
+        description:
+          default: Area type
+          description: Governance
+          title: Governance
+          type: string
+        code:
+          title: Code
+          type: string
+        language:
+          $ref: '#/components/schemas/Language'
+        type:
+          $ref: '#/components/schemas/KpiTypes'
+        tooltip:
+          title: Tooltip
+          type: string
+        answers:
+          $ref: '#/components/schemas/KpiAnswerModel'
+        sequence:
+          title: Sequence
+          type: integer
+        relevance:
+          title: Relevance
+          type: integer
+        unit_measure:
+          title: Unit Measure
+          type: string
+        file:
+          $ref: '#/components/schemas/KpiFileModel'
+        depends_on:
+          $ref: '#/components/schemas/KpiDependOnModel'
+        consistency_check:
+          nullable: true
+          title: Consistency Check
+      required:
+      - answers
+      - area_id
+      - code
+      - consistency_check
+      - depends_on
+      - fact_id
+      - file
+      - framework_id
+      - id
+      - indicator_id
+      - language
+      - name
+      - relevance
+      - sequence
+      - subarea_id
+      - tooltip
+      - type
+      - unit_measure
+      title: Kpi
+    KpiTypes:
+      enum:
+      - LIKERT3
+      - LIKERT5
+      - BINARY
+      title: KpiTypes
+      type: string
+    Language:
+      enum:
+      - it
+      - en
+      title: Language
+      type: string
+    ScoreBodyModel:
+      description: this model describe score structure
+      example:
+        nace_code: nace_code
+        data:
+        - indicator: indicator
+          indicator_number: indicator_number
+          desc_KPI: desc_KPI
+          questionnaire_values: 1
+          subarea_code: subarea_code
+          company_category_code: company_category_code
+          area_code: area_code
+          confirmed_response: 6
+          code_KPI: code_KPI
+          weight_indicator_binary_sum: 5
+          num_KPI: 0
+          type_KPI: type_KPI
+        - indicator: indicator
+          indicator_number: indicator_number
+          desc_KPI: desc_KPI
+          questionnaire_values: 1
+          subarea_code: subarea_code
+          company_category_code: company_category_code
+          area_code: area_code
+          confirmed_response: 6
+          code_KPI: code_KPI
+          weight_indicator_binary_sum: 5
+          num_KPI: 0
+          type_KPI: type_KPI
+        user_id: user_id
+        report_id: report_id
+      properties:
+        user_id:
+          title: User Id
+          type: string
+        report_id:
+          title: Report Id
+          type: string
+        nace_code:
+          title: Nace Code
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ScoreDataModel'
+          type: array
+      required:
+      - data
+      - nace_code
+      - report_id
+      - user_id
+      title: Score
+    ScoreDataModel:
+      example:
+        indicator: indicator
+        indicator_number: indicator_number
+        desc_KPI: desc_KPI
+        questionnaire_values: 1
+        subarea_code: subarea_code
+        company_category_code: company_category_code
+        area_code: area_code
+        confirmed_response: 6
+        code_KPI: code_KPI
+        weight_indicator_binary_sum: 5
+        num_KPI: 0
+        type_KPI: type_KPI
+      properties:
+        subarea_code:
+          title: Subarea Code
+          type: string
+        area_code:
+          title: Area Code
+          type: string
+        indicator_number:
+          title: Indicator Number
+          type: string
+        indicator:
+          title: Indicator
+          type: string
+        num_KPI:
+          title: Num Kpi
+          type: integer
+        type_KPI:
+          title: Type Kpi
+          type: string
+        code_KPI:
+          title: Code Kpi
+          type: string
+        desc_KPI:
+          title: Desc Kpi
+          type: string
+        confirmed_response:
+          title: Confirmed Response
+          type: integer
+        questionnaire_values:
+          title: Questionnaire Values
+          type: integer
+        company_category_code:
+          title: Company Category Code
+          type: string
+        weight_indicator_binary_sum:
+          title: Weight Indicator Binary Sum
+          type: integer
+      required:
+      - area_code
+      - code_KPI
+      - company_category_code
+      - confirmed_response
+      - desc_KPI
+      - indicator
+      - indicator_number
+      - num_KPI
+      - questionnaire_values
+      - subarea_code
+      - type_KPI
+      - weight_indicator_binary_sum
+      title: ScoreDataModel
+    ScoreResponseModel:
+      description: this model describe score input structure
+      example:
+        code: 0
+        response:
+          subareas:
+          - score_subarea: 6.027456183070403
+            score_subarea_max: 1.4658129805029452
+            subarea_code: subarea_code
+            delta_improvements_subarea: 5.637376656633329
+            critical_issues_subarea: critical_issues_subarea
+            improvements_subarea: improvements_subarea
+            score_subarea_ToBe: 5.962133916683182
+            delta_critical_issues_subarea: 2.3021358869347655
+          - score_subarea: 6.027456183070403
+            score_subarea_max: 1.4658129805029452
+            subarea_code: subarea_code
+            delta_improvements_subarea: 5.637376656633329
+            critical_issues_subarea: critical_issues_subarea
+            improvements_subarea: improvements_subarea
+            score_subarea_ToBe: 5.962133916683182
+            delta_critical_issues_subarea: 2.3021358869347655
+          global_score:
+            global_esg: 4.965218492984954
+          areas:
+          - score_area_max: 9.301444243932576
+            score_area: 7.061401241503109
+            delta_critical_issues_area: 4.145608029883936
+            area_code: area_code
+            improvements_area: improvements_area
+            score_area_ToBe: 3.616076749251911
+            delta_improvements_area: 2.027123023002322
+            critical_issues_area: critical_issues_area
+          - score_area_max: 9.301444243932576
+            score_area: 7.061401241503109
+            delta_critical_issues_area: 4.145608029883936
+            area_code: area_code
+            improvements_area: improvements_area
+            score_area_ToBe: 3.616076749251911
+            delta_improvements_area: 2.027123023002322
+            critical_issues_area: critical_issues_area
+          indicators:
+          - delta_improvements_ind: 1.4894159098541704
+            indicator_code: indicator_code
+            indicator_cost: 1.1730742509559433
+            delta_critical_issues_ind: 6.84685269835264
+            critical_issues_ind: critical_issues_ind
+            questionnaire_values_list: ""
+            ESG_KPI_score_ToBe_list: ""
+            score_indicator: 7.386281948385884
+            ESG_KPI_score_list: ""
+            type_KPI_list: ""
+            score_indicator_ToBe: 1.0246457001441578
+            weight_KPI_list: ""
+            score_indicator_max: 1.2315135367772556
+            questionnaire_values_ToBe_list: ""
+            indicator_weight: 7.457744773683766
+            improvements_ind: improvements_ind
+            cod_KPI_list: ""
+          - delta_improvements_ind: 1.4894159098541704
+            indicator_code: indicator_code
+            indicator_cost: 1.1730742509559433
+            delta_critical_issues_ind: 6.84685269835264
+            critical_issues_ind: critical_issues_ind
+            questionnaire_values_list: ""
+            ESG_KPI_score_ToBe_list: ""
+            score_indicator: 7.386281948385884
+            ESG_KPI_score_list: ""
+            type_KPI_list: ""
+            score_indicator_ToBe: 1.0246457001441578
+            weight_KPI_list: ""
+            score_indicator_max: 1.2315135367772556
+            questionnaire_values_ToBe_list: ""
+            indicator_weight: 7.457744773683766
+            improvements_ind: improvements_ind
+            cod_KPI_list: ""
+      properties:
+        code:
+          title: Code
+          type: integer
+        response:
+          $ref: '#/components/schemas/ScoreSubResponseModel'
+      required:
+      - code
+      - response
+      title: Score
+    ScoreSubResponseModel:
+      example:
+        subareas:
+        - score_subarea: 6.027456183070403
+          score_subarea_max: 1.4658129805029452
+          subarea_code: subarea_code
+          delta_improvements_subarea: 5.637376656633329
+          critical_issues_subarea: critical_issues_subarea
+          improvements_subarea: improvements_subarea
+          score_subarea_ToBe: 5.962133916683182
+          delta_critical_issues_subarea: 2.3021358869347655
+        - score_subarea: 6.027456183070403
+          score_subarea_max: 1.4658129805029452
+          subarea_code: subarea_code
+          delta_improvements_subarea: 5.637376656633329
+          critical_issues_subarea: critical_issues_subarea
+          improvements_subarea: improvements_subarea
+          score_subarea_ToBe: 5.962133916683182
+          delta_critical_issues_subarea: 2.3021358869347655
+        global_score:
+          global_esg: 4.965218492984954
+        areas:
+        - score_area_max: 9.301444243932576
+          score_area: 7.061401241503109
+          delta_critical_issues_area: 4.145608029883936
+          area_code: area_code
+          improvements_area: improvements_area
+          score_area_ToBe: 3.616076749251911
+          delta_improvements_area: 2.027123023002322
+          critical_issues_area: critical_issues_area
+        - score_area_max: 9.301444243932576
+          score_area: 7.061401241503109
+          delta_critical_issues_area: 4.145608029883936
+          area_code: area_code
+          improvements_area: improvements_area
+          score_area_ToBe: 3.616076749251911
+          delta_improvements_area: 2.027123023002322
+          critical_issues_area: critical_issues_area
+        indicators:
+        - delta_improvements_ind: 1.4894159098541704
+          indicator_code: indicator_code
+          indicator_cost: 1.1730742509559433
+          delta_critical_issues_ind: 6.84685269835264
+          critical_issues_ind: critical_issues_ind
+          questionnaire_values_list: ""
+          ESG_KPI_score_ToBe_list: ""
+          score_indicator: 7.386281948385884
+          ESG_KPI_score_list: ""
+          type_KPI_list: ""
+          score_indicator_ToBe: 1.0246457001441578
+          weight_KPI_list: ""
+          score_indicator_max: 1.2315135367772556
+          questionnaire_values_ToBe_list: ""
+          indicator_weight: 7.457744773683766
+          improvements_ind: improvements_ind
+          cod_KPI_list: ""
+        - delta_improvements_ind: 1.4894159098541704
+          indicator_code: indicator_code
+          indicator_cost: 1.1730742509559433
+          delta_critical_issues_ind: 6.84685269835264
+          critical_issues_ind: critical_issues_ind
+          questionnaire_values_list: ""
+          ESG_KPI_score_ToBe_list: ""
+          score_indicator: 7.386281948385884
+          ESG_KPI_score_list: ""
+          type_KPI_list: ""
+          score_indicator_ToBe: 1.0246457001441578
+          weight_KPI_list: ""
+          score_indicator_max: 1.2315135367772556
+          questionnaire_values_ToBe_list: ""
+          indicator_weight: 7.457744773683766
+          improvements_ind: improvements_ind
+          cod_KPI_list: ""
+      properties:
+        subareas:
+          items:
+            $ref: '#/components/schemas/SubAreaScore'
+          type: array
+        areas:
+          items:
+            $ref: '#/components/schemas/AreaScore'
+          type: array
+        indicators:
+          items:
+            $ref: '#/components/schemas/IndicatoriScore'
+          type: array
+        global_score:
+          $ref: '#/components/schemas/GlobalScore'
+      required:
+      - areas
+      - global_score
+      - indicators
+      - subareas
+      title: ScoreSubResponseModel
+    SubAreaResponseModel:
+      description: this model describe area structure
+      example:
+        code: code
+        maximum_subarea_score: 5.962133916683182
+        name: name
+        framework_id: 6
+        description: Area type
+        language: null
+        id: 0
+        area_id: 1
+      properties:
+        id:
+          title: Id
+          type: integer
+        framework_id:
+          title: Framework Id
+          type: integer
+        area_id:
+          title: Area Id
+          type: integer
+        name:
+          title: Name
+          type: string
+        description:
+          default: Area type
+          description: Governance
+          title: Governance
+          type: string
+        code:
+          title: Code
+          type: string
+        language:
+          $ref: '#/components/schemas/Language'
+        maximum_subarea_score:
+          title: Maximum Subarea Score
+          type: number
+      required:
+      - area_id
+      - code
+      - framework_id
+      - id
+      - language
+      - maximum_subarea_score
+      - name
+      title: Area
+    SubAreaScore:
+      example:
+        score_subarea: 6.027456183070403
+        score_subarea_max: 1.4658129805029452
+        subarea_code: subarea_code
+        delta_improvements_subarea: 5.637376656633329
+        critical_issues_subarea: critical_issues_subarea
+        improvements_subarea: improvements_subarea
+        score_subarea_ToBe: 5.962133916683182
+        delta_critical_issues_subarea: 2.3021358869347655
+      properties:
+        subarea_code:
+          title: Subarea Code
+          type: string
+        score_subarea:
+          title: Score Subarea
+          type: number
+        score_subarea_max:
+          title: Score Subarea Max
+          type: number
+        score_subarea_ToBe:
+          title: Score Subarea Tobe
+          type: number
+        delta_improvements_subarea:
+          title: Delta Improvements Subarea
+          type: number
+        delta_critical_issues_subarea:
+          title: Delta Critical Issues Subarea
+          type: number
+        improvements_subarea:
+          title: Improvements Subarea
+          type: string
+        critical_issues_subarea:
+          title: Critical Issues Subarea
+          type: string
+      required:
+      - critical_issues_subarea
+      - delta_critical_issues_subarea
+      - delta_improvements_subarea
+      - improvements_subarea
+      - score_subarea
+      - score_subarea_ToBe
+      - score_subarea_max
+      - subarea_code
+      title: SubAreaScore
 
