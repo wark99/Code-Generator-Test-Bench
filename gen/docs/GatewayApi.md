@@ -1,18 +1,18 @@
-# AuthenticationApiApi
+# GatewayApi
 
-All URIs are relative to *http://localhost:8000/v1*
+All URIs are relative to *https://localhost:8080/api/v1*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**getJwtToken**](AuthenticationApiApi.md#getJwtToken) | **POST** /auth | Get a JWT token for the given scopes |
+| [**sendMonthlyNewsletterByEmail**](GatewayApi.md#sendMonthlyNewsletterByEmail) | **POST** /email/newsletter | Send monthly newsletter to customer via email |
 
 
 
-## getJwtToken
+## sendMonthlyNewsletterByEmail
 
-> GetJwtToken200Response getJwtToken(requestBody)
+> SendMonthlyNewsletterByEmail200Response sendMonthlyNewsletterByEmail(gatewayBody)
 
-Get a JWT token for the given scopes
+Send monthly newsletter to customer via email
 
 ### Example
 
@@ -22,20 +22,20 @@ import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
 import org.openapitools.client.models.*;
-import org.openapitools.client.api.AuthenticationApiApi;
+import org.openapitools.client.api.GatewayApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost:8000/v1");
+        defaultClient.setBasePath("https://localhost:8080/api/v1");
 
-        AuthenticationApiApi apiInstance = new AuthenticationApiApi(defaultClient);
-        List<String> requestBody = Arrays.asList(); // List<String> | Scopes to request
+        GatewayApi apiInstance = new GatewayApi(defaultClient);
+        GatewayBody gatewayBody = new GatewayBody(); // GatewayBody | The customer ID and message ID
         try {
-            GetJwtToken200Response result = apiInstance.getJwtToken(requestBody);
+            SendMonthlyNewsletterByEmail200Response result = apiInstance.sendMonthlyNewsletterByEmail(gatewayBody);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling AuthenticationApiApi#getJwtToken");
+            System.err.println("Exception when calling GatewayApi#sendMonthlyNewsletterByEmail");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -50,11 +50,11 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **requestBody** | [**List&lt;String&gt;**](String.md)| Scopes to request | |
+| **gatewayBody** | [**GatewayBody**](GatewayBody.md)| The customer ID and message ID | |
 
 ### Return type
 
-[**GetJwtToken200Response**](GetJwtToken200Response.md)
+[**SendMonthlyNewsletterByEmail200Response**](SendMonthlyNewsletterByEmail200Response.md)
 
 ### Authorization
 
@@ -71,6 +71,7 @@ No authorization required
 |-------------|-------------|------------------|
 | **200** | OK |  -  |
 | **400** | Bad Request |  -  |
-| **401** | Unauthorised |  -  |
+| **401** | Unauthorized |  -  |
 | **403** | Forbidden |  -  |
+| **500** | Internal Server Error |  -  |
 
