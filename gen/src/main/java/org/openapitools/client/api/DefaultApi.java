@@ -2,14 +2,11 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import org.openapitools.client.model.InstitutionsGet200Response;
-import org.openapitools.client.model.InstitutionsInstitutionCoursesGet200Response;
-import org.openapitools.client.model.InstitutionsInstitutionProgrammesGet200Response;
-import org.openapitools.client.model.SchedulesGet200ResponseInner;
-import org.openapitools.client.model.SchedulesPostRequest;
-import org.openapitools.client.model.ScrapingJobScrapingIdPostRequest;
-import org.openapitools.client.model.ScrapingJobsGet200Response;
-import org.openapitools.client.model.ScrapingPreviewGet200Response;
+import org.openapitools.client.model.EducationGet200Response;
+import org.openapitools.client.model.ExperienceGet200Response;
+import org.openapitools.client.model.GeneralGet200Response;
+import org.openapitools.client.model.SkillsGet200Response;
+import org.openapitools.client.model.Url;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:15:20.052181070Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:15:28.161294873Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class DefaultApi {
     private ApiClient apiClient;
 
@@ -53,24 +50,24 @@ public class DefaultApi {
     }
 
     /**
-     * List all institutions.
-     * Retrieve a list of all available institutions.
-     * <p><b>200</b> - A list of institutions.
-     * @return InstitutionsGet200Response
+     * Information about educational background
+     * 
+     * <p><b>200</b> - Section content
+     * @return EducationGet200Response
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public InstitutionsGet200Response institutionsGet() throws RestClientException {
-        return institutionsGetWithHttpInfo().getBody();
+    public EducationGet200Response educationGet() throws RestClientException {
+        return educationGetWithHttpInfo().getBody();
     }
 
     /**
-     * List all institutions.
-     * Retrieve a list of all available institutions.
-     * <p><b>200</b> - A list of institutions.
-     * @return ResponseEntity&lt;InstitutionsGet200Response&gt;
+     * Information about educational background
+     * 
+     * <p><b>200</b> - Section content
+     * @return ResponseEntity&lt;EducationGet200Response&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<InstitutionsGet200Response> institutionsGetWithHttpInfo() throws RestClientException {
+    public ResponseEntity<EducationGet200Response> educationGetWithHttpInfo() throws RestClientException {
         Object localVarPostBody = null;
         
 
@@ -88,130 +85,28 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<InstitutionsGet200Response> localReturnType = new ParameterizedTypeReference<InstitutionsGet200Response>() {};
-        return apiClient.invokeAPI("/institutions", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<EducationGet200Response> localReturnType = new ParameterizedTypeReference<EducationGet200Response>() {};
+        return apiClient.invokeAPI("/education", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * List all courses for a specific institution.
-     * Retrieve all courses associated with a given institution.
-     * <p><b>200</b> - List of courses.
-     * <p><b>404</b> - Institution not found.
-     * @param institution  (required)
-     * @return InstitutionsInstitutionCoursesGet200Response
+     * Information about professional background
+     * 
+     * <p><b>200</b> - Section content
+     * @return ExperienceGet200Response
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public InstitutionsInstitutionCoursesGet200Response institutionsInstitutionCoursesGet(String institution) throws RestClientException {
-        return institutionsInstitutionCoursesGetWithHttpInfo(institution).getBody();
+    public ExperienceGet200Response experienceGet() throws RestClientException {
+        return experienceGetWithHttpInfo().getBody();
     }
 
     /**
-     * List all courses for a specific institution.
-     * Retrieve all courses associated with a given institution.
-     * <p><b>200</b> - List of courses.
-     * <p><b>404</b> - Institution not found.
-     * @param institution  (required)
-     * @return ResponseEntity&lt;InstitutionsInstitutionCoursesGet200Response&gt;
+     * Information about professional background
+     * 
+     * <p><b>200</b> - Section content
+     * @return ResponseEntity&lt;ExperienceGet200Response&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<InstitutionsInstitutionCoursesGet200Response> institutionsInstitutionCoursesGetWithHttpInfo(String institution) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'institution' is set
-        if (institution == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'institution' when calling institutionsInstitutionCoursesGet");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("institution", institution);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = { 
-            "application/json"
-         };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<InstitutionsInstitutionCoursesGet200Response> localReturnType = new ParameterizedTypeReference<InstitutionsInstitutionCoursesGet200Response>() {};
-        return apiClient.invokeAPI("/institutions/{institution}/courses", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * List all programmes for a specific institution.
-     * Retrieve all programmes associated with a given institution.
-     * <p><b>200</b> - List of programmes.
-     * <p><b>404</b> - Institution not found.
-     * @param institution  (required)
-     * @return InstitutionsInstitutionProgrammesGet200Response
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public InstitutionsInstitutionProgrammesGet200Response institutionsInstitutionProgrammesGet(String institution) throws RestClientException {
-        return institutionsInstitutionProgrammesGetWithHttpInfo(institution).getBody();
-    }
-
-    /**
-     * List all programmes for a specific institution.
-     * Retrieve all programmes associated with a given institution.
-     * <p><b>200</b> - List of programmes.
-     * <p><b>404</b> - Institution not found.
-     * @param institution  (required)
-     * @return ResponseEntity&lt;InstitutionsInstitutionProgrammesGet200Response&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<InstitutionsInstitutionProgrammesGet200Response> institutionsInstitutionProgrammesGetWithHttpInfo(String institution) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'institution' is set
-        if (institution == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'institution' when calling institutionsInstitutionProgrammesGet");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("institution", institution);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = { 
-            "application/json"
-         };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<InstitutionsInstitutionProgrammesGet200Response> localReturnType = new ParameterizedTypeReference<InstitutionsInstitutionProgrammesGet200Response>() {};
-        return apiClient.invokeAPI("/institutions/{institution}/programmes", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * List all schedules.
-     * Retrieve a list of all active schedules.
-     * <p><b>200</b> - A list of schedules.
-     * @return List&lt;SchedulesGet200ResponseInner&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public List<SchedulesGet200ResponseInner> schedulesGet() throws RestClientException {
-        return schedulesGetWithHttpInfo().getBody();
-    }
-
-    /**
-     * List all schedules.
-     * Retrieve a list of all active schedules.
-     * <p><b>200</b> - A list of schedules.
-     * @return ResponseEntity&lt;List&lt;SchedulesGet200ResponseInner&gt;&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<List<SchedulesGet200ResponseInner>> schedulesGetWithHttpInfo() throws RestClientException {
+    public ResponseEntity<ExperienceGet200Response> experienceGetWithHttpInfo() throws RestClientException {
         Object localVarPostBody = null;
         
 
@@ -229,132 +124,28 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<List<SchedulesGet200ResponseInner>> localReturnType = new ParameterizedTypeReference<List<SchedulesGet200ResponseInner>>() {};
-        return apiClient.invokeAPI("/schedules", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<ExperienceGet200Response> localReturnType = new ParameterizedTypeReference<ExperienceGet200Response>() {};
+        return apiClient.invokeAPI("/experience", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * Enable or disable scraping schedules.
+     * General information
      * 
-     * <p><b>201</b> - Scheduling action executed successfully.
-     * <p><b>400</b> - Invalid or missing action in request.
-     * @param schedulesPostRequest  (required)
+     * <p><b>200</b> - Section content
+     * @return GeneralGet200Response
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public void schedulesPost(SchedulesPostRequest schedulesPostRequest) throws RestClientException {
-        schedulesPostWithHttpInfo(schedulesPostRequest);
+    public GeneralGet200Response generalGet() throws RestClientException {
+        return generalGetWithHttpInfo().getBody();
     }
 
     /**
-     * Enable or disable scraping schedules.
+     * General information
      * 
-     * <p><b>201</b> - Scheduling action executed successfully.
-     * <p><b>400</b> - Invalid or missing action in request.
-     * @param schedulesPostRequest  (required)
-     * @return ResponseEntity&lt;Void&gt;
+     * <p><b>200</b> - Section content
+     * @return ResponseEntity&lt;GeneralGet200Response&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<Void> schedulesPostWithHttpInfo(SchedulesPostRequest schedulesPostRequest) throws RestClientException {
-        Object localVarPostBody = schedulesPostRequest;
-        
-        // verify the required parameter 'schedulesPostRequest' is set
-        if (schedulesPostRequest == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'schedulesPostRequest' when calling schedulesPost");
-        }
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/schedules", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Approve or reject a scraping job.
-     * 
-     * <p><b>201</b> - Scraping data approved successfully.
-     * <p><b>400</b> - Invalid input.
-     * @param scrapingId  (required)
-     * @param scrapingJobScrapingIdPostRequest  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void scrapingJobScrapingIdPost(String scrapingId, ScrapingJobScrapingIdPostRequest scrapingJobScrapingIdPostRequest) throws RestClientException {
-        scrapingJobScrapingIdPostWithHttpInfo(scrapingId, scrapingJobScrapingIdPostRequest);
-    }
-
-    /**
-     * Approve or reject a scraping job.
-     * 
-     * <p><b>201</b> - Scraping data approved successfully.
-     * <p><b>400</b> - Invalid input.
-     * @param scrapingId  (required)
-     * @param scrapingJobScrapingIdPostRequest  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> scrapingJobScrapingIdPostWithHttpInfo(String scrapingId, ScrapingJobScrapingIdPostRequest scrapingJobScrapingIdPostRequest) throws RestClientException {
-        Object localVarPostBody = scrapingJobScrapingIdPostRequest;
-        
-        // verify the required parameter 'scrapingId' is set
-        if (scrapingId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'scrapingId' when calling scrapingJobScrapingIdPost");
-        }
-        
-        // verify the required parameter 'scrapingJobScrapingIdPostRequest' is set
-        if (scrapingJobScrapingIdPostRequest == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'scrapingJobScrapingIdPostRequest' when calling scrapingJobScrapingIdPost");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("scraping_id", scrapingId);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/scraping-job/{scraping_id}", HttpMethod.POST, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * List all scraping jobs.
-     * Retrieve a list of all running scraping jobs.
-     * <p><b>200</b> - A list of scraping jobs.
-     * @return ScrapingJobsGet200Response
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ScrapingJobsGet200Response scrapingJobsGet() throws RestClientException {
-        return scrapingJobsGetWithHttpInfo().getBody();
-    }
-
-    /**
-     * List all scraping jobs.
-     * Retrieve a list of all running scraping jobs.
-     * <p><b>200</b> - A list of scraping jobs.
-     * @return ResponseEntity&lt;ScrapingJobsGet200Response&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<ScrapingJobsGet200Response> scrapingJobsGetWithHttpInfo() throws RestClientException {
+    public ResponseEntity<GeneralGet200Response> generalGetWithHttpInfo() throws RestClientException {
         Object localVarPostBody = null;
         
 
@@ -372,134 +163,28 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<ScrapingJobsGet200Response> localReturnType = new ParameterizedTypeReference<ScrapingJobsGet200Response>() {};
-        return apiClient.invokeAPI("/scraping-jobs", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<GeneralGet200Response> localReturnType = new ParameterizedTypeReference<GeneralGet200Response>() {};
+        return apiClient.invokeAPI("/general", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * List scraping jobs for a specific institution.
-     * Retrieve all scraping jobs running for a specific institution.
-     * <p><b>200</b> - A list of scraping jobs.
-     * @param institutionName  (required)
-     * @return ScrapingJobsGet200Response
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ScrapingJobsGet200Response scrapingJobsInstitutionNameGet(String institutionName) throws RestClientException {
-        return scrapingJobsInstitutionNameGetWithHttpInfo(institutionName).getBody();
-    }
-
-    /**
-     * List scraping jobs for a specific institution.
-     * Retrieve all scraping jobs running for a specific institution.
-     * <p><b>200</b> - A list of scraping jobs.
-     * @param institutionName  (required)
-     * @return ResponseEntity&lt;ScrapingJobsGet200Response&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<ScrapingJobsGet200Response> scrapingJobsInstitutionNameGetWithHttpInfo(String institutionName) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'institutionName' is set
-        if (institutionName == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'institutionName' when calling scrapingJobsInstitutionNameGet");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("institution_name", institutionName);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = { 
-            "application/json"
-         };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<ScrapingJobsGet200Response> localReturnType = new ParameterizedTypeReference<ScrapingJobsGet200Response>() {};
-        return apiClient.invokeAPI("/scraping-jobs/{institution_name}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Start or stop scraping job for a institution.
+     * Index of resume section endpoints
      * 
-     * <p><b>201</b> - Scraping job updated successfully.
-     * <p><b>400</b> - Invalid action.
-     * @param institutionName  (required)
-     * @param schedulesPostRequest  (required)
+     * <p><b>200</b> - Section list
+     * @return List&lt;Url&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public void scrapingJobsInstitutionNamePost(String institutionName, SchedulesPostRequest schedulesPostRequest) throws RestClientException {
-        scrapingJobsInstitutionNamePostWithHttpInfo(institutionName, schedulesPostRequest);
+    public List<Url> rootGet() throws RestClientException {
+        return rootGetWithHttpInfo().getBody();
     }
 
     /**
-     * Start or stop scraping job for a institution.
+     * Index of resume section endpoints
      * 
-     * <p><b>201</b> - Scraping job updated successfully.
-     * <p><b>400</b> - Invalid action.
-     * @param institutionName  (required)
-     * @param schedulesPostRequest  (required)
-     * @return ResponseEntity&lt;Void&gt;
+     * <p><b>200</b> - Section list
+     * @return ResponseEntity&lt;List&lt;Url&gt;&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<Void> scrapingJobsInstitutionNamePostWithHttpInfo(String institutionName, SchedulesPostRequest schedulesPostRequest) throws RestClientException {
-        Object localVarPostBody = schedulesPostRequest;
-        
-        // verify the required parameter 'institutionName' is set
-        if (institutionName == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'institutionName' when calling scrapingJobsInstitutionNamePost");
-        }
-        
-        // verify the required parameter 'schedulesPostRequest' is set
-        if (schedulesPostRequest == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'schedulesPostRequest' when calling scrapingJobsInstitutionNamePost");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("institution_name", institutionName);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/scraping-jobs/{institution_name}", HttpMethod.POST, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Get all scraping session awaiting approval of associated data.
-     * 
-     * <p><b>200</b> - A list of all scraping sessions awaiting approval.
-     * @return ScrapingPreviewGet200Response
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ScrapingPreviewGet200Response scrapingPreviewGet() throws RestClientException {
-        return scrapingPreviewGetWithHttpInfo().getBody();
-    }
-
-    /**
-     * Get all scraping session awaiting approval of associated data.
-     * 
-     * <p><b>200</b> - A list of all scraping sessions awaiting approval.
-     * @return ResponseEntity&lt;ScrapingPreviewGet200Response&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<ScrapingPreviewGet200Response> scrapingPreviewGetWithHttpInfo() throws RestClientException {
+    public ResponseEntity<List<Url>> rootGetWithHttpInfo() throws RestClientException {
         Object localVarPostBody = null;
         
 
@@ -517,40 +202,30 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<ScrapingPreviewGet200Response> localReturnType = new ParameterizedTypeReference<ScrapingPreviewGet200Response>() {};
-        return apiClient.invokeAPI("/scraping-preview", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<List<Url>> localReturnType = new ParameterizedTypeReference<List<Url>>() {};
+        return apiClient.invokeAPI("/", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * Get scraping sessions awaiting approval for a specific institution.
+     * Hard and soft skills, technologies and programming languages
      * 
-     * <p><b>200</b> - List of sessions awaiting approval for the given institution.
-     * @param institution  (required)
-     * @return ScrapingPreviewGet200Response
+     * <p><b>200</b> - Section content
+     * @return SkillsGet200Response
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ScrapingPreviewGet200Response scrapingPreviewInstitutionGet(String institution) throws RestClientException {
-        return scrapingPreviewInstitutionGetWithHttpInfo(institution).getBody();
+    public SkillsGet200Response skillsGet() throws RestClientException {
+        return skillsGetWithHttpInfo().getBody();
     }
 
     /**
-     * Get scraping sessions awaiting approval for a specific institution.
+     * Hard and soft skills, technologies and programming languages
      * 
-     * <p><b>200</b> - List of sessions awaiting approval for the given institution.
-     * @param institution  (required)
-     * @return ResponseEntity&lt;ScrapingPreviewGet200Response&gt;
+     * <p><b>200</b> - Section content
+     * @return ResponseEntity&lt;SkillsGet200Response&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<ScrapingPreviewGet200Response> scrapingPreviewInstitutionGetWithHttpInfo(String institution) throws RestClientException {
+    public ResponseEntity<SkillsGet200Response> skillsGetWithHttpInfo() throws RestClientException {
         Object localVarPostBody = null;
         
-        // verify the required parameter 'institution' is set
-        if (institution == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'institution' when calling scrapingPreviewInstitutionGet");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("institution", institution);
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
@@ -566,61 +241,7 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<ScrapingPreviewGet200Response> localReturnType = new ParameterizedTypeReference<ScrapingPreviewGet200Response>() {};
-        return apiClient.invokeAPI("/scraping-preview/{institution}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Get preview data for a specific session by institution.
-     * Retrieve a random set of data from a specific session by institution.
-     * <p><b>200</b> - The session data.
-     * @param institution  (required)
-     * @param sessionId  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void scrapingPreviewInstitutionSessionIdGet(String institution, String sessionId) throws RestClientException {
-        scrapingPreviewInstitutionSessionIdGetWithHttpInfo(institution, sessionId);
-    }
-
-    /**
-     * Get preview data for a specific session by institution.
-     * Retrieve a random set of data from a specific session by institution.
-     * <p><b>200</b> - The session data.
-     * @param institution  (required)
-     * @param sessionId  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> scrapingPreviewInstitutionSessionIdGetWithHttpInfo(String institution, String sessionId) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'institution' is set
-        if (institution == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'institution' when calling scrapingPreviewInstitutionSessionIdGet");
-        }
-        
-        // verify the required parameter 'sessionId' is set
-        if (sessionId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'sessionId' when calling scrapingPreviewInstitutionSessionIdGet");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("institution", institution);
-        uriVariables.put("session_id", sessionId);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/scraping-preview/{institution}/{session_id}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<SkillsGet200Response> localReturnType = new ParameterizedTypeReference<SkillsGet200Response>() {};
+        return apiClient.invokeAPI("/skills", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }

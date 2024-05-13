@@ -1,13 +1,14 @@
 
 
-# ScrapingJobScrapingIdPostRequest
+# GeneralGet200Response
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**approve** | **Boolean** | Approval flag for the scraping job. |  [optional] |
+|**title** | **String** |  |  |
+|**content** | [**General**](General.md) |  |  |
 
 
 

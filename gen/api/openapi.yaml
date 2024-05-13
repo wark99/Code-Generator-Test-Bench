@@ -1,864 +1,362 @@
 openapi: 3.1.0
 info:
-  description: "A RESTful API for managing web scraping data related to educational\
-    \ institutions, programmes, courses, and schedules."
-  title: Data Scraper API
-  version: 1.0.0
+  contact:
+    email: di-man@yandex.ru
+    name: Dmitriy Bondar
+    url: https://dmitriy-bondar.dev
+  description: "The Resume API allows developers to access resume content, providing\
+    \ detailed information about an individual's professional and educational background.\
+    \ This API offers endpoints for retrieving general information, such as name and\
+    \ contact details, as well as detailed sections for experience and education."
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Resume API
+  version: 1.0.1
 servers:
-- url: http://localhost:5000
+- description: Next.js implementetion of the Resume API
+  url: https://api.dmitriy-bondar.dev/resume
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/Chiocciola/Resume/1.0.0
 paths:
-  /scraping-preview:
+  /:
     get:
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_scraping_preview_get_200_response'
-          description: A list of all scraping sessions awaiting approval.
-      summary: Get all scraping session awaiting approval of associated data.
+                $ref: '#/components/schemas/Sections'
+          description: Section list
+      summary: Index of resume section endpoints
       x-accepts: application/json
-  /scraping-preview/{institution}:
+  /general:
     get:
-      parameters:
-      - explode: false
-        in: path
-        name: institution
-        required: true
-        schema:
-          type: string
-        style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_scraping_preview_get_200_response'
-          description: List of sessions awaiting approval for the given institution.
-      summary: Get scraping sessions awaiting approval for a specific institution.
+                $ref: '#/components/schemas/_general_get_200_response'
+          description: Section content
+      summary: General information
       x-accepts: application/json
-  /scraping-preview/{institution}/{session_id}:
+  /skills:
     get:
-      description: Retrieve a random set of data from a specific session by institution.
-      parameters:
-      - explode: false
-        in: path
-        name: institution
-        required: true
-        schema:
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: session_id
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        "200":
-          description: The session data.
-      summary: Get preview data for a specific session by institution.
-      x-accepts: application/json
-  /institutions:
-    get:
-      description: Retrieve a list of all available institutions.
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_institutions_get_200_response'
-          description: A list of institutions.
-      summary: List all institutions.
+                $ref: '#/components/schemas/_skills_get_200_response'
+          description: Section content
+      summary: "Hard and soft skills, technologies and programming languages"
       x-accepts: application/json
-  /institutions/{institution}/programmes:
+  /experience:
     get:
-      description: Retrieve all programmes associated with a given institution.
-      parameters:
-      - explode: false
-        in: path
-        name: institution
-        required: true
-        schema:
-          type: string
-        style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_institutions__institution__programmes_get_200_response'
-          description: List of programmes.
-        "404":
-          description: Institution not found.
-      summary: List all programmes for a specific institution.
+                $ref: '#/components/schemas/_experience_get_200_response'
+          description: Section content
+      summary: Information about professional background
       x-accepts: application/json
-  /institutions/{institution}/courses:
+  /education:
     get:
-      description: Retrieve all courses associated with a given institution.
-      parameters:
-      - explode: false
-        in: path
-        name: institution
-        required: true
-        schema:
-          type: string
-        style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_institutions__institution__courses_get_200_response'
-          description: List of courses.
-        "404":
-          description: Institution not found.
-      summary: List all courses for a specific institution.
-      x-accepts: application/json
-  /schedules:
-    get:
-      description: Retrieve a list of all active schedules.
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/_schedules_get_200_response_inner'
-                type: array
-          description: A list of schedules.
-      summary: List all schedules.
-      x-accepts: application/json
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_schedules_post_request'
-        required: true
-      responses:
-        "201":
-          description: Scheduling action executed successfully.
-        "400":
-          description: Invalid or missing action in request.
-      summary: Enable or disable scraping schedules.
-      x-content-type: application/json
-      x-accepts: application/json
-  /scraping-jobs:
-    get:
-      description: Retrieve a list of all running scraping jobs.
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_scraping_jobs_get_200_response'
-          description: A list of scraping jobs.
-      summary: List all scraping jobs.
-      x-accepts: application/json
-  /scraping-job/{scraping_id}:
-    post:
-      parameters:
-      - explode: false
-        in: path
-        name: scraping_id
-        required: true
-        schema:
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_scraping_job__scraping_id__post_request'
-        required: true
-      responses:
-        "201":
-          description: Scraping data approved successfully.
-        "400":
-          description: Invalid input.
-      summary: Approve or reject a scraping job.
-      x-content-type: application/json
-      x-accepts: application/json
-  /scraping-jobs/{institution_name}:
-    get:
-      description: Retrieve all scraping jobs running for a specific institution.
-      parameters:
-      - explode: false
-        in: path
-        name: institution_name
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_scraping_jobs_get_200_response'
-          description: A list of scraping jobs.
-      summary: List scraping jobs for a specific institution.
-      x-accepts: application/json
-    post:
-      parameters:
-      - explode: false
-        in: path
-        name: institution_name
-        required: true
-        schema:
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_schedules_post_request'
-        required: true
-      responses:
-        "201":
-          description: Scraping job updated successfully.
-        "400":
-          description: Invalid action.
-      summary: Start or stop scraping job for a institution.
-      x-content-type: application/json
+                $ref: '#/components/schemas/_education_get_200_response'
+          description: Section content
+      summary: Information about educational background
       x-accepts: application/json
 components:
   schemas:
-    InstitutionDTO:
+    Url:
+      example:
+        url: http://example.com/aeiou
+      properties:
+        url:
+          format: url
+          type: string
+      required:
+      - url
+    Sections:
+      items:
+        $ref: '#/components/schemas/Url'
+      type: array
+    General:
+      example:
+        summary: summary
+        phone: 123-456-7890
+        name: Wile E. Coyote
+        location: "Nevada, USA"
+        linkedin:
+          url: http://example.com/aeiou
+        title: Coyote
+        email: coyote@acme-corp.com
       properties:
         name:
+          example: Wile E. Coyote
           type: string
-        programme_keys:
-          items:
-            type: integer
-          type: array
-        course_keys:
-          items:
-            type: integer
-        lecturer_keys:
-          items:
-            type: integer
-        session_keys:
-          items:
-            type: integer
-    ProgrammeDTO:
-      properties:
-        hash:
-          type: integer
-        name:
-          type: string
-        first_seen_key:
-          type: integer
-        last_seen_key:
-          type: integer
-        institution_key:
-          type: string
-        no_semesters:
-          type: integer
-        level:
-          type: string
-        ects_to_complete:
-          type: integer
-        language:
-          type: string
-        start_semester:
+        title:
+          example: Coyote
           type: string
         location:
+          example: "Nevada, USA"
           type: string
-        description:
+        phone:
+          example: 123-456-7890
           type: string
-        mandatory_courses_keys:
-          items:
-            type: integer
-          type: array
-        programme_id:
-          type: string
-        capacity:
-          type: integer
-        leader_key:
-          type: integer
-        level_extended:
-          type: string
-    CourseDTO:
-      properties:
-        hash:
-          type: integer
-        first_seen_key:
-          type: integer
-        last_seen_key:
-          type: integer
-        name:
-          type: string
-        institution_key:
-          type: string
-        ects_points:
-          type: integer
-        start_year:
-          type: integer
-        end_year:
-          type: integer
-        semester:
-          type: string
-        course_id:
-          type: string
-        language:
-          type: string
-        lecturer_keys:
-          items:
-            type: integer
-          type: array
-        description_keys:
-          items:
-            type: integer
-          type: array
-        mandatory_in_keys:
-          items:
-            type: integer
-          type: array
-    LecturerDTO:
-      properties:
-        hash:
-          type: integer
-        first_name:
-          type: string
-        last_name:
-          type: string
-        institution_key:
-          type: integer
-        first_seen_key:
-          type: integer
-        last_seen_key:
-          type: integer
         email:
+          example: coyote@acme-corp.com
           type: string
-        teaches_keys:
-          items:
-            type: integer
-          type: array
-    SessionDTO:
-      properties:
-        hash:
-          type: integer
-        institution_key:
+        linkedin:
+          $ref: '#/components/schemas/Url'
+        summary:
           type: string
-        start_time:
-          format: date-time
-          type: string
-        end_time:
-          format: date-time
-          type: string
-        status:
-          type: string
-        approved:
-          type: boolean
-        new_course_keys:
-          items:
-            type: integer
-          type: array
-        updated_course_keys:
-          items:
-            type: integer
-          type: array
-        new_programme_keys:
-          items:
-            type: integer
-          type: array
-        updated_programme_keys:
-          items:
-            type: integer
-          type: array
-        new_description_keys:
-          items:
-            type: integer
-          type: array
-        updated_description_keys:
-          items:
-            type: integer
-          type: array
-        new_lecturer_keys:
-          items:
-            type: integer
-          type: array
-        updated_lecturer_keys:
-          items:
-            type: integer
-          type: array
-    SessionPreviewDTO:
-      properties:
-        hash:
-          type: integer
-        institution_key:
-          type: string
-        start_time:
-          format: date-time
-          type: string
-        end_time:
-          format: date-time
-          type: string
-        status:
-          type: string
-        approved:
-          type: boolean
-        no_new_courses:
-          type: integer
-        no_new_descriptions:
-          type: integer
-        no_new_lectureres:
-          type: integer
-        no_new_programmes:
-          type: integer
-        no_updated_courses:
-          type: integer
-        no_updated_descriptions:
-          type: integer
-        no_updated_lecturers:
-          type: integer
-        no_updated_programmes:
-          type: integer
-    Schedule:
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        status:
-          type: string
-    InstitutionPreview:
-      type: string
-    SchedulePreview:
-      properties:
-        institution:
-          description: Name of the institution
-          type: string
-        next_scrape:
-          description: The next scheduled time for a scrape.
-          format: date-time
-          type: string
-    _scraping_preview_get_200_response_sessions_inner:
+      required:
+      - location
+      - name
+      - title
+    SkillSet:
       example:
-        institution_key: institution_key
-        no_new_courses: 6
-        no_new_descriptions: 1
-        no_new_lectureres: 5
-        end_time: 2000-01-23T04:56:07.000+00:00
-        no_updated_descriptions: 7
-        start_time: 2000-01-23T04:56:07.000+00:00
-        approved: true
-        no_updated_courses: 2
-        no_updated_programmes: 3
-        hash: 0
-        status: status
-        no_new_programmes: 5
-        no_updated_lecturers: 9
+        skills:
+        - skills
+        - skills
+        kind: kind
       properties:
-        hash:
-          type: integer
-        institution_key:
+        kind:
           type: string
-        start_time:
-          format: date-time
-          type: string
-        end_time:
-          format: date-time
-          type: string
-        status:
-          type: string
-        approved:
-          type: boolean
-        no_new_courses:
-          type: integer
-        no_new_descriptions:
-          type: integer
-        no_new_lectureres:
-          type: integer
-        no_new_programmes:
-          type: integer
-        no_updated_courses:
-          type: integer
-        no_updated_descriptions:
-          type: integer
-        no_updated_lecturers:
-          type: integer
-        no_updated_programmes:
-          type: integer
-    _scraping_preview_get_200_response:
-      example:
-        sessions:
-        - institution_key: institution_key
-          no_new_courses: 6
-          no_new_descriptions: 1
-          no_new_lectureres: 5
-          end_time: 2000-01-23T04:56:07.000+00:00
-          no_updated_descriptions: 7
-          start_time: 2000-01-23T04:56:07.000+00:00
-          approved: true
-          no_updated_courses: 2
-          no_updated_programmes: 3
-          hash: 0
-          status: status
-          no_new_programmes: 5
-          no_updated_lecturers: 9
-        - institution_key: institution_key
-          no_new_courses: 6
-          no_new_descriptions: 1
-          no_new_lectureres: 5
-          end_time: 2000-01-23T04:56:07.000+00:00
-          no_updated_descriptions: 7
-          start_time: 2000-01-23T04:56:07.000+00:00
-          approved: true
-          no_updated_courses: 2
-          no_updated_programmes: 3
-          hash: 0
-          status: status
-          no_new_programmes: 5
-          no_updated_lecturers: 9
-      properties:
-        sessions:
-          items:
-            $ref: '#/components/schemas/_scraping_preview_get_200_response_sessions_inner'
-          type: array
-    _institutions_get_200_response:
-      example:
-        institutions:
-        - institutions
-        - institutions
-      properties:
-        institutions:
+        skills:
           items:
             type: string
           type: array
-    _institutions__institution__programmes_get_200_response_programmes_inner:
+      required:
+      - kind
+      - skills
+    Employer:
       example:
-        leader_key: 9
-        no_semesters: 5
-        start_semester: start_semester
-        level_extended: level_extended
-        institution_key: institution_key
-        level: level
-        description: description
-        ects_to_complete: 5
-        language: language
-        capacity: 7
-        mandatory_courses_keys:
-        - 2
-        - 2
-        last_seen_key: 1
-        name: name
-        location: location
-        first_seen_key: 6
-        programme_id: programme_id
-        hash: 0
+        logo:
+          url: http://example.com/aeiou
+        company: company
+        positions:
+        - summary: summary
+          highlights:
+          - highlights
+          - highlights
+          endDate: endDate
+          location: location
+          title: title
+          startDate: startDate
+        - summary: summary
+          highlights:
+          - highlights
+          - highlights
+          endDate: endDate
+          location: location
+          title: title
+          startDate: startDate
       properties:
-        hash:
-          type: integer
-        name:
+        company:
           type: string
-        first_seen_key:
-          type: integer
-        last_seen_key:
-          type: integer
-        institution_key:
-          type: string
-        no_semesters:
-          type: integer
-        level:
-          type: string
-        ects_to_complete:
-          type: integer
-        language:
-          type: string
-        start_semester:
+        logo:
+          $ref: '#/components/schemas/Url'
+        positions:
+          items:
+            $ref: '#/components/schemas/Position'
+          type: array
+      required:
+      - company
+      - logo
+      - positions
+    Position:
+      example:
+        summary: summary
+        highlights:
+        - highlights
+        - highlights
+        endDate: endDate
+        location: location
+        title: title
+        startDate: startDate
+      properties:
+        title:
           type: string
         location:
           type: string
-        description:
+        startDate:
           type: string
-        mandatory_courses_keys:
+        endDate:
+          type: string
+        summary:
+          type: string
+        highlights:
           items:
-            type: integer
+            type: string
           type: array
-        programme_id:
-          type: string
-        capacity:
-          type: integer
-        leader_key:
-          type: integer
-        level_extended:
-          type: string
-    _institutions__institution__programmes_get_200_response:
+      required:
+      - location
+      - startDate
+      - title
+    Degree:
       example:
-        programmes:
-        - leader_key: 9
-          no_semesters: 5
-          start_semester: start_semester
-          level_extended: level_extended
-          institution_key: institution_key
-          level: level
-          description: description
-          ects_to_complete: 5
-          language: language
-          capacity: 7
-          mandatory_courses_keys:
-          - 2
-          - 2
-          last_seen_key: 1
-          name: name
-          location: location
-          first_seen_key: 6
-          programme_id: programme_id
-          hash: 0
-        - leader_key: 9
-          no_semesters: 5
-          start_semester: start_semester
-          level_extended: level_extended
-          institution_key: institution_key
-          level: level
-          description: description
-          ects_to_complete: 5
-          language: language
-          capacity: 7
-          mandatory_courses_keys:
-          - 2
-          - 2
-          last_seen_key: 1
-          name: name
-          location: location
-          first_seen_key: 6
-          programme_id: programme_id
-          hash: 0
-      properties:
-        programmes:
-          items:
-            $ref: '#/components/schemas/_institutions__institution__programmes_get_200_response_programmes_inner'
-          type: array
-    _institutions__institution__courses_get_200_response_courses_inner:
-      example:
-        course_id: course_id
-        description_keys:
-        - 9
-        - 9
-        ects_points: 5
-        institution_key: institution_key
-        start_year: 5
-        language: language
-        lecturer_keys:
-        - 7
-        - 7
-        last_seen_key: 1
-        mandatory_in_keys: ""
-        name: name
-        semester: semester
-        first_seen_key: 6
-        end_year: 2
-        hash: 0
-      properties:
-        hash:
-          type: integer
-        first_seen_key:
-          type: integer
-        last_seen_key:
-          type: integer
-        name:
-          type: string
-        institution_key:
-          type: string
-        ects_points:
-          type: integer
-        start_year:
-          type: integer
-        end_year:
-          type: integer
-        semester:
-          type: string
-        course_id:
-          type: string
-        language:
-          type: string
-        lecturer_keys:
-          items:
-            type: integer
-          type: array
-        description_keys:
-          items:
-            type: integer
-          type: array
-        mandatory_in_keys:
-          items:
-            type: integer
-    _institutions__institution__courses_get_200_response:
-      example:
-        courses:
-        - course_id: course_id
-          description_keys:
-          - 9
-          - 9
-          ects_points: 5
-          institution_key: institution_key
-          start_year: 5
-          language: language
-          lecturer_keys:
-          - 7
-          - 7
-          last_seen_key: 1
-          mandatory_in_keys: ""
-          name: name
-          semester: semester
-          first_seen_key: 6
-          end_year: 2
-          hash: 0
-        - course_id: course_id
-          description_keys:
-          - 9
-          - 9
-          ects_points: 5
-          institution_key: institution_key
-          start_year: 5
-          language: language
-          lecturer_keys:
-          - 7
-          - 7
-          last_seen_key: 1
-          mandatory_in_keys: ""
-          name: name
-          semester: semester
-          first_seen_key: 6
-          end_year: 2
-          hash: 0
-      properties:
-        courses:
-          items:
-            $ref: '#/components/schemas/_institutions__institution__courses_get_200_response_courses_inner'
-          type: array
-    _schedules_get_200_response_inner:
-      example:
-        next_scrape: 2000-01-23T04:56:07.000+00:00
         institution: institution
+        endDate: endDate
+        degree: degree
+        logo:
+          url: http://example.com/aeiou
+        location: location
+        startDate: startDate
       properties:
         institution:
-          description: Name of the institution
           type: string
-        next_scrape:
-          description: The next scheduled time for a scrape.
-          format: date-time
+        logo:
+          $ref: '#/components/schemas/Url'
+        degree:
           type: string
-    _schedules_post_request:
-      properties:
-        action:
-          description: Action to be performed.
-          enum:
-          - start
-          - stop
+        location:
           type: string
-    _scraping_jobs_get_200_response_sessions_inner:
+        startDate:
+          type: string
+        endDate:
+          type: string
+      required:
+      - degree
+      - endDate
+      - institution
+      - location
+      - logo
+      - startDate
+    Language:
+      description: Spoken language
+      type: string
+    _general_get_200_response:
       example:
-        new_lecturer_keys: ""
-        institution_key: institution_key
-        new_description_keys: ""
-        end_time: 2000-01-23T04:56:07.000+00:00
-        updated_programme_keys: ""
-        start_time: 2000-01-23T04:56:07.000+00:00
-        approved: true
-        updated_course_keys:
-        - 1
-        - 1
-        updated_lecturer_keys: ""
-        new_course_keys:
-        - 6
-        - 6
-        new_programme_keys: ""
-        hash: 0
-        updated_description_keys: ""
-        status: status
+        title: title
+        content:
+          summary: summary
+          phone: 123-456-7890
+          name: Wile E. Coyote
+          location: "Nevada, USA"
+          linkedin:
+            url: http://example.com/aeiou
+          title: Coyote
+          email: coyote@acme-corp.com
       properties:
-        hash:
-          type: integer
-        institution_key:
+        title:
           type: string
-        start_time:
-          format: date-time
-          type: string
-        end_time:
-          format: date-time
-          type: string
-        status:
-          type: string
-        approved:
-          type: boolean
-        new_course_keys:
-          items:
-            type: integer
-          type: array
-        updated_course_keys:
-          items:
-            type: integer
-          type: array
-        new_programme_keys:
-          items:
-            type: integer
-        updated_programme_keys:
-          items:
-            type: integer
-        new_description_keys:
-          items:
-            type: integer
-        updated_description_keys:
-          items:
-            type: integer
-        new_lecturer_keys:
-          items:
-            type: integer
-        updated_lecturer_keys:
-          items:
-            type: integer
-    _scraping_jobs_get_200_response:
+        content:
+          $ref: '#/components/schemas/General'
+      required:
+      - content
+      - title
+    _skills_get_200_response:
       example:
-        sessions:
-        - new_lecturer_keys: ""
-          institution_key: institution_key
-          new_description_keys: ""
-          end_time: 2000-01-23T04:56:07.000+00:00
-          updated_programme_keys: ""
-          start_time: 2000-01-23T04:56:07.000+00:00
-          approved: true
-          updated_course_keys:
-          - 1
-          - 1
-          updated_lecturer_keys: ""
-          new_course_keys:
-          - 6
-          - 6
-          new_programme_keys: ""
-          hash: 0
-          updated_description_keys: ""
-          status: status
-        - new_lecturer_keys: ""
-          institution_key: institution_key
-          new_description_keys: ""
-          end_time: 2000-01-23T04:56:07.000+00:00
-          updated_programme_keys: ""
-          start_time: 2000-01-23T04:56:07.000+00:00
-          approved: true
-          updated_course_keys:
-          - 1
-          - 1
-          updated_lecturer_keys: ""
-          new_course_keys:
-          - 6
-          - 6
-          new_programme_keys: ""
-          hash: 0
-          updated_description_keys: ""
-          status: status
+        title: title
+        content:
+        - skills:
+          - skills
+          - skills
+          kind: kind
+        - skills:
+          - skills
+          - skills
+          kind: kind
       properties:
-        sessions:
+        title:
+          type: string
+        content:
           items:
-            $ref: '#/components/schemas/_scraping_jobs_get_200_response_sessions_inner'
+            $ref: '#/components/schemas/SkillSet'
           type: array
-    _scraping_job__scraping_id__post_request:
+      required:
+      - content
+      - title
+    _experience_get_200_response:
+      example:
+        title: title
+        content:
+        - logo:
+            url: http://example.com/aeiou
+          company: company
+          positions:
+          - summary: summary
+            highlights:
+            - highlights
+            - highlights
+            endDate: endDate
+            location: location
+            title: title
+            startDate: startDate
+          - summary: summary
+            highlights:
+            - highlights
+            - highlights
+            endDate: endDate
+            location: location
+            title: title
+            startDate: startDate
+        - logo:
+            url: http://example.com/aeiou
+          company: company
+          positions:
+          - summary: summary
+            highlights:
+            - highlights
+            - highlights
+            endDate: endDate
+            location: location
+            title: title
+            startDate: startDate
+          - summary: summary
+            highlights:
+            - highlights
+            - highlights
+            endDate: endDate
+            location: location
+            title: title
+            startDate: startDate
       properties:
-        approve:
-          description: Approval flag for the scraping job.
-          type: boolean
+        title:
+          type: string
+        content:
+          items:
+            $ref: '#/components/schemas/Employer'
+          type: array
+      required:
+      - content
+      - title
+    _education_get_200_response:
+      example:
+        title: title
+        content:
+        - institution: institution
+          endDate: endDate
+          degree: degree
+          logo:
+            url: http://example.com/aeiou
+          location: location
+          startDate: startDate
+        - institution: institution
+          endDate: endDate
+          degree: degree
+          logo:
+            url: http://example.com/aeiou
+          location: location
+          startDate: startDate
+      properties:
+        title:
+          type: string
+        content:
+          items:
+            $ref: '#/components/schemas/Degree'
+          type: array
+      required:
+      - content
+      - title
 

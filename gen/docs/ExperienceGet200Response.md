@@ -1,13 +1,14 @@
 
 
-# InstitutionsGet200Response
+# ExperienceGet200Response
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**institutions** | **List&lt;String&gt;** |  |  [optional] |
+|**title** | **String** |  |  |
+|**content** | [**List&lt;Employer&gt;**](Employer.md) |  |  |
 
 
 
