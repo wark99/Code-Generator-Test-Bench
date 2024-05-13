@@ -13,6 +13,5 @@ mvn package -Dgenerator_inputfile="$filepath"
 
 if [ $? -ne 0 ]; then
     echo "Error while generating the code for $filepath"
-    rm -rf ./gen/*
-    exit 0
+    exit 1
 fi
