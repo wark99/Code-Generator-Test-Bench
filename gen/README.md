@@ -1,10 +1,10 @@
 # openapi-java-client
 
-SME Professional API
+FastAPI
 
-- API version: 1.15.0-oas3.1
+- API version: 0.1.0
 
-- Build date: 2024-05-13T19:21:30.009582082Z[Etc/UTC]
+- Build date: 2024-05-13T19:21:43.053280295Z[Etc/UTC]
 
 - Generator version: 7.4.0
 
@@ -44,7 +44,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>org.openapitools</groupId>
   <artifactId>openapi-java-client</artifactId>
-  <version>1.15.0-oas3.1</version>
+  <version>0.1.0</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -60,7 +60,7 @@ Add this dependency to your project's build file:
   }
 
   dependencies {
-     implementation "org.openapitools:openapi-java-client:1.15.0-oas3.1"
+     implementation "org.openapitools:openapi-java-client:0.1.0"
   }
 ```
 
@@ -74,7 +74,7 @@ mvn clean package
 
 Then manually install the following JARs:
 
-- `target/openapi-java-client-1.15.0-oas3.1.jar`
+- `target/openapi-java-client-0.1.0.jar`
 - `target/lib/*.jar`
 
 ## Getting Started
@@ -92,26 +92,14 @@ public class DefaultApiExample {
 
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://virtserver.swaggerhub.com/SMEProfessional/Dev/1.15.0");
+        defaultClient.setBasePath("http://localhost");
         
-        // Configure API key authorization: ApiKeyAuth
-        ApiKeyAuth ApiKeyAuth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
-        ApiKeyAuth.setApiKey("YOUR API KEY");
-        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-        //ApiKeyAuth.setApiKeyPrefix("Token");
-
         DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Integer page = 56; // Integer | The page of results returned
-        Integer pageSize = 56; // Integer | Set the number of results per page (max: 500)
-        LocalDate lastUpdatedFrom = LocalDate.now(); // LocalDate | Filter the results on or after the date
-        LocalDate lastUpdatedTo = LocalDate.now(); // LocalDate | Filter the results on or before the date
-        LocalDate fromDate = LocalDate.now(); // LocalDate | Filter results by initial meeting with a date on or after the date
-        LocalDate toDate = LocalDate.now(); // LocalDate | Filter results by initial meeting with a date on or before the date
         try {
-            AppraisalGet200Response result = apiInstance.appraisalGet(page, pageSize, lastUpdatedFrom, lastUpdatedTo, fromDate, toDate);
+            Object result = apiInstance.getModelNameModelNameGet();
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#appraisalGet");
+            System.err.println("Exception when calling DefaultApi#getModelNameModelNameGet");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -124,292 +112,27 @@ public class DefaultApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://virtserver.swaggerhub.com/SMEProfessional/Dev/1.15.0*
+All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*DefaultApi* | [**appraisalGet**](docs/DefaultApi.md#appraisalGet) | **GET** /appraisal | 
-*DefaultApi* | [**buyerGet**](docs/DefaultApi.md#buyerGet) | **GET** /buyer | 
-*DefaultApi* | [**buyerPotentialGet**](docs/DefaultApi.md#buyerPotentialGet) | **GET** /buyer/potential | 
-*DefaultApi* | [**certificateGet**](docs/DefaultApi.md#certificateGet) | **GET** /certificate | 
-*DefaultApi* | [**contractorGet**](docs/DefaultApi.md#contractorGet) | **GET** /contractor | 
-*DefaultApi* | [**correspondencePost**](docs/DefaultApi.md#correspondencePost) | **POST** /correspondence | 
-*DefaultApi* | [**employeeGet**](docs/DefaultApi.md#employeeGet) | **GET** /employee | 
-*DefaultApi* | [**inspectionAppointmentGet**](docs/DefaultApi.md#inspectionAppointmentGet) | **GET** /inspection/appointment | 
-*DefaultApi* | [**inspectionReportGet**](docs/DefaultApi.md#inspectionReportGet) | **GET** /inspection/report | 
-*DefaultApi* | [**inspectionReportPost**](docs/DefaultApi.md#inspectionReportPost) | **POST** /inspection/report | 
-*DefaultApi* | [**inventoryPropertyPropertyIdPost**](docs/DefaultApi.md#inventoryPropertyPropertyIdPost) | **POST** /inventory/property/{property_id} | 
-*DefaultApi* | [**landlordPotentialGet**](docs/DefaultApi.md#landlordPotentialGet) | **GET** /landlord/potential | 
-*DefaultApi* | [**maintenanceGet**](docs/DefaultApi.md#maintenanceGet) | **GET** /maintenance | 
-*DefaultApi* | [**maintenanceIdPut**](docs/DefaultApi.md#maintenanceIdPut) | **PUT** /maintenance/{id} | 
-*DefaultApi* | [**maintenancePost**](docs/DefaultApi.md#maintenancePost) | **POST** /maintenance | 
-*DefaultApi* | [**maintenancePropertyPropertyIdPost**](docs/DefaultApi.md#maintenancePropertyPropertyIdPost) | **POST** /maintenance/property/{property_id} | 
-*DefaultApi* | [**offerAcceptedGet**](docs/DefaultApi.md#offerAcceptedGet) | **GET** /offer/accepted | 
-*DefaultApi* | [**offerGet**](docs/DefaultApi.md#offerGet) | **GET** /offer | 
-*DefaultApi* | [**ownerGet**](docs/DefaultApi.md#ownerGet) | **GET** /owner | 
-*DefaultApi* | [**ownerIdBankAccountGet**](docs/DefaultApi.md#ownerIdBankAccountGet) | **GET** /owner/{id}/bank-account | 
-*DefaultApi* | [**propertyFeesGet**](docs/DefaultApi.md#propertyFeesGet) | **GET** /property/fees | 
-*DefaultApi* | [**propertyGet**](docs/DefaultApi.md#propertyGet) | **GET** /property | 
-*DefaultApi* | [**propertyIdInsuranceGet**](docs/DefaultApi.md#propertyIdInsuranceGet) | **GET** /property/{id}/insurance | 
-*DefaultApi* | [**propertyIdLandlordStatementsGet**](docs/DefaultApi.md#propertyIdLandlordStatementsGet) | **GET** /property/{id}/landlord-statements | 
-*DefaultApi* | [**propertyIdLedgerLandlordGet**](docs/DefaultApi.md#propertyIdLedgerLandlordGet) | **GET** /property/{id}/ledger/landlord | 
-*DefaultApi* | [**propertyIdMortgageGet**](docs/DefaultApi.md#propertyIdMortgageGet) | **GET** /property/{id}/mortgage | 
-*DefaultApi* | [**propertyIdPaymentGet**](docs/DefaultApi.md#propertyIdPaymentGet) | **GET** /property/{id}/payment | 
-*DefaultApi* | [**propertyIdRentLedgerGet**](docs/DefaultApi.md#propertyIdRentLedgerGet) | **GET** /property/{id}/rent-ledger | 
-*DefaultApi* | [**propertyInvoiceOwnerBalancePost**](docs/DefaultApi.md#propertyInvoiceOwnerBalancePost) | **POST** /property/invoice/owner/balance | 
-*DefaultApi* | [**propertyLeadPost**](docs/DefaultApi.md#propertyLeadPost) | **POST** /property/lead | 
-*DefaultApi* | [**propertyLettingsIdMarketingGet**](docs/DefaultApi.md#propertyLettingsIdMarketingGet) | **GET** /property/lettings/{id}/marketing | 
-*DefaultApi* | [**propertyNotesGet**](docs/DefaultApi.md#propertyNotesGet) | **GET** /property/notes | 
-*DefaultApi* | [**propertyPropertyIdInvoiceFilePost**](docs/DefaultApi.md#propertyPropertyIdInvoiceFilePost) | **POST** /property/{property_id}/invoice/file | 
-*DefaultApi* | [**propertyPropertyIdMeterReadingPost**](docs/DefaultApi.md#propertyPropertyIdMeterReadingPost) | **POST** /property/{property_id}/meter-reading | 
-*DefaultApi* | [**propertySalesIdMarketingGet**](docs/DefaultApi.md#propertySalesIdMarketingGet) | **GET** /property/sales/{id}/marketing | 
-*DefaultApi* | [**propertySalesReportGet**](docs/DefaultApi.md#propertySalesReportGet) | **GET** /property/sales/report | 
-*DefaultApi* | [**propertyStatusChangeGet**](docs/DefaultApi.md#propertyStatusChangeGet) | **GET** /property/status/change | 
-*DefaultApi* | [**propertyUtilitiesMovementTypeGet**](docs/DefaultApi.md#propertyUtilitiesMovementTypeGet) | **GET** /property/utilities/{movement_type} | 
-*DefaultApi* | [**referralMortgageCustomUpdatePost**](docs/DefaultApi.md#referralMortgageCustomUpdatePost) | **POST** /referral/mortgage/custom-update | 
-*DefaultApi* | [**tenantGet**](docs/DefaultApi.md#tenantGet) | **GET** /tenant | 
-*DefaultApi* | [**tenantIdDetailsGet**](docs/DefaultApi.md#tenantIdDetailsGet) | **GET** /tenant/{id}/details | 
-*DefaultApi* | [**tenantPotentialGet**](docs/DefaultApi.md#tenantPotentialGet) | **GET** /tenant/potential | 
-*DefaultApi* | [**viewingGet**](docs/DefaultApi.md#viewingGet) | **GET** /viewing | 
+*DefaultApi* | [**getModelNameModelNameGet**](docs/DefaultApi.md#getModelNameModelNameGet) | **GET** /model_name | Get Model Name
+*DefaultApi* | [**predictPredictPost**](docs/DefaultApi.md#predictPredictPost) | **POST** /predict/ | Predict
+*DefaultApi* | [**readRootGet**](docs/DefaultApi.md#readRootGet) | **GET** / | Read Root
+*DefaultApi* | [**uploadFileClassifyPost**](docs/DefaultApi.md#uploadFileClassifyPost) | **POST** /classify/ | Upload File
 
 
 ## Documentation for Models
 
- - [AcceptedOfferResponse](docs/AcceptedOfferResponse.md)
- - [AppraisalGet200Response](docs/AppraisalGet200Response.md)
- - [AppraisalGet200ResponseValue](docs/AppraisalGet200ResponseValue.md)
- - [AppraisalResponse](docs/AppraisalResponse.md)
- - [AreaCriteriaResponse](docs/AreaCriteriaResponse.md)
- - [BuyerAddressResponse](docs/BuyerAddressResponse.md)
- - [BuyerContractorContactResponse](docs/BuyerContractorContactResponse.md)
- - [BuyerCriteriaResponse](docs/BuyerCriteriaResponse.md)
- - [BuyerCriteriaResponseBathrooms](docs/BuyerCriteriaResponseBathrooms.md)
- - [BuyerCriteriaResponseBedrooms](docs/BuyerCriteriaResponseBedrooms.md)
- - [BuyerEmailAddressesResponseInner](docs/BuyerEmailAddressesResponseInner.md)
- - [BuyerGet200Response](docs/BuyerGet200Response.md)
- - [BuyerGet200ResponseValue](docs/BuyerGet200ResponseValue.md)
- - [BuyerPhoneNumbersResponseInner](docs/BuyerPhoneNumbersResponseInner.md)
- - [BuyerResponse](docs/BuyerResponse.md)
- - [BuyerResponseServicesOfInterest](docs/BuyerResponseServicesOfInterest.md)
- - [CertificateGet200Response](docs/CertificateGet200Response.md)
- - [CertificateGet200ResponseValue](docs/CertificateGet200ResponseValue.md)
- - [CertificateGet200ResponseValueMeta](docs/CertificateGet200ResponseValueMeta.md)
- - [CertificateResponse](docs/CertificateResponse.md)
- - [ConsentResponse](docs/ConsentResponse.md)
- - [ContactResponse](docs/ContactResponse.md)
- - [ContractorAddressResponse](docs/ContractorAddressResponse.md)
- - [ContractorContactResponse](docs/ContractorContactResponse.md)
- - [ContractorGet200Response](docs/ContractorGet200Response.md)
- - [ContractorGet200ResponseValue](docs/ContractorGet200ResponseValue.md)
- - [ContractorInsuranceResponseInner](docs/ContractorInsuranceResponseInner.md)
- - [ContractorPhoneNumbersResponseInner](docs/ContractorPhoneNumbersResponseInner.md)
- - [ContractorResponse](docs/ContractorResponse.md)
- - [CorrespondencePost200Response](docs/CorrespondencePost200Response.md)
- - [CorrespondencePost200ResponseValue](docs/CorrespondencePost200ResponseValue.md)
- - [CorrespondencePostRequest](docs/CorrespondencePostRequest.md)
- - [CorrespondencePostRequestAction](docs/CorrespondencePostRequestAction.md)
- - [CorrespondencePostRequestContact](docs/CorrespondencePostRequestContact.md)
- - [CorrespondencePostRequestProperty](docs/CorrespondencePostRequestProperty.md)
- - [CorrespondencePostRequestUser](docs/CorrespondencePostRequestUser.md)
- - [DateRequest](docs/DateRequest.md)
- - [EmployeeGet200Response](docs/EmployeeGet200Response.md)
- - [EmployeeGet200ResponseValue](docs/EmployeeGet200ResponseValue.md)
- - [EmployeeResponse](docs/EmployeeResponse.md)
- - [EncryptedFileConfig](docs/EncryptedFileConfig.md)
- - [EnquiryContactResponse](docs/EnquiryContactResponse.md)
- - [ExtendedLinkedPropertyResponse](docs/ExtendedLinkedPropertyResponse.md)
- - [ExtendedPropertyFeesResponse](docs/ExtendedPropertyFeesResponse.md)
- - [FallbackContactResponse](docs/FallbackContactResponse.md)
- - [InspectionAppointmentGet200Response](docs/InspectionAppointmentGet200Response.md)
- - [InspectionAppointmentGet200ResponseValue](docs/InspectionAppointmentGet200ResponseValue.md)
- - [InspectionAppointmentResponse](docs/InspectionAppointmentResponse.md)
- - [InspectionAppointmentResponseAppointment](docs/InspectionAppointmentResponseAppointment.md)
- - [InspectionAppointmentResponseType](docs/InspectionAppointmentResponseType.md)
- - [InspectionReportGet200Response](docs/InspectionReportGet200Response.md)
- - [InspectionReportGet200ResponseValue](docs/InspectionReportGet200ResponseValue.md)
- - [InspectionReportPost200Response](docs/InspectionReportPost200Response.md)
- - [InspectionReportPost200ResponseValue](docs/InspectionReportPost200ResponseValue.md)
- - [InspectionReportPostRequest](docs/InspectionReportPostRequest.md)
- - [InspectionReportPostRequestAdditionalNotesInner](docs/InspectionReportPostRequestAdditionalNotesInner.md)
- - [InspectionReportResponse](docs/InspectionReportResponse.md)
- - [InspectionReportResponseAdditionalNotesInner](docs/InspectionReportResponseAdditionalNotesInner.md)
- - [InspectionReportResponseCompanyRepresentative](docs/InspectionReportResponseCompanyRepresentative.md)
- - [InventoryPropertyPropertyIdPost200Response](docs/InventoryPropertyPropertyIdPost200Response.md)
- - [InventoryPropertyPropertyIdPost200ResponseValue](docs/InventoryPropertyPropertyIdPost200ResponseValue.md)
- - [InventoryPropertyPropertyIdPostRequest](docs/InventoryPropertyPropertyIdPostRequest.md)
- - [LandlordPotentialGet200Response](docs/LandlordPotentialGet200Response.md)
- - [LandlordPotentialGet200ResponseValue](docs/LandlordPotentialGet200ResponseValue.md)
- - [LedgerItemReferenceResponse](docs/LedgerItemReferenceResponse.md)
- - [LedgerItemResponse](docs/LedgerItemResponse.md)
- - [LinkedBuyerResponse](docs/LinkedBuyerResponse.md)
- - [LinkedContractorResponse](docs/LinkedContractorResponse.md)
- - [LinkedEmployeeResponse](docs/LinkedEmployeeResponse.md)
- - [LinkedOwnerResponse](docs/LinkedOwnerResponse.md)
- - [LinkedPropertyEmployeeResponse](docs/LinkedPropertyEmployeeResponse.md)
- - [LinkedPropertyResponse](docs/LinkedPropertyResponse.md)
- - [LinkedServiceResponse](docs/LinkedServiceResponse.md)
- - [LinkedTenantResponse](docs/LinkedTenantResponse.md)
- - [LinkedViewingResponse](docs/LinkedViewingResponse.md)
- - [LocationCriteriaResponse](docs/LocationCriteriaResponse.md)
- - [MaintenanceCategoryConfig](docs/MaintenanceCategoryConfig.md)
- - [MaintenanceGet200Response](docs/MaintenanceGet200Response.md)
- - [MaintenanceGet200ResponseValue](docs/MaintenanceGet200ResponseValue.md)
- - [MaintenanceIdPut200Response](docs/MaintenanceIdPut200Response.md)
- - [MaintenanceIdPut200ResponseValue](docs/MaintenanceIdPut200ResponseValue.md)
- - [MaintenanceIdPutRequest](docs/MaintenanceIdPutRequest.md)
- - [MaintenancePost200Response](docs/MaintenancePost200Response.md)
- - [MaintenancePost200ResponseValue](docs/MaintenancePost200ResponseValue.md)
- - [MaintenancePost200ResponseValueCreatedDate](docs/MaintenancePost200ResponseValueCreatedDate.md)
- - [MaintenancePostRequest](docs/MaintenancePostRequest.md)
- - [MaintenancePostRequestAddress](docs/MaintenancePostRequestAddress.md)
- - [MaintenancePostRequestReporter](docs/MaintenancePostRequestReporter.md)
- - [MaintenancePropertyPropertyIdPost200Response](docs/MaintenancePropertyPropertyIdPost200Response.md)
- - [MaintenancePropertyPropertyIdPost200ResponseValue](docs/MaintenancePropertyPropertyIdPost200ResponseValue.md)
- - [MaintenancePropertyPropertyIdPostRequest](docs/MaintenancePropertyPropertyIdPostRequest.md)
- - [MaintenanceReportResponse](docs/MaintenanceReportResponse.md)
- - [MaintenanceStatusConfig](docs/MaintenanceStatusConfig.md)
- - [MeetingResponse](docs/MeetingResponse.md)
- - [MetaResponse](docs/MetaResponse.md)
- - [MeterReadingResponse](docs/MeterReadingResponse.md)
- - [MortgageDetailsContactResponse](docs/MortgageDetailsContactResponse.md)
- - [OfferAcceptedGet200Response](docs/OfferAcceptedGet200Response.md)
- - [OfferAcceptedGet200ResponseValue](docs/OfferAcceptedGet200ResponseValue.md)
- - [OfferGet200Response](docs/OfferGet200Response.md)
- - [OfferGet200ResponseValue](docs/OfferGet200ResponseValue.md)
- - [OfferResponse](docs/OfferResponse.md)
- - [OwnerAddressResponse](docs/OwnerAddressResponse.md)
- - [OwnerGet200Response](docs/OwnerGet200Response.md)
- - [OwnerGet200ResponseValue](docs/OwnerGet200ResponseValue.md)
- - [OwnerIdBankAccountGet200Response](docs/OwnerIdBankAccountGet200Response.md)
- - [OwnerIdBankAccountGet200ResponseValue](docs/OwnerIdBankAccountGet200ResponseValue.md)
- - [OwnerResponse](docs/OwnerResponse.md)
- - [PotentialLandlordResponse](docs/PotentialLandlordResponse.md)
- - [PotentialLandlordResponseFollowUp](docs/PotentialLandlordResponseFollowUp.md)
- - [PotentialPropertyResponse](docs/PotentialPropertyResponse.md)
- - [PotentialTenantContractorContactResponse](docs/PotentialTenantContractorContactResponse.md)
- - [PotentialTenantCriteriaResponse](docs/PotentialTenantCriteriaResponse.md)
- - [PotentialTenantResponse](docs/PotentialTenantResponse.md)
- - [PropertyAddressResponse](docs/PropertyAddressResponse.md)
- - [PropertyFeesGet200Response](docs/PropertyFeesGet200Response.md)
- - [PropertyFeesGet200ResponseValue](docs/PropertyFeesGet200ResponseValue.md)
- - [PropertyGet200Response](docs/PropertyGet200Response.md)
- - [PropertyGet200ResponseValue](docs/PropertyGet200ResponseValue.md)
- - [PropertyIdInsuranceGet200Response](docs/PropertyIdInsuranceGet200Response.md)
- - [PropertyIdInsuranceGet200ResponseProperty](docs/PropertyIdInsuranceGet200ResponseProperty.md)
- - [PropertyIdLandlordStatementsGet200Response](docs/PropertyIdLandlordStatementsGet200Response.md)
- - [PropertyIdLandlordStatementsGet200ResponseValue](docs/PropertyIdLandlordStatementsGet200ResponseValue.md)
- - [PropertyIdLedgerLandlordGet200Response](docs/PropertyIdLedgerLandlordGet200Response.md)
- - [PropertyIdLedgerLandlordGet200ResponseValue](docs/PropertyIdLedgerLandlordGet200ResponseValue.md)
- - [PropertyIdLedgerLandlordGet200ResponseValueMeta](docs/PropertyIdLedgerLandlordGet200ResponseValueMeta.md)
- - [PropertyIdLedgerLandlordGet200ResponseValueProperty](docs/PropertyIdLedgerLandlordGet200ResponseValueProperty.md)
- - [PropertyIdLedgerLandlordGet200ResponseValuePropertyLedger](docs/PropertyIdLedgerLandlordGet200ResponseValuePropertyLedger.md)
- - [PropertyIdMortgageGet200Response](docs/PropertyIdMortgageGet200Response.md)
- - [PropertyIdMortgageGet200ResponseProperty](docs/PropertyIdMortgageGet200ResponseProperty.md)
- - [PropertyIdPaymentGet200Response](docs/PropertyIdPaymentGet200Response.md)
- - [PropertyIdPaymentGet200ResponseProperty](docs/PropertyIdPaymentGet200ResponseProperty.md)
- - [PropertyIdRentLedgerGet200Response](docs/PropertyIdRentLedgerGet200Response.md)
- - [PropertyIdRentLedgerGet200ResponseProperty](docs/PropertyIdRentLedgerGet200ResponseProperty.md)
- - [PropertyInsuranceConfig](docs/PropertyInsuranceConfig.md)
- - [PropertyInvoiceOwnerBalancePost200Response](docs/PropertyInvoiceOwnerBalancePost200Response.md)
- - [PropertyInvoiceOwnerBalancePost200ResponseValue](docs/PropertyInvoiceOwnerBalancePost200ResponseValue.md)
- - [PropertyInvoiceOwnerBalancePostRequest](docs/PropertyInvoiceOwnerBalancePostRequest.md)
- - [PropertyInvoiceOwnerBalancePostRequestContractor](docs/PropertyInvoiceOwnerBalancePostRequestContractor.md)
- - [PropertyInvoiceOwnerBalancePostRequestProperty](docs/PropertyInvoiceOwnerBalancePostRequestProperty.md)
- - [PropertyLeadPost200Response](docs/PropertyLeadPost200Response.md)
- - [PropertyLeadPost200ResponseValue](docs/PropertyLeadPost200ResponseValue.md)
- - [PropertyLeadPostRequest](docs/PropertyLeadPostRequest.md)
- - [PropertyLeadPostRequestContact](docs/PropertyLeadPostRequestContact.md)
- - [PropertyLettingsIdMarketingGet200Response](docs/PropertyLettingsIdMarketingGet200Response.md)
- - [PropertyLettingsIdMarketingGet200ResponseValue](docs/PropertyLettingsIdMarketingGet200ResponseValue.md)
- - [PropertyLettingsIdMarketingGet200ResponseValueCommercial](docs/PropertyLettingsIdMarketingGet200ResponseValueCommercial.md)
- - [PropertyLettingsIdMarketingGet200ResponseValueDetails](docs/PropertyLettingsIdMarketingGet200ResponseValueDetails.md)
- - [PropertyLettingsIdMarketingGet200ResponseValueDetailsElectricalGoods](docs/PropertyLettingsIdMarketingGet200ResponseValueDetailsElectricalGoods.md)
- - [PropertyLettingsIdMarketingGet200ResponseValueDetailsFeaturedRooms](docs/PropertyLettingsIdMarketingGet200ResponseValueDetailsFeaturedRooms.md)
- - [PropertyLettingsIdMarketingGet200ResponseValueDetailsFeatures](docs/PropertyLettingsIdMarketingGet200ResponseValueDetailsFeatures.md)
- - [PropertyLettingsIdMarketingGet200ResponseValuePriceInformation](docs/PropertyLettingsIdMarketingGet200ResponseValuePriceInformation.md)
- - [PropertyLettingsIdMarketingGet200ResponseValueTenantSuitability](docs/PropertyLettingsIdMarketingGet200ResponseValueTenantSuitability.md)
- - [PropertyLinkedEmployeeResponse](docs/PropertyLinkedEmployeeResponse.md)
- - [PropertyMarketingAddressResponse](docs/PropertyMarketingAddressResponse.md)
- - [PropertyMarketingMediaResponse](docs/PropertyMarketingMediaResponse.md)
- - [PropertyMarketingRoomsResponse](docs/PropertyMarketingRoomsResponse.md)
- - [PropertyMortgageConfig](docs/PropertyMortgageConfig.md)
- - [PropertyNoteResponse](docs/PropertyNoteResponse.md)
- - [PropertyNotesGet200Response](docs/PropertyNotesGet200Response.md)
- - [PropertyNotesGet200ResponseValue](docs/PropertyNotesGet200ResponseValue.md)
- - [PropertyNotesGet200ResponseValueMeta](docs/PropertyNotesGet200ResponseValueMeta.md)
- - [PropertyOfferResponse](docs/PropertyOfferResponse.md)
- - [PropertyPropertyIdInvoiceFilePost200Response](docs/PropertyPropertyIdInvoiceFilePost200Response.md)
- - [PropertyPropertyIdInvoiceFilePost200ResponseValue](docs/PropertyPropertyIdInvoiceFilePost200ResponseValue.md)
- - [PropertyPropertyIdMeterReadingPost200Response](docs/PropertyPropertyIdMeterReadingPost200Response.md)
- - [PropertyPropertyIdMeterReadingPost200ResponseValue](docs/PropertyPropertyIdMeterReadingPost200ResponseValue.md)
- - [PropertyPropertyIdMeterReadingPostRequest](docs/PropertyPropertyIdMeterReadingPostRequest.md)
- - [PropertyRentLedgerConfig](docs/PropertyRentLedgerConfig.md)
- - [PropertyRentLedgerConfigAppliesToDate](docs/PropertyRentLedgerConfigAppliesToDate.md)
- - [PropertyResponse](docs/PropertyResponse.md)
- - [PropertySalesIdMarketingGet200Response](docs/PropertySalesIdMarketingGet200Response.md)
- - [PropertySalesIdMarketingGet200ResponseValue](docs/PropertySalesIdMarketingGet200ResponseValue.md)
- - [PropertySalesIdMarketingGet200ResponseValueCommercial](docs/PropertySalesIdMarketingGet200ResponseValueCommercial.md)
- - [PropertySalesIdMarketingGet200ResponseValueDetails](docs/PropertySalesIdMarketingGet200ResponseValueDetails.md)
- - [PropertySalesIdMarketingGet200ResponseValueDetailsFeaturedRooms](docs/PropertySalesIdMarketingGet200ResponseValueDetailsFeaturedRooms.md)
- - [PropertySalesIdMarketingGet200ResponseValuePriceInformation](docs/PropertySalesIdMarketingGet200ResponseValuePriceInformation.md)
- - [PropertySalesReportGet200Response](docs/PropertySalesReportGet200Response.md)
- - [PropertySalesReportGet200ResponseValue](docs/PropertySalesReportGet200ResponseValue.md)
- - [PropertySalesReportGet200ResponseValueAppraisals](docs/PropertySalesReportGet200ResponseValueAppraisals.md)
- - [PropertySalesReportGet200ResponseValueExchanges](docs/PropertySalesReportGet200ResponseValueExchanges.md)
- - [PropertySalesReportGet200ResponseValueFallThroughs](docs/PropertySalesReportGet200ResponseValueFallThroughs.md)
- - [PropertySalesReportGet200ResponseValueInstructions](docs/PropertySalesReportGet200ResponseValueInstructions.md)
- - [PropertySalesReportGet200ResponseValueNetSales](docs/PropertySalesReportGet200ResponseValueNetSales.md)
- - [PropertySalesReportGet200ResponseValuePipeline](docs/PropertySalesReportGet200ResponseValuePipeline.md)
- - [PropertySalesReportGet200ResponseValueRejections](docs/PropertySalesReportGet200ResponseValueRejections.md)
- - [PropertySalesReportGet200ResponseValueSales](docs/PropertySalesReportGet200ResponseValueSales.md)
- - [PropertySalesReportGet200ResponseValueStock](docs/PropertySalesReportGet200ResponseValueStock.md)
- - [PropertySalesReportGet200ResponseValueViewings](docs/PropertySalesReportGet200ResponseValueViewings.md)
- - [PropertyStatusChangeEventResponse](docs/PropertyStatusChangeEventResponse.md)
- - [PropertyStatusChangeGet200Response](docs/PropertyStatusChangeGet200Response.md)
- - [PropertyStatusChangeGet200ResponseValue](docs/PropertyStatusChangeGet200ResponseValue.md)
- - [PropertyStatusResponse](docs/PropertyStatusResponse.md)
- - [PropertyUtilitiesMovementTypeGet200Response](docs/PropertyUtilitiesMovementTypeGet200Response.md)
- - [PropertyUtilitiesMovementTypeGet200ResponseValue](docs/PropertyUtilitiesMovementTypeGet200ResponseValue.md)
- - [PropertyUtilitiesResponse](docs/PropertyUtilitiesResponse.md)
- - [PropertyWithPaymentDetailsConfig](docs/PropertyWithPaymentDetailsConfig.md)
- - [PropertyWithPaymentDetailsConfigBankAccount](docs/PropertyWithPaymentDetailsConfigBankAccount.md)
- - [RecurringAmountConfig](docs/RecurringAmountConfig.md)
- - [ReferralMortgageCustomUpdatePost200Response](docs/ReferralMortgageCustomUpdatePost200Response.md)
- - [ReferralMortgageCustomUpdatePostRequest](docs/ReferralMortgageCustomUpdatePostRequest.md)
- - [RelatedOfferResponse](docs/RelatedOfferResponse.md)
- - [TenancyDatesResponse](docs/TenancyDatesResponse.md)
- - [TenantAddressResponse](docs/TenantAddressResponse.md)
- - [TenantConsentResponse](docs/TenantConsentResponse.md)
- - [TenantGet200Response](docs/TenantGet200Response.md)
- - [TenantGet200ResponseMeta](docs/TenantGet200ResponseMeta.md)
- - [TenantIdDetailsGet200Response](docs/TenantIdDetailsGet200Response.md)
- - [TenantIdDetailsGet200ResponseEnquiry](docs/TenantIdDetailsGet200ResponseEnquiry.md)
- - [TenantIdDetailsGet200ResponseRightToRent](docs/TenantIdDetailsGet200ResponseRightToRent.md)
- - [TenantPotentialGet200Response](docs/TenantPotentialGet200Response.md)
- - [TenantPotentialGet200ResponseValue](docs/TenantPotentialGet200ResponseValue.md)
- - [TenantResponse](docs/TenantResponse.md)
- - [ThirdPartyProviderConfig](docs/ThirdPartyProviderConfig.md)
- - [UtilitiesExtendedLinkedPropertyResponse](docs/UtilitiesExtendedLinkedPropertyResponse.md)
- - [UtilitiesExtendedLinkedPropertyResponseMeters](docs/UtilitiesExtendedLinkedPropertyResponseMeters.md)
- - [UtilitiesLinkedTenantResponse](docs/UtilitiesLinkedTenantResponse.md)
- - [ViewerResponse](docs/ViewerResponse.md)
- - [ViewingGet200Response](docs/ViewingGet200Response.md)
- - [ViewingGet200ResponseValue](docs/ViewingGet200ResponseValue.md)
- - [ViewingResponse](docs/ViewingResponse.md)
+ - [HTTPValidationError](docs/HTTPValidationError.md)
+ - [ValidationError](docs/ValidationError.md)
+ - [ValidationErrorLocInner](docs/ValidationErrorLocInner.md)
 
 
 <a id="documentation-for-authorization"></a>
 ## Documentation for Authorization
 
-
-Authentication schemes defined for the API:
-<a id="ApiKeyAuth"></a>
-### ApiKeyAuth
-
-
-- **Type**: API key
-- **API key parameter name**: X-API-KEY
-- **Location**: HTTP header
+Endpoints do not require authorization.
 
 
 ## Recommendation
