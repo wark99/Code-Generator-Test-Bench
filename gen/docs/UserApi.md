@@ -1,27 +1,26 @@
 # UserApi
 
-All URIs are relative to *http://geo-api.air-bit.ru:8081*
+All URIs are relative to *https://petstore3.swagger.io/api/v3*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**addUser**](UserApi.md#addUser) | **POST** /users/ | Add user |
-| [**changeCompanyUser**](UserApi.md#changeCompanyUser) | **POST** /users/change-company/ | User change company |
-| [**clearSessionUser**](UserApi.md#clearSessionUser) | **POST** /users/clear-session/ | User clear session |
-| [**deleteUser**](UserApi.md#deleteUser) | **DELETE** /users/{id}/ | Delete user by id |
-| [**getMe**](UserApi.md#getMe) | **GET** /users/me/ | Get Me |
-| [**getUser**](UserApi.md#getUser) | **GET** /users/{id}/ | Get user by id |
-| [**getUsers**](UserApi.md#getUsers) | **GET** /users/ | Get a list of users |
-| [**updateUser**](UserApi.md#updateUser) | **PUT** /users/{id}/ | Update user by id |
+| [**createUser**](UserApi.md#createUser) | **POST** /user | Create user |
+| [**createUsersWithListInput**](UserApi.md#createUsersWithListInput) | **POST** /user/createWithList | Creates list of users with given input array |
+| [**deleteUser**](UserApi.md#deleteUser) | **DELETE** /user/{username} | Delete user |
+| [**getUserByName**](UserApi.md#getUserByName) | **GET** /user/{username} | Get user by user name |
+| [**loginUser**](UserApi.md#loginUser) | **GET** /user/login | Logs user into the system |
+| [**logoutUser**](UserApi.md#logoutUser) | **GET** /user/logout | Logs out current logged in user session |
+| [**updateUser**](UserApi.md#updateUser) | **PUT** /user/{username} | Update user |
 
 
 
-## addUser
+## createUser
 
-> UserBaseScheme addUser(createUserScheme)
+> User createUser(user)
 
-Add user
+Create user
 
-Add user
+This can only be done by the logged in user.
 
 ### Example
 
@@ -30,27 +29,21 @@ Add user
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
-import org.openapitools.client.auth.*;
 import org.openapitools.client.models.*;
 import org.openapitools.client.api.UserApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://geo-api.air-bit.ru:8081");
-        
-        // Configure HTTP basic authorization: AWSAuthenticator
-        HttpBasicAuth AWSAuthenticator = (HttpBasicAuth) defaultClient.getAuthentication("AWSAuthenticator");
-        AWSAuthenticator.setUsername("YOUR USERNAME");
-        AWSAuthenticator.setPassword("YOUR PASSWORD");
+        defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
 
         UserApi apiInstance = new UserApi(defaultClient);
-        CreateUserScheme createUserScheme = new CreateUserScheme(); // CreateUserScheme | 
+        User user = new User(); // User | Created user object
         try {
-            UserBaseScheme result = apiInstance.addUser(createUserScheme);
+            User result = apiInstance.createUser(user);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#addUser");
+            System.err.println("Exception when calling UserApi#createUser");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -65,150 +58,11 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **createUserScheme** | [**CreateUserScheme**](CreateUserScheme.md)|  | |
+| **user** | [**User**](User.md)| Created user object | [optional] |
 
 ### Return type
 
-[**UserBaseScheme**](UserBaseScheme.md)
-
-### Authorization
-
-[AWSAuthenticator](../README.md#AWSAuthenticator)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **201** | Successful Response |  -  |
-| **403** | Forbidden |  -  |
-| **422** | Validation Error |  -  |
-
-
-## changeCompanyUser
-
-> Object changeCompanyUser(companyId)
-
-User change company
-
-User change company
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.auth.*;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.UserApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://geo-api.air-bit.ru:8081");
-        
-        // Configure HTTP basic authorization: AWSAuthenticator
-        HttpBasicAuth AWSAuthenticator = (HttpBasicAuth) defaultClient.getAuthentication("AWSAuthenticator");
-        AWSAuthenticator.setUsername("YOUR USERNAME");
-        AWSAuthenticator.setPassword("YOUR PASSWORD");
-
-        UserApi apiInstance = new UserApi(defaultClient);
-        Integer companyId = 56; // Integer | unique company id
-        try {
-            Object result = apiInstance.changeCompanyUser(companyId);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#changeCompanyUser");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **companyId** | **Integer**| unique company id | |
-
-### Return type
-
-**Object**
-
-### Authorization
-
-[AWSAuthenticator](../README.md#AWSAuthenticator)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-| **403** | Forbidden |  -  |
-| **404** | Not Found |  -  |
-| **422** | Validation Error |  -  |
-
-
-## clearSessionUser
-
-> Object clearSessionUser()
-
-User clear session
-
-User clear session
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.UserApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://geo-api.air-bit.ru:8081");
-
-        UserApi apiInstance = new UserApi(defaultClient);
-        try {
-            Object result = apiInstance.clearSessionUser();
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#clearSessionUser");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-**Object**
+[**User**](User.md)
 
 ### Authorization
 
@@ -216,25 +70,23 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: application/json
+- **Content-Type**: application/json, application/xml, application/x-www-form-urlencoded
+- **Accept**: application/json, application/xml
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-| **403** | Forbidden |  -  |
-| **404** | Not Found |  -  |
+| **0** | successful operation |  -  |
 
 
-## deleteUser
+## createUsersWithListInput
 
-> deleteUser(id)
+> User createUsersWithListInput(user)
 
-Delete user by id
+Creates list of users with given input array
 
-Delete user by id
+Creates list of users with given input array
 
 ### Example
 
@@ -243,24 +95,85 @@ Delete user by id
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
-import org.openapitools.client.auth.*;
 import org.openapitools.client.models.*;
 import org.openapitools.client.api.UserApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://geo-api.air-bit.ru:8081");
-        
-        // Configure HTTP basic authorization: AWSAuthenticator
-        HttpBasicAuth AWSAuthenticator = (HttpBasicAuth) defaultClient.getAuthentication("AWSAuthenticator");
-        AWSAuthenticator.setUsername("YOUR USERNAME");
-        AWSAuthenticator.setPassword("YOUR PASSWORD");
+        defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
 
         UserApi apiInstance = new UserApi(defaultClient);
-        Integer id = 56; // Integer | unique user id
+        List<User> user = Arrays.asList(); // List<User> | 
         try {
-            apiInstance.deleteUser(id);
+            User result = apiInstance.createUsersWithListInput(user);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling UserApi#createUsersWithListInput");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **user** | [**List&lt;User&gt;**](User.md)|  | [optional] |
+
+### Return type
+
+[**User**](User.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json, application/xml
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Successful operation |  -  |
+| **0** | successful operation |  -  |
+
+
+## deleteUser
+
+> deleteUser(username)
+
+Delete user
+
+This can only be done by the logged in user.
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.UserApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
+
+        UserApi apiInstance = new UserApi(defaultClient);
+        String username = "username_example"; // String | The name that needs to be deleted
+        try {
+            apiInstance.deleteUser(username);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#deleteUser");
             System.err.println("Status code: " + e.getCode());
@@ -277,7 +190,7 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **id** | **Integer**| unique user id | |
+| **username** | **String**| The name that needs to be deleted | |
 
 ### Return type
 
@@ -285,30 +198,28 @@ null (empty response body)
 
 ### Authorization
 
-[AWSAuthenticator](../README.md#AWSAuthenticator)
+No authorization required
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: application/json
+- **Accept**: Not defined
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **204** | Successful Response |  -  |
-| **403** | Forbidden |  -  |
-| **404** | Not Found |  -  |
-| **422** | Validation Error |  -  |
+| **400** | Invalid username supplied |  -  |
+| **404** | User not found |  -  |
 
 
-## getMe
+## getUserByName
 
-> UserBaseScheme getMe()
+> User getUserByName(username)
 
-Get Me
+Get user by user name
 
-Get data of the current user  Args:     request: Request     curr_user: Date of the current user  Returns:     Data scheme of the current user
+
 
 ### Example
 
@@ -317,26 +228,156 @@ Get data of the current user  Args:     request: Request     curr_user: Date of 
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
-import org.openapitools.client.auth.*;
 import org.openapitools.client.models.*;
 import org.openapitools.client.api.UserApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://geo-api.air-bit.ru:8081");
-        
-        // Configure HTTP basic authorization: AWSAuthenticator
-        HttpBasicAuth AWSAuthenticator = (HttpBasicAuth) defaultClient.getAuthentication("AWSAuthenticator");
-        AWSAuthenticator.setUsername("YOUR USERNAME");
-        AWSAuthenticator.setPassword("YOUR PASSWORD");
+        defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
+
+        UserApi apiInstance = new UserApi(defaultClient);
+        String username = "username_example"; // String | The name that needs to be fetched. Use user1 for testing. 
+        try {
+            User result = apiInstance.getUserByName(username);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling UserApi#getUserByName");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **username** | **String**| The name that needs to be fetched. Use user1 for testing.  | |
+
+### Return type
+
+[**User**](User.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json, application/xml
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | successful operation |  -  |
+| **400** | Invalid username supplied |  -  |
+| **404** | User not found |  -  |
+
+
+## loginUser
+
+> String loginUser(username, password)
+
+Logs user into the system
+
+
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.UserApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
+
+        UserApi apiInstance = new UserApi(defaultClient);
+        String username = "username_example"; // String | The user name for login
+        String password = "password_example"; // String | The password for login in clear text
+        try {
+            String result = apiInstance.loginUser(username, password);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling UserApi#loginUser");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **username** | **String**| The user name for login | [optional] |
+| **password** | **String**| The password for login in clear text | [optional] |
+
+### Return type
+
+**String**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/xml, application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | successful operation |  * X-Rate-Limit - calls per hour allowed by the user <br>  * X-Expires-After - date in UTC when token expires <br>  |
+| **400** | Invalid username/password supplied |  -  |
+
+
+## logoutUser
+
+> logoutUser()
+
+Logs out current logged in user session
+
+
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.UserApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
 
         UserApi apiInstance = new UserApi(defaultClient);
         try {
-            UserBaseScheme result = apiInstance.getMe();
-            System.out.println(result);
+            apiInstance.logoutUser();
         } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#getMe");
+            System.err.println("Exception when calling UserApi#logoutUser");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -352,190 +393,31 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**UserBaseScheme**](UserBaseScheme.md)
+null (empty response body)
 
 ### Authorization
 
-[AWSAuthenticator](../README.md#AWSAuthenticator)
+No authorization required
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: application/json
+- **Accept**: Not defined
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-| **401** | Unauthorized |  -  |
-| **404** | Not Found |  -  |
-
-
-## getUser
-
-> UserBaseScheme getUser(id)
-
-Get user by id
-
-Get user by id
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.auth.*;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.UserApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://geo-api.air-bit.ru:8081");
-        
-        // Configure HTTP basic authorization: AWSAuthenticator
-        HttpBasicAuth AWSAuthenticator = (HttpBasicAuth) defaultClient.getAuthentication("AWSAuthenticator");
-        AWSAuthenticator.setUsername("YOUR USERNAME");
-        AWSAuthenticator.setPassword("YOUR PASSWORD");
-
-        UserApi apiInstance = new UserApi(defaultClient);
-        Integer id = 56; // Integer | unique user id
-        try {
-            UserBaseScheme result = apiInstance.getUser(id);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#getUser");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **id** | **Integer**| unique user id | |
-
-### Return type
-
-[**UserBaseScheme**](UserBaseScheme.md)
-
-### Authorization
-
-[AWSAuthenticator](../README.md#AWSAuthenticator)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-| **403** | Forbidden |  -  |
-| **404** | Not Found |  -  |
-| **422** | Validation Error |  -  |
-
-
-## getUsers
-
-> PageUserBaseScheme getUsers(role, status, text, perPage, page)
-
-Get a list of users
-
-Get a list of users
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.auth.*;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.UserApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://geo-api.air-bit.ru:8081");
-        
-        // Configure HTTP basic authorization: AWSAuthenticator
-        HttpBasicAuth AWSAuthenticator = (HttpBasicAuth) defaultClient.getAuthentication("AWSAuthenticator");
-        AWSAuthenticator.setUsername("YOUR USERNAME");
-        AWSAuthenticator.setPassword("YOUR PASSWORD");
-
-        UserApi apiInstance = new UserApi(defaultClient);
-        UserRole role = UserRole.fromValue("0"); // UserRole | Roles user:   * 0 - Superadmin     * 1 - Administrator     * 2 - Operator     * 3 - User     * 4 - Partner   
-        StatusUser status = StatusUser.fromValue("1"); // StatusUser | Status user:   * 1 - Inactive     * 2 - New     * 3 - Active   
-        String text = "text_example"; // String | text value for search by name
-        Integer perPage = 1000; // Integer | 
-        Integer page = 1; // Integer | 
-        try {
-            PageUserBaseScheme result = apiInstance.getUsers(role, status, text, perPage, page);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#getUsers");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **role** | [**UserRole**](.md)| Roles user:   * 0 - Superadmin     * 1 - Administrator     * 2 - Operator     * 3 - User     * 4 - Partner    | [optional] [enum: 0, 1, 2, 3, 4] |
-| **status** | [**StatusUser**](.md)| Status user:   * 1 - Inactive     * 2 - New     * 3 - Active    | [optional] [enum: 1, 2, 3] |
-| **text** | **String**| text value for search by name | [optional] |
-| **perPage** | **Integer**|  | [optional] [default to 1000] |
-| **page** | **Integer**|  | [optional] [default to 1] |
-
-### Return type
-
-[**PageUserBaseScheme**](PageUserBaseScheme.md)
-
-### Authorization
-
-[AWSAuthenticator](../README.md#AWSAuthenticator)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-| **403** | Forbidden |  -  |
-| **422** | Validation Error |  -  |
+| **0** | successful operation |  -  |
 
 
 ## updateUser
 
-> UserBaseScheme updateUser(id, createUserScheme)
+> updateUser(username, user)
 
-Update user by id
+Update user
 
-Update user by id
+This can only be done by the logged in user.
 
 ### Example
 
@@ -544,26 +426,19 @@ Update user by id
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
-import org.openapitools.client.auth.*;
 import org.openapitools.client.models.*;
 import org.openapitools.client.api.UserApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://geo-api.air-bit.ru:8081");
-        
-        // Configure HTTP basic authorization: AWSAuthenticator
-        HttpBasicAuth AWSAuthenticator = (HttpBasicAuth) defaultClient.getAuthentication("AWSAuthenticator");
-        AWSAuthenticator.setUsername("YOUR USERNAME");
-        AWSAuthenticator.setPassword("YOUR PASSWORD");
+        defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
 
         UserApi apiInstance = new UserApi(defaultClient);
-        Integer id = 56; // Integer | 
-        CreateUserScheme createUserScheme = new CreateUserScheme(); // CreateUserScheme | 
+        String username = "username_example"; // String | name that need to be deleted
+        User user = new User(); // User | Update an existent user in the store
         try {
-            UserBaseScheme result = apiInstance.updateUser(id, createUserScheme);
-            System.out.println(result);
+            apiInstance.updateUser(username, user);
         } catch (ApiException e) {
             System.err.println("Exception when calling UserApi#updateUser");
             System.err.println("Status code: " + e.getCode());
@@ -580,28 +455,25 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **id** | **Integer**|  | |
-| **createUserScheme** | [**CreateUserScheme**](CreateUserScheme.md)|  | |
+| **username** | **String**| name that need to be deleted | |
+| **user** | [**User**](User.md)| Update an existent user in the store | [optional] |
 
 ### Return type
 
-[**UserBaseScheme**](UserBaseScheme.md)
+null (empty response body)
 
 ### Authorization
 
-[AWSAuthenticator](../README.md#AWSAuthenticator)
+No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
+- **Content-Type**: application/json, application/xml, application/x-www-form-urlencoded
+- **Accept**: Not defined
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful Response |  -  |
-| **403** | Forbidden |  -  |
-| **404** | Not Found |  -  |
-| **422** | Validation Error |  -  |
+| **0** | successful operation |  -  |
 
