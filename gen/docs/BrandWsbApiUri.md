@@ -1,15 +1,14 @@
 
 
-# College
+# BrandWsbApiUri
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**id** | **String** |  |  |
-|**name** | **String** |  |  |
-|**domain** | **String** |  |  |
+|**hostname** | **String** |  |  [optional] |
+|**baseUrl** | **String** |  |  [optional] |
 
 
 
