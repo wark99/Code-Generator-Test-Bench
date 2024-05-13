@@ -1,0 +1,259 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: nwagner@anduril.com
+  description: "[WIP] API for third-party developers to interact with Anduril's SDANet\
+    \ system."
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: SDANet - OpenAPI 3.1
+  version: 1.0.0
+servers:
+- url: /
+tags:
+- description: Interact with the Flux network to transit data around the network.
+  name: message
+- description: Contains methods related to the status of the SSN or SDANet.
+  name: health
+- description: Contains methods that pass through SDANet directly to the UDL.
+  name: udl
+paths:
+  /message:
+    get:
+      parameters:
+      - description: Whether to receive messages in an 'IWSD' or 'UDL' format.
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - udl
+          - iwsd
+          type: string
+        style: form
+      summary: Subscribe to an SSE stream of messages coming from the Flux network
+      tags:
+      - message
+      x-accepts: application/json
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        description: The message content to send
+      summary: Send a message over the Flux network
+      tags:
+      - message
+      x-content-type: application/json
+      x-accepts: application/json
+  /site-state:
+    get:
+      parameters:
+      - description: The ID of the site to retrieve health status
+        explode: true
+        in: query
+        name: siteID
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorState'
+          description: A successful state lookup.
+        "400":
+          description: "A failed lookup, the site ID wasn't found."
+      summary: Receive the state of a C2 or sensor site.
+      tags:
+      - health
+      x-accepts: application/json
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorState'
+        description: The message content to send
+      summary: Update the state of a C2 or sensor site.
+      tags:
+      - health
+      x-content-type: application/json
+      x-accepts: application/json
+  /flux-state:
+    get:
+      parameters:
+      - description: The ID of the site to retrieve Flux link status.
+        explode: true
+        in: query
+        name: siteID
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FluxState'
+          description: A successful state lookup.
+        "400":
+          description: "A failed lookup, the site ID wasn't found."
+      summary: Receive the state of the SDANet Flux mesh network.
+      tags:
+      - health
+      x-accepts: application/json
+  /udl:
+    delete:
+      tags:
+      - udl
+      x-accepts: application/json
+    get:
+      tags:
+      - udl
+      x-accepts: application/json
+    post:
+      tags:
+      - udl
+      x-accepts: application/json
+    put:
+      tags:
+      - udl
+      x-accepts: application/json
+components:
+  schemas:
+    Message:
+      example:
+        udl: "{}"
+        iwsd: iwsd
+      properties:
+        iwsd:
+          description: The raw IWSD fixed-width message type
+          type: string
+        udl:
+          description: The UDL JSON object to send.
+          type: object
+    FluxState:
+      example:
+        linkState:
+        - linkState: UNKNOWN
+          remoteID: remoteID
+        - linkState: UNKNOWN
+          remoteID: remoteID
+        idSite: idSite
+      properties:
+        idSite:
+          description: "The ID of the site, if this status is associated with a fixed\
+            \ site or platform."
+          maxLength: 36
+          minLength: 1
+          type: string
+        linkState:
+          items:
+            $ref: '#/components/schemas/FluxState_linkState_inner'
+          type: array
+    SensorState:
+      example:
+        cpcon: 4
+        idSite: idSite
+        hpcon: CHARLIE
+        fpcon: BRAVO
+        weatherMessage: Heavy rain
+        instStatus: PMC
+        siteType: siteType
+        reportTime: 2021-01-01T01:01:01.123Z
+      properties:
+        idSite:
+          description: "The ID of the site, if this status is associated with a fixed\
+            \ site or platform."
+          maxLength: 36
+          minLength: 1
+          type: string
+        siteType:
+          description: "Optional site type or further detail of type.  Intended for,\
+            \ but not limited to, Link-16 site type specifications (e.g. ADOC, GACC,\
+            \ SOC, TACC, etc.)."
+          maxLength: 36
+          minLength: 0
+          type: string
+        instStatus:
+          description: The status of the installation.  FMC - Fully Mission Capable   PMC
+            - Partially Mission Capable  NMC - Non Mission Capable  UNK - Unknown.
+          enum:
+          - FMC PMC NMC UNK
+          example: PMC
+          maxLength: 3
+          minLength: 0
+          type: string
+        fpcon:
+          description: Force Protection Condition (FPCON).    NORMAL - Applies when
+            a general global threat of possible terrorist activity exists and warrants
+            a routine security posture.  ALPHA - Applies when an increased general
+            threat of possible terrorist activity against personnel or facilities.
+            Nature and extent of threat are unpredictable.  BRAVO - Applies when an
+            increased or predictable threat of terrorist activity exists.  CHARLIE
+            - Applies when an incident occurs or intelligence is received indicating
+            some form of terrorist action against personnel and facilities is imminent.  DELTA
+            - Applies in the immediate area where an attack has occurred or when intelligence
+            is received indicating terrorist action against a location is imminent.
+          enum:
+          - NORMAL ALPHA BRAVO CHARLIE DELTA
+          example: BRAVO
+          maxLength: 7
+          minLength: 0
+          type: string
+        hpcon:
+          description: Health Protection Condition (HPCON).    0 - Routine no community
+            transmission.  ALPHA - Limited community transmission beginning.  BRAVO
+            - Moderate increased community transmission.  CHARLIE - Substantial sustained
+            community transmission.  DELTA - Severe widespread community transmission.
+          enum:
+          - 0 ALPHA BRAVO CHARLIE DELTA
+          example: CHARLIE
+          maxLength: 7
+          minLength: 0
+          type: string
+        cpcon:
+          description: Cyberspace Protection Condition (CPCON).    1 - VERY HIGH -
+            Critical functions.  2 - HIGH - Critical and essential functions.  3 -
+            MEDIUM - Critical essential and support functions.  4 - LOW - All functions.  5
+            - VERY LOW - All functions.
+          enum:
+          - 1 2 3 4 5
+          example: 4
+          maxLength: 1
+          minLength: 0
+          type: string
+        reportTime:
+          description: Time of report in ISO8601 UTC format.
+          example: 2021-01-01T01:01:01.123Z
+          format: date-time
+          type: string
+        weatherMessage:
+          description: Description of the current weather conditions over a site.
+          example: Heavy rain
+          maxLength: 512
+          minLength: 0
+          type: string
+    FluxState_linkState_inner:
+      example:
+        linkState: UNKNOWN
+        remoteID: remoteID
+      properties:
+        remoteID:
+          description: The siteID of the remote site that this link status describes.
+          type: string
+        linkState:
+          enum:
+          - UNKNOWN
+          - DISCONNECTED
+          - DEGRADED
+          - CONNECTED
+          type: string
+
