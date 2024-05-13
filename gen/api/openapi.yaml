@@ -1,0 +1,754 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: support.api@uniqrewards.com
+    name: UNIQREWARDS API Support
+    url: https://documentation.api.uniqrewards.com/apiv3
+  description: "The UNIQREWARDS Client API v3 enables our clients to issue digital\
+    \ vouchers. Retrieval of product details, catalogues, and vouchers status and\
+    \ details is also supported by this API."
+  title: UNIQREWARDS Client API v3
+  version: "3.0"
+servers:
+- description: DEMO
+  url: https://api.demo.uniqrewards.com/v3
+- description: UAT
+  url: https://api.uat.uniqrewards.com/v3
+- description: PRODUCTION
+  url: https://api.uniqrewards.com/v3
+security:
+- Authorization:
+  - client
+tags:
+- description: Voucher management endpoints
+  name: Voucher
+- description: Catalogue endpoints
+  name: Catalogue
+paths:
+  /products:
+    get:
+      description: "Retrieve the catalogue of products, listing all configured products\
+        \ available for issuance. Can be used to discover available products and their\
+        \ codes."
+      operationId: retrieve-products
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example 1:
+                  value:
+                    request_id: 266ea41d-adf5-480b-af50-15b940c2b846
+                    products:
+                    - product_code: MAMVDDMMYY01
+                      name: $10 UNIQGIFT Value Based Test Voucher
+                      description: UNIQGIFT Value Based Test Voucher
+                      is_value_based: true
+                      is_open_value: false
+                      is_status_available: true
+                      is_multiple_use: true
+                      currency: SGD
+                      amount: 1000
+                      quantity: null
+                      expiry_scheme: 1 year from issuance
+                      valid_from: 2023-01-01T00:00:00+08:00
+                      valid_until: null
+                      image: https://images.qa.uniqgift.com/voucher/750x288/MAMVDDMMYY01.jpg
+                      terms_and_conditions: |-
+                        • This voucher may be used for multiple transactions in denominations of SGD1.00 until it runs out or expires.
+                        • This voucher is issued by Option Gift Pte Ltd which owns the registered trademark UNIQGIFT.
+                        • This voucher must be presented before payment.
+                        • This voucher cannot be exchanged for cash and any unused balance at expiry will not be refunded.
+                        • This voucher cannot be replaced if lost, damaged, stolen or expired.
+                        • Option Gift Pte Ltd reserves the right to vary these terms and conditions at any time without prior notice.
+                        • Option Gift Pte Ltd shall not be responsible for any issue that arises in connection with the redemption and/or use of this voucher and shall not be responsible or held liable for any loss, injury, damage or harm suffered or incurred by or in connection with the redemption or use of the voucher by any person.
+                    - product_code: MAMPDDMMYY02
+                      name: UNIQGIFT Product-Based Test Voucher
+                      description: UNIQGIFT Product-Based Test Voucher
+                      is_value_based: false
+                      is_open_value: false
+                      is_status_available: true
+                      is_multiple_use: false
+                      currency: ""
+                      amount: 1
+                      quantity: null
+                      expiry_scheme: 1 year from issuance
+                      valid_from: 2023-01-01T00:00:00+08:00
+                      valid_until: null
+                      image: https://images.qa.uniqgift.com/voucher/750x288/MAMPDDMMYY02.jpg
+                      terms_and_conditions: |-
+                        • voucher is not refundable and shall be forfeited.
+                        • This voucher is issued by Option Gift Pte Ltd which owns the registered trademark UNIQGIFT.
+                        • This voucher must be presented before payment.
+                        • This voucher cannot be exchanged for cash and any unused balance at expiry will not be refunded.
+                        • This voucher cannot be replaced if lost, damaged, stolen or expired.
+                        • Option Gift Pte Ltd reserves the right to vary these terms and conditions at any time without prior notice.
+                        • Option Gift Pte Ltd shall not be responsible for any issue that arises in connection with the redemption and/or use of this voucher and shall not be responsible or held liable for any loss, injury, damage or harm suffered or incurred by or in connection with the redemption or use of the voucher by any person.
+              schema:
+                $ref: '#/components/schemas/retrieve_products_200_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/Error'
+      summary: Retrieve catalogue of products
+      tags:
+      - Catalogue
+      x-accepts: application/json
+  /products/{code}:
+    get:
+      description: Retrieve the details of the product from the path.
+      operationId: retrieve-product
+      parameters:
+      - description: The product code of the product object to be retrieved.
+        explode: false
+        in: path
+        name: code
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example 1:
+                  value:
+                    request_id: 266ea41d-adf5-480b-af50-15b940c2b846
+                    product:
+                      product_code: MAMVDDMMYY01
+                      name: $10 UNIQGIFT Value Based Test Voucher
+                      description: UNIQGIFT Value Based Test Voucher
+                      is_value_based: true
+                      is_open_value: false
+                      is_status_available: true
+                      is_multiple_use: true
+                      currency: SGD
+                      amount: 1000
+                      quantity: null
+                      expiry_scheme: 1 year from issuance
+                      valid_from: 2023-01-01T00:00:00+08:00
+                      valid_until: null
+                      image: https://images.qa.uniqgift.com/voucher/750x288/MAMVDDMMYY01.jpg
+                      terms_and_conditions: |-
+                        • This voucher may be used for multiple transactions in denominations of SGD1.00 until it runs out or expires.
+                        • This voucher is issued by Option Gift Pte Ltd which owns the registered trademark UNIQGIFT.
+                        • This voucher must be presented before payment.
+                        • This voucher cannot be exchanged for cash and any unused balance at expiry will not be refunded.
+                        • This voucher cannot be replaced if lost, damaged, stolen or expired.
+                        • Option Gift Pte Ltd reserves the right to vary these terms and conditions at any time without prior notice.
+                        • Option Gift Pte Ltd shall not be responsible for any issue that arises in connection with the redemption and/or use of this voucher and shall not be responsible or held liable for any loss, injury, damage or harm suffered or incurred by or in connection with the redemption or use of the voucher by any person.
+              schema:
+                $ref: '#/components/schemas/retrieve_product_200_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/Error'
+      summary: Retrieve product details
+      tags:
+      - Catalogue
+      x-accepts: application/json
+    parameters:
+    - description: The product code of the product object to be retrieved.
+      explode: false
+      in: path
+      name: code
+      required: true
+      schema:
+        type: string
+      style: simple
+    post:
+      description: Issue vouchers from the requested product identified by its code
+        specified in the path.
+      operationId: issue-vouchers
+      parameters:
+      - description: The idempotency key in UUID v4 format to ensure issuing vouchers
+          is idempotent.
+        explode: false
+        in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: The product code of the product object to be retrieved.
+        explode: false
+        in: path
+        name: code
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Example 1:
+                value:
+                  quantity: 1
+                  face_value: 1050
+            schema:
+              $ref: '#/components/schemas/issue_vouchers_request'
+        description: Request parameters required to issue vouchers.
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example 1:
+                  value:
+                    request_id: 266ea41d-adf5-480b-af50-15b940c2b846
+                    vouchers:
+                    - voucher_code: UG1123456789
+                      voucher_id: 1b5a607b-e5eb-4b17-80b0-5739c041e81b
+                      name: $10 UNIQGIFT Value Based Test Voucher
+                      status: active
+                      expiration: 2029-10-31T23:59:59+08:00
+                      currency: SGD
+                      remaining_amount: 1000
+                      product_code: MAMVDDMMYY01
+                      product_name: $10 UNIQGIFT Value Based Test Voucher
+                      is_value_based: true
+                      is_status_available: true
+                      is_multiple_use: true
+                      url: https://_base_url_1b5a607b-e5eb-4b17-80b0-5739c041e81b
+                      short_url: https://_base_url_short_/v/BMhgQhHigm7
+                      short_url_pin: 1234
+              schema:
+                $ref: '#/components/schemas/issue_vouchers_200_response'
+          description: OK
+          headers:
+            Idempotency-Record:
+              description: This header is only provided in the response if obtained
+                from the idempotency cache.
+              explode: false
+              schema:
+                enum:
+                - "true"
+                type: string
+              style: simple
+        "500":
+          $ref: '#/components/responses/Error'
+      summary: Issue vouchers
+      tags:
+      - Voucher
+      x-content-type: application/json
+      x-accepts: application/json
+  /vouchers/{id}:
+    get:
+      description: Retrieve the information and updated status of 1 voucher.
+      operationId: retrieve-voucher
+      parameters:
+      - description: The id of the voucher to be retrieved.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/retrieve_voucher_200_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/Error'
+      summary: Retrieve vouchers information
+      tags:
+      - Voucher
+      x-accepts: application/json
+    parameters:
+    - description: The id of the voucher to be retrieved.
+      explode: false
+      in: path
+      name: id
+      required: true
+      schema:
+        format: uuid
+        type: string
+      style: simple
+  /vouchers:
+    get:
+      description: Retrieve the details of multiple vouchers in a single request.
+      operationId: retrieve-vouchers
+      parameters:
+      - explode: false
+        in: query
+        name: id
+        required: true
+        schema:
+          example:
+          - "33bc3524-fefe-415e-903d-196bc6dadb21,2b0969ee-7fcf-4e52-8e0a-4ddb608820b2"
+          items: {}
+          maxItems: 20
+          minItems: 1
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/retrieve_vouchers_200_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/Error'
+      summary: Retrieve multiple vouchers information
+      tags:
+      - Voucher
+      x-accepts: application/json
+components:
+  responses:
+    Error:
+      content:
+        application/json:
+          examples:
+            Retrieve voucher, voucher not found error:
+              value:
+                request_id: 266ea41d-adf5-480b-af50-15b940c2b846
+                error:
+                  code: 404-D4E
+                  message: Voucher Not Found
+                  documentation: "Voucher not found in records, please verify the\
+                    \ path parameter voucher id."
+          schema:
+            properties:
+              request_id:
+                description: "The request ID in UUID v4 format, assigned by the API\
+                  \ to the request."
+                format: uuid
+                type: string
+              error:
+                properties:
+                  code:
+                    description: "A composite code formatted as {http_error_code}-{api_error_code}\
+                      \ (e.g., 404-D4E). The HTTP error code indicates the type of\
+                      \ error, while the second part specifies the exact issue."
+                    type: string
+                  message:
+                    description: "A brief error message, generally aligned with the\
+                      \ HTTP status message."
+                    type: string
+                  documentation:
+                    description: An extended description providing more context and
+                      actions to resolve the issue.
+                    type: string
+      description: Error response structure. Shared by all endpoints.
+  schemas:
+    Product:
+      description: The product object. Serves as template from which vouchers are
+        issued.
+      example:
+        image: https://openapi-generator.tech
+        amount: 0
+        quantity: 6
+        description: description
+        valid_from: 2000-01-23T04:56:07.000+00:00
+        product_code: product_code
+        expiry_scheme: expiry_scheme
+        is_open_value: true
+        is_multiple_use: true
+        is_status_available: true
+        terms_and_conditions: terms_and_conditions
+        valid_until: 2000-01-23T04:56:07.000+00:00
+        name: name
+        currency: SGD
+        is_value_based: true
+      properties:
+        product_code:
+          description: "A unique set of alphanumeric characters assigned to the product\
+            \ within the product catalogue, serving as an SKU."
+          type: string
+        name:
+          description: Name of the product.
+          type: string
+        description:
+          description: A brief description of the product.
+          type: string
+        is_value_based:
+          description: Indicates whether the product is value-based (true) or product-based
+            (false).
+          type: boolean
+          x-stoplight:
+            id: p8s2dbfp59aut
+        is_open_value:
+          description: Allows for open denomination or quantity at issuance (true)
+            or is a fixed denomination / quantity product (false).
+          type: boolean
+          x-stoplight:
+            id: xivimk1zkt66d
+        is_status_available:
+          description: Indicates whether the status of vouchers issued from this product
+            can be retrieved (true) or not (false).
+          type: boolean
+          x-stoplight:
+            id: f879tcnco7ng4
+        is_multiple_use:
+          description: Indicates whether the vouchers can be redeemed in multiple
+            transactions or will be fully redeemed in a single transaction.
+          type: boolean
+          x-stoplight:
+            id: 67avsvhrmretf
+        currency:
+          default: SGD
+          description: "Currency code (ISO 4217 format i.e. SGD) for the product's\
+            \ amount, or an empty string for product-based (is_value_based = false)."
+          pattern: "^([A-Z]{3})?$"
+          type: string
+        amount:
+          description: "Face value in cents for value-based products, or number of\
+            \ items for product-based. null for open-value products."
+          type: integer
+        quantity:
+          description: Quantity of this product in stock or null if stock is unlimited.
+          type: integer
+          nullable: true
+        expiry_scheme:
+          description: Specifies how the voucher's expiration date is determined upon
+            issuance.
+          type: string
+        valid_from:
+          description: The start date and time of the product validity.
+          format: date-time
+          type: string
+        valid_until:
+          description: "The end date and time of the product validity, if applicable."
+          format: date-time
+          type: string
+          nullable: true
+        image:
+          description: A URL linking to the product's image.
+          format: uri
+          type: string
+        terms_and_conditions:
+          description: Terms and conditions of the product.
+          type: string
+      title: Product
+      x-stoplight:
+        id: iridon9h3twlh
+    Voucher:
+      description: The voucher object. Contains attributes specific to the voucher
+        and others inherited from the product from which it is issued.
+      example:
+        remaining_amount: 1000
+        voucher_code: voucher_code
+        product_code: product_code
+        product_name: product_name
+        is_multiple_use: true
+        url: https://openapi-generator.tech
+        is_status_available: true
+        short_url: https://openapi-generator.tech
+        short_url_pin: 1234
+        name: name
+        voucher_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        expiration: 2000-01-23T04:56:07.000+00:00
+        currency: SGD
+        is_value_based: true
+        status: active
+      properties:
+        voucher_code:
+          description: The unique voucher code (also referred to as the voucher number)
+            that is accepted by the merchant.
+          type: string
+        voucher_id:
+          description: "The unique technical reference for the voucher, used in Client\
+            \ API requests."
+          format: uuid
+          type: string
+        name:
+          description: "The name of the voucher as displayed to end-users, generally\
+            \ including its denomination."
+          type: string
+        status:
+          description: The current status of the voucher.
+          enum:
+          - active
+          - inactive
+          - expired
+          - voided
+          - used
+          type: string
+        expiration:
+          description: Expiration date and time of the voucher in ISO 8601 / RFC 3339
+            format (i.e. 2030-10-12T22:59:59+00:00).
+          format: date-time
+          type: string
+        currency:
+          default: SGD
+          description: "Currency code (ISO 4217 format i.e. SGD) for the voucher's\
+            \ amount, or an empty string for product-based (is_value_based = false)."
+          pattern: "^([A-Z]{3})?$"
+          type: string
+        remaining_amount:
+          description: "Voucher remaining amount to spend in cents for value-based\
+            \ vouchers, or the number of items for product-based."
+          example: 1000
+          maximum: 100000
+          minimum: 0
+          multipleOf: 1
+          type: integer
+        product_code:
+          description: The product code identifying the product from which the voucher
+            is issued.
+          type: string
+        product_name:
+          description: The product name.
+          type: string
+        is_value_based:
+          description: Indicates whether the voucher is value-based (true) or product-based
+            (false).
+          type: boolean
+          x-stoplight:
+            id: 5hd1rh9dnzw63
+        is_status_available:
+          description: Indicates whether the status of the voucher can be retrieved
+            (true) or not (false).
+          type: boolean
+          x-stoplight:
+            id: pkbhxjlf52u6u
+        is_multiple_use:
+          description: Indicates whether the vouchers can be redeemed in multiple
+            transactions or will be fully redeemed in a single transaction.
+          type: boolean
+          x-stoplight:
+            id: 6znq38vlrfpd9
+        url:
+          description: Full URL providing direct access to the voucher.
+          format: uri
+          type: string
+        short_url:
+          description: "Shortened URL to access the voucher, used in combination with\
+            \ a PIN. "
+          format: uri
+          type: string
+        short_url_pin:
+          description: PIN code required to access the voucher via the short URL.
+          example: 1234
+          type: integer
+      title: Voucher
+      x-stoplight:
+        id: qop5wp0sn4f9l
+    retrieve_products_200_response:
+      example:
+        request_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        products:
+        - image: https://openapi-generator.tech
+          amount: 0
+          quantity: 6
+          description: description
+          valid_from: 2000-01-23T04:56:07.000+00:00
+          product_code: product_code
+          expiry_scheme: expiry_scheme
+          is_open_value: true
+          is_multiple_use: true
+          is_status_available: true
+          terms_and_conditions: terms_and_conditions
+          valid_until: 2000-01-23T04:56:07.000+00:00
+          name: name
+          currency: SGD
+          is_value_based: true
+        - image: https://openapi-generator.tech
+          amount: 0
+          quantity: 6
+          description: description
+          valid_from: 2000-01-23T04:56:07.000+00:00
+          product_code: product_code
+          expiry_scheme: expiry_scheme
+          is_open_value: true
+          is_multiple_use: true
+          is_status_available: true
+          terms_and_conditions: terms_and_conditions
+          valid_until: 2000-01-23T04:56:07.000+00:00
+          name: name
+          currency: SGD
+          is_value_based: true
+      properties:
+        request_id:
+          description: "The request ID in UUID v4 format, assigned by the API to the\
+            \ request."
+          format: uuid
+          type: string
+        products:
+          description: An array of product objects representing each product in the
+            catalogue.
+          items:
+            $ref: '#/components/schemas/Product'
+          type: array
+    retrieve_product_200_response:
+      example:
+        product:
+          image: https://openapi-generator.tech
+          amount: 0
+          quantity: 6
+          description: description
+          valid_from: 2000-01-23T04:56:07.000+00:00
+          product_code: product_code
+          expiry_scheme: expiry_scheme
+          is_open_value: true
+          is_multiple_use: true
+          is_status_available: true
+          terms_and_conditions: terms_and_conditions
+          valid_until: 2000-01-23T04:56:07.000+00:00
+          name: name
+          currency: SGD
+          is_value_based: true
+        request_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        request_id:
+          description: "The request ID in UUID v4 format, assigned by the API to the\
+            \ request."
+          format: uuid
+          type: string
+        product:
+          $ref: '#/components/schemas/Product'
+    issue_vouchers_request:
+      properties:
+        quantity:
+          description: Number of vouchers to be issued.
+          example: 1
+          maximum: 20
+          minimum: 1
+          multipleOf: 1
+          type: integer
+        face_value:
+          description: "The requested denomination of the vouchers, expressed in cents.\
+            \ If `is_open_value` is true only."
+          example: 1050
+          maximum: 100000
+          minimum: 100
+          multipleOf: 1
+          type: integer
+      required:
+      - quantity
+    issue_vouchers_200_response:
+      example:
+        vouchers:
+        - remaining_amount: 1000
+          voucher_code: voucher_code
+          product_code: product_code
+          product_name: product_name
+          is_multiple_use: true
+          url: https://openapi-generator.tech
+          is_status_available: true
+          short_url: https://openapi-generator.tech
+          short_url_pin: 1234
+          name: name
+          voucher_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiration: 2000-01-23T04:56:07.000+00:00
+          currency: SGD
+          is_value_based: true
+          status: active
+        - remaining_amount: 1000
+          voucher_code: voucher_code
+          product_code: product_code
+          product_name: product_name
+          is_multiple_use: true
+          url: https://openapi-generator.tech
+          is_status_available: true
+          short_url: https://openapi-generator.tech
+          short_url_pin: 1234
+          name: name
+          voucher_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiration: 2000-01-23T04:56:07.000+00:00
+          currency: SGD
+          is_value_based: true
+          status: active
+        request_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        request_id:
+          description: "The request ID in UUID v4 format, assigned by the API to the\
+            \ request."
+          format: uuid
+          type: string
+        vouchers:
+          items:
+            $ref: '#/components/schemas/Voucher'
+          type: array
+    retrieve_voucher_200_response:
+      example:
+        voucher:
+          remaining_amount: 1000
+          voucher_code: voucher_code
+          product_code: product_code
+          product_name: product_name
+          is_multiple_use: true
+          url: https://openapi-generator.tech
+          is_status_available: true
+          short_url: https://openapi-generator.tech
+          short_url_pin: 1234
+          name: name
+          voucher_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiration: 2000-01-23T04:56:07.000+00:00
+          currency: SGD
+          is_value_based: true
+          status: active
+        request_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        request_id:
+          description: "The request ID in UUID v4 format, assigned by the API to the\
+            \ request."
+          format: uuid
+          type: string
+        voucher:
+          $ref: '#/components/schemas/Voucher'
+    retrieve_vouchers_200_response:
+      example:
+        vouchers:
+        - remaining_amount: 1000
+          voucher_code: voucher_code
+          product_code: product_code
+          product_name: product_name
+          is_multiple_use: true
+          url: https://openapi-generator.tech
+          is_status_available: true
+          short_url: https://openapi-generator.tech
+          short_url_pin: 1234
+          name: name
+          voucher_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiration: 2000-01-23T04:56:07.000+00:00
+          currency: SGD
+          is_value_based: true
+          status: active
+        - remaining_amount: 1000
+          voucher_code: voucher_code
+          product_code: product_code
+          product_name: product_name
+          is_multiple_use: true
+          url: https://openapi-generator.tech
+          is_status_available: true
+          short_url: https://openapi-generator.tech
+          short_url_pin: 1234
+          name: name
+          voucher_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiration: 2000-01-23T04:56:07.000+00:00
+          currency: SGD
+          is_value_based: true
+          status: active
+        request_id: request_id
+      properties:
+        request_id:
+          description: "The request ID in UUID v4 format, assigned by the API to the\
+            \ request."
+          type: string
+        vouchers:
+          items:
+            $ref: '#/components/schemas/Voucher'
+          type: array
+  securitySchemes:
+    Authorization:
+      description: Production authorization details.
+      flows:
+        clientCredentials:
+          refreshUrl: ""
+          scopes:
+            read_vouchers: Retrieve voucher information
+            read_catalogue: Retrieve catalogue of products and product information
+            issue_vouchers: Issue new vouchers
+          tokenUrl: https://uniqgift.auth.ap-southeast-1.amazoncognito.com/oauth2/token
+      type: oauth2
+x-stoplight:
+  id: vbg1rx9w9tz4y
+
