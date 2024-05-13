@@ -10,55 +10,59 @@
  * Do not edit the class manually.
  */
 
-package org.openapitools.client;
 
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+package org.openapitools.client.model;
+
+import java.util.Objects;
+import java.util.Arrays;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Class that add parsing/formatting support for Java 8+ {@code OffsetDateTime} class.
- * It's generated for java clients when {@code AbstractJavaCodegen#dateLibrary} specified as {@code java8}.
+ * ValidationErrorLocInner
  */
+@JsonPropertyOrder({
+})
+@JsonTypeName("ValidationError_loc_inner")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:22:50.833453606Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class JavaTimeFormatter {
-
-    private DateTimeFormatter offsetDateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-
-    /**
-     * Get the date format used to parse/format {@code OffsetDateTime} parameters.
-     * @return DateTimeFormatter
-     */
-    public DateTimeFormatter getOffsetDateTimeFormatter() {
-        return offsetDateTimeFormatter;
+public class ValidationErrorLocInner {
+  public ValidationErrorLocInner() {
+  }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    return true;
+  }
 
-    /**
-     * Set the date format used to parse/format {@code OffsetDateTime} parameters.
-     * @param offsetDateTimeFormatter {@code DateTimeFormatter}
-     */
-    public void setOffsetDateTimeFormatter(DateTimeFormatter offsetDateTimeFormatter) {
-        this.offsetDateTimeFormatter = offsetDateTimeFormatter;
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash();
+  }
 
-    /**
-     * Parse the given string into {@code OffsetDateTime} object.
-     * @param str String
-     * @return {@code OffsetDateTime}
-     */
-    public OffsetDateTime parseOffsetDateTime(String str) {
-        try {
-            return OffsetDateTime.parse(str, offsetDateTimeFormatter);
-        } catch (DateTimeParseException e) {
-            throw new RuntimeException(e);
-        }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class ValidationErrorLocInner {\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(Object o) {
+    if (o == null) {
+      return "null";
     }
-    /**
-     * Format the given {@code OffsetDateTime} object into string.
-     * @param offsetDateTime {@code OffsetDateTime}
-     * @return {@code OffsetDateTime} in string format
-     */
-    public String formatOffsetDateTime(OffsetDateTime offsetDateTime) {
-        return offsetDateTimeFormatter.format(offsetDateTime);
-    }
+    return o.toString().replace("\n", "\n    ");
+  }
+
 }
+

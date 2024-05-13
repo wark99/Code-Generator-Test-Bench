@@ -1,15 +1,14 @@
 
 
-# Iteminput
+# SendResultExampleResponse
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**productId** | **Integer** |  |  |
-|**name** | **String** |  |  |
-|**price** | **Integer** |  |  |
+|**status** | **String** |  |  |
+|**result** | **Object** |  |  |
 
 
 

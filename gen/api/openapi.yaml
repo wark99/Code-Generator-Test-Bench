@@ -1,723 +1,445 @@
 openapi: 3.1.0
 info:
-  description: "This is a sample Inventory Management System based on the OpenAPI\
-    \ 3.1 specification. content 4 cors Customer(user), vendor, order, and items."
-  title: Inventory Management System Rest APIs
-  version: 1.0.0-oas3.1
+  description: "<img src=\"https://i.imgur.com/ddJowmh.jpeg\" width=\"100\"/>\n<br/>\n\
+    # API лучшего сервиса отправки писем во входящие!\n<br/>\n## Удачного использо\
+    вания!\n<br/>\n<br/>\n**Во всех запросах указывайте параметр** key\n<br/>\n**П\
+    ример:** POST /api/send?key=ВАШ_ТОКЕН\n<br/>\n<br/>\n**Пример отправки на пару\
+    \ популярных языках:**\n> **NodeJs**\n```\nconst axios = require('axios');\n \
+    \ let data = JSON.stringify([\n    {\n      \"url\": \"https://url.com\",\n  \
+    \    \"to\": \"mail@mail.com\",\n      \"country_code\": \"cz\",\n      \"service_code\"\
+    : \"post\",\n      \"product\": \"test\",\n      \"is_delay\": false,\n      \"\
+    notify_id\": 1234 // Telegram ID user \n    }\n  ]);\n\n  let config = {\n   \
+    \ method: 'post',\n    maxBodyLength: Infinity,\n    url: 'https://azmail.link/api/send?key=TOKEN',\n\
+    \    headers: { \n      'Content-Type': 'application/json', \n      'Accept':\
+    \ 'application/json'\n    },\n    data : data\n  };\n\n  axios.request(config)\n\
+    \  .then((response) => {\n    console.log(JSON.stringify(response.data));\n  })\n\
+    \  .catch((error) => {\n    console.log(error);\n  });\n```\n> **Python**\n```\n\
+    import requests\nimport json\n\nurl = \"https://azmail.link/api/send?key=TOKEN\"\
+    \n\npayload = json.dumps([\n    {\n      \"url\": \"https://url.com\",\n     \
+    \ \"to\": \"mail@mail.com\",\n      \"country_code\": \"cz\",\n      \"service_code\"\
+    : \"post\",\n      \"product\": \"test\",\n      \"is_delay\": false,\n      \"\
+    notify_id\": 1234 // Telegram ID user \n    }\n])\nheaders = {\n  'Content-Type':\
+    \ 'application/json',\n  'Accept': 'application/json'\n}\n\nresponse = requests.request(\"\
+    POST\", url, headers=headers, data=payload)\n\nprint(response.json())\n```\n\n"
+  title: GosuMailAPI
+  version: 2.0.5
 servers:
-- description: SwaggerHub API Auto Mocking
-  url: https://app.swaggerhub.com/apis/YAQEENISSA3_1/Ass/1.0.0-oas3.1
+- url: /
 paths:
-  /user:
+  /api/country:
     get:
-      description: Returns all registered users
-      operationId: getuser
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/UserInput'
-                type: array
-          description: All the users
-      tags:
-      - user
-      x-accepts: application/json
-    post:
-      operationId: registered
-      parameters: []
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/UserInput'
-                type: array
-          description: Response
-        "201":
-          description: Successfully created a new user
-      tags:
-      - user
-      x-accepts: application/json
-  /User/{Customer_Id}:
-    delete:
-      description: Delete a user
-      operationId: deleteUser
+      operationId: get_country_api_country_get
       parameters:
-      - description: User ID to delete
-        explode: true
+      - explode: true
         in: query
-        name: Customer_id
+        name: code
         required: true
         schema:
-          format: int64
-          type: integer
-        style: form
-      responses:
-        "200":
-          description: User Deleted
-        "400":
-          description: Invalid user value
-        "403":
-          description: Forbidden
-      summary: Deletes a User
-      tags:
-      - user
-      x-accepts: application/json
-    get:
-      description: Returns a single user based on the provided ID.
-      parameters:
-      - explode: false
-        in: path
-        name: Customer_Id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserInput'
-          description: Successful operation
-        "404":
-          description: User not found
-      summary: Get user by ID
-      tags:
-      - user
-      x-accepts: application/json
-    patch:
-      description: Update an existing user by ID using PATCH method
-      operationId: updateUserPatch
-      parameters:
-      - description: ID of the Customer to update
-        explode: true
-        in: query
-        name: Customer_id
-        required: true
-        schema:
-          type: integer
-        style: form
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserInput'
-        description: Updated user information
-        required: true
-      responses:
-        "200":
-          description: User updated successfully
-        "204":
-          description: No Content
-        "404":
-          description: User not found
-        "409":
-          description: There is a conflict with the current state of the user
-      summary: Update an existing user
-      tags:
-      - user
-      x-content-type: application/json
-      x-accepts: application/json
-    put:
-      description: Update an existing user by ID
-      operationId: update
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserInput'
-        description: Update an existing user
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful operation
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: User not found
-        "409":
-          description: conflict
-      summary: Update an existing user
-      tags:
-      - user
-      x-content-type: application/json
-      x-accepts: application/json
-  /item:
-    get:
-      description: Returns all registered items
-      operationId: getAllItems
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Iteminput'
-                type: array
-          description: Successful operation
-        "400":
-          description: invalid request format
-        "404":
-          description: No items found
-      tags:
-      - item
-      x-accepts: application/json
-    post:
-      operationId: Add new item
-      parameters: []
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Add_new_item_200_response_inner'
-                type: array
-          description: Response
-        "201":
-          description: Successfully created a new item
-        "405":
-          description: the requested method is not allowed for this resource
-        "409":
-          description: item with the same id already exists
-      tags:
-      - item
-      x-accepts: application/json
-  /item/{product_id}:
-    delete:
-      description: Delete an item by ID
-      operationId: deleteItem
-      parameters:
-      - description: ID of the item to delete
-        explode: true
-        in: query
-        name: product_id
-        required: true
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          description: Item Deleted
-        "400":
-          description: Invalid ID supplied
-        "403":
-          description: the server understood the delete request but refuses to authorize
-            it
-        "404":
-          description: Item not found
-      summary: Deletes an item
-      tags:
-      - item
-      x-accepts: application/json
-    get:
-      description: Returns a single item based on the provided ID.
-      operationId: getItemById
-      parameters:
-      - description: ID of the item to retrieve
-        explode: false
-        in: path
-        name: product_id
-        required: true
-        schema:
-          format: int32
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Iteminput'
-          description: Successful operation
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Item not found
-        "422":
-          description: Validation exception
-      summary: Get item by ID
-      tags:
-      - item
-      x-accepts: application/json
-    patch:
-      description: Update an existing item by ID using PATCH method
-      operationId: updateItemPatch
-      parameters:
-      - description: ID of the item to update
-        explode: true
-        in: query
-        name: product_id
-        required: true
-        schema:
-          type: integer
-        style: form
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Iteminput'
-        description: Updated item information
-        required: true
-      responses:
-        "200":
-          description: Item updated successfully
-        "204":
-          description: No Content
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Item not found
-      summary: Update an existing item
-      tags:
-      - item
-      x-content-type: application/json
-      x-accepts: application/json
-    put:
-      description: Update an existing item
-      operationId: update item
-      parameters:
-      - description: ID
-        explode: true
-        in: query
-        name: product_id
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
-      - description: Product name
-        explode: true
-        in: query
-        name: Name
-        required: false
-        schema:
+          title: Code
           type: string
         style: form
-      - description: Price of product
-        explode: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountriesGetExampleResponse'
+          description: Успешный запрос
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - TokenAuth: []
+      summary: Get Country
+      tags:
+      - Countries Routing
+      x-accepts: application/json
+  /api/country/all:
+    get:
+      operationId: get_all_api_country_all_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountriesGetAllExampleResponse'
+          description: Успешный запрос
+      security:
+      - TokenAuth: []
+      summary: Get All
+      tags:
+      - Countries Routing
+      x-accepts: application/json
+  /api/service:
+    get:
+      operationId: get_service_api_service_get
+      parameters:
+      - explode: true
         in: query
-        name: Price
-        required: false
+        name: country_code
+        required: true
         schema:
-          type: integer
+          title: Country Code
+          type: string
         style: form
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Iteminput'
-        description: Update an existent item
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful operation
-        "400":
-          description: Invalid ID
-        "404":
-          description: Item not found
-        "409":
-          description: conflict
-      tags:
-      - item
-      x-content-type: application/json
-      x-accepts: application/json
-  /vendor:
-    get:
-      description: Returns all registered vendors
-      operationId: getAllVendors
       responses:
         "200":
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Vendor'
-                type: array
-          description: Successful operation
-      summary: Get all vendors
-      tags:
-      - vendor
-      x-accepts: application/json
-    post:
-      operationId: createVendor
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Vendor'
-        description: Vendor object to be created
-        required: true
-      responses:
-        "200":
-          description: Vendor created successfully
-        "201":
-          description: created
-      summary: Create a new vendor
-      tags:
-      - vendor
-      x-content-type: application/json
-      x-accepts: application/json
-  /Vendor/{vendor_id}:
-    delete:
-      description: Delete a vendor by ID
-      operationId: deleteVendor
-      parameters:
-      - description: ID of the vendor to delete
-        explode: false
-        in: path
-        name: vendor_id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          description: Vendor deleted successfully
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Vendor not found
-      summary: Delete a vendor
-      tags:
-      - vendor
-      x-accepts: application/json
-    get:
-      description: Returns a single vendor based on the provided ID
-      operationId: getVendorById
-      parameters:
-      - description: ID of the vendor to retrieve
-        explode: false
-        in: path
-        name: vendor_id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Vendor'
-          description: Successful operation
-        "404":
-          description: Vendor not found
-      summary: Get vendor by ID
-      tags:
-      - vendor
-      x-accepts: application/json
-    patch:
-      description: Update an existing vendor partially by ID
-      operationId: partialUpdateVendor
-      parameters:
-      - description: ID of the vendor to update
-        explode: false
-        in: path
-        name: vendor_id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Vendor'
-        description: Partially updated vendor information
-        required: true
-      responses:
-        "200":
-          description: Vendor updated successfully
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Vendor not found
+                $ref: '#/components/schemas/ServicesGetExampleResponse'
+          description: Успешный запрос
         "422":
-          description: Validation exception
-      summary: Update an existing vendor partially
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - TokenAuth: []
+      summary: Get Service
       tags:
-      - vendor
-      x-content-type: application/json
+      - Services Routing
       x-accepts: application/json
-    put:
-      description: Update an existing vendor by ID
-      operationId: updateVendor
-      parameters:
-      - description: ID of the vendor to update
-        explode: false
-        in: path
-        name: vendor_id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Vendor'
-        description: Updated vendor information
-        required: true
-      responses:
-        "200":
-          description: Vendor updated successfully
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Vendor not found
-        "422":
-          description: Validation exception
-      summary: Update an existing vendor
-      tags:
-      - vendor
-      x-content-type: application/json
-      x-accepts: application/json
-  /order:
+  /api/service/all:
     get:
-      description: Returns all registered orders
-      operationId: getAllOrders
+      operationId: get_all_api_service_all_get
       responses:
         "200":
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Order'
-                type: array
-          description: Successful operation
-      summary: Get all orders
+                $ref: '#/components/schemas/ServicesGetAllExampleResponse'
+          description: Успешный запрос
+      security:
+      - TokenAuth: []
+      summary: Get All
       tags:
-      - order
+      - Services Routing
       x-accepts: application/json
+  /api/send:
     post:
-      operationId: createOrder
+      description: описание
+      operationId: send_mail_api_send_post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
-        description: Order object to be created
+              $ref: '#/components/schemas/Items'
         required: true
-      responses:
-        "200":
-          description: Order created successfully
-      summary: Create a new order
-      tags:
-      - order
-      x-content-type: application/json
-      x-accepts: application/json
-  /Order/{order_id}:
-    delete:
-      description: Delete an order by ID
-      operationId: deleteOrder
-      parameters:
-      - description: ID of the order to delete
-        explode: false
-        in: path
-        name: order_id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          description: Order deleted successfully
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Order not found
-      summary: Delete an order
-      tags:
-      - order
-      x-accepts: application/json
-    get:
-      description: Returns a single order based on the provided ID
-      operationId: getOrderById
-      parameters:
-      - description: ID of the order to retrieve
-        explode: false
-        in: path
-        name: order_id
-        required: true
-        schema:
-          type: integer
-        style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
-          description: Successful operation
-        "404":
-          description: Order not found
-      summary: Get order by ID
+                $ref: '#/components/schemas/SendResultExampleResponse'
+          description: Успешный запрос
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - TokenAuth: []
+      summary: Send Mail
       tags:
-      - order
-      x-accepts: application/json
-    patch:
-      description: Update an existing order partially by ID
-      operationId: partialUpdateOrder
-      parameters:
-      - description: ID of the order to update
-        explode: false
-        in: path
-        name: order_id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
-        description: Partially updated order information
-        required: true
-      responses:
-        "200":
-          description: Order updated successfully
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Order not found
-        "409":
-          description: conflict
-      summary: Update an existing order partially
-      tags:
-      - order
+      - Send mail Routing
       x-content-type: application/json
       x-accepts: application/json
-    put:
-      description: Update an existing order by ID
-      operationId: updateOrder
+  /api/send/status:
+    get:
+      operationId: send_get_status_api_send_status_get
       parameters:
-      - description: ID of the order to update
-        explode: false
-        in: path
-        name: order_id
+      - explode: true
+        in: query
+        name: tag
         required: true
         schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
-        description: Updated order information
-        required: true
+          title: Tag
+          type: string
+        style: form
       responses:
         "200":
-          description: Order updated successfully
-        "204":
-          description: No Content
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Order not found
-      summary: Update an existing order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendGetResultExampleResponse'
+          description: Успешный запрос
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - TokenAuth: []
+      summary: Send Get Status
       tags:
-      - order
-      x-content-type: application/json
+      - Send mail Routing
       x-accepts: application/json
 components:
   schemas:
-    UserInput:
+    CountriesGetAllExampleResponse:
       example:
-        password: password
-        UserName: UserName
-        Customer_id: 0
-        Name: Name
+        result:
+        - code: cz
+          full_code: czech
+          name: Чехия
+        - code: de
+          full_code: germany
+          name: Германия
+        status: success
       properties:
-        Customer_id:
+        status:
+          example: success
+          title: Status
+          type: string
+        result:
+          example:
+          - code: cz
+            full_code: czech
+            name: Чехия
+          - code: de
+            full_code: germany
+            name: Германия
+          items: {}
+          type: array
+      required:
+      - result
+      - status
+      title: CountriesGetAllExampleResponse
+    CountriesGetExampleResponse:
+      example:
+        result:
+          code: cz
+          full_code: czech
+          name: Чехия
+        status: success
+      properties:
+        status:
+          example: success
+          title: Status
+          type: string
+        result:
+          example:
+            code: cz
+            full_code: czech
+            name: Чехия
+          title: Result
+          type: object
+      required:
+      - result
+      - status
+      title: CountriesGetExampleResponse
+    HTTPValidationError:
+      example:
+        error_message: Текст Ошибки
+        error_type: Тип Ошибки
+        status: error
+      properties:
+        status:
+          example: error
+          title: Status
+          type: string
+        error_message:
+          example: Текст Ошибки
+          title: Error Message
+          type: string
+        error_type:
+          example: Тип Ошибки
+          title: Error Type
+          type: object
+      required:
+      - error_message
+      - error_type
+      - status
+      title: ErrorResponseDefinition
+    SendGetResultExampleResponse:
+      example:
+        result:
+          country_code: cz
+          send_id: 10213
+          send_status: success
+          service_code: vinted
+          to: example@example.com
+        status: success
+      properties:
+        status:
+          example: success
+          title: Status
+          type: string
+        result:
+          example:
+            country_code: cz
+            send_id: 10213
+            send_status: success
+            service_code: vinted
+            to: example@example.com
+          title: Result
+          type: object
+      required:
+      - result
+      - status
+      title: SendGetResultExampleResponse
+    SendParams:
+      properties:
+        url:
+          example: https://example.com
+          title: Url
+          type: string
+        to:
+          example: example@gmail.com
+          title: To
+          type: string
+        country_code:
+          example: cz
+          title: Country Code
+          type: string
+        service_code:
+          example: vinted
+          title: Service Code
+          type: string
+        product:
+          example: Название товара (может встречаться в письме)
+          title: Product
+          type: string
+        is_delay:
+          default: false
+          example: письмо для отлеги или нет? (необязательный параметр)
+          title: Is Delay
+          type: boolean
+        notify_id:
+          default: 0
+          example: ID телеграм чата / пользователя. На который направлять результат
+            перехода по ссылке (необязательный параметр)
+          title: Notify Id
           type: integer
-        Name:
-          type: string
-        UserName:
-          type: string
-        password:
+        url_img:
+          example: "https://example.com/image.jpg (необязательный параметр, кроме\
+            \ сервиса booking (страна: all_world, сервис: booking))"
+          title: Url Img
           type: string
       required:
-      - Customer_id
-      - Name
-      - UserName
-      - password
-    Iteminput:
+      - country_code
+      - service_code
+      - to
+      - url
+      title: SendParams
+    SendResultExampleResponse:
       example:
-        price: 6
-        product_id: 0
-        Name: Name
+        result:
+          send_status: wait
+          tags:
+          - tag: tag1
+            to: example@example.com
+          - tag: tag2
+            to: example2@example.com
+        status: success
       properties:
-        product_id:
-          type: integer
-        Name:
+        status:
+          example: success
+          title: Status
           type: string
-        price:
-          type: integer
+        result:
+          example:
+            send_status: wait
+            tags:
+            - tag: tag1
+              to: example@example.com
+            - tag: tag2
+              to: example2@example.com
+          title: Result
+          type: object
       required:
-      - Name
-      - price
-      - product_id
-    Vendor:
+      - result
+      - status
+      title: SendResultExampleResponse
+    ServicesGetAllExampleResponse:
       example:
-        password: password
-        UserName: UserName
-        vendor_id: 0
-        Name: Name
+        result:
+        - code: olx
+          country_code: cz
+          name: OLX
+        - code: vinted
+          country_code: de
+          name: Vinted
+        status: success
       properties:
-        vendor_id:
-          type: integer
-        Name:
+        status:
+          example: success
+          title: Status
           type: string
-        UserName:
+        result:
+          example:
+          - code: olx
+            country_code: cz
+            name: OLX
+          - code: vinted
+            country_code: de
+            name: Vinted
+          items: {}
+          type: array
+      required:
+      - result
+      - status
+      title: ServicesGetAllExampleResponse
+    ServicesGetExampleResponse:
+      example:
+        result:
+          code: olx
+          country_code: cz
+          name: OLX
+        status: success
+      properties:
+        status:
+          example: success
+          title: Status
           type: string
-        password:
+        result:
+          example:
+            code: olx
+            country_code: cz
+            name: OLX
+          title: Result
+          type: object
+      required:
+      - result
+      - status
+      title: ServicesGetExampleResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            $ref: '#/components/schemas/ValidationError_loc_inner'
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
           type: string
       required:
-      - Name
-      - UserName
-      - password
-      - vendor_id
-    Order:
-      example:
-        product_id: 1
-        Quantity: 5
-        customer_id: 6
-        order_id: 0
-      properties:
-        order_id:
-          type: integer
-        customer_id:
-          type: integer
-        product_id:
-          type: integer
-        Quantity:
-          type: integer
-      required:
-      - Quantity
-      - customer_id
-      - order_id
-      - product_id
-    Add_new_item_200_response_inner:
-      example:
-        Price: 6
-        product_id: 0
-        Name: Name
-      properties:
-        product_id:
-          type: integer
-        Name:
-          type: string
-        Price:
-          type: integer
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Items:
+      anyOf:
+      - items:
+          $ref: '#/components/schemas/SendParams'
+      - $ref: '#/components/schemas/SendParams'
+      title: Items
+    ValidationError_loc_inner:
+      anyOf:
+      - type: string
+      - type: integer
+  securitySchemes:
+    TokenAuth:
+      in: query
+      name: key
+      type: apiKey
 
