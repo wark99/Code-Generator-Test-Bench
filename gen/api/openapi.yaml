@@ -1,0 +1,663 @@
+openapi: 3.1.0
+info:
+  description: ucic API
+  title: ucic API
+  version: 1.0.0
+servers:
+- url: http://ucic.extremist.gay:8080
+paths:
+  /accounts:
+    get:
+      description: This endpoint retrieves all accounts. It requires a "secret" header
+        with the value "meow". <br> It responds with a list of all accounts in the
+        system. (For debugging purposes)
+      parameters:
+      - explode: false
+        in: header
+        name: secret
+        required: true
+        schema:
+          example: meow
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountResponse'
+                type: array
+          description: OK
+      x-accepts: application/json
+  /accounts/{id}/creator:
+    get:
+      description: This endpoint retrieves a specific account's display details by
+        ID. <br> It responds with the account's display details.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDisplayResponse'
+          description: OK
+      x-accepts: application/json
+  /accounts/{id}/follow:
+    post:
+      description: This endpoint allows a specific account to follow another account
+        by ID. It requires "token" and "accountId" headers for authentication. <br>
+        It responds with a success message if the follow action is successful.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            text/plain:
+              examples:
+                Example#1:
+                  value: ""
+              schema:
+                type: string
+          description: OK
+      x-accepts: "application/json,text/plain"
+  /accounts/{id}/following:
+    get:
+      description: This endpoint retrieves a specific account's followed accounts
+        by ID. It requires a "token" header for authentication. <br> It responds with
+        the account's followed accounts.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountDisplayResponse'
+                type: array
+          description: OK
+      x-accepts: '*/*'
+  /accounts/login:
+    post:
+      description: This endpoint allows an account to log in. It accepts a POST request
+        with a body containing the account's email and password. <br> It responds
+        with a token and account ID if the login is successful.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginAccount'
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect username or password
+                    status: "null"
+                    data: "null"
+              schema: {}
+          description: OK
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /accounts/{id}/playlists:
+    get:
+      description: This endpoint retrieves a specific account's playlists by ID. <br>
+        It responds with the account's playlists.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/PlaylistDisplayResponse'
+                type: array
+          description: OK
+      x-accepts: '*/*'
+  /accounts/{id}/recommended-videos:
+    get:
+      description: This endpoint retrieves recommended videos for a specific account
+        by ID. It requires a "token" header for authentication and a "by" query parameter
+        to specify the recommendation method. <br> It responds with a list of recommended
+        videos.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: by
+        required: true
+        schema:
+          enum:
+          - tags
+          - following
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                items:
+                  $ref: '#/components/schemas/VideoDisplayResponse'
+                type: array
+          description: OK
+      x-accepts: '*/*'
+  /accounts/register:
+    post:
+      description: "This endpoint allows a new account to register. It accepts a POST\
+        \ request with a body containing the account's username, email, and password.\
+        \ <br> It responds with the registered account's token and ID if the registration\
+        \ is successful."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationAccount'
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Username or email already taken
+                    status: "null"
+                    data: "null"
+              schema:
+                $ref: '#/components/schemas/_accounts_register_post_200_response'
+          description: OK
+      x-content-type: application/json
+      x-accepts: application/json
+  /accounts/search:
+    get:
+      description: This endpoint searches for accounts. It accepts a "q" query parameter
+        for the search query and an optional "fuzzy" query parameter to enable fuzzy
+        search. <br> It responds with a list of matching accounts.
+      parameters:
+      - explode: true
+        in: query
+        name: q
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: fuzzy
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountDisplayResponse'
+                type: array
+          description: OK
+      x-accepts: application/json
+  /accounts/{id}/tags:
+    get:
+      description: This endpoint retrieves a specific account's followed tags by ID.
+        It requires a "token" header for authentication. <br> It responds with the
+        account's followed tags.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                items:
+                  $ref: '#/components/schemas/TagResponse'
+                type: array
+          description: OK
+      x-accepts: '*/*'
+  /accounts/{id}/unfollow:
+    post:
+      description: This endpoint allows a specific account to unfollow another account
+        by ID. It requires "token" and "accountId" headers for authentication. <br>
+        It responds with a success message if the unfollow action is successful.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            text/plain:
+              examples:
+                Example#1:
+                  value: ""
+              schema:
+                type: string
+          description: OK
+      x-accepts: "*/*,text/plain"
+  /accounts/{id}/videos:
+    get:
+      description: This endpoint retrieves a specific account's videos by ID.<br>
+        It responds with the account's videos.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/VideoDisplayResponse'
+                type: array
+          description: OK
+      x-accepts: application/json
+  /accounts/{id}:
+    delete:
+      description: This endpoint deletes a specific account by ID. It requires a "token"
+        header for authentication. <br> It responds with a NoContent response if the
+        deletion is successful.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: OK
+        "204":
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: No Content
+      x-accepts: '*/*'
+    get:
+      description: This endpoint retrieves a specific account by ID. It requires a
+        "token" header for authentication. <br> It responds with the account's details
+        if the retrieval is successful.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                $ref: '#/components/schemas/_accounts__id__get_200_response'
+          description: OK
+      x-accepts: application/json
+    post:
+      description: This endpoint updates a specific account's details by ID. It requires
+        a "token" header for authentication. <br> It responds with the updated account's
+        details if the update is successful.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema: {}
+          description: OK
+      x-accepts: '*/*'
+components:
+  schemas:
+    Object:
+      properties: {}
+      type: object
+    ErrorResponse:
+      example:
+        data: "{}"
+        error: error
+        message: message
+        status: 0
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        status:
+          format: int32
+          type: integer
+        data:
+          properties: {}
+          type: object
+      required:
+      - error
+      - message
+    AccountResponse:
+      example:
+        accountID: 0
+        password: password
+        email: email
+        username: username
+        token: token
+      properties:
+        accountID:
+          format: int32
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        token:
+          type: string
+      required:
+      - email
+      - password
+      - token
+      - username
+    AccountDisplayResponse:
+      example:
+        id: 0
+        username: username
+      properties:
+        id:
+          format: int32
+          type: integer
+        username:
+          type: string
+      required:
+      - username
+    RegisteredAccount:
+      properties:
+        token:
+          type: string
+        accountId:
+          format: int32
+          type: integer
+      required:
+      - token
+    PlaylistDisplayResponse:
+      example:
+        name: name
+        id: 0
+      properties:
+        id:
+          format: int32
+          type: integer
+        name:
+          type: string
+      required:
+      - name
+    VideoDisplayResponse:
+      example:
+        videoPath: videoPath
+        creator:
+          id: 0
+          username: username
+        uploadDate: uploadDate
+        id: 0
+        viewCount: 6
+        title: title
+      properties:
+        id:
+          format: int32
+          type: integer
+        title:
+          type: string
+        videoPath:
+          type: string
+        creator:
+          $ref: '#/components/schemas/AccountDisplayResponse'
+        viewCount:
+          format: int32
+          type: integer
+        uploadDate:
+          type: string
+      required:
+      - creator
+      - title
+      - uploadDate
+      - videoPath
+    TagResponse:
+      example:
+        id: 0
+        tag: tag
+        category: category
+      properties:
+        id:
+          format: int32
+          type: integer
+        tag:
+          type: string
+        category:
+          type: string
+      required:
+      - tag
+    LoginAccount:
+      example:
+        password: password
+        email: email
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+    RegistrationAccount:
+      example:
+        password: password
+        email: email
+        username: username
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+      - username
+    _accounts_register_post_200_response:
+      oneOf:
+      - $ref: '#/components/schemas/ErrorResponse'
+      - $ref: '#/components/schemas/RegisteredAccount'
+    _accounts__id__get_200_response:
+      oneOf:
+      - $ref: '#/components/schemas/ErrorResponse'
+      - $ref: '#/components/schemas/AccountResponse'
+
