@@ -1,97 +1,123 @@
 openapi: 3.1.0
 info:
-  description: <strong>Documentation de l'api du portail auditeur de Qualibat.</strong>
-    <br> <br> L'identification est effectuée via un Bearer token fourni par Qualibat.<br>
-    Vous pouvez obtenir plus d'information en contactant le support sur l'adresse
-    email <support.portail-auditeur@qualibat.com> <br><br> Des webhooks sont disponibles
-    pour être notifiés des actions effectuées à partir du portail auditeur.
-  title: Portail auditeur
-  version: 1.0.12
+  contact:
+    email: developers@hudini.io
+  description: Explore reference documentation for Hudini Elevate - A collection of
+    APIs that application developers can utilize to extend hospitality functions on
+    their experiences
+  termsOfService: http://hudini.io/terms/
+  title: Hudini Elevate
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Hudini
+  url: http://hudini.io
 servers:
-- description: Environnement de Test
-  url: https://test.auditeurs.qualibat.eu/PAGC/v1
-- description: Environement de pré-production
-  url: https://preprod.auditeurs.qualibat.eu/PAGC/v1
-- description: Environement de production
-  url: https://auditeurs.qualibat.com/PAGC/v1
-security:
-- BearerAuth:
-  - BearerAuth
+- url: https://api.hudini.io/v1
+tags:
+- description: Operations on a room reservation.
+  name: reservation
 paths:
-  /ordreMission/accepter:
-    post:
-      description: <strong>Accepter un ordre de mission</strong><br> Cette action
-        peut être réalisée si l'état de l'ordre de mission est "vEtatOrdreMissionEnAttenteAcceptation"
-        voir schéma enumEtatOrdreMission
-      operationId: PostOMAcceptation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NumeroOM'
-        required: true
-      responses:
-        "204":
-          $ref: '#/components/responses/204'
-        "400":
-          $ref: '#/components/responses/400'
-        "401":
-          $ref: '#/components/responses/401'
-        "403":
-          $ref: '#/components/responses/403'
-        "404":
-          $ref: '#/components/responses/404'
-        "406":
-          $ref: '#/components/responses/406'
-        "500":
-          $ref: '#/components/responses/500'
-      tags:
-      - Ordre de mission
-      x-content-type: application/json
-      x-accepts: application/json
-  /ordreMission/refuser:
-    post:
-      description: <strong>Refuser un ordre de mission</strong><br> Cette action peut
-        être réalisée si l'état de l'ordre de mission est "vEtatOrdreMissionEnAttenteAcceptation"
-        voir schéma enumEtatOrdreMission
-      operationId: PostOMRefus
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NumeroOMMotif'
-        required: true
-      responses:
-        "204":
-          $ref: '#/components/responses/204'
-        "400":
-          $ref: '#/components/responses/400'
-        "401":
-          $ref: '#/components/responses/401'
-        "403":
-          $ref: '#/components/responses/403'
-        "404":
-          $ref: '#/components/responses/404'
-        "406":
-          $ref: '#/components/responses/406'
-        "500":
-          $ref: '#/components/responses/500'
-      tags:
-      - Ordre de mission
-      x-content-type: application/json
-      x-accepts: application/json
-  /ordreMission/{Numéro}:
+  /{hotelId}/reservations:
     get:
-      description: <strong>Information sur l'ordre de mission</strong><br> Cette action
-        permet de récupérer les informations sur l'ordre de mission <u> <li>Informations
-        générales de l'ordre de mission</li> <li>Informations sur le chantier à auditer</li>
-        <li>Informations sur l'entreprise auditées</li> </u>
-      operationId: GetOM
+      description: Returns a collection of reservations
+      operationId: getReservations
       parameters:
-      - description: Numéro de l'ordre de mission
+      - description: Hudini Hotel Identifier
         explode: false
         in: path
-        name: Numéro
+        name: hotelId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: Start of range for check in dates
+        explode: true
+        in: query
+        name: fromDate
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: End of range for check in dates
+        explode: true
+        in: query
+        name: toDate
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: First name of guest
+        explode: true
+        in: query
+        name: firstName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Last name of guest
+        explode: true
+        in: query
+        name: lastName
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/getReservations_200_response_inner'
+                type: array
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Downstream system unavailable
+      security:
+      - api_key: []
+      - hudini_auth:
+        - read:reservations
+      summary: Find Reservations
+      tags:
+      - reservation
+      x-accepts: application/json
+  /{hotelId}/reservations/{reservationId}:
+    get:
+      description: Returns details about a reservation
+      operationId: getReservationDetails
+      parameters:
+      - description: Hudini Hotel Identifier
+        explode: false
+        in: path
+        name: hotelId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: Reservation ID
+        explode: false
+        in: path
+        name: reservationId
         required: true
         schema:
           type: string
@@ -101,748 +127,921 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrdreMission'
-          description: Information sur l'ordre de mission demandé
+                $ref: '#/components/schemas/getReservationDetails_200_response'
+          description: Successful operation
         "400":
-          $ref: '#/components/responses/400'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
         "401":
-          $ref: '#/components/responses/401'
-        "403":
-          $ref: '#/components/responses/403'
-        "404":
-          $ref: '#/components/responses/404'
-        "406":
-          $ref: '#/components/responses/406'
-        "500":
-          $ref: '#/components/responses/500'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Downstream system unavailable
+      security:
+      - api_key: []
+      - hudini_auth:
+        - read:reservations
+      summary: Find Reservation Details
       tags:
-      - Ordre de mission
+      - reservation
       x-accepts: application/json
-  /ordreMission/annuler:
+  /{hotelId}/reservations/{reservationId}/guests:
+    get:
+      description: Returns details about all guests on reservation
+      operationId: getReservationGuests
+      parameters:
+      - description: Hudini Hotel Identifier
+        explode: false
+        in: path
+        name: hotelId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: Reservation ID
+        explode: false
+        in: path
+        name: reservationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Guest'
+                type: array
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Downstream system unavailable
+      security:
+      - api_key: []
+      - hudini_auth:
+        - read:reservations
+      summary: Find Guests on a reservation
+      tags:
+      - reservation
+      x-accepts: application/json
     post:
-      description: "<strong>Annuler un ordre de mission</strong><br> Cette action\
-        \ peut être réalisée à n'importe quel moment dans la mesure ou la confirmation\
-        \ de réaliastion de l'audit n'a pas été éffectuée. (Etat de l'ordre de mission\
-        \ différent de :[vEtatOrdreMissionAnnulé,vEtatOrdreMissionRefusé,vEtatOrdreMissionRé\
-        cusé,vEtatOrdreMissionRapportARediger,vEtatOrdreMissionRapportAVerifier,vEtatOrdreMissionRapportEnVerification,vEtatOrdreMissionLevé\
-        eAVerifier,vEtatOrdreMissionLevéeEnVerification, vEtatOrdreMissionNCAttenteReponse,\
-        \ vEtatOrdreMissionNCAttenteLevées, vEtatOrdreMissionClôturé])"
-      operationId: PostOMAnnuler
+      description: Add a new guest to the reservation
+      operationId: addReservationGuest
+      parameters:
+      - description: Hudini Hotel Identifier
+        explode: false
+        in: path
+        name: hotelId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: Reservation ID
+        explode: false
+        in: path
+        name: reservationId
+        required: true
+        schema:
+          type: string
+        style: simple
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NumeroOMMotif'
-        required: true
+              $ref: '#/components/schemas/Guest'
       responses:
-        "204":
-          $ref: '#/components/responses/204'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guest'
+          description: Successful operation
         "400":
-          $ref: '#/components/responses/400'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
         "401":
-          $ref: '#/components/responses/401'
-        "403":
-          $ref: '#/components/responses/403'
-        "404":
-          $ref: '#/components/responses/404'
-        "406":
-          $ref: '#/components/responses/406'
-        "500":
-          $ref: '#/components/responses/500'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Downstream system unavailable
+      security:
+      - api_key: []
+      - hudini_auth:
+        - write:reservations
+      summary: Add a guest
       tags:
-      - Ordre de mission
+      - reservation
       x-content-type: application/json
       x-accepts: application/json
-  /ordreMission/auditeur:
-    post:
-      description: "<strong>Associer un auditeur à un ordre de mission</strong><br>\
-        \ Cette action peut être réalisée  si l'ordre de mission est dans l'état [vEtatOrdreMissionAuditeurAAffecter,\
-        \ vEtatOrdreMissionAuditAPlanifié, vEtatOrdreMissionAuditPlanifié].<br><br><strong>Attention</strong>,\
-        \ pour les OM combinés, l'auditeur affecté doit être le même."
-      operationId: PostOMAuditeur
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NumeroOMEmail'
+  /{hotelId}/reservations/{reservationId}/guests/{guestId}:
+    get:
+      description: Returns details about a guest on reservation
+      operationId: getReservationGuestDetails
+      parameters:
+      - description: Hudini Hotel Identifier
+        explode: false
+        in: path
+        name: hotelId
         required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: Reservation ID
+        explode: false
+        in: path
+        name: reservationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Guest ID
+        explode: false
+        in: path
+        name: guestId
+        required: true
+        schema:
+          type: string
+        style: simple
       responses:
-        "204":
-          $ref: '#/components/responses/204'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guest'
+          description: Successful operation
         "400":
-          $ref: '#/components/responses/400'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
         "401":
-          $ref: '#/components/responses/401'
-        "403":
-          $ref: '#/components/responses/403'
-        "404":
-          $ref: '#/components/responses/404'
-        "406":
-          $ref: '#/components/responses/406'
-        "500":
-          $ref: '#/components/responses/500'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Downstream system unavailable
+      security:
+      - api_key: []
+      - hudini_auth:
+        - read:reservations
+      summary: Find Guests Details on a reservation
       tags:
-      - Ordre de mission
-      x-content-type: application/json
+      - reservation
       x-accepts: application/json
-  /ordreMission/planification:
-    post:
-      description: "<strong>Planifier un ordre de mission</strong><br> Cette action\
-        \ peut être réalisée  si l'ordre de mission est dans l'état [vEtatOrdreMissionAuditAPlanifié\
-        , vEtatOrdreMissionAuditPlanifié]. <br> L'année de l'audit ne peut pas être\
-        \ antérieure de plus de 3 ans."
-      operationId: PostOMPlanifier
+    patch:
+      description: Add a new guest to the reservation
+      operationId: updateReservationGuest
+      parameters:
+      - description: Hudini Hotel Identifier
+        explode: false
+        in: path
+        name: hotelId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      - description: Reservation ID
+        explode: false
+        in: path
+        name: reservationId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Guest ID
+        explode: false
+        in: path
+        name: guestId
+        required: true
+        schema:
+          type: string
+        style: simple
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlanificationOM'
-        required: true
+              $ref: '#/components/schemas/Guest'
       responses:
-        "204":
-          $ref: '#/components/responses/204'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guest'
+          description: Successful operation
         "400":
-          $ref: '#/components/responses/400'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
         "401":
-          $ref: '#/components/responses/401'
-        "403":
-          $ref: '#/components/responses/403'
-        "404":
-          $ref: '#/components/responses/404'
-        "406":
-          $ref: '#/components/responses/406'
-        "500":
-          $ref: '#/components/responses/500'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unauthorized
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Downstream system unavailable
+      security:
+      - api_key: []
+      - hudini_auth:
+        - write:reservations
+      summary: Add a guest
       tags:
-      - Ordre de mission
-      x-content-type: application/json
-      x-accepts: application/json
-  /ordreMission/planification/annuler:
-    post:
-      description: <strong>Annuler la planification un ordre de mission</strong><br>
-        Cette action peut être réalisée  si l'ordre de mission est dans l'état "vEtatOrdreMissionAuditPlanifié".
-      operationId: PostOMPlanifierAnnuler
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NumeroOMMotif'
-        required: true
-      responses:
-        "204":
-          $ref: '#/components/responses/204'
-        "400":
-          $ref: '#/components/responses/400'
-        "401":
-          $ref: '#/components/responses/401'
-        "403":
-          $ref: '#/components/responses/403'
-        "404":
-          $ref: '#/components/responses/404'
-        "406":
-          $ref: '#/components/responses/406'
-        "500":
-          $ref: '#/components/responses/500'
-      tags:
-      - Ordre de mission
+      - reservation
       x-content-type: application/json
       x-accepts: application/json
 components:
-  responses:
-    "204":
-      description: "<strong>Succès, pas de retour</strong>"
-    "400":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Erreur'
-      description: <strong>Erreur de requête</strong><br> 4001 - Erreur de requete<br>
-        4002 - Formatage json<br> 4003 - Information obligatoire manquante<br>
-    "401":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Erreur'
-      description: <strong>Non autorisé</strong><BR> 4011 - Authentification absente
-        ou refusée.<br>
-    "403":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Erreur'
-      description: <strong>Ressource non autorisé</strong><br> 4031 - Entreprise non
-        autorisée<br> 4032 - Auditeur non autorisé<br> 4033 - Compte auditeur non
-        actif
-    "404":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Erreur'
-      description: <strong>Non trouvé</strong> <br> 4041 - Entreprise inconnu<br>
-        4042 - Ordre de mission inconnu<br> 4043 - Auditeur inconnu
-    "406":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Erreur'
-      description: <strong>Non acceptable</strong><BR> 4061 - L'état de l'ordre de
-        mission ne permet pas la modification<br> 4062 - Les qualifications de l'auditeur
-        déclarée à Qualibat n'inclue pas le code nomenclature de l'ordre de mission<br>
-        4063 - La date de l'audit doit être spérieure à la date du jour<br> 4064 -
-        L'auditeur est absent de l'ordre de mission<br> 4065 - Un autre auditeur est
-        déjà affecté sur un des om combiné (il ne peux y avoir qu'un auditeur sur
-        tous les om combiné ensemble)
-    "500":
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Erreur'
-      description: <strong>Erreur interne</strong>
-    "500_webhook":
-      description: "En cas d'anomalie, la webhook sera rappelé selon le schéma suivant\
-        \ :<br> <ul> <li>+5 minutes - 1er rappel</li> <li>+10 minutes - 2ème rappel</li>\
-        \ <li>+30 minutes - 3ème rappel</li> <li>+1 heure - 4ème rappel</li> <li>+2\
-        \ heures - 5ème rappel</li> <li>+3 heures - 6ème rappel</li> <li>+6 heures\
-        \ - 7ème rappel</li> <li>+12 heures - 8ème rappel</li> <li>+18 heures - 9è\
-        me rappel</li> <li>+24 heures - 10ème rappel</li> <li>+48 heures - 11ème rappel</li>\
-        \ <li>+96 heures - 12ème rappel</li> </ul>"
   schemas:
-    Erreur:
+    ErrorResponse:
+      example:
+        errorMessage: errorMessage
+        errorCode: 5
+      properties:
+        errorCode:
+          format: int64
+          type: integer
+        errorMessage:
+          type: string
+    ReservationSummary:
+      properties:
+        id:
+          description: System generated unique ID for a reservation
+          type: string
+        externalIds:
+          description: One or more reference IDs for a reservation. Uniqueness is
+            not guarenteed.
+          items:
+            $ref: '#/components/schemas/ExternalReservationID'
+          type: array
+        checkinDate:
+          description: Start of stay reservation
+          format: date-time
+          type: string
+        checkoutDate:
+          description: End of stay reservation
+          format: date-time
+          type: string
+        status:
+          description: Status of reservation
+          enum:
+          - CONFIRMED
+          - CHECKED_IN
+          - ""
+          type: string
+        numAdults:
+          description: Total number of adults on the reservation
+          type: integer
+        numChildren:
+          description: Total number of children on the reservation
+          type: integer
+        payments:
+          items:
+            $ref: '#/components/schemas/ReservationSummary_payments_inner'
+          type: array
+    ExternalReservationID:
+      description: Alternate reference IDs for the reservation. Uniqueness of this
+        reference number is not guarenteed
+      example:
+        id: id
+        source: source
+        type: EXTERNAL_ID
+      properties:
+        id:
+          type: string
+        type:
+          enum:
+          - EXTERNAL_ID
+          - CONFIRMATION_ID
+          - CRS_ID
+          - OTA_ID
+          type: string
+        source:
+          description: Reference to the source of external ID
+          type: string
+    RoomTypeSummary:
+      example:
+        code: code
+        isAssigned: true
+        roomNo: roomNo
+        name: name
       properties:
         code:
-          description: "Code de l'erreur, se référer aux réponses des webservices"
-          type: integer
-        titre:
-          description: Définition du code erreur http
           type: string
-        detail:
-          description: Contenu détaillant l'erreur
+        name:
           type: string
-    enumTypeNotification:
-      enum:
-      - PublicationOM
-      - AcceptationOM
-      - RefusOM
-      - RecusationEntreprise
-      - AnnulationOM
-      - Auditeur
-      - PlanificationAudit
-      - AnnulationPlanificationAudit
-      - InformationOM
-      - Superviseur
-      - EtatOM
-      type: string
-    enumEtatOrdreMission:
-      enum:
-      - vEtatOrdreMissionAnnulé
-      - vEtatOrdreMissionRefusé
-      - vEtatOrdreMissionRécusé
-      - vEtatOrdreMissionEnAttenteAcceptation
-      - vEtatOrdreMissionAuditeurAAffecter
-      - vEtatOrdreMissionAuditAPlanifié
-      - vEtatOrdreMissionAuditPlanifié
-      - vEtatOrdreMissionRapportARediger
-      - vEtatOrdreMissionRapportAVerifier
-      - vEtatOrdreMissionRapportEnVerification
-      - vEtatOrdreMissionNCAttenteReponse
-      - vEtatOrdreMissionNCAttenteLevées
-      - vEtatOrdreMissionLevéeAVerifier
-      - vEtatOrdreMissionLevéeEnVerification
-      - vEtatOrdreMissionClôturé
-      type: string
-    NumeroOM:
-      example:
-        data:
-          numeroOm: numeroOm
-        type: null
-      properties:
-        type:
-          $ref: '#/components/schemas/enumTypeNotification'
-        data:
-          $ref: '#/components/schemas/NumeroOM_data'
-    NumerosOM:
-      properties:
-        type:
-          $ref: '#/components/schemas/enumTypeNotification'
-        data:
-          $ref: '#/components/schemas/NumerosOM_data'
-    NumeroOMMotif:
-      example:
-        data:
-          numeroOm: numeroOm
-          motif: motif
-        type: null
-      properties:
-        type:
-          $ref: '#/components/schemas/enumTypeNotification'
-        data:
-          $ref: '#/components/schemas/NumeroOMMotif_data'
-    NumeroOMEmail:
-      example:
-        data:
-          numeroOm: numeroOm
-          email: email
-        type: null
-      properties:
-        type:
-          $ref: '#/components/schemas/enumTypeNotification'
-        data:
-          $ref: '#/components/schemas/NumeroOMEmail_data'
-    PlanificationOM:
-      example:
-        data:
-          numeroOm: numeroOm
-          dateAudit: 0
-        type: null
-      properties:
-        type:
-          $ref: '#/components/schemas/enumTypeNotification'
-        data:
-          $ref: '#/components/schemas/PlanificationOM_data'
-    OrdreMission:
-      example:
-        data:
-          categorieTravaux: categorieTravaux
-          omCombine:
-          - omCombine
-          - omCombine
-          numeroOM: numeroOM
-          objetAudit: objetAudit
-          etat: null
-          dateLimiteAudit: dateLimiteAudit
-          estCategorieTravauxCritique: true
-          qualification: qualification
-          chantier:
-            responsableChantier:
-              telephone: telephone
-              nom: nom
-              email: email
-            nomChantier: nomChantier
-            montantHtTravauxSousTraite: 6.027456183070403
-            adresseChantier:
-              ville: ville
-              adresse3: adresse3
-              adresse4: adresse4
-              codePostal: codePostal
-              adresse1: adresse1
-              adresse2: adresse2
-            surface: 1.4658129805029452
-            dateDebutTravaux: dateDebutTravaux
-            montantHtTravaux: 0.8008281904610115
-            natureTravaux: natureTravaux
-            natureTravauxSousTraite: natureTravauxSousTraite
-            dateReceptionTravaux: dateReceptionTravaux
-            maitreOuvrage:
-              adresse:
-                ville: ville
-                adresse3: adresse3
-                adresse4: adresse4
-                codePostal: codePostal
-                adresse1: adresse1
-                adresse2: adresse2
-              telephone: telephone
-              nom: nom
-              email: email
-          entreprise:
-            formeJuridique: formeJuridique
-            raisonSociale: raisonSociale
-            adresse:
-              ville: ville
-              adresse3: adresse3
-              adresse4: adresse4
-              codePostal: codePostal
-              adresse1: adresse1
-              adresse2: adresse2
-            identifiantQualibat: 5
-            telephone: telephone
-            responsableEntreprise:
-              fonction: fonction
-              telephone: telephone
-              nom: nom
-              email: email
-            libDelegation: libDelegation
-            siret: siret
-            email: email
-            codeDelegation: codeDelegation
-          referentRge:
-            telephone: telephone
-            nom: nom
-            email: email
-          contactQualibat:
-            agence:
-              adresse:
-                ville: ville
-                adresse3: adresse3
-                adresse4: adresse4
-                codePostal: codePostal
-                adresse1: adresse1
-                adresse2: adresse2
-              telephone: telephone
-              nom: nom
-              email: email
-            chargeAffaire: chargeAffaire
-          dateEcheanceQualification: dateEcheanceQualification
-        type: null
-      properties:
-        type:
-          $ref: '#/components/schemas/enumTypeNotification'
-        data:
-          $ref: '#/components/schemas/OrdreMission_data'
-    Chantier:
-      example:
-        responsableChantier:
-          telephone: telephone
-          nom: nom
-          email: email
-        nomChantier: nomChantier
-        montantHtTravauxSousTraite: 6.027456183070403
-        adresseChantier:
-          ville: ville
-          adresse3: adresse3
-          adresse4: adresse4
-          codePostal: codePostal
-          adresse1: adresse1
-          adresse2: adresse2
-        surface: 1.4658129805029452
-        dateDebutTravaux: dateDebutTravaux
-        montantHtTravaux: 0.8008281904610115
-        natureTravaux: natureTravaux
-        natureTravauxSousTraite: natureTravauxSousTraite
-        dateReceptionTravaux: dateReceptionTravaux
-        maitreOuvrage:
-          adresse:
-            ville: ville
-            adresse3: adresse3
-            adresse4: adresse4
-            codePostal: codePostal
-            adresse1: adresse1
-            adresse2: adresse2
-          telephone: telephone
-          nom: nom
-          email: email
-      properties:
-        nomChantier:
-          type: string
-        dateDebutTravaux:
-          type: string
-        dateReceptionTravaux:
-          type: string
-        adresseChantier:
-          $ref: '#/components/schemas/Adresse'
-        responsableChantier:
-          $ref: '#/components/schemas/Identite'
-        montantHtTravaux:
-          type: number
-        montantHtTravauxSousTraite:
-          type: number
-        surface:
-          type: number
-        maitreOuvrage:
-          $ref: '#/components/schemas/IdentiteAdresse'
-        natureTravaux:
-          type: string
-        natureTravauxSousTraite:
-          type: string
-    ContactQualibat:
-      example:
-        agence:
-          adresse:
-            ville: ville
-            adresse3: adresse3
-            adresse4: adresse4
-            codePostal: codePostal
-            adresse1: adresse1
-            adresse2: adresse2
-          telephone: telephone
-          nom: nom
-          email: email
-        chargeAffaire: chargeAffaire
-      properties:
-        chargeAffaire:
-          type: string
-        agence:
-          $ref: '#/components/schemas/IdentiteAdresse'
-    Entreprise:
-      example:
-        formeJuridique: formeJuridique
-        raisonSociale: raisonSociale
-        adresse:
-          ville: ville
-          adresse3: adresse3
-          adresse4: adresse4
-          codePostal: codePostal
-          adresse1: adresse1
-          adresse2: adresse2
-        identifiantQualibat: 5
-        telephone: telephone
-        responsableEntreprise:
-          fonction: fonction
-          telephone: telephone
-          nom: nom
-          email: email
-        libDelegation: libDelegation
-        siret: siret
-        email: email
-        codeDelegation: codeDelegation
-      properties:
-        identifiantQualibat:
-          type: integer
-        raisonSociale:
-          type: string
-        siret:
-          type: string
-        formeJuridique:
-          type: string
-        adresse:
-          $ref: '#/components/schemas/Adresse'
-        responsableEntreprise:
-          $ref: '#/components/schemas/Entreprise_responsableEntreprise'
-        telephone:
-          type: string
-        email:
-          type: string
-        codeDelegation:
-          type: string
-        libDelegation:
-          type: string
-    Identite:
-      example:
-        telephone: telephone
-        nom: nom
-        email: email
-      properties:
-        nom:
-          type: string
-        telephone:
-          type: string
-        email:
-          type: string
-    IdentiteAdresse:
-      example:
-        adresse:
-          ville: ville
-          adresse3: adresse3
-          adresse4: adresse4
-          codePostal: codePostal
-          adresse1: adresse1
-          adresse2: adresse2
-        telephone: telephone
-        nom: nom
-        email: email
-      properties:
-        nom:
-          type: string
-        telephone:
-          type: string
-        email:
-          type: string
-        adresse:
-          $ref: '#/components/schemas/Adresse'
-    Adresse:
-      example:
-        ville: ville
-        adresse3: adresse3
-        adresse4: adresse4
-        codePostal: codePostal
-        adresse1: adresse1
-        adresse2: adresse2
-      properties:
-        adresse1:
-          type: string
-        adresse2:
-          type: string
-        adresse3:
-          type: string
-        adresse4:
-          type: string
-        codePostal:
-          type: string
-        ville:
-          type: string
-    EtatOM:
-      properties:
-        type:
-          $ref: '#/components/schemas/enumTypeNotification'
-        data:
-          $ref: '#/components/schemas/EtatOM_data'
-    NumeroOM_data:
-      example:
-        numeroOm: numeroOm
-      properties:
-        numeroOm:
-          type: string
-    NumerosOM_data:
-      properties:
-        numerosOM:
-          items:
-            description: TODO default missing array inner type to string
-            type: string
-          type: array
-    NumeroOMMotif_data:
-      example:
-        numeroOm: numeroOm
-        motif: motif
-      properties:
-        numeroOm:
-          type: string
-        motif:
-          description: Indiquer le motif de la notification
-          type: string
-    NumeroOMEmail_data:
-      example:
-        numeroOm: numeroOm
-        email: email
-      properties:
-        numeroOm:
-          type: string
-        email:
-          description: Indiquer l'adresse email du compte concerné par la notification
-          type: string
-    PlanificationOM_data:
-      example:
-        numeroOm: numeroOm
-        dateAudit: 0
-      properties:
-        numeroOm:
-          type: string
-        dateAudit:
-          description: Date et heure de l'audit au format Unix timestamp en seconde
-          type: integer
-    OrdreMission_data:
-      example:
-        categorieTravaux: categorieTravaux
-        omCombine:
-        - omCombine
-        - omCombine
-        numeroOM: numeroOM
-        objetAudit: objetAudit
-        etat: null
-        dateLimiteAudit: dateLimiteAudit
-        estCategorieTravauxCritique: true
-        qualification: qualification
-        chantier:
-          responsableChantier:
-            telephone: telephone
-            nom: nom
-            email: email
-          nomChantier: nomChantier
-          montantHtTravauxSousTraite: 6.027456183070403
-          adresseChantier:
-            ville: ville
-            adresse3: adresse3
-            adresse4: adresse4
-            codePostal: codePostal
-            adresse1: adresse1
-            adresse2: adresse2
-          surface: 1.4658129805029452
-          dateDebutTravaux: dateDebutTravaux
-          montantHtTravaux: 0.8008281904610115
-          natureTravaux: natureTravaux
-          natureTravauxSousTraite: natureTravauxSousTraite
-          dateReceptionTravaux: dateReceptionTravaux
-          maitreOuvrage:
-            adresse:
-              ville: ville
-              adresse3: adresse3
-              adresse4: adresse4
-              codePostal: codePostal
-              adresse1: adresse1
-              adresse2: adresse2
-            telephone: telephone
-            nom: nom
-            email: email
-        entreprise:
-          formeJuridique: formeJuridique
-          raisonSociale: raisonSociale
-          adresse:
-            ville: ville
-            adresse3: adresse3
-            adresse4: adresse4
-            codePostal: codePostal
-            adresse1: adresse1
-            adresse2: adresse2
-          identifiantQualibat: 5
-          telephone: telephone
-          responsableEntreprise:
-            fonction: fonction
-            telephone: telephone
-            nom: nom
-            email: email
-          libDelegation: libDelegation
-          siret: siret
-          email: email
-          codeDelegation: codeDelegation
-        referentRge:
-          telephone: telephone
-          nom: nom
-          email: email
-        contactQualibat:
-          agence:
-            adresse:
-              ville: ville
-              adresse3: adresse3
-              adresse4: adresse4
-              codePostal: codePostal
-              adresse1: adresse1
-              adresse2: adresse2
-            telephone: telephone
-            nom: nom
-            email: email
-          chargeAffaire: chargeAffaire
-        dateEcheanceQualification: dateEcheanceQualification
-      properties:
-        numeroOM:
-          type: string
-        categorieTravaux:
-          type: string
-        estCategorieTravauxCritique:
+        isAssigned:
+          description: Is set to true is a room is assigned
           type: boolean
-        qualification:
+        roomNo:
+          description: "Assigned room number, when isAssigned is true"
           type: string
-        etat:
-          $ref: '#/components/schemas/enumEtatOrdreMission'
-        objetAudit:
-          type: string
-        dateLimiteAudit:
-          type: string
-        dateEcheanceQualification:
-          type: string
-        omCombine:
-          items:
-            description: TODO default missing array inner type to string
-            type: string
-          type: array
-        chantier:
-          $ref: '#/components/schemas/Chantier'
-        referentRge:
-          $ref: '#/components/schemas/Identite'
-        contactQualibat:
-          $ref: '#/components/schemas/ContactQualibat'
-        entreprise:
-          $ref: '#/components/schemas/Entreprise'
-    Entreprise_responsableEntreprise:
+    RoomType:
+      allOf:
+      - $ref: '#/components/schemas/RoomTypeSummary'
+      - properties:
+          ratePlan:
+            $ref: '#/components/schemas/RoomType_allOf_ratePlan'
+          addOns:
+            items:
+              $ref: '#/components/schemas/RoomType_allOf_addOns_inner'
+            type: array
+          preferences:
+            items:
+              $ref: '#/components/schemas/RoomType_allOf_preferences_inner'
+            type: array
       example:
-        fonction: fonction
-        telephone: telephone
-        nom: nom
+        ratePlan:
+          code: code
+          rate: 1.4658129
+          name: name
+          currency: currency
+        preferences:
+        - code: code
+          title: title
+        - code: code
+          title: title
+        code: code
+        isAssigned: true
+        roomNo: roomNo
+        addOns:
+        - code: code
+          price:
+            description: description
+            unitAmount: 5.962134
+            currency: currency
+            units: 5.637377
+          title: title
+        - code: code
+          price:
+            description: description
+            unitAmount: 5.962134
+            currency: currency
+            units: 5.637377
+          title: title
+        name: name
+    Amount:
+      example:
+        description: description
+        unitAmount: 5.962134
+        currency: currency
+        units: 5.637377
+      properties:
+        description:
+          type: string
+        unitAmount:
+          format: float
+          type: number
+        units:
+          format: float
+          type: number
+        currency:
+          type: string
+    GuestSummary:
+      example:
+        firstName: firstName
+        lastName: lastName
+        isVerified: true
+        isPrimary: true
+        middleName: middleName
+        id: id
+        title: title
+        isAdult: true
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        isAdult:
+          description: Set to true when a guest is considered an adult as per hotel
+            rules
+          type: boolean
+        isVerified:
+          description: Set to true when a guest has been verified against an ID Docuemnt
+          type: boolean
+        isPrimary:
+          description: Set to true if this is a primary guest
+          type: boolean
+    Guest:
+      allOf:
+      - $ref: '#/components/schemas/GuestSummary'
+      - properties:
+          gender:
+            enum:
+            - MALE
+            - FEMALE
+            - OTHER
+            - NA
+            type: string
+          emailAddresses:
+            items:
+              $ref: '#/components/schemas/EmailAddress'
+            type: array
+          phoneNumbers:
+            items:
+              $ref: '#/components/schemas/PhoneNumber'
+            type: array
+          addresses:
+            items:
+              $ref: '#/components/schemas/Address'
+            type: array
+          nationality:
+            $ref: '#/components/schemas/Country'
+          identity:
+            $ref: '#/components/schemas/Guest_allOf_identity'
+          verification:
+            $ref: '#/components/schemas/Guest_allOf_verification'
+      example:
+        lastName: lastName
+        addresses:
+        - country:
+            countryCode: countryCode
+            countryName: countryName
+          city: city
+          state: state
+          type: HOME
+          line2: line2
+          line1: line1
+        - country:
+            countryCode: countryCode
+            countryName: countryName
+          city: city
+          state: state
+          type: HOME
+          line2: line2
+          line1: line1
+        gender: MALE
+        isVerified: true
+        title: title
+        phoneNumbers:
+        - phone: 6
+          countryCode: 0
+          type: MOBILE
+        - phone: 6
+          countryCode: 0
+          type: MOBILE
+        firstName: firstName
+        emailAddresses:
+        - type: PRIMARY
+          email: email
+        - type: PRIMARY
+          email: email
+        nationality:
+          countryCode: countryCode
+          countryName: countryName
+        isPrimary: true
+        identity:
+          expiryDate: expiryDate
+          number: number
+          issueCountry:
+            countryCode: countryCode
+            countryName: countryName
+          issueDate: issueDate
+          IDType: PASSPORT
+        middleName: middleName
+        id: id
+        isAdult: true
+        verification:
+          score: 1.4658129
+          status: ID_VERIFIED
+    EmailAddress:
+      example:
+        type: PRIMARY
         email: email
       properties:
-        nom:
-          type: string
-        telephone:
-          type: string
         email:
+          format: email
           type: string
-        fonction:
+        type:
+          enum:
+          - PRIMARY
+          - OTHER
           type: string
-    EtatOM_data:
+    Country:
+      example:
+        countryCode: countryCode
+        countryName: countryName
       properties:
-        numeroOM:
+        countryCode:
+          description: ISO 3166 A-2 country code corresponding to the country
           type: string
-        etat:
+        countryName:
           type: string
+    PhoneNumber:
+      example:
+        phone: 6
+        countryCode: 0
+        type: MOBILE
+      properties:
+        countryCode:
+          format: int64
+          type: integer
+        phone:
+          format: int64
+          type: integer
+        type:
+          enum:
+          - MOBILE
+          - HOME
+          - WHATSAPP
+          - TEXT
+          type: string
+    Address:
+      example:
+        country:
+          countryCode: countryCode
+          countryName: countryName
+        city: city
+        state: state
+        type: HOME
+        line2: line2
+        line1: line1
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        type:
+          enum:
+          - HOME
+          - WORK
+          - OTHER
+          type: string
+    getReservations_200_response_inner_allOf_additionalData_inner:
+      example:
+        value: value
+        key: key
+      properties:
+        key:
+          description: Unique key for a hotel-specific advanced proeprty
+          type: string
+        value:
+          description: Value of a hotel-specific advanced property
+          type: string
+    getReservations_200_response_inner:
+      allOf:
+      - $ref: '#/components/schemas/ReservationSummary'
+      - properties:
+          roomTypes:
+            description: Rooms booked on the reservation
+            items:
+              $ref: '#/components/schemas/RoomTypeSummary'
+            type: array
+          guests:
+            description: Collection of guests on the reservation
+            items:
+              $ref: '#/components/schemas/GuestSummary'
+            type: array
+          additionalData:
+            items:
+              $ref: '#/components/schemas/getReservations_200_response_inner_allOf_additionalData_inner'
+            type: array
+      example:
+        checkoutDate: 2000-01-23T04:56:07.000+00:00
+        numAdults: 0
+        roomTypes:
+        - code: code
+          isAssigned: true
+          roomNo: roomNo
+          name: name
+        - code: code
+          isAssigned: true
+          roomNo: roomNo
+          name: name
+        payments:
+        - description: description
+          unitAmount: 1.4658129
+          currency: currency
+          units: 5.962134
+          status: PAID
+        - description: description
+          unitAmount: 1.4658129
+          currency: currency
+          units: 5.962134
+          status: PAID
+        externalIds:
+        - id: id
+          source: source
+          type: EXTERNAL_ID
+        - id: id
+          source: source
+          type: EXTERNAL_ID
+        numChildren: 6
+        guests:
+        - firstName: firstName
+          lastName: lastName
+          isVerified: true
+          isPrimary: true
+          middleName: middleName
+          id: id
+          title: title
+          isAdult: true
+        - firstName: firstName
+          lastName: lastName
+          isVerified: true
+          isPrimary: true
+          middleName: middleName
+          id: id
+          title: title
+          isAdult: true
+        checkinDate: 2000-01-23T04:56:07.000+00:00
+        id: id
+        additionalData:
+        - value: value
+          key: key
+        - value: value
+          key: key
+        status: CONFIRMED
+    getReservationDetails_200_response:
+      allOf:
+      - $ref: '#/components/schemas/ReservationSummary'
+      - properties:
+          roomTypes:
+            description: Rooms booked on the reservation
+            items:
+              $ref: '#/components/schemas/RoomType'
+            type: array
+          guests:
+            description: Collection of guests on the reservation
+            items:
+              $ref: '#/components/schemas/GuestSummary'
+            type: array
+      example:
+        checkoutDate: 2000-01-23T04:56:07.000+00:00
+        numAdults: 0
+        roomTypes:
+        - ratePlan:
+            code: code
+            rate: 1.4658129
+            name: name
+            currency: currency
+          preferences:
+          - code: code
+            title: title
+          - code: code
+            title: title
+          code: code
+          isAssigned: true
+          roomNo: roomNo
+          addOns:
+          - code: code
+            price:
+              description: description
+              unitAmount: 5.962134
+              currency: currency
+              units: 5.637377
+            title: title
+          - code: code
+            price:
+              description: description
+              unitAmount: 5.962134
+              currency: currency
+              units: 5.637377
+            title: title
+          name: name
+        - ratePlan:
+            code: code
+            rate: 1.4658129
+            name: name
+            currency: currency
+          preferences:
+          - code: code
+            title: title
+          - code: code
+            title: title
+          code: code
+          isAssigned: true
+          roomNo: roomNo
+          addOns:
+          - code: code
+            price:
+              description: description
+              unitAmount: 5.962134
+              currency: currency
+              units: 5.637377
+            title: title
+          - code: code
+            price:
+              description: description
+              unitAmount: 5.962134
+              currency: currency
+              units: 5.637377
+            title: title
+          name: name
+        payments:
+        - description: description
+          unitAmount: 1.4658129
+          currency: currency
+          units: 5.962134
+          status: PAID
+        - description: description
+          unitAmount: 1.4658129
+          currency: currency
+          units: 5.962134
+          status: PAID
+        externalIds:
+        - id: id
+          source: source
+          type: EXTERNAL_ID
+        - id: id
+          source: source
+          type: EXTERNAL_ID
+        numChildren: 6
+        guests:
+        - firstName: firstName
+          lastName: lastName
+          isVerified: true
+          isPrimary: true
+          middleName: middleName
+          id: id
+          title: title
+          isAdult: true
+        - firstName: firstName
+          lastName: lastName
+          isVerified: true
+          isPrimary: true
+          middleName: middleName
+          id: id
+          title: title
+          isAdult: true
+        checkinDate: 2000-01-23T04:56:07.000+00:00
+        id: id
+        status: CONFIRMED
+    ReservationSummary_payments_inner:
+      allOf:
+      - $ref: '#/components/schemas/Amount'
+      - properties:
+          status:
+            enum:
+            - PAID
+            - HOLD
+            - PENDING
+            type: string
+      example:
+        description: description
+        unitAmount: 1.4658129
+        currency: currency
+        units: 5.962134
+        status: PAID
+    RoomType_allOf_ratePlan:
+      example:
+        code: code
+        rate: 1.4658129
+        name: name
+        currency: currency
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        rate:
+          format: float
+          type: number
+        currency:
+          type: string
+    RoomType_allOf_addOns_inner:
+      example:
+        code: code
+        price:
+          description: description
+          unitAmount: 5.962134
+          currency: currency
+          units: 5.637377
+        title: title
+      properties:
+        code:
+          type: string
+        title:
+          type: string
+        price:
+          $ref: '#/components/schemas/Amount'
+    RoomType_allOf_preferences_inner:
+      example:
+        code: code
+        title: title
+      properties:
+        code:
+          type: string
+        title:
+          type: string
+    Guest_allOf_identity:
+      example:
+        expiryDate: expiryDate
+        number: number
+        issueCountry:
+          countryCode: countryCode
+          countryName: countryName
+        issueDate: issueDate
+        IDType: PASSPORT
+      properties:
+        IDType:
+          enum:
+          - PASSPORT
+          - DRIVERS_LICENSE
+          - NATIONAL_ID
+          - OTHER_ID
+          type: string
+        number:
+          type: string
+        issueDate:
+          format: datetime
+          type: string
+        expiryDate:
+          format: datetime
+          type: string
+        issueCountry:
+          $ref: '#/components/schemas/Country'
+    Guest_allOf_verification:
+      example:
+        score: 1.4658129
+        status: ID_VERIFIED
+      properties:
+        status:
+          description: Value set based on verification performed
+          enum:
+          - ID_VERIFIED
+          - FACE_MATCHED
+          - EXTERNAL
+          type: string
+        score:
+          description: Verification score
+          format: float
+          type: number
   securitySchemes:
-    BearerAuth:
-      scheme: bearer
-      type: http
+    hudini_auth:
+      flows:
+        implicit:
+          authorizationUrl: https://auth.hudini.io/oauth/authorize
+          scopes:
+            write:reservations: modify authorized reservations
+            read:reservations: read authorized reservations
+      type: oauth2
+    api_key:
+      in: header
+      name: api_key
+      type: apiKey
 
