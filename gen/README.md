@@ -4,7 +4,7 @@ Swagger Inventory Management System(ConvoConvert) - OpenAPI 3.1
 
 - API version: 1.0.0
 
-- Build date: 2024-05-13T19:17:37.514106366Z[Etc/UTC]
+- Build date: 2024-05-13T19:17:45.540345838Z[Etc/UTC]
 
 - Generator version: 7.4.0
 

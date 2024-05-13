@@ -82,10 +82,10 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Successful operation |  -  |
-| **405** | Invalid input |  -  |
-| **404** | the server cannot find the requested resource |  -  |
 | **201** | the resources have been successfully created on the server |  -  |
 | **304** | Not modified |  -  |
+| **404** | the server cannot find the requested resource |  -  |
+| **405** | Invalid input |  -  |
 | **510** | extensions to the request are required for the server to fulfill it. |  -  |
 
 
@@ -153,9 +153,9 @@ No authorization required
 |-------------|-------------|------------------|
 | **200** | Successfully updated Customer |  -  |
 | **202** | the request has been received but not completed yet |  -  |
-| **405** | Invalid operation |  -  |
-| **400** | Invalid ID supplied |  -  |
 | **300** | The request has more than one possible response |  -  |
+| **400** | Invalid ID supplied |  -  |
+| **405** | Invalid operation |  -  |
 | **510** | extensions to the request are required for the server to fulfill it |  -  |
 
 
@@ -228,8 +228,8 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | successful operation |  -  |
-| **400** | Invalid UserName |  -  |
 | **202** | the request has been accepted for processing |  -  |
+| **400** | Invalid UserName |  -  |
 
 
 ## getCustomerById
@@ -307,10 +307,10 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | successful operation |  -  |
-| **400** | Invalid ID supplied |  -  |
-| **404** | Customer not found |  -  |
 | **202** | the request has been accepted for processing |  -  |
 | **302** | the request has been accepted for processing |  -  |
+| **400** | Invalid ID supplied |  -  |
+| **404** | Customer not found |  -  |
 | **503** | The server is not ready to handle the request |  -  |
 
 
@@ -383,12 +383,12 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Successful operation |  -  |
-| **400** | Invalid ID supplied |  -  |
-| **404** | customer not found |  -  |
-| **405** | Validation exception |  -  |
 | **201** | new resource has been created |  -  |
 | **202** | the request has been accepted for processing |  -  |
 | **304** | the response has not been modified |  -  |
+| **400** | Invalid ID supplied |  -  |
+| **404** | customer not found |  -  |
+| **405** | Validation exception |  -  |
 
 
 ## updateCustomerById
@@ -455,9 +455,9 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Successfully updated Customer |  -  |
-| **404** | Customer not found |  -  |
 | **202** | the request has been received but not completed yet |  -  |
 | **204** | No Content |  -  |
 | **302** | The URL of the requested resource has been changed temporarily |  -  |
+| **404** | Customer not found |  -  |
 | **503** | The server is not ready to handle the request |  -  |
 

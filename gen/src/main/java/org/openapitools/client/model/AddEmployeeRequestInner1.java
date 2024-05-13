@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   AddEmployeeRequestInner1.JSON_PROPERTY_PHONE_NUMBER
 })
 @JsonTypeName("addEmployee_request_inner_1")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:17:37.514106366Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:17:45.540345838Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class AddEmployeeRequestInner1 {
   public static final String JSON_PROPERTY_I_D = "ID";
   private Integer ID;

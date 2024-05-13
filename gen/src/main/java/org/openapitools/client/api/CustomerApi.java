@@ -28,7 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:17:37.514106366Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:17:45.540345838Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class CustomerApi {
     private ApiClient apiClient;
 
@@ -52,10 +52,10 @@ public class CustomerApi {
      * Add a new Customer to the Inventory Management System
      * Add a new Customer to the Inventory Management System
      * <p><b>200</b> - Successful operation
-     * <p><b>405</b> - Invalid input
-     * <p><b>404</b> - the server cannot find the requested resource
      * <p><b>201</b> - the resources have been successfully created on the server
      * <p><b>304</b> - Not modified
+     * <p><b>404</b> - the server cannot find the requested resource
+     * <p><b>405</b> - Invalid input
      * <p><b>510</b> - extensions to the request are required for the server to fulfill it.
      * @param addCustomerRequestInner Create a new Customer in the store (required)
      * @return List&lt;AddCustomerRequestInner&gt;
@@ -69,10 +69,10 @@ public class CustomerApi {
      * Add a new Customer to the Inventory Management System
      * Add a new Customer to the Inventory Management System
      * <p><b>200</b> - Successful operation
-     * <p><b>405</b> - Invalid input
-     * <p><b>404</b> - the server cannot find the requested resource
      * <p><b>201</b> - the resources have been successfully created on the server
      * <p><b>304</b> - Not modified
+     * <p><b>404</b> - the server cannot find the requested resource
+     * <p><b>405</b> - Invalid input
      * <p><b>510</b> - extensions to the request are required for the server to fulfill it.
      * @param addCustomerRequestInner Create a new Customer in the store (required)
      * @return ResponseEntity&lt;List&lt;AddCustomerRequestInner&gt;&gt;
@@ -111,9 +111,9 @@ public class CustomerApi {
      * delete a Customer
      * <p><b>200</b> - Successfully updated Customer
      * <p><b>202</b> - the request has been received but not completed yet
-     * <p><b>405</b> - Invalid operation
-     * <p><b>400</b> - Invalid ID supplied
      * <p><b>300</b> - The request has more than one possible response
+     * <p><b>400</b> - Invalid ID supplied
+     * <p><b>405</b> - Invalid operation
      * <p><b>510</b> - extensions to the request are required for the server to fulfill it
      * @param apiKey  (optional)
      * @throws RestClientException if an error occurs while attempting to invoke the API
@@ -127,9 +127,9 @@ public class CustomerApi {
      * delete a Customer
      * <p><b>200</b> - Successfully updated Customer
      * <p><b>202</b> - the request has been received but not completed yet
-     * <p><b>405</b> - Invalid operation
-     * <p><b>400</b> - Invalid ID supplied
      * <p><b>300</b> - The request has more than one possible response
+     * <p><b>400</b> - Invalid ID supplied
+     * <p><b>405</b> - Invalid operation
      * <p><b>510</b> - extensions to the request are required for the server to fulfill it
      * @param apiKey  (optional)
      * @return ResponseEntity&lt;Void&gt;
@@ -161,8 +161,8 @@ public class CustomerApi {
      * Finds Customers by UserName
      * Multiple UserName values can be provided with comma separated strings
      * <p><b>200</b> - successful operation
-     * <p><b>400</b> - Invalid UserName
      * <p><b>202</b> - the request has been accepted for processing
+     * <p><b>400</b> - Invalid UserName
      * @param userName UserName values that need to be considered for filter (optional)
      * @return List&lt;UpdateCustomerRequestInner&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
@@ -175,8 +175,8 @@ public class CustomerApi {
      * Finds Customers by UserName
      * Multiple UserName values can be provided with comma separated strings
      * <p><b>200</b> - successful operation
-     * <p><b>400</b> - Invalid UserName
      * <p><b>202</b> - the request has been accepted for processing
+     * <p><b>400</b> - Invalid UserName
      * @param userName UserName values that need to be considered for filter (optional)
      * @return ResponseEntity&lt;List&lt;UpdateCustomerRequestInner&gt;&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
@@ -209,10 +209,10 @@ public class CustomerApi {
      * Find Customer by ID
      * Returns a single Customer
      * <p><b>200</b> - successful operation
-     * <p><b>400</b> - Invalid ID supplied
-     * <p><b>404</b> - Customer not found
      * <p><b>202</b> - the request has been accepted for processing
      * <p><b>302</b> - the request has been accepted for processing
+     * <p><b>400</b> - Invalid ID supplied
+     * <p><b>404</b> - Customer not found
      * <p><b>503</b> - The server is not ready to handle the request
      * @param customerId ID of Customer to return (required)
      * @return List&lt;UpdateCustomerRequestInner&gt;
@@ -226,10 +226,10 @@ public class CustomerApi {
      * Find Customer by ID
      * Returns a single Customer
      * <p><b>200</b> - successful operation
-     * <p><b>400</b> - Invalid ID supplied
-     * <p><b>404</b> - Customer not found
      * <p><b>202</b> - the request has been accepted for processing
      * <p><b>302</b> - the request has been accepted for processing
+     * <p><b>400</b> - Invalid ID supplied
+     * <p><b>404</b> - Customer not found
      * <p><b>503</b> - The server is not ready to handle the request
      * @param customerId ID of Customer to return (required)
      * @return ResponseEntity&lt;List&lt;UpdateCustomerRequestInner&gt;&gt;
@@ -268,12 +268,12 @@ public class CustomerApi {
      * Update an existing Customer
      * Update an existing Customer by Id
      * <p><b>200</b> - Successful operation
-     * <p><b>400</b> - Invalid ID supplied
-     * <p><b>404</b> - customer not found
-     * <p><b>405</b> - Validation exception
      * <p><b>201</b> - new resource has been created
      * <p><b>202</b> - the request has been accepted for processing
      * <p><b>304</b> - the response has not been modified
+     * <p><b>400</b> - Invalid ID supplied
+     * <p><b>404</b> - customer not found
+     * <p><b>405</b> - Validation exception
      * @param updateCustomerRequestInner Update an existent Customer in Inventory Management System (required)
      * @return List&lt;UpdateCustomerRequestInner&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
@@ -286,12 +286,12 @@ public class CustomerApi {
      * Update an existing Customer
      * Update an existing Customer by Id
      * <p><b>200</b> - Successful operation
-     * <p><b>400</b> - Invalid ID supplied
-     * <p><b>404</b> - customer not found
-     * <p><b>405</b> - Validation exception
      * <p><b>201</b> - new resource has been created
      * <p><b>202</b> - the request has been accepted for processing
      * <p><b>304</b> - the response has not been modified
+     * <p><b>400</b> - Invalid ID supplied
+     * <p><b>404</b> - customer not found
+     * <p><b>405</b> - Validation exception
      * @param updateCustomerRequestInner Update an existent Customer in Inventory Management System (required)
      * @return ResponseEntity&lt;List&lt;UpdateCustomerRequestInner&gt;&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
@@ -328,10 +328,10 @@ public class CustomerApi {
      * Update Customer by ID
      * Updates specific fields of a Customer identified by ID
      * <p><b>200</b> - Successfully updated Customer
-     * <p><b>404</b> - Customer not found
      * <p><b>202</b> - the request has been received but not completed yet
      * <p><b>204</b> - No Content
      * <p><b>302</b> - The URL of the requested resource has been changed temporarily
+     * <p><b>404</b> - Customer not found
      * <p><b>503</b> - The server is not ready to handle the request
      * @param updateCustomerByIdRequest  (required)
      * @return UpdateCustomerById200Response
@@ -345,10 +345,10 @@ public class CustomerApi {
      * Update Customer by ID
      * Updates specific fields of a Customer identified by ID
      * <p><b>200</b> - Successfully updated Customer
-     * <p><b>404</b> - Customer not found
      * <p><b>202</b> - the request has been received but not completed yet
      * <p><b>204</b> - No Content
      * <p><b>302</b> - The URL of the requested resource has been changed temporarily
+     * <p><b>404</b> - Customer not found
      * <p><b>503</b> - The server is not ready to handle the request
      * @param updateCustomerByIdRequest  (required)
      * @return ResponseEntity&lt;UpdateCustomerById200Response&gt;
