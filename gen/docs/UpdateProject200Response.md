@@ -1,13 +1,13 @@
 
 
-# HTTPValidationError
+# UpdateProject200Response
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**detail** | [**List&lt;ValidationError&gt;**](ValidationError.md) |  |  [optional] |
+|**message** | **String** | A success message indicating the update. |  [optional] |
 
 
 
