@@ -20,14 +20,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * ValidationErrorLocInner
+ * IssuerWallet
  */
 @JsonPropertyOrder({
 })
-@JsonTypeName("ValidationError_loc_inner")
+@JsonTypeName("Issuer_Wallet")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:15:43.391813307Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class ValidationErrorLocInner {
-  public ValidationErrorLocInner() {
+public class IssuerWallet {
+  public IssuerWallet() {
   }
   @Override
   public boolean equals(Object o) {
@@ -48,7 +48,7 @@ public class ValidationErrorLocInner {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValidationErrorLocInner {\n");
+    sb.append("class IssuerWallet {\n");
     sb.append("}");
     return sb.toString();
   }

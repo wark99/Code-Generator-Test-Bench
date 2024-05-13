@@ -20,58 +20,76 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.openapitools.client.model.ValidationError;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * HTTPValidationError
+ * ItemNotFoundMessage
  */
 @JsonPropertyOrder({
-  HTTPValidationError.JSON_PROPERTY_DETAIL
+  ItemNotFoundMessage.JSON_PROPERTY_ERROR,
+  ItemNotFoundMessage.JSON_PROPERTY_MESSAGE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:15:43.391813307Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class HTTPValidationError {
-  public static final String JSON_PROPERTY_DETAIL = "detail";
-  private List<ValidationError> detail;
+public class ItemNotFoundMessage {
+  public static final String JSON_PROPERTY_ERROR = "error";
+  private String error;
 
-  public HTTPValidationError() {
+  public static final String JSON_PROPERTY_MESSAGE = "message";
+  private String message;
+
+  public ItemNotFoundMessage() {
   }
 
-  public HTTPValidationError detail(List<ValidationError> detail) {
+  public ItemNotFoundMessage error(String error) {
     
-    this.detail = detail;
-    return this;
-  }
-
-  public HTTPValidationError addDetailItem(ValidationError detailItem) {
-    if (this.detail == null) {
-      this.detail = new ArrayList<>();
-    }
-    this.detail.add(detailItem);
+    this.error = error;
     return this;
   }
 
    /**
-   * Get detail
-   * @return detail
+   * Get error
+   * @return error
   **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DETAIL)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @javax.annotation.Nonnull
+  @JsonProperty(JSON_PROPERTY_ERROR)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public List<ValidationError> getDetail() {
-    return detail;
+  public String getError() {
+    return error;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_DETAIL)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDetail(List<ValidationError> detail) {
-    this.detail = detail;
+  @JsonProperty(JSON_PROPERTY_ERROR)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setError(String error) {
+    this.error = error;
+  }
+
+
+  public ItemNotFoundMessage message(String message) {
+    
+    this.message = message;
+    return this;
+  }
+
+   /**
+   * Get message
+   * @return message
+  **/
+  @javax.annotation.Nonnull
+  @JsonProperty(JSON_PROPERTY_MESSAGE)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+
+  public String getMessage() {
+    return message;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_MESSAGE)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setMessage(String message) {
+    this.message = message;
   }
 
   @Override
@@ -82,20 +100,22 @@ public class HTTPValidationError {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    HTTPValidationError htTPValidationError = (HTTPValidationError) o;
-    return Objects.equals(this.detail, htTPValidationError.detail);
+    ItemNotFoundMessage itemNotFoundMessage = (ItemNotFoundMessage) o;
+    return Objects.equals(this.error, itemNotFoundMessage.error) &&
+        Objects.equals(this.message, itemNotFoundMessage.message);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(detail);
+    return Objects.hash(error, message);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class HTTPValidationError {\n");
-    sb.append("    detail: ").append(toIndentedString(detail)).append("\n");
+    sb.append("class ItemNotFoundMessage {\n");
+    sb.append("    error: ").append(toIndentedString(error)).append("\n");
+    sb.append("    message: ").append(toIndentedString(message)).append("\n");
     sb.append("}");
     return sb.toString();
   }
