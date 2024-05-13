@@ -1,6 +1,6 @@
 
 
-# ClientsListDevicesGet200Response
+# DevicesConnectPost200Response
 
 
 ## Properties

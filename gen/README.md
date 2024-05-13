@@ -1,10 +1,10 @@
 # openapi-java-client
 
-VR-Training backend with pockebase (admin panel)
+VR-Training backend with pockebase (device api)
 
 - API version: 1.0.0
 
-- Build date: 2024-05-13T19:19:04.981860060Z[Etc/UTC]
+- Build date: 2024-05-13T19:19:11.915359394Z[Etc/UTC]
 
 - Generator version: 7.4.0
 
@@ -95,11 +95,12 @@ public class DefaultApiExample {
         defaultClient.setBasePath("http://localhost:3000");
         
         DefaultApi apiInstance = new DefaultApi(defaultClient);
+        DevicesAutoConnectPostRequest devicesAutoConnectPostRequest = new DevicesAutoConnectPostRequest(); // DevicesAutoConnectPostRequest | 
         try {
-            ClientsAddDeviceGet200Response result = apiInstance.clientsAddDeviceGet();
+            DevicesConnectPost200Response result = apiInstance.devicesAutoConnectPost(devicesAutoConnectPostRequest);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#clientsAddDeviceGet");
+            System.err.println("Exception when calling DefaultApi#devicesAutoConnectPost");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -116,19 +117,20 @@ All URIs are relative to *http://localhost:3000*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*DefaultApi* | [**clientsAddDeviceGet**](docs/DefaultApi.md#clientsAddDeviceGet) | **GET** /clients/add_device | add new device 
-*DefaultApi* | [**clientsListDevicesGet**](docs/DefaultApi.md#clientsListDevicesGet) | **GET** /clients/list_devices | list devices
-*DefaultApi* | [**clientsLoginPost**](docs/DefaultApi.md#clientsLoginPost) | **POST** /clients/login | client login
-*DefaultApi* | [**clientsStartSessionPost**](docs/DefaultApi.md#clientsStartSessionPost) | **POST** /clients/start_session | start game session
+*DefaultApi* | [**devicesAutoConnectPost**](docs/DefaultApi.md#devicesAutoConnectPost) | **POST** /devices/auto_connect | auto link device
+*DefaultApi* | [**devicesConnectPost**](docs/DefaultApi.md#devicesConnectPost) | **POST** /devices/connect | link device
+*DefaultApi* | [**devicesStartGamePost**](docs/DefaultApi.md#devicesStartGamePost) | **POST** /devices/start_game | start game
+*DefaultApi* | [**recordsAddPost**](docs/DefaultApi.md#recordsAddPost) | **POST** /records/add | add playing recored
 
 
 ## Documentation for Models
 
- - [ClientsAddDeviceGet200Response](docs/ClientsAddDeviceGet200Response.md)
- - [ClientsListDevicesGet200Response](docs/ClientsListDevicesGet200Response.md)
- - [ClientsLoginPost200Response](docs/ClientsLoginPost200Response.md)
- - [ClientsLoginPostRequest](docs/ClientsLoginPostRequest.md)
- - [ClientsStartSessionPostRequest](docs/ClientsStartSessionPostRequest.md)
+ - [DevicesAutoConnectPostRequest](docs/DevicesAutoConnectPostRequest.md)
+ - [DevicesConnectPost200Response](docs/DevicesConnectPost200Response.md)
+ - [DevicesConnectPostRequest](docs/DevicesConnectPostRequest.md)
+ - [DevicesStartGamePost200Response](docs/DevicesStartGamePost200Response.md)
+ - [RecordsAddPost200Response](docs/RecordsAddPost200Response.md)
+ - [RecordsAddPostRequest](docs/RecordsAddPostRequest.md)
 
 
 <a id="documentation-for-authorization"></a>

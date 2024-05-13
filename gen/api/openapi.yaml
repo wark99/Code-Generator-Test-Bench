@@ -1,75 +1,117 @@
 openapi: 3.1.0
 info:
-  title: VR-Training backend with pockebase (admin panel)
+  title: VR-Training backend with pockebase (device api)
   version: 1.0.0
 servers:
 - url: http://localhost:3000
 paths:
-  /clients/login:
+  /devices/connect:
     post:
-      description: login using pocketbase auth with password and username
+      description: used to link new device to client license
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/_clients_login_post_request'
+              $ref: '#/components/schemas/_devices_connect_post_request'
         required: true
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_clients_login_post_200_response'
+                $ref: '#/components/schemas/_devices_connect_post_200_response'
           description: To test
-      summary: client login
+      summary: link device
       x-content-type: application/json
       x-accepts: application/json
-  /clients/add_device:
-    get:
-      description: add new device to client license using the generated code
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_clients_add_device_get_200_response'
-          description: the generated code
-      summary: 'add new device '
-      x-accepts: application/json
-  /clients/list_devices:
-    get:
-      description: list all devices connected to client
-      responses:
-        "200":
-          content:
-            array:
-              schema:
-                $ref: '#/components/schemas/_clients_list_devices_get_200_response'
-          description: devices list
-      summary: list devices
-      x-accepts: array
-  /clients/start_session:
+  /devices/auto_connect:
     post:
-      description: start game session so the player can start the game from device
+      description: used to link new device to client license when the device is launche
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/_clients_start_session_post_request'
+              $ref: '#/components/schemas/_devices_auto_connect_post_request'
         required: true
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_clients_login_post_200_response'
+                $ref: '#/components/schemas/_devices_connect_post_200_response'
           description: To test
-      summary: start game session
+      summary: auto link device
+      x-content-type: application/json
+      x-accepts: application/json
+  /devices/start_game:
+    post:
+      description: used to start the game after the client presses the start session
+        button
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_devices_auto_connect_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_devices_start_game_post_200_response'
+          description: To test
+      summary: start game
+      x-content-type: application/json
+      x-accepts: application/json
+  /records/add:
+    post:
+      description: used after finishing the game to record the player results in the
+        database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_records_add_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_records_add_post_200_response'
+          description: To test
+      summary: add playing recored
       x-content-type: application/json
       x-accepts: application/json
 components:
   schemas:
-    _clients_list_devices_get_200_response:
+    _records_add_post_request:
+      properties:
+        client_id:
+          type: string
+        device_id:
+          type: string
+        device_serial_number:
+          type: string
+        record_id:
+          type: string
+        scenario_id:
+          type: string
+        metrics:
+          type: object
+        checklist:
+          type: object
+        additional_info:
+          type: string
+    _devices_connect_post_200_response:
+      example:
+        device_id: device_id
+        ready: true
+        running_record: running_record
+        device_serial_number: device_serial_number
+        client_id: client_id
+        running_scenario: running_scenario
+        connect_code: connect_code
       properties:
         device_id:
           type: string
@@ -85,30 +127,59 @@ components:
           type: string
         running_record:
           type: string
-    _clients_login_post_200_response:
+    _devices_start_game_post_200_response:
       example:
-        name: name
-        seats: seats
-      properties:
-        name:
-          type: string
-        seats:
-          type: string
-    _clients_login_post_request:
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-    _clients_add_device_get_200_response:
-      example:
-        connect_code: 0.8008281904610115
-      properties:
-        connect_code:
-          type: number
-    _clients_start_session_post_request:
+        record_id: record_id
+        checklist_keys: ""
+        device_id: device_id
+        additional_info: ""
+        scenario_name: scenario_name
+        metrics_keys:
+        - metrics_keys
+        - metrics_keys
+        client_id: client_id
+        scenario_id: scenario_id
       properties:
         device_id:
+          type: string
+        client_id:
+          type: string
+        scenario_id:
+          type: string
+        scenario_name:
+          type: string
+        record_id:
+          type: string
+        metrics_keys:
+          items:
+            description: TODO default missing array inner type to string
+            type: string
+          type: array
+        checklist_keys: {}
+        additional_info: {}
+    _devices_connect_post_request:
+      properties:
+        connect_code:
+          description: the code showing in the client admin panel
+          type: number
+        device_serial_number:
+          description: any unique string the device can provide
+          type: string
+    _devices_auto_connect_post_request:
+      properties:
+        device_serial_number:
+          description: any unique string the device can provide
+          type: string
+    _records_add_post_200_response:
+      example:
+        device_id: device_id
+        user_id: user_id
+        client_id: client_id
+        scenario_id: scenario_id
+      properties:
+        device_id:
+          type: string
+        client_id:
           type: string
         scenario_id:
           type: string

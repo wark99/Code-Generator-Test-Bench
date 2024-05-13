@@ -2,11 +2,12 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import org.openapitools.client.model.ClientsAddDeviceGet200Response;
-import org.openapitools.client.model.ClientsListDevicesGet200Response;
-import org.openapitools.client.model.ClientsLoginPost200Response;
-import org.openapitools.client.model.ClientsLoginPostRequest;
-import org.openapitools.client.model.ClientsStartSessionPostRequest;
+import org.openapitools.client.model.DevicesAutoConnectPostRequest;
+import org.openapitools.client.model.DevicesConnectPost200Response;
+import org.openapitools.client.model.DevicesConnectPostRequest;
+import org.openapitools.client.model.DevicesStartGamePost200Response;
+import org.openapitools.client.model.RecordsAddPost200Response;
+import org.openapitools.client.model.RecordsAddPostRequest;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:19:04.981860060Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:19:11.915359394Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class DefaultApi {
     private ApiClient apiClient;
 
@@ -50,109 +51,31 @@ public class DefaultApi {
     }
 
     /**
-     * add new device 
-     * add new device to client license using the generated code
-     * <p><b>200</b> - the generated code
-     * @return ClientsAddDeviceGet200Response
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ClientsAddDeviceGet200Response clientsAddDeviceGet() throws RestClientException {
-        return clientsAddDeviceGetWithHttpInfo().getBody();
-    }
-
-    /**
-     * add new device 
-     * add new device to client license using the generated code
-     * <p><b>200</b> - the generated code
-     * @return ResponseEntity&lt;ClientsAddDeviceGet200Response&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<ClientsAddDeviceGet200Response> clientsAddDeviceGetWithHttpInfo() throws RestClientException {
-        Object localVarPostBody = null;
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = { 
-            "application/json"
-         };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<ClientsAddDeviceGet200Response> localReturnType = new ParameterizedTypeReference<ClientsAddDeviceGet200Response>() {};
-        return apiClient.invokeAPI("/clients/add_device", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * list devices
-     * list all devices connected to client
-     * <p><b>200</b> - devices list
-     * @return ClientsListDevicesGet200Response
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ClientsListDevicesGet200Response clientsListDevicesGet() throws RestClientException {
-        return clientsListDevicesGetWithHttpInfo().getBody();
-    }
-
-    /**
-     * list devices
-     * list all devices connected to client
-     * <p><b>200</b> - devices list
-     * @return ResponseEntity&lt;ClientsListDevicesGet200Response&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<ClientsListDevicesGet200Response> clientsListDevicesGetWithHttpInfo() throws RestClientException {
-        Object localVarPostBody = null;
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = { 
-            "array"
-         };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<ClientsListDevicesGet200Response> localReturnType = new ParameterizedTypeReference<ClientsListDevicesGet200Response>() {};
-        return apiClient.invokeAPI("/clients/list_devices", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * client login
-     * login using pocketbase auth with password and username
+     * auto link device
+     * used to link new device to client license when the device is launche
      * <p><b>200</b> - To test
-     * @param clientsLoginPostRequest  (required)
-     * @return ClientsLoginPost200Response
+     * @param devicesAutoConnectPostRequest  (required)
+     * @return DevicesConnectPost200Response
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ClientsLoginPost200Response clientsLoginPost(ClientsLoginPostRequest clientsLoginPostRequest) throws RestClientException {
-        return clientsLoginPostWithHttpInfo(clientsLoginPostRequest).getBody();
+    public DevicesConnectPost200Response devicesAutoConnectPost(DevicesAutoConnectPostRequest devicesAutoConnectPostRequest) throws RestClientException {
+        return devicesAutoConnectPostWithHttpInfo(devicesAutoConnectPostRequest).getBody();
     }
 
     /**
-     * client login
-     * login using pocketbase auth with password and username
+     * auto link device
+     * used to link new device to client license when the device is launche
      * <p><b>200</b> - To test
-     * @param clientsLoginPostRequest  (required)
-     * @return ResponseEntity&lt;ClientsLoginPost200Response&gt;
+     * @param devicesAutoConnectPostRequest  (required)
+     * @return ResponseEntity&lt;DevicesConnectPost200Response&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<ClientsLoginPost200Response> clientsLoginPostWithHttpInfo(ClientsLoginPostRequest clientsLoginPostRequest) throws RestClientException {
-        Object localVarPostBody = clientsLoginPostRequest;
+    public ResponseEntity<DevicesConnectPost200Response> devicesAutoConnectPostWithHttpInfo(DevicesAutoConnectPostRequest devicesAutoConnectPostRequest) throws RestClientException {
+        Object localVarPostBody = devicesAutoConnectPostRequest;
         
-        // verify the required parameter 'clientsLoginPostRequest' is set
-        if (clientsLoginPostRequest == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'clientsLoginPostRequest' when calling clientsLoginPost");
+        // verify the required parameter 'devicesAutoConnectPostRequest' is set
+        if (devicesAutoConnectPostRequest == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'devicesAutoConnectPostRequest' when calling devicesAutoConnectPost");
         }
         
 
@@ -172,35 +95,35 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<ClientsLoginPost200Response> localReturnType = new ParameterizedTypeReference<ClientsLoginPost200Response>() {};
-        return apiClient.invokeAPI("/clients/login", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<DevicesConnectPost200Response> localReturnType = new ParameterizedTypeReference<DevicesConnectPost200Response>() {};
+        return apiClient.invokeAPI("/devices/auto_connect", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * start game session
-     * start game session so the player can start the game from device
+     * link device
+     * used to link new device to client license
      * <p><b>200</b> - To test
-     * @param clientsStartSessionPostRequest  (required)
-     * @return ClientsLoginPost200Response
+     * @param devicesConnectPostRequest  (required)
+     * @return DevicesConnectPost200Response
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ClientsLoginPost200Response clientsStartSessionPost(ClientsStartSessionPostRequest clientsStartSessionPostRequest) throws RestClientException {
-        return clientsStartSessionPostWithHttpInfo(clientsStartSessionPostRequest).getBody();
+    public DevicesConnectPost200Response devicesConnectPost(DevicesConnectPostRequest devicesConnectPostRequest) throws RestClientException {
+        return devicesConnectPostWithHttpInfo(devicesConnectPostRequest).getBody();
     }
 
     /**
-     * start game session
-     * start game session so the player can start the game from device
+     * link device
+     * used to link new device to client license
      * <p><b>200</b> - To test
-     * @param clientsStartSessionPostRequest  (required)
-     * @return ResponseEntity&lt;ClientsLoginPost200Response&gt;
+     * @param devicesConnectPostRequest  (required)
+     * @return ResponseEntity&lt;DevicesConnectPost200Response&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<ClientsLoginPost200Response> clientsStartSessionPostWithHttpInfo(ClientsStartSessionPostRequest clientsStartSessionPostRequest) throws RestClientException {
-        Object localVarPostBody = clientsStartSessionPostRequest;
+    public ResponseEntity<DevicesConnectPost200Response> devicesConnectPostWithHttpInfo(DevicesConnectPostRequest devicesConnectPostRequest) throws RestClientException {
+        Object localVarPostBody = devicesConnectPostRequest;
         
-        // verify the required parameter 'clientsStartSessionPostRequest' is set
-        if (clientsStartSessionPostRequest == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'clientsStartSessionPostRequest' when calling clientsStartSessionPost");
+        // verify the required parameter 'devicesConnectPostRequest' is set
+        if (devicesConnectPostRequest == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'devicesConnectPostRequest' when calling devicesConnectPost");
         }
         
 
@@ -220,7 +143,103 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<ClientsLoginPost200Response> localReturnType = new ParameterizedTypeReference<ClientsLoginPost200Response>() {};
-        return apiClient.invokeAPI("/clients/start_session", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<DevicesConnectPost200Response> localReturnType = new ParameterizedTypeReference<DevicesConnectPost200Response>() {};
+        return apiClient.invokeAPI("/devices/connect", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * start game
+     * used to start the game after the client presses the start session button
+     * <p><b>200</b> - To test
+     * @param devicesAutoConnectPostRequest  (required)
+     * @return DevicesStartGamePost200Response
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public DevicesStartGamePost200Response devicesStartGamePost(DevicesAutoConnectPostRequest devicesAutoConnectPostRequest) throws RestClientException {
+        return devicesStartGamePostWithHttpInfo(devicesAutoConnectPostRequest).getBody();
+    }
+
+    /**
+     * start game
+     * used to start the game after the client presses the start session button
+     * <p><b>200</b> - To test
+     * @param devicesAutoConnectPostRequest  (required)
+     * @return ResponseEntity&lt;DevicesStartGamePost200Response&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<DevicesStartGamePost200Response> devicesStartGamePostWithHttpInfo(DevicesAutoConnectPostRequest devicesAutoConnectPostRequest) throws RestClientException {
+        Object localVarPostBody = devicesAutoConnectPostRequest;
+        
+        // verify the required parameter 'devicesAutoConnectPostRequest' is set
+        if (devicesAutoConnectPostRequest == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'devicesAutoConnectPostRequest' when calling devicesStartGamePost");
+        }
+        
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { 
+            "application/json"
+         };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] {  };
+
+        ParameterizedTypeReference<DevicesStartGamePost200Response> localReturnType = new ParameterizedTypeReference<DevicesStartGamePost200Response>() {};
+        return apiClient.invokeAPI("/devices/start_game", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * add playing recored
+     * used after finishing the game to record the player results in the database
+     * <p><b>200</b> - To test
+     * @param recordsAddPostRequest  (required)
+     * @return RecordsAddPost200Response
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public RecordsAddPost200Response recordsAddPost(RecordsAddPostRequest recordsAddPostRequest) throws RestClientException {
+        return recordsAddPostWithHttpInfo(recordsAddPostRequest).getBody();
+    }
+
+    /**
+     * add playing recored
+     * used after finishing the game to record the player results in the database
+     * <p><b>200</b> - To test
+     * @param recordsAddPostRequest  (required)
+     * @return ResponseEntity&lt;RecordsAddPost200Response&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<RecordsAddPost200Response> recordsAddPostWithHttpInfo(RecordsAddPostRequest recordsAddPostRequest) throws RestClientException {
+        Object localVarPostBody = recordsAddPostRequest;
+        
+        // verify the required parameter 'recordsAddPostRequest' is set
+        if (recordsAddPostRequest == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'recordsAddPostRequest' when calling recordsAddPost");
+        }
+        
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { 
+            "application/json"
+         };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] {  };
+
+        ParameterizedTypeReference<RecordsAddPost200Response> localReturnType = new ParameterizedTypeReference<RecordsAddPost200Response>() {};
+        return apiClient.invokeAPI("/records/add", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }
