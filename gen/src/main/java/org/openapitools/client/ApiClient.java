@@ -57,10 +57,8 @@ import java.util.function.Supplier;
 import java.time.OffsetDateTime;
 
 import org.openapitools.client.auth.Authentication;
-import org.openapitools.client.auth.HttpBearerAuth;
-import org.openapitools.client.auth.OAuth;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:18:35.261242100Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:18:50.381152Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
@@ -85,7 +83,7 @@ public class ApiClient extends JavaTimeFormatter {
 
     private long waitTimeMillis = 10;
 
-    private String basePath = "https://api.infomaniak.com";
+    private String basePath = "http://104.42.44.252/BoomAPI/api/Genric";
 
     private RestTemplate restTemplate;
 
@@ -116,8 +114,6 @@ public class ApiClient extends JavaTimeFormatter {
 
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<String, Authentication>();
-        authentications.put("oAuth", new OAuth());
-        authentications.put("bearerAuth", new HttpBearerAuth("bearer"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -201,47 +197,8 @@ public class ApiClient extends JavaTimeFormatter {
         return authentications.get(authName);
     }
 
-    /**
-     * Helper method to set access token for the first Bearer authentication.
-     *
-     * @param bearerToken Bearer token
-     */
-    public void setBearerToken(String bearerToken) {
-        setBearerToken(() -> bearerToken);
-    }
-
-    /**
-     * Helper method to set the supplier of access tokens for Bearer authentication.
-     *
-     * @param tokenSupplier The supplier of bearer tokens
-     */
-    public void setBearerToken(Supplier<String> tokenSupplier) {
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof HttpBearerAuth) {
-                ((HttpBearerAuth) auth).setBearerToken(tokenSupplier);
-                return;
-            }
-        }
-        throw new RuntimeException("No Bearer authentication configured!");
-    }
 
 
-
-
-    /**
-     * Helper method to set access token for the first OAuth2 authentication.
-     *
-     * @param accessToken Access token
-     */
-    public void setAccessToken(String accessToken) {
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof OAuth) {
-                ((OAuth) auth).setAccessToken(accessToken);
-                return;
-            }
-        }
-        throw new RuntimeException("No OAuth2 authentication configured!");
-    }
 
 
     /**

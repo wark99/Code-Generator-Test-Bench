@@ -24,17 +24,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * ModelApiResponse
+ * GetDetailsByMdnApiResponse
  */
 @JsonPropertyOrder({
-  ModelApiResponse.JSON_PROPERTY_ERRORCODE,
-  ModelApiResponse.JSON_PROPERTY_DATA,
-  ModelApiResponse.JSON_PROPERTY_DETAILS,
-  ModelApiResponse.JSON_PROPERTY_STATUS
+  GetDetailsByMdnApiResponse.JSON_PROPERTY_ERRORCODE,
+  GetDetailsByMdnApiResponse.JSON_PROPERTY_DATA,
+  GetDetailsByMdnApiResponse.JSON_PROPERTY_DETAILS,
+  GetDetailsByMdnApiResponse.JSON_PROPERTY_CREATION_TIME,
+  GetDetailsByMdnApiResponse.JSON_PROPERTY_DELAY_ACTIVATION,
+  GetDetailsByMdnApiResponse.JSON_PROPERTY_STATUS
 })
-@JsonTypeName("ApiResponse")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:18:50.381152Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class ModelApiResponse {
+public class GetDetailsByMdnApiResponse {
   public static final String JSON_PROPERTY_ERRORCODE = "errorcode";
   private String errorcode;
 
@@ -44,13 +45,19 @@ public class ModelApiResponse {
   public static final String JSON_PROPERTY_DETAILS = "details";
   private String details;
 
+  public static final String JSON_PROPERTY_CREATION_TIME = "creationTime";
+  private String creationTime;
+
+  public static final String JSON_PROPERTY_DELAY_ACTIVATION = "delayActivation";
+  private Boolean delayActivation;
+
   public static final String JSON_PROPERTY_STATUS = "status";
   private Boolean status;
 
-  public ModelApiResponse() {
+  public GetDetailsByMdnApiResponse() {
   }
 
-  public ModelApiResponse errorcode(String errorcode) {
+  public GetDetailsByMdnApiResponse errorcode(String errorcode) {
     
     this.errorcode = errorcode;
     return this;
@@ -76,7 +83,7 @@ public class ModelApiResponse {
   }
 
 
-  public ModelApiResponse data(String data) {
+  public GetDetailsByMdnApiResponse data(String data) {
     
     this.data = data;
     return this;
@@ -102,7 +109,7 @@ public class ModelApiResponse {
   }
 
 
-  public ModelApiResponse details(String details) {
+  public GetDetailsByMdnApiResponse details(String details) {
     
     this.details = details;
     return this;
@@ -128,7 +135,59 @@ public class ModelApiResponse {
   }
 
 
-  public ModelApiResponse status(Boolean status) {
+  public GetDetailsByMdnApiResponse creationTime(String creationTime) {
+    
+    this.creationTime = creationTime;
+    return this;
+  }
+
+   /**
+   * Get creationTime
+   * @return creationTime
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_CREATION_TIME)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getCreationTime() {
+    return creationTime;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_CREATION_TIME)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setCreationTime(String creationTime) {
+    this.creationTime = creationTime;
+  }
+
+
+  public GetDetailsByMdnApiResponse delayActivation(Boolean delayActivation) {
+    
+    this.delayActivation = delayActivation;
+    return this;
+  }
+
+   /**
+   * Get delayActivation
+   * @return delayActivation
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_DELAY_ACTIVATION)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Boolean getDelayActivation() {
+    return delayActivation;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_DELAY_ACTIVATION)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setDelayActivation(Boolean delayActivation) {
+    this.delayActivation = delayActivation;
+  }
+
+
+  public GetDetailsByMdnApiResponse status(Boolean status) {
     
     this.status = status;
     return this;
@@ -161,25 +220,29 @@ public class ModelApiResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ModelApiResponse _apiResponse = (ModelApiResponse) o;
-    return Objects.equals(this.errorcode, _apiResponse.errorcode) &&
-        Objects.equals(this.data, _apiResponse.data) &&
-        Objects.equals(this.details, _apiResponse.details) &&
-        Objects.equals(this.status, _apiResponse.status);
+    GetDetailsByMdnApiResponse getDetailsByMdnApiResponse = (GetDetailsByMdnApiResponse) o;
+    return Objects.equals(this.errorcode, getDetailsByMdnApiResponse.errorcode) &&
+        Objects.equals(this.data, getDetailsByMdnApiResponse.data) &&
+        Objects.equals(this.details, getDetailsByMdnApiResponse.details) &&
+        Objects.equals(this.creationTime, getDetailsByMdnApiResponse.creationTime) &&
+        Objects.equals(this.delayActivation, getDetailsByMdnApiResponse.delayActivation) &&
+        Objects.equals(this.status, getDetailsByMdnApiResponse.status);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(errorcode, data, details, status);
+    return Objects.hash(errorcode, data, details, creationTime, delayActivation, status);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModelApiResponse {\n");
+    sb.append("class GetDetailsByMdnApiResponse {\n");
     sb.append("    errorcode: ").append(toIndentedString(errorcode)).append("\n");
     sb.append("    data: ").append(toIndentedString(data)).append("\n");
     sb.append("    details: ").append(toIndentedString(details)).append("\n");
+    sb.append("    creationTime: ").append(toIndentedString(creationTime)).append("\n");
+    sb.append("    delayActivation: ").append(toIndentedString(delayActivation)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("}");
     return sb.toString();
