@@ -1,13 +1,13 @@
 
 
-# AuthLogoutPostRequest
+# HTTPValidationError
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**token** | **String** | 사용자의 인증 토큰 |  |
+|**detail** | [**List&lt;ValidationError&gt;**](ValidationError.md) |  |  [optional] |
 
 
 

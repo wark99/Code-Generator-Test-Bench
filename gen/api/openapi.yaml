@@ -1,458 +1,132 @@
 openapi: 3.1.0
 info:
-  description: 의류 보관 서비스를 위한 API 명세서
-  title: 의류 보관 서비스 API
-  version: 1.0.0
+  contact:
+    name: '@Cheese'
+    url: https://cheese.chatango.com/
+  description: deez
+  license:
+    name: MIT
+  termsOfService: https://chatango.vissle.repl.co/policy
+  title: Unofficial Chatango API
+  version: 0.1.0
 servers:
-- url: http://localhost:3000
+- url: /
 paths:
-  /users:
-    post:
-      description: "핸드폰 번호, 주소, 비밀번호로 새로운 사용자 등록"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_users_post_request'
-        required: true
-      responses:
-        "201":
-          description: User created successfully
-        "400":
-          description: Invalid input
-      summary: 회원가입
-      x-content-type: application/json
-      x-accepts: application/json
-  /auth/login:
-    post:
-      description: "사용자 이메일과 비밀번호를 통해 로그인을 진행하고, 인증 토큰을 발급합니다."
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_auth_login_post_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_auth_login_post_200_response'
-          description: 로그인 성공
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_auth_login_post_401_response'
-          description: Unauthorized
-      summary: 로그인
-      x-content-type: application/json
-      x-accepts: application/json
-  /auth/logout:
-    post:
-      description: 현재 세션의 사용자를 로그아웃 처리합니다.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_auth_logout_post_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_auth_logout_post_200_response'
-          description: 로그아웃 성공
-      summary: 로그아웃
-      x-content-type: application/json
-      x-accepts: application/json
-  /clothes/store:
-    post:
-      description: 사용자가 의류 보관을 신청하는 API
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_clothes_store_post_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_clothes_store_post_200_response'
-          description: 의류 보관 신청 성공
-        "400":
-          description: Invalid input data
-        "401":
-          description: User not authenticated
-        "403":
-          description: User is not authorized to perform this action
-      summary: 의류 보관 신청
-      x-content-type: application/json
-      x-accepts: application/json
-  /clothes/return:
-    post:
-      description: 사용자가 보관된 의류의 반환을 신청합니다.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_clothes_return_post_request'
-        required: true
-      summary: 의류 반환 신청
-      x-content-type: application/json
-      x-accepts: application/json
-  /clothes/list/{user_id}:
+  /v1/profile/{user}:
     get:
-      description: 사용자가 보관한 의류 리스트를 조회하는 API
+      operationId: profile_v1_profile__user__get
       parameters:
-      - explode: false
-        in: path
-        name: user_id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_clothes_list__user_id__get_200_response'
-          description: 보관한 의류 리스트 조회 성공
-        "404":
-          description: No clothes found
-        "401":
-          description: User not authenticated
-      summary: 보관한 의류 리스트 조회
-      x-accepts: application/json
-  /payments/{userId}/auto:
-    get:
-      description: 사용자의 월별 결제에 대한 자동 결제 상태를 검색
-      parameters:
-      - description: user ID
+      - description: bruh moment
         explode: false
         in: path
-        name: userId
+        name: name
         required: true
         schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_payments__userId__auto_get_200_response'
-          description: 결제 상태 검색
-        "404":
-          description: User not found
-      summary: 자동 결제
-      x-accepts: application/json
-  /payments/retry:
-    post:
-      description: 저장된 카드 정보를 사용하여 매일 실패한 결제를 자동으로 재시도
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_payments_retry_post_request'
-        required: true
-      responses:
-        "200":
-          description: 결제 재시도 시작됨
-        "404":
-          description: 사용자를 찾을 수 없음
-      summary: 실패한 결제 재시도
-      x-content-type: application/json
-      x-accepts: application/json
-  /notifications/slack:
-    post:
-      description: 결제 실패 시 구성된 Slack 채널로 알림 메시지를 보냄
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_notifications_slack_post_request'
-        required: true
-      responses:
-        "200":
-          description: 알림 전송
-        "400":
-          description: 잘못된 입력
-      summary: Slack에 알림 보내기
-      x-content-type: application/json
-      x-accepts: application/json
-  /storage-requests/{requestId}/pickup:
-    put:
-      parameters:
-      - explode: false
-        in: path
-        name: requestId
-        required: true
-        schema:
+          description: bruh moment
+          maxLength: 20
+          minLength: 1
+          title: Name
           type: string
         style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_storage_requests__requestId__pickup_put_200_response'
-          description: 의류 수거 완료
-      summary: 의류 수거 완료 (배송팀용)
-      x-accepts: application/json
-  /storage-requests/{requestId}/store:
-    put:
-      parameters:
-      - explode: false
-        in: path
-        name: requestId
-        required: true
+      - description: Optionally set multiple queries separated by a comma.
+        explode: true
+        in: query
+        name: get
+        required: false
         schema:
+          description: Optionally set multiple queries separated by a comma.
+          enum:
+          - mini
+          - full
+          - background
+          - style
+          - css
+          - purchase
+          - group
+          title: Get
           type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_storage_requests__requestId__pickup_put_200_response'
-          description: 의류 적재 완료
-      summary: 의류 적재 완료 (물류팀용)
-      x-accepts: application/json
-  /return-requests/{requestId}/return:
-    put:
-      parameters:
-      - explode: false
-        in: path
-        name: requestId
-        required: true
+        style: form
+      - description: Optionally set multiple queries separated by a comma.
+        explode: true
+        in: query
+        name: image
+        required: false
         schema:
+          description: Optionally set multiple queries separated by a comma.
+          enum:
+          - avatar
+          - thumb
+          - thumb_m
+          - message
+          - flag
+          - flag_t
+          - vr_t
+          title: Image
           type: string
-        style: simple
+        style: form
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_storage_requests__requestId__pickup_put_200_response'
-          description: 의류 반환 완료
-      summary: 의류 반환 완료 (배송팀용)
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Profile
+      tags:
+      - api
       x-accepts: application/json
 components:
   schemas:
-    _payments__userId__auto_get_200_response:
+    HTTPValidationError:
       example:
-        lastAttemptedAt: 2000-01-23T04:56:07.000+00:00
-        failedAttempts: 0
-        nextPaymentDue: 2000-01-23T04:56:07.000+00:00
-        isAutoPayment: true
+        detail:
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
       properties:
-        isAutoPayment:
-          description: 결제가 자동 결제되도록 설정되어 있는지 여부
-          type: boolean
-        lastAttemptedAt:
-          description: 마지막 결제 시도의 타임스탬프
-          format: date-time
-          type: string
-        failedAttempts:
-          description: 연속 결제 시도 실패 횟수
-          type: integer
-        nextPaymentDue:
-          description: 다음 결제일
-          format: date-time
-          type: string
-    _clothes_list__user_id__get_200_response_clothes_inner:
-      example:
-        storage_start_date: 2000-01-23
-        clothes_id: 0
-        clothes_status: clothes_status
-        description: description
-      properties:
-        clothes_id:
-          type: integer
-        description:
-          type: string
-        clothes_status:
-          type: string
-        storage_start_date:
-          description: 보관 시작 날짜
-          format: date
-          type: string
-    _notifications_slack_post_request:
-      properties:
-        userId:
-          description: 결제에 실패한 사용자의 ID
-          type: integer
-        message:
-          description: Slack으로 전송할 메시지 콘텐츠
-          type: string
-      required:
-      - message
-      - userId
-    _clothes_return_post_request:
-      properties:
-        order_id:
-          description: 반환을 요청하는 주문 ID
-          type: integer
-        token:
-          description: 사용자의 인증 토큰
-          type: string
-      required:
-      - order_id
-      - token
-    _auth_login_post_request:
-      properties:
-        email:
-          description: 사용자의 이메일 주소
-          format: email
-          type: string
-        password:
-          description: 사용자의 비밀번호
-          type: string
-      required:
-      - email
-      - password
-    _auth_login_post_200_response:
-      example:
-        success: true
-        message: message
-        token: token
-      properties:
-        success:
-          description: 요청 성공 여부
-          type: boolean
-        token:
-          description: 발급된 인증 토큰
-          type: string
-        message:
-          description: 처리 결과 메시지
-          type: string
-    _storage_requests__requestId__pickup_put_200_response:
-      example:
-        requestId: requestId
-        status: status
-      properties:
-        requestId:
-          type: string
-        status:
-          type: string
-    _clothes_list__user_id__get_200_response:
-      example:
-        clothes:
-        - storage_start_date: 2000-01-23
-          clothes_id: 0
-          clothes_status: clothes_status
-          description: description
-        - storage_start_date: 2000-01-23
-          clothes_id: 0
-          clothes_status: clothes_status
-          description: description
-      properties:
-        clothes:
+        detail:
           items:
-            $ref: '#/components/schemas/_clothes_list__user_id__get_200_response_clothes_inner'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-    _clothes_store_post_200_response:
+      title: HTTPValidationError
+    ValidationError:
       example:
-        order_storage_amount: 0
-        discount_applied: 6
-        success: true
-        message: message
-        order_final_amount: 1
+        msg: msg
+        loc:
+        - ValidationError_loc_inner
+        - ValidationError_loc_inner
+        type: type
       properties:
-        success:
-          description: 요청 성공 여부
-          type: boolean
-        order_storage_amount:
-          description: 할인 적용 전 총 비용
-          type: integer
-        discount_applied:
-          description: 적용된 할인 금액
-          type: integer
-        order_final_amount:
-          description: 할인 후 최종 비용
-          type: integer
-        message:
-          description: 주문 생성 및 계산 결과 메시지
+        loc:
+          items:
+            $ref: '#/components/schemas/ValidationError_loc_inner'
+          type: array
+        msg:
+          title: Message
           type: string
-    _auth_logout_post_200_response:
-      example:
-        success: true
-        message: message
-      properties:
-        success:
-          description: 요청 성공 여부
-          type: boolean
-        message:
-          description: 로그아웃 처리 결과 메시지
-          type: string
-    _clothes_store_post_request:
-      properties:
-        user_id:
-          type: integer
-        order_id:
-          type: integer
-        description:
-          type: string
-        clothes_category_id:
-          type: integer
-        order_date:
-          format: date
-          type: string
-        storage_duration_months:
-          type: integer
-        token:
-          description: 사용자의 인증 토큰
+        type:
+          title: Error Type
           type: string
       required:
-      - clothes_category_id
-      - order_date
-      - order_id
-      - storage_duration_months
-      - token
-      - user_id
-    _auth_logout_post_request:
-      properties:
-        token:
-          description: 사용자의 인증 토큰
-          type: string
-      required:
-      - token
-    _payments_retry_post_request:
-      properties:
-        userId:
-          description: 결제에 실패한 사용자의 ID
-          type: integer
-      required:
-      - userId
-    _users_post_request:
-      properties:
-        phoneNumber:
-          description: 사용자 핸드폰 번호 = unique.
-          type: string
-        address:
-          description: 수거 및 배송을 위한 사용자 주소
-          type: string
-        password:
-          description: 사용자 비밀번호
-          type: string
-      required:
-      - address
-      - password
-      - phoneNumber
-    _auth_login_post_401_response:
-      example:
-        success: true
-        message: message
-      properties:
-        success:
-          description: 요청 실패 여부
-          type: boolean
-        message:
-          description: 인증 실패 메시지
-          type: string
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ValidationError_loc_inner:
+      anyOf:
+      - type: string
+      - type: integer
 
