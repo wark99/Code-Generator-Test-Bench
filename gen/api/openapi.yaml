@@ -1,0 +1,275 @@
+openapi: 3.1.0
+info:
+  contact:
+    name: Brukerstøtte
+    url: https://www.skatteetaten.no/deling/kontakt/
+  description: Tjenesten leverer informasjon om en virksomhets aksjonærer pr. 31.12
+    sist kalenderår.
+  termsOfService: https://www.skatteetaten.no/deling/bruksvilkar-for-delingstjenester
+  title: Aksjonær i virksomhet API
+  version: 1.1.0
+externalDocs:
+  description: Dokumentasjon på Skatteetatens GitHub
+  url: https://skatteetaten.github.io/api-dokumentasjon/api/aksjonaer
+servers:
+- description: Ekstern deling (Test)
+  url: https://aksjonaerivirksomhet.api.skatteetaten-test.no/v1
+- description: Produksjon (Prod)
+  url: https://aksjonaerivirksomhet.api.skatteetaten.no/v1
+paths:
+  /{rettighetspakke}/aksjonaerer/{organisasjonsnummer}:
+    get:
+      description: Informasjon om en virksomhets aksjonærer pr. 31.12 sist kalenderår
+      operationId: hentAksjonaerIVirksomhet
+      parameters:
+      - description: "Datakonsumenter plasseres i en rettighetspakke (per datasett)\
+          \ basert på en juridisk vurdering. Rettighetspakken styrer skjermingsregler,\
+          \ filtrering og detaljering som benyttes når det gis innsyn i data i datasett."
+        explode: false
+        in: path
+        name: rettighetspakke
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Organisasjonsnummer for virksomhet
+        explode: false
+        in: path
+        name: organisasjonsnummer
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Kalenderåret det skal hentes opplysninger fra. Returnerer siste
+          tilgjengelige dersom ikke oppgitt.
+        explode: true
+        in: query
+        name: kalenderaar
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Korrelasjonsid, unik identifikator for den tekniske forespø\
+          rselen. Må være på UUID-format"
+        explode: false
+        in: header
+        name: Korrelasjonsid
+        required: false
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aksjeselskap'
+          description: Gyldig respons
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feil'
+          description: "Diverse feilmeldinger, se egen dokumentasjon"
+      summary: Hent aksjonærer i en virksomhet
+      tags:
+      - aksjonaerIVirksomhet
+      x-accepts: application/json
+components:
+  schemas:
+    Feil:
+      description: Feilstruktur for alle feilmeldinger.
+      example:
+        melding: melding
+        kode: kode
+        korrelasjonsid: korrelasjonsid
+      properties:
+        kode:
+          description: "Feilkode, for maskinell håndtering"
+          type: string
+        melding:
+          description: Beskrivelse av feilen som har oppstått
+          type: string
+        korrelasjonsid:
+          description: Korrelasjonsid
+          type: string
+    Aksjeselskap:
+      description: ""
+      example:
+        identifikator: identifikator
+        kalenderaar: kalenderaar
+        aksjonaerer:
+        - aksjer:
+          - antallAksjer: 0
+            aksjeklasse: aksjeklasse
+            isinnummer: isinnummer
+          - antallAksjer: 0
+            aksjeklasse: aksjeklasse
+            isinnummer: isinnummer
+          landkode: landkode
+          postnummer: postnummer
+          personidentifikator: personidentifikator
+          navn: navn
+          foedselsaar: foedselsaar
+          organisasjonsnummer: organisasjonsnummer
+        - aksjer:
+          - antallAksjer: 0
+            aksjeklasse: aksjeklasse
+            isinnummer: isinnummer
+          - antallAksjer: 0
+            aksjeklasse: aksjeklasse
+            isinnummer: isinnummer
+          landkode: landkode
+          postnummer: postnummer
+          personidentifikator: personidentifikator
+          navn: navn
+          foedselsaar: foedselsaar
+          organisasjonsnummer: organisasjonsnummer
+        totaltAntallAksjer: 6
+      properties:
+        aksjonaerer:
+          description: ""
+          items:
+            $ref: '#/components/schemas/Aksjonaer'
+          type: array
+        totaltAntallAksjer:
+          description: mengde som utgjør eller kan uttrykkes i et visst tall (<a href='https://data.skatteetaten.no/begrep/20b2e145-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: int64
+          type: integer
+        identifikator:
+          description: (<a href='https://data.skatteetaten.no/begreper/dcfb4778-e484-11e6-9cb3-005056821322'>Begrepsreferanse</a>)
+          type: string
+        kalenderaar:
+          description: årstall er et tall som angir årets nummer i tidsregningen i
+            den gregorianske kalender (<a href='https://data.skatteetaten.no/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: year
+          type: string
+    Aksje:
+      description: ""
+      example:
+        antallAksjer: 0
+        aksjeklasse: aksjeklasse
+        isinnummer: isinnummer
+      properties:
+        isinnummer:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+        antallAksjer:
+          description: mengde som utgjør eller kan uttrykkes i et visst tall (<a href='https://data.skatteetaten.no/begrep/20b2e145-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: int64
+          type: integer
+        aksjeklasse:
+          description: "Lovlige verdier for kodelisten ligger her: https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml\
+            \ (<a href='https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml'>Kodelistereferanse</a>)"
+          type: string
+    Aksjonaer:
+      description: (<a href='https://data.skatteetaten.no/begrep/20b2e177-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      example:
+        aksjer:
+        - antallAksjer: 0
+          aksjeklasse: aksjeklasse
+          isinnummer: isinnummer
+        - antallAksjer: 0
+          aksjeklasse: aksjeklasse
+          isinnummer: isinnummer
+        landkode: landkode
+        postnummer: postnummer
+        personidentifikator: personidentifikator
+        navn: navn
+        foedselsaar: foedselsaar
+        organisasjonsnummer: organisasjonsnummer
+      properties:
+        personidentifikator:
+          description: "ellevesifret identifikasjonsnummer for personer bosatt i Norge,\
+            \ der de seks første sifrene angir fødselsdato og de fem siste personnummer.\
+            \ (<a href='https://data.skatteetaten.no/begrep/5138da10-be20-11e6-8004-005056825ca0'>Begrepsreferanse</a>)"
+          maxLength: 11
+          minLength: 11
+          pattern: "[0-9]+"
+          type: string
+        organisasjonsnummer:
+          description: 9 sifret nummer gitt de som er registrert i Enhetsregisteret.
+            (<a href='https://data.skatteetaten.no/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 9
+          minLength: 9
+          pattern: "[0-9]+"
+          type: string
+        navn:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+        foedselsaar:
+          description: årstall er et tall som angir årets nummer i tidsregningen i
+            den gregorianske kalender (<a href='https://data.skatteetaten.no/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: year
+          type: string
+        postnummer:
+          description: nummer på et poststed (<a href='https://data.skatteetaten.no/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4
+          minLength: 4
+          pattern: "([0-9]){4}"
+          type: string
+        aksjer:
+          description: ""
+          items:
+            $ref: '#/components/schemas/Aksje'
+          type: array
+        landkode:
+          description: koder for land etter ISO 3166-1 Alpha-2 (<a href='https://data.skatteetaten.no/begrep/20b2e112-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 2
+          minLength: 2
+          pattern: "([A-Z]){2}"
+          type: string
+    Antall:
+      description: mengde som utgjør eller kan uttrykkes i et visst tall (<a href='https://data.skatteetaten.no/begrep/20b2e145-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      format: int64
+      type: integer
+    NorskIdentifikator:
+      description: (<a href='https://data.skatteetaten.no/begreper/dcfb4778-e484-11e6-9cb3-005056821322'>Begrepsreferanse</a>)
+      type: string
+    Aarstall:
+      description: årstall er et tall som angir årets nummer i tidsregningen i den
+        gregorianske kalender (<a href='https://data.skatteetaten.no/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      format: year
+      type: string
+    Tekst:
+      description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+        tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 4000
+      type: string
+    Aksjeklasse:
+      description: "Lovlige verdier for kodelisten ligger her: https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml\
+        \ (<a href='https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml'>Kodelistereferanse</a>)"
+      type: string
+    Foedselsnummer:
+      description: "ellevesifret identifikasjonsnummer for personer bosatt i Norge,\
+        \ der de seks første sifrene angir fødselsdato og de fem siste personnummer.\
+        \ (<a href='https://data.skatteetaten.no/begrep/5138da10-be20-11e6-8004-005056825ca0'>Begrepsreferanse</a>)"
+      maxLength: 11
+      minLength: 11
+      pattern: "[0-9]+"
+      type: string
+    Organisasjonsnummer:
+      description: 9 sifret nummer gitt de som er registrert i Enhetsregisteret. (<a
+        href='https://data.skatteetaten.no/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 9
+      minLength: 9
+      pattern: "[0-9]+"
+      type: string
+    Postnummer:
+      description: nummer på et poststed (<a href='https://data.skatteetaten.no/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 4
+      minLength: 4
+      pattern: "([0-9]){4}"
+      type: string
+    Landkode:
+      description: koder for land etter ISO 3166-1 Alpha-2 (<a href='https://data.skatteetaten.no/begrep/20b2e112-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 2
+      minLength: 2
+      pattern: "([A-Z]){2}"
+      type: string
+
