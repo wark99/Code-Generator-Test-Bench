@@ -1,6 +1,6 @@
 /*
- * LiveFree Health Measurements API
- * The Health Measurements API enables partners to access data from the LiveFree Health Portal.
+ * LiveFree PERS API
+ * The Personal Emergency Response System (PERS) API enables partners to receive PERS alarms and location data via HTTP webhook.  **Alarm Types**  | Code | Alarm Type | Description | |---|---|---| | E100 | Medical Alarm (Primary Button) | The medical alarm button was activated. | | E101 | Personal Emergency Alarm (Pendant Button) | The personal emergency button was activated. | | E111 | Smoke Alarm | Smoke was detected by a compatible smoke detector. | | E301 | AC Power Loss | The device has lost AC power. | | E302 | Low Battery | The device battery is low. | | E308 | System Shutdown | The device is powering off due to low battery. | | E601 | Manual Test | A manually triggered test signal. | | E602 | Periodic Test | The device sent a recurring test signal. | | E641 | Fall Alarm | The device detected a fall. | | E643 | Geofence Exit | The user has exited a geofence area. | | E644 | Geofence Enter | The user has entered a geofence area. | | E646 | Remote Patient Monitoring (RPM) Alarm | A compatible remote patient monitoring device reported an alarm. | | R100 | Medical Alarm Cancel | A medical alarm was cancelled by the user. | **Provisioning**  Webhooks must be configured by LiveFree support. To configure your webhook, contact support with your webhook URL and authentication info. 
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: engineering@lifebeacon.com
@@ -20,6 +20,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.openapitools.jackson.nullable.JsonNullable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.openapitools.jackson.nullable.JsonNullable;
+import java.util.NoSuchElementException;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -29,17 +33,17 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({
   SimpleErrorResult.JSON_PROPERTY_MESSAGE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:24:30.476705269Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:24:36.505131168Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class SimpleErrorResult {
   public static final String JSON_PROPERTY_MESSAGE = "message";
-  private String message;
+  private JsonNullable<String> message = JsonNullable.<String>undefined();
 
   public SimpleErrorResult() {
   }
 
   public SimpleErrorResult message(String message) {
+    this.message = JsonNullable.<String>of(message);
     
-    this.message = message;
     return this;
   }
 
@@ -48,18 +52,26 @@ public class SimpleErrorResult {
    * @return message
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_MESSAGE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonIgnore
 
   public String getMessage() {
-    return message;
+        return message.orElse(null);
   }
-
 
   @JsonProperty(JSON_PROPERTY_MESSAGE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMessage(String message) {
+
+  public JsonNullable<String> getMessage_JsonNullable() {
+    return message;
+  }
+  
+  @JsonProperty(JSON_PROPERTY_MESSAGE)
+  public void setMessage_JsonNullable(JsonNullable<String> message) {
     this.message = message;
+  }
+
+  public void setMessage(String message) {
+    this.message = JsonNullable.<String>of(message);
   }
 
   @Override
@@ -71,12 +83,23 @@ public class SimpleErrorResult {
       return false;
     }
     SimpleErrorResult simpleErrorResult = (SimpleErrorResult) o;
-    return Objects.equals(this.message, simpleErrorResult.message);
+    return equalsNullable(this.message, simpleErrorResult.message);
+  }
+
+  private static <T> boolean equalsNullable(JsonNullable<T> a, JsonNullable<T> b) {
+    return a == b || (a != null && b != null && a.isPresent() && b.isPresent() && Objects.deepEquals(a.get(), b.get()));
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(message);
+    return Objects.hash(hashCodeNullable(message));
+  }
+
+  private static <T> int hashCodeNullable(JsonNullable<T> a) {
+    if (a == null) {
+      return 1;
+    }
+    return a.isPresent() ? Arrays.deepHashCode(new Object[]{a.get()}) : 31;
   }
 
   @Override

@@ -10,48 +10,58 @@
  * Do not edit the class manually.
  */
 
-package org.openapitools.client;
 
-import com.fasterxml.jackson.databind.util.StdDateFormat;
+package org.openapitools.client.model;
 
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
-import java.util.Date;
-import java.text.DecimalFormat;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.util.Objects;
+import java.util.Arrays;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
-public class RFC3339DateFormat extends DateFormat {
-  private static final long serialVersionUID = 1L;
-  private static final TimeZone TIMEZONE_Z = TimeZone.getTimeZone("UTC");
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-  private final StdDateFormat fmt = new StdDateFormat()
-          .withTimeZone(TIMEZONE_Z)
-          .withColonInTimeZone(true);
+/**
+ * The model of device that reported the event. * LifeBeacon - LifeBeacon Gen-1 * EZCare - EZ-Care (7700, Landline) * EZCarePlus - EZ-Care Plus (7600, Cellular) * LifeBeaconGen2 - LifeBeacon Gen-2 (8200, Mobile PERS) * Duo - Duo (7800, Landline + Cellular) * Unknown - An unknown device type 
+ */
+public enum DeviceType {
+  
+  LIFEBEACON("LifeBeacon"),
+  
+  EZCARE("EZCare"),
+  
+  EZCAREPLUS("EZCarePlus"),
+  
+  LIFEBEACONGEN2("LifeBeaconGen2"),
+  
+  DUO("Duo"),
+  
+  UNKNOWN("Unknown");
 
-  public RFC3339DateFormat() {
-    this.calendar = new GregorianCalendar();
-    this.numberFormat = new DecimalFormat();
+  private String value;
+
+  DeviceType(String value) {
+    this.value = value;
+  }
+
+  @JsonValue
+  public String getValue() {
+    return value;
   }
 
   @Override
-  public Date parse(String source) {
-    return parse(source, new ParsePosition(0));
+  public String toString() {
+    return String.valueOf(value);
   }
 
-  @Override
-  public Date parse(String source, ParsePosition pos) {
-    return fmt.parse(source, pos);
-  }
-
-  @Override
-  public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition) {
-    return fmt.format(date, toAppendTo, fieldPosition);
-  }
-
-  @Override
-  public Object clone() {
-    return super.clone();
+  @JsonCreator
+  public static DeviceType fromValue(String value) {
+    for (DeviceType b : DeviceType.values()) {
+      if (b.value.equals(value)) {
+        return b;
+      }
+    }
+    throw new IllegalArgumentException("Unexpected value '" + value + "'");
   }
 }
+

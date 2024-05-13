@@ -1,6 +1,6 @@
 /*
- * LiveFree Health Measurements API
- * The Health Measurements API enables partners to access data from the LiveFree Health Portal.
+ * LiveFree PERS API
+ * The Personal Emergency Response System (PERS) API enables partners to receive PERS alarms and location data via HTTP webhook.  **Alarm Types**  | Code | Alarm Type | Description | |---|---|---| | E100 | Medical Alarm (Primary Button) | The medical alarm button was activated. | | E101 | Personal Emergency Alarm (Pendant Button) | The personal emergency button was activated. | | E111 | Smoke Alarm | Smoke was detected by a compatible smoke detector. | | E301 | AC Power Loss | The device has lost AC power. | | E302 | Low Battery | The device battery is low. | | E308 | System Shutdown | The device is powering off due to low battery. | | E601 | Manual Test | A manually triggered test signal. | | E602 | Periodic Test | The device sent a recurring test signal. | | E641 | Fall Alarm | The device detected a fall. | | E643 | Geofence Exit | The user has exited a geofence area. | | E644 | Geofence Enter | The user has entered a geofence area. | | E646 | Remote Patient Monitoring (RPM) Alarm | A compatible remote patient monitoring device reported an alarm. | | R100 | Medical Alarm Cancel | A medical alarm was cancelled by the user. | **Provisioning**  Webhooks must be configured by LiveFree support. To configure your webhook, contact support with your webhook URL and authentication info. 
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: engineering@lifebeacon.com
@@ -20,6 +20,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.openapitools.jackson.nullable.JsonNullable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.openapitools.jackson.nullable.JsonNullable;
+import java.util.NoSuchElementException;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -32,26 +36,26 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   ServerErrorResult.JSON_PROPERTY_STATUS,
   ServerErrorResult.JSON_PROPERTY_DETAIL
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:24:30.476705269Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:24:36.505131168Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ServerErrorResult {
   public static final String JSON_PROPERTY_TYPE = "type";
-  private String type;
+  private JsonNullable<String> type = JsonNullable.<String>undefined();
 
   public static final String JSON_PROPERTY_TITLE = "title";
-  private String title;
+  private JsonNullable<String> title = JsonNullable.<String>undefined();
 
   public static final String JSON_PROPERTY_STATUS = "status";
-  private Integer status;
+  private JsonNullable<Integer> status = JsonNullable.<Integer>undefined();
 
   public static final String JSON_PROPERTY_DETAIL = "detail";
-  private String detail;
+  private JsonNullable<String> detail = JsonNullable.<String>undefined();
 
   public ServerErrorResult() {
   }
 
   public ServerErrorResult type(String type) {
+    this.type = JsonNullable.<String>of(type);
     
-    this.type = type;
     return this;
   }
 
@@ -60,24 +64,32 @@ public class ServerErrorResult {
    * @return type
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_TYPE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonIgnore
 
   public String getType() {
-    return type;
+        return type.orElse(null);
   }
-
 
   @JsonProperty(JSON_PROPERTY_TYPE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setType(String type) {
+
+  public JsonNullable<String> getType_JsonNullable() {
+    return type;
+  }
+  
+  @JsonProperty(JSON_PROPERTY_TYPE)
+  public void setType_JsonNullable(JsonNullable<String> type) {
     this.type = type;
+  }
+
+  public void setType(String type) {
+    this.type = JsonNullable.<String>of(type);
   }
 
 
   public ServerErrorResult title(String title) {
+    this.title = JsonNullable.<String>of(title);
     
-    this.title = title;
     return this;
   }
 
@@ -86,24 +98,32 @@ public class ServerErrorResult {
    * @return title
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_TITLE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonIgnore
 
   public String getTitle() {
-    return title;
+        return title.orElse(null);
   }
-
 
   @JsonProperty(JSON_PROPERTY_TITLE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setTitle(String title) {
+
+  public JsonNullable<String> getTitle_JsonNullable() {
+    return title;
+  }
+  
+  @JsonProperty(JSON_PROPERTY_TITLE)
+  public void setTitle_JsonNullable(JsonNullable<String> title) {
     this.title = title;
+  }
+
+  public void setTitle(String title) {
+    this.title = JsonNullable.<String>of(title);
   }
 
 
   public ServerErrorResult status(Integer status) {
+    this.status = JsonNullable.<Integer>of(status);
     
-    this.status = status;
     return this;
   }
 
@@ -112,24 +132,32 @@ public class ServerErrorResult {
    * @return status
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_STATUS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonIgnore
 
   public Integer getStatus() {
-    return status;
+        return status.orElse(null);
   }
-
 
   @JsonProperty(JSON_PROPERTY_STATUS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setStatus(Integer status) {
+
+  public JsonNullable<Integer> getStatus_JsonNullable() {
+    return status;
+  }
+  
+  @JsonProperty(JSON_PROPERTY_STATUS)
+  public void setStatus_JsonNullable(JsonNullable<Integer> status) {
     this.status = status;
+  }
+
+  public void setStatus(Integer status) {
+    this.status = JsonNullable.<Integer>of(status);
   }
 
 
   public ServerErrorResult detail(String detail) {
+    this.detail = JsonNullable.<String>of(detail);
     
-    this.detail = detail;
     return this;
   }
 
@@ -138,18 +166,26 @@ public class ServerErrorResult {
    * @return detail
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DETAIL)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonIgnore
 
   public String getDetail() {
-    return detail;
+        return detail.orElse(null);
   }
-
 
   @JsonProperty(JSON_PROPERTY_DETAIL)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDetail(String detail) {
+
+  public JsonNullable<String> getDetail_JsonNullable() {
+    return detail;
+  }
+  
+  @JsonProperty(JSON_PROPERTY_DETAIL)
+  public void setDetail_JsonNullable(JsonNullable<String> detail) {
     this.detail = detail;
+  }
+
+  public void setDetail(String detail) {
+    this.detail = JsonNullable.<String>of(detail);
   }
 
   @Override
@@ -161,15 +197,26 @@ public class ServerErrorResult {
       return false;
     }
     ServerErrorResult serverErrorResult = (ServerErrorResult) o;
-    return Objects.equals(this.type, serverErrorResult.type) &&
-        Objects.equals(this.title, serverErrorResult.title) &&
-        Objects.equals(this.status, serverErrorResult.status) &&
-        Objects.equals(this.detail, serverErrorResult.detail);
+    return equalsNullable(this.type, serverErrorResult.type) &&
+        equalsNullable(this.title, serverErrorResult.title) &&
+        equalsNullable(this.status, serverErrorResult.status) &&
+        equalsNullable(this.detail, serverErrorResult.detail);
+  }
+
+  private static <T> boolean equalsNullable(JsonNullable<T> a, JsonNullable<T> b) {
+    return a == b || (a != null && b != null && a.isPresent() && b.isPresent() && Objects.deepEquals(a.get(), b.get()));
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, title, status, detail);
+    return Objects.hash(hashCodeNullable(type), hashCodeNullable(title), hashCodeNullable(status), hashCodeNullable(detail));
+  }
+
+  private static <T> int hashCodeNullable(JsonNullable<T> a) {
+    if (a == null) {
+      return 1;
+    }
+    return a.isPresent() ? Arrays.deepHashCode(new Object[]{a.get()}) : 31;
   }
 
   @Override

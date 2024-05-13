@@ -3,246 +3,34 @@ info:
   contact:
     email: engineering@lifebeacon.com
     name: API Support
-  description: The Health Measurements API enables partners to access data from the
-    LiveFree Health Portal.
-  title: LiveFree Health Measurements API
+  description: |
+    The Personal Emergency Response System (PERS) API enables partners to receive PERS alarms and location data via HTTP webhook.
+
+    **Alarm Types**
+
+    | Code | Alarm Type | Description |
+    |---|---|---|
+    | E100 | Medical Alarm (Primary Button) | The medical alarm button was activated. |
+    | E101 | Personal Emergency Alarm (Pendant Button) | The personal emergency button was activated. |
+    | E111 | Smoke Alarm | Smoke was detected by a compatible smoke detector. |
+    | E301 | AC Power Loss | The device has lost AC power. |
+    | E302 | Low Battery | The device battery is low. |
+    | E308 | System Shutdown | The device is powering off due to low battery. |
+    | E601 | Manual Test | A manually triggered test signal. |
+    | E602 | Periodic Test | The device sent a recurring test signal. |
+    | E641 | Fall Alarm | The device detected a fall. |
+    | E643 | Geofence Exit | The user has exited a geofence area. |
+    | E644 | Geofence Enter | The user has entered a geofence area. |
+    | E646 | Remote Patient Monitoring (RPM) Alarm | A compatible remote patient monitoring device reported an alarm. |
+    | R100 | Medical Alarm Cancel | A medical alarm was cancelled by the user. |
+    **Provisioning**
+
+    Webhooks must be configured by LiveFree support. To configure your webhook, contact support with your webhook URL and authentication info.
+  title: LiveFree PERS API
   version: 1.0.0
 servers:
-- url: https://device-events.lfapi.net/v1.0/
-tags:
-- description: A measurement event contains raw data and measurement info.
-  name: Measurement Events
-- description: A measurement webhook describes an HTTP endpoint where notification
-    messages will be sent whenever new measurement events occur.
-  name: Measurement Webhooks
-paths:
-  /measurement-events:
-    get:
-      parameters:
-      - description: Include events that occurred or were modified after the specified
-          date/time (inclusive).
-        explode: true
-        in: query
-        name: since
-        required: false
-        schema:
-          format: date-time
-          type: string
-        style: form
-      - description: Include events that occurred or were modified before the specified
-          date/time (inclusive).
-        explode: true
-        in: query
-        name: until
-        required: false
-        schema:
-          format: date-time
-          type: string
-        style: form
-      - description: Filter by event type(s).
-        explode: true
-        in: query
-        name: types
-        required: false
-        schema:
-          items:
-            $ref: '#/components/schemas/MeasurementEventType'
-          type: array
-        style: form
-      - description: The number of events to skip.
-        explode: true
-        in: query
-        name: offset
-        required: false
-        schema:
-          type: integer
-        style: form
-      - description: The maximum number of events to return.
-        explode: true
-        in: query
-        name: limit
-        required: false
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/MeasurementEvent'
-                type: array
-          description: Measurement events (if any)
-      summary: Query measurement events
-      tags:
-      - Measurement Events
-      x-accepts: application/json
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateMeasurementEventRequest'
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MeasurementEvent'
-          description: Measurement event created
-          headers:
-            Locatioh:
-              description: The URL of the newly created measurement event.
-              explode: false
-              schema:
-                type: string
-              style: simple
-      summary: Create a measurement event (for non-production testing only)
-      tags:
-      - Measurement Events
-      x-content-type: application/json
-      x-accepts: application/json
-  /measurement-events/{id}:
-    get:
-      parameters:
-      - description: ID of the measurement event.
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          format: uuid
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MeasurementEvent'
-          description: Measurement event
-      summary: Get a single measurement event
-      tags:
-      - Measurement Events
-      x-accepts: application/json
-  /measurement-webhooks:
-    get:
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/MeasurementWebhook'
-                type: array
-          description: Measurement webhooks (if any)
-      summary: List all measurement webhooks
-      tags:
-      - Measurement Webhooks
-      x-accepts: application/json
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MeasurementWebhookBase'
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MeasurementWebhook'
-          description: Measurement webhook created
-          headers:
-            Locatioh:
-              description: The URL of the newly created measurement webhook.
-              explode: false
-              schema:
-                type: string
-              style: simple
-      summary: Create a measurement webhook
-      tags:
-      - Measurement Webhooks
-      x-content-type: application/json
-      x-accepts: application/json
-  /measurement-webhooks/{id}:
-    delete:
-      parameters:
-      - $ref: '#/components/parameters/measurementWebhookId'
-      responses:
-        "204":
-          description: Measurement webhook deleted
-      summary: Dalate a measurement webhook
-      tags:
-      - Measurement Webhooks
-      x-accepts: application/json
-    get:
-      parameters:
-      - $ref: '#/components/parameters/measurementWebhookId'
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MeasurementWebhook'
-          description: Measurement webhook
-      summary: Get a single measurement webhook
-      tags:
-      - Measurement Webhooks
-      x-accepts: application/json
-    post:
-      parameters:
-      - $ref: '#/components/parameters/measurementWebhookId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MeasurementWebhookBase'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MeasurementWebhook'
-          description: Measurement webhook updated
-      summary: Update a measurement webhook
-      tags:
-      - Measurement Webhooks
-      x-content-type: application/json
-      x-accepts: application/json
-  /measurement-webhooks/{id}/test:
-    post:
-      description: Sends a test notification to your webhook URL and returns information
-        about the response received.
-      parameters:
-      - $ref: '#/components/parameters/measurementWebhookId'
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MeasurementWebhookTestResult'
-          description: Measurement webhook test result
-      summary: Test a measurement webhook
-      tags:
-      - Measurement Webhooks
-      x-accepts: application/json
+- url: /
 components:
-  parameters:
-    measurementWebhookId:
-      description: ID of the measurement webhook.
-      explode: false
-      in: path
-      name: id
-      required: true
-      schema:
-        format: uuid
-        type: string
-      style: simple
   responses:
     "4XXClientError":
       content:
@@ -252,6 +40,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/SimpleErrorResult'
+        text/plain:
+          schema:
+            $ref: '#/components/schemas/TextErrorResult'
       description: Client error
     "5XXServerError":
       content:
@@ -261,6 +52,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/SimpleErrorResult'
+        text/plain:
+          schema:
+            $ref: '#/components/schemas/TextErrorResult'
       description: Server error
   schemas:
     ClientErrorResult:
@@ -269,339 +63,216 @@ components:
         type:
           description: A URI reference that identifies the problem type.
           format: uri-reference
+          nullable: true
           type: string
         title:
           description: A summary of the problem type.
+          nullable: true
           type: string
         status:
           description: The HTTP status code.
+          format: int32
+          nullable: true
           type: integer
         detail:
           description: An explanation specific to this occurrence of the problem.
+          nullable: true
           type: string
-    CreateMeasurementEventDeviceRequest:
-      example:
-        serialNumber: serialNumber
-        peripheralId: peripheralId
-      properties:
-        serialNumber:
-          type: string
-        peripheralId:
-          type: string
-      required:
-      - serialNumber
-    CreateMeasurementEventRequest:
-      example:
-        raw:
-          encoding: null
-          value: value
-        type: null
-        device:
-          serialNumber: serialNumber
-          peripheralId: peripheralId
-        measurements:
-        - unit: unit
-          bodySite: bodySite
-          name: name
-          type: null
-          value: value
-        - unit: unit
-          bodySite: bodySite
-          name: name
-          type: null
-          value: value
-      properties:
-        type:
-          $ref: '#/components/schemas/MeasurementEventType'
-        device:
-          $ref: '#/components/schemas/CreateMeasurementEventDeviceRequest'
-        raw:
-          $ref: '#/components/schemas/MeasurementEventRaw'
-        measurements:
-          items:
-            $ref: '#/components/schemas/Measurement'
-          type: array
-      required:
-      - device
-      - measurements
-      - raw
-      - type
-    Measurement:
-      example:
-        unit: unit
-        bodySite: bodySite
-        name: name
-        type: null
-        value: value
-      properties:
-        type:
-          $ref: '#/components/schemas/MeasurementType'
-        name:
-          description: The name of the measurement.
-          type: string
-        value:
-          description: The measurement value in string format.
-          type: string
-        unit:
-          description: The unit of measure in UCUM format (see https://ucum.org).
-          type: string
-        bodySite:
-          description: The site on the body where the measurement was taken (if applicable).
-          type: string
-      required:
-      - name
-      - type
-      - unit
-      - value
-    MeasurementEvent:
-      example:
-        raw:
-          encoding: null
-          value: value
-        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-        lastModified: 2000-01-23T04:56:07.000+00:00
-        type: null
-        device:
-          serialNumber: serialNumber
-          peripheralId: peripheralId
-          dealerId: 0
-          partnerDeviceId: partnerDeviceId
-        timestamp: 2000-01-23T04:56:07.000+00:00
-        measurements:
-        - unit: unit
-          bodySite: bodySite
-          name: name
-          type: null
-          value: value
-        - unit: unit
-          bodySite: bodySite
-          name: name
-          type: null
-          value: value
+    DeviceEvent:
+      anyOf:
+      - required:
+        - event
+      - required:
+        - location
+      description: This is the request body that will be sent to your webhook URL.
       properties:
         id:
-          description: The unique identifier for the event.
+          description: A unique identifier for this event.
           format: uuid
+        device:
+          $ref: '#/components/schemas/DeviceEventDevice'
+        event:
+          $ref: '#/components/schemas/DeviceEventEvent'
+        location:
+          $ref: '#/components/schemas/DeviceEventLocation'
+      required:
+      - device
+      - id
+    DeviceEventDevice:
+      description: Information about the device that reported the event.
+      properties:
+        id:
+          description: A unique identifier for the customer device where this event
+            originated. The format of this ID may vary depending on the station where
+            the device is assigned.
           type: string
+        type:
+          $ref: '#/components/schemas/DeviceType'
+        serialNumber:
+          description: The manufacturer serial number for the device.
+          type: string
+        imei:
+          description: International Mobile Equipment Identity.
+          type: string
+        phoneNumber:
+          description: This is an E.164 formatted phone number. Examples include +14035551111
+            and +918067218000. This will always lead with a + and include only numbers
+            afterwards (no dashes).
+          pattern: "^\\+[1-9]\\d{1,14}$"
+          type: string
+        batteryPercentage:
+          description: The battery percentage at the time when this event occurred.
+            This is an integer between 0 and 100. This value may not be present for
+            all events.
+          format: int32
+          maximum: 100
+          minimum: 0
+          nullable: true
+          type: integer
+      required:
+      - id
+      - phoneNumber
+      - type
+    DeviceEventEvent:
+      description: Information about the event/alarm that was reported by the customer
+        device. This property may be null or not present if this is a location-only
+        message.
+      properties:
         timestamp:
           description: The time when the event occurred.
           format: date-time
           type: string
-        lastModified:
-          description: The time when the event was last modified. In some cases an
-            event may be modified to correct invalid information.
-          format: date-time
-          type: string
         type:
-          $ref: '#/components/schemas/MeasurementEventType'
-        device:
-          $ref: '#/components/schemas/MeasurementEventDevice'
-        raw:
-          $ref: '#/components/schemas/MeasurementEventRaw'
-        measurements:
-          items:
-            $ref: '#/components/schemas/Measurement'
-          type: array
+          $ref: '#/components/schemas/DeviceEventType'
+        code:
+          description: The Contact ID event code.
+          type: string
+        zone:
+          description: The zone number reporting the event/alarm.
+          format: int32
+          maximum: 255
+          minimum: 0
+          type: integer
       required:
-      - device
-      - id
-      - lastModified
-      - measurements
-      - raw
+      - code
       - timestamp
       - type
-    MeasurementEventDevice:
-      example:
-        serialNumber: serialNumber
-        peripheralId: peripheralId
-        dealerId: 0
-        partnerDeviceId: partnerDeviceId
+      - zone
+    DeviceEventLocation:
+      description: Information about the location where the device was located at
+        the time of this event/alarm. Thie property may not be present for all events.
       properties:
-        serialNumber:
+        timestamp:
+          description: The time when the event occurred.
+          format: date-time
           type: string
-        peripheralId:
+        fixType:
+          $ref: '#/components/schemas/GpsFixType'
+        latitude:
+          format: double
+          maximum: 90
+          minimum: -90
+          type: number
+        longitude:
+          format: double
+          maximum: 180
+          minimum: -180
+          type: number
+        speed:
+          format: double
+          minimum: 0
+          nullable: true
+          type: number
+        heading:
+          format: double
+          maximum: 360
+          minimum: 0
+          nullable: true
+          type: number
+        gpsText:
+          description: The raw location data reported by the device. For GPS fix types
+            this will be in NMEA message structure.
+          nullable: true
           type: string
-        partnerDeviceId:
-          type: string
-        dealerId:
-          type: integer
       required:
-      - serialNumber
-    MeasurementEventRaw:
-      example:
-        encoding: null
-        value: value
-      properties:
-        encoding:
-          $ref: '#/components/schemas/MeasurementEventRawEncodingType'
-        value:
-          description: The raw value received from the device.
-          type: string
-      required:
-      - encoding
-      - value
-    MeasurementEventRawEncodingType:
-      description: The type of encoding for the raw value.
+      - fixType
+      - latitude
+      - longitude
+      - timestamp
+    DeviceEventType:
+      description: |
+        The type of event. This will determine the format of the code property. At this time all events use Contact ID (CID) format.
+        * CID - A Contact ID event.
       enum:
-      - Text
-      - Base64
-      format: MeasurementEventRawEncodingType
+      - CID
+      format: DeviceEventType
       type: string
-    MeasurementEventType:
-      description: The type of measurement event.
+    DeviceType:
+      description: |
+        The model of device that reported the event.
+        * LifeBeacon - LifeBeacon Gen-1
+        * EZCare - EZ-Care (7700, Landline)
+        * EZCarePlus - EZ-Care Plus (7600, Cellular)
+        * LifeBeaconGen2 - LifeBeacon Gen-2 (8200, Mobile PERS)
+        * Duo - Duo (7800, Landline + Cellular)
+        * Unknown - An unknown device type
       enum:
-      - BloodGlucoseReading
-      - BloodPressureReading
-      - BodyTemperatureReading
-      - BodyWeightReading
-      - ElectrocardiogramReading
-      - PulseOximetryReading
-      format: MeasurementEventType
+      - LifeBeacon
+      - EZCare
+      - EZCarePlus
+      - LifeBeaconGen2
+      - Duo
+      - Unknown
+      format: DeviceType
       type: string
-    MeasurementNotification:
-      properties:
-        webhook:
-          $ref: '#/components/schemas/MeasurementNotification_webhook'
-        event:
-          $ref: '#/components/schemas/MeasurementNotification_event'
-      required:
-      - event
-      - webhook
-    MeasurementType:
-      description: The type of measurement.
+    GpsFixType:
+      description: |
+        The type of signal or technique being used by the GPS receiver to determine its location.
+        * GPS - A standard GPS signal.
+        * DGPS - A differential GPS signal, which provides increased accuracy over standard GPS.
+        * Estimated - An estimated location, which is based on a known point of origin and measurements of speed, heading, and elapsed time.
+        * Manual - A location that has been manually entered.
+        * Wifi - A location based on available Wifi networks in the area.
+        * CellTower - A location based on cell towers detected in the area.
+        * Invalid - There is no GPS signal being received or there are not enough sources available for proper location determination.
       enum:
-      - BodyWeight
-      - DiastolicBloodPressure
-      - HeartRate
-      - OxygenSaturation
-      - PerfusionIndex
-      - SystolicBloodPressure
-      - BloodGlucose
-      - BodyTemperature
-      - Electrocardiogram
-      - ElectrocardiogramClassification
-      format: MeasurementType
+      - GPS
+      - DGPS
+      - Estimated
+      - Manual
+      - Wifi
+      - CellTower
+      - Invalid
+      format: GpsFixType
       type: string
-    MeasurementWebhook:
-      allOf:
-      - properties:
-          id:
-            description: The unique identifier for the webhook.
-            format: uuid
-            type: string
-        required:
-        - id
-      - $ref: '#/components/schemas/MeasurementWebhookBase'
-      example:
-        minSecondsPerCall: 0
-        active: false
-        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-        eventTypes:
-        - null
-        - null
-        url: https://openapi-generator.tech
-    MeasurementWebhookBase:
-      example:
-        minSecondsPerCall: 0
-        active: false
-        eventTypes:
-        - null
-        - null
-        url: https://openapi-generator.tech
-      properties:
-        url:
-          description: The URL where notifications will be sent.
-          format: uri
-          type: string
-        active:
-          default: false
-          description: Indicates whether notifications are enabled for this webhook.
-          type: boolean
-        minSecondsPerCall:
-          default: 0
-          description: "The number of seconds to wait between notifications, or zero\
-            \ to trigger a notification on every event."
-          type: integer
-        eventTypes:
-          default: []
-          description: An optional array of measurement event types to limit which
-            event types will trigger a notification. If no event types are specified
-            then all events will trigger a notification.
-          items:
-            $ref: '#/components/schemas/MeasurementEventType'
-          type: array
-      required:
-      - url
-    MeasurementWebhookTestResult:
-      example:
-        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-        url: https://openapi-generator.tech
-        statusCode: 0
-      properties:
-        id:
-          description: The unique identifier for the webhook.
-          format: uuid
-          type: string
-        url:
-          description: The URL where the test notification was sent.
-          format: uri
-          type: string
-        statusCode:
-          description: The HTTP status code returned by the notification target.
-          type: integer
-      required:
-      - id
-      - statusCode
-      - url
     ServerErrorResult:
       description: A problem details object (see https://datatracker.ietf.org/doc/html/rfc7807).
       properties:
         type:
           description: A URI reference that identifies the problem type.
           format: uri-reference
+          nullable: true
           type: string
         title:
           description: A summary of the problem type.
+          nullable: true
           type: string
         status:
           description: The HTTP status code.
+          format: int32
+          nullable: true
           type: integer
         detail:
           description: An explanation specific to this occurrence of the problem.
+          nullable: true
           type: string
     SimpleErrorResult:
       properties:
         message:
           description: An explanation of the problem.
+          nullable: true
           type: string
-    WebhookType:
-      description: The type of webhook.
-      enum:
-      - Measurement
-      format: WebhookType
+    TextErrorResult:
+      nullable: true
       type: string
-    MeasurementNotification_webhook:
-      properties:
-        id:
-          description: The unique identifier for the webhook.
-          format: uuid
-          type: string
-        type:
-          $ref: '#/components/schemas/WebhookType'
-      required:
-      - id
-      - type
-    MeasurementNotification_event:
-      properties:
-        id:
-          description: The unique identifier for the measurement event.
-          format: uuid
-          type: string
-        timestamp:
-          description: The time when the measurement event occurred.
-          format: date-time
-          type: string
-      required:
-      - id
-      - timestamp
 
