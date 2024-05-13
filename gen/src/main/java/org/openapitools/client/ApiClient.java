@@ -58,7 +58,7 @@ import java.time.OffsetDateTime;
 
 import org.openapitools.client.auth.Authentication;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:25:10.681580159Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:25:17.794277948Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
@@ -83,7 +83,7 @@ public class ApiClient extends JavaTimeFormatter {
 
     private long waitTimeMillis = 10;
 
-    private String basePath = "https://aksjonaerivirksomhet.api.skatteetaten-test.no/v1";
+    private String basePath = "https://formuesgrunnlageiendomsskatt.api.skatteetaten-test.no/v1";
 
     private RestTemplate restTemplate;
 

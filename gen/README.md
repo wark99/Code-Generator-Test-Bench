@@ -1,14 +1,14 @@
 # openapi-java-client
 
-Aksjonær i virksomhet API
+Formuesgrunnlag for eiendomsskatt API
 
-- API version: 1.1.0
+- API version: 1.2.0
 
-- Build date: 2024-05-13T19:25:10.681580159Z[Etc/UTC]
+- Build date: 2024-05-13T19:25:17.794277948Z[Etc/UTC]
 
 - Generator version: 7.4.0
 
-Tjenesten leverer informasjon om en virksomhets aksjonærer pr. 31.12 sist kalenderår.
+Tjenesten leverer fastsatte formuesgrunnlag for fast eiendom som grunnlag for eiendomsskatt, og inneholder informasjon om eiendomsopplysninger, adresseopplysninger og eiendomsrelasjoner for fast eiendom, samt beregnede markedsverdier med tilhørende grunnlag for boliger
 
   For more information, please visit [https://www.skatteetaten.no/deling/kontakt/](https://www.skatteetaten.no/deling/kontakt/)
 
@@ -45,7 +45,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>org.openapitools</groupId>
   <artifactId>openapi-java-client</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -61,7 +61,7 @@ Add this dependency to your project's build file:
   }
 
   dependencies {
-     implementation "org.openapitools:openapi-java-client:1.1.0"
+     implementation "org.openapitools:openapi-java-client:1.2.0"
   }
 ```
 
@@ -75,7 +75,7 @@ mvn clean package
 
 Then manually install the following JARs:
 
-- `target/openapi-java-client-1.1.0.jar`
+- `target/openapi-java-client-1.2.0.jar`
 - `target/lib/*.jar`
 
 ## Getting Started
@@ -87,24 +87,25 @@ Please follow the [installation](#installation) instruction and execute the foll
 import org.openapitools.client.*;
 import org.openapitools.client.auth.*;
 import org.openapitools.client.model.*;
-import org.openapitools.client.api.AksjonaerIVirksomhetApi;
+import org.openapitools.client.api.FormuesgrunnlagEiendomsskattApi;
 
-public class AksjonaerIVirksomhetApiExample {
+public class FormuesgrunnlagEiendomsskattApiExample {
 
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://aksjonaerivirksomhet.api.skatteetaten-test.no/v1");
+        defaultClient.setBasePath("https://formuesgrunnlageiendomsskatt.api.skatteetaten-test.no/v1");
         
-        AksjonaerIVirksomhetApi apiInstance = new AksjonaerIVirksomhetApi(defaultClient);
+        FormuesgrunnlagEiendomsskattApi apiInstance = new FormuesgrunnlagEiendomsskattApi(defaultClient);
         String rettighetspakke = "rettighetspakke_example"; // String | Datakonsumenter plasseres i en rettighetspakke (per datasett) basert på en juridisk vurdering. Rettighetspakken styrer skjermingsregler, filtrering og detaljering som benyttes når det gis innsyn i data i datasett.
-        String organisasjonsnummer = "organisasjonsnummer_example"; // String | Organisasjonsnummer for virksomhet
-        String kalenderaar = "kalenderaar_example"; // String | Kalenderåret det skal hentes opplysninger fra. Returnerer siste tilgjengelige dersom ikke oppgitt.
-        UUID korrelasjonsid = UUID.randomUUID(); // UUID | Korrelasjonsid, unik identifikator for den tekniske forespørselen. Må være på UUID-format
+        String gjelderPeriode = "2022"; // String | Perioden
+        String kommunenummer = "0301"; // String | Kommunenummer
+        String eksternidentifikator = "000000000000000"; // String | Ekstern identifikator
+        UUID korrelasjonsid = UUID.fromString("123e4567-e89b-12d3-a456-426655440000"); // UUID | Korrelasjonsid, unik identifikator for den tekniske forespørselen. Må være på UUID-format
         try {
-            Aksjeselskap result = apiInstance.hentAksjonaerIVirksomhet(rettighetspakke, organisasjonsnummer, kalenderaar, korrelasjonsid);
+            FormuesgrunnlagForEiendomsskatt result = apiInstance.hentFormuesgrunnlagEiendomsskatt(rettighetspakke, gjelderPeriode, kommunenummer, eksternidentifikator, korrelasjonsid);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling AksjonaerIVirksomhetApi#hentAksjonaerIVirksomhet");
+            System.err.println("Exception when calling FormuesgrunnlagEiendomsskattApi#hentFormuesgrunnlagEiendomsskatt");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -117,19 +118,34 @@ public class AksjonaerIVirksomhetApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://aksjonaerivirksomhet.api.skatteetaten-test.no/v1*
+All URIs are relative to *https://formuesgrunnlageiendomsskatt.api.skatteetaten-test.no/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*AksjonaerIVirksomhetApi* | [**hentAksjonaerIVirksomhet**](docs/AksjonaerIVirksomhetApi.md#hentAksjonaerIVirksomhet) | **GET** /{rettighetspakke}/aksjonaerer/{organisasjonsnummer} | Hent aksjonærer i en virksomhet
+*FormuesgrunnlagEiendomsskattApi* | [**hentFormuesgrunnlagEiendomsskatt**](docs/FormuesgrunnlagEiendomsskattApi.md#hentFormuesgrunnlagEiendomsskatt) | **GET** /{rettighetspakke}/{gjelderPeriode}/{kommunenummer}/{eksternidentifikator} | Hent formuesgrunnlageiendomsskatt for en identifikator
 
 
 ## Documentation for Models
 
- - [Aksje](docs/Aksje.md)
- - [Aksjeselskap](docs/Aksjeselskap.md)
- - [Aksjonaer](docs/Aksjonaer.md)
+ - [Adressenummer](docs/Adressenummer.md)
+ - [Adresseopplysninger](docs/Adresseopplysninger.md)
+ - [BoenhetIBoligselskap](docs/BoenhetIBoligselskap.md)
+ - [Boligegenskaper](docs/Boligegenskaper.md)
+ - [Eiendomsidentifikator](docs/Eiendomsidentifikator.md)
+ - [Eiendomsopplysninger](docs/Eiendomsopplysninger.md)
+ - [Eiendomsrelasjon](docs/Eiendomsrelasjon.md)
+ - [EnhetsnummerForBoenhetIBoligselskap](docs/EnhetsnummerForBoenhetIBoligselskap.md)
  - [Feil](docs/Feil.md)
+ - [FormuesgrunnlagForEiendomsskatt](docs/FormuesgrunnlagForEiendomsskatt.md)
+ - [Formuesopplysninger](docs/Formuesopplysninger.md)
+ - [FormuespesifikasjonForBolig](docs/FormuespesifikasjonForBolig.md)
+ - [FormuesspesifikasjonFlerboligbygning](docs/FormuesspesifikasjonFlerboligbygning.md)
+ - [Grunnkrets](docs/Grunnkrets.md)
+ - [GrunnlagForBeregnetMarkedsverdi](docs/GrunnlagForBeregnetMarkedsverdi.md)
+ - [Matrikkelnummer](docs/Matrikkelnummer.md)
+ - [Poststed](docs/Poststed.md)
+ - [UseksjonertBoenhet](docs/UseksjonertBoenhet.md)
+ - [Vegadresse](docs/Vegadresse.md)
 
 
 <a id="documentation-for-authorization"></a>

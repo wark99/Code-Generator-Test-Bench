@@ -24,102 +24,72 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Feilstruktur for alle feilmeldinger.
+ * Et nummer og en eventuell bokstav som entydig identifiserer eiendommer, anlegg, bygninger eller innganger til bygninger innenfor en adresserbar gate, veg, sti, plass eller område (&lt;a href&#x3D;&#39;http://begrepskatalog/begrep/20b2e0fa-9fe1-11e5-a9f8-e4115b280940&#39;&gt;Begrepsreferanse&lt;/a&gt;)
  */
 @JsonPropertyOrder({
-  Feil.JSON_PROPERTY_KODE,
-  Feil.JSON_PROPERTY_MELDING,
-  Feil.JSON_PROPERTY_KORRELASJONSID
+  Adressenummer.JSON_PROPERTY_HUSNUMMER,
+  Adressenummer.JSON_PROPERTY_HUSBOKSTAV
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:25:17.794277948Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class Feil {
-  public static final String JSON_PROPERTY_KODE = "kode";
-  private String kode;
+public class Adressenummer {
+  public static final String JSON_PROPERTY_HUSNUMMER = "husnummer";
+  private Long husnummer;
 
-  public static final String JSON_PROPERTY_MELDING = "melding";
-  private String melding;
+  public static final String JSON_PROPERTY_HUSBOKSTAV = "husbokstav";
+  private String husbokstav;
 
-  public static final String JSON_PROPERTY_KORRELASJONSID = "korrelasjonsid";
-  private String korrelasjonsid;
-
-  public Feil() {
+  public Adressenummer() {
   }
 
-  public Feil kode(String kode) {
+  public Adressenummer husnummer(Long husnummer) {
     
-    this.kode = kode;
+    this.husnummer = husnummer;
     return this;
   }
 
    /**
-   * Feilkode, for maskinell håndtering
-   * @return kode
+   * hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2, ...} (&lt;a href&#x3D;&#39;https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940&#39;&gt;Begrepsreferanse&lt;/a&gt;)
+   * @return husnummer
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_KODE)
+  @JsonProperty(JSON_PROPERTY_HUSNUMMER)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public String getKode() {
-    return kode;
+  public Long getHusnummer() {
+    return husnummer;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_KODE)
+  @JsonProperty(JSON_PROPERTY_HUSNUMMER)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setKode(String kode) {
-    this.kode = kode;
+  public void setHusnummer(Long husnummer) {
+    this.husnummer = husnummer;
   }
 
 
-  public Feil melding(String melding) {
+  public Adressenummer husbokstav(String husbokstav) {
     
-    this.melding = melding;
+    this.husbokstav = husbokstav;
     return this;
   }
 
    /**
-   * Beskrivelse av feilen som har oppstått
-   * @return melding
+   * vilkårlig lang sekvens av tegn inkludert aksenter og spesielle tegn fra standardiserte tegnsett (&lt;a href&#x3D;&#39;https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940&#39;&gt;Begrepsreferanse&lt;/a&gt;)
+   * @return husbokstav
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_MELDING)
+  @JsonProperty(JSON_PROPERTY_HUSBOKSTAV)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public String getMelding() {
-    return melding;
+  public String getHusbokstav() {
+    return husbokstav;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_MELDING)
+  @JsonProperty(JSON_PROPERTY_HUSBOKSTAV)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMelding(String melding) {
-    this.melding = melding;
-  }
-
-
-  public Feil korrelasjonsid(String korrelasjonsid) {
-    
-    this.korrelasjonsid = korrelasjonsid;
-    return this;
-  }
-
-   /**
-   * Korrelasjonsid
-   * @return korrelasjonsid
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_KORRELASJONSID)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public String getKorrelasjonsid() {
-    return korrelasjonsid;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_KORRELASJONSID)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setKorrelasjonsid(String korrelasjonsid) {
-    this.korrelasjonsid = korrelasjonsid;
+  public void setHusbokstav(String husbokstav) {
+    this.husbokstav = husbokstav;
   }
 
   @Override
@@ -130,24 +100,22 @@ public class Feil {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Feil feil = (Feil) o;
-    return Objects.equals(this.kode, feil.kode) &&
-        Objects.equals(this.melding, feil.melding) &&
-        Objects.equals(this.korrelasjonsid, feil.korrelasjonsid);
+    Adressenummer adressenummer = (Adressenummer) o;
+    return Objects.equals(this.husnummer, adressenummer.husnummer) &&
+        Objects.equals(this.husbokstav, adressenummer.husbokstav);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(kode, melding, korrelasjonsid);
+    return Objects.hash(husnummer, husbokstav);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Feil {\n");
-    sb.append("    kode: ").append(toIndentedString(kode)).append("\n");
-    sb.append("    melding: ").append(toIndentedString(melding)).append("\n");
-    sb.append("    korrelasjonsid: ").append(toIndentedString(korrelasjonsid)).append("\n");
+    sb.append("class Adressenummer {\n");
+    sb.append("    husnummer: ").append(toIndentedString(husnummer)).append("\n");
+    sb.append("    husbokstav: ").append(toIndentedString(husbokstav)).append("\n");
     sb.append("}");
     return sb.toString();
   }

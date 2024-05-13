@@ -1,26 +1,28 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   contact:
     name: Brukerstøtte
     url: https://www.skatteetaten.no/deling/kontakt/
-  description: Tjenesten leverer informasjon om en virksomhets aksjonærer pr. 31.12
-    sist kalenderår.
+  description: "Tjenesten leverer fastsatte formuesgrunnlag for fast eiendom som grunnlag\
+    \ for eiendomsskatt, og inneholder informasjon om eiendomsopplysninger, adresseopplysninger\
+    \ og eiendomsrelasjoner for fast eiendom, samt beregnede markedsverdier med tilhø\
+    rende grunnlag for boliger"
   termsOfService: https://www.skatteetaten.no/deling/bruksvilkar-for-delingstjenester
-  title: Aksjonær i virksomhet API
-  version: 1.1.0
+  title: Formuesgrunnlag for eiendomsskatt API
+  version: 1.2.0
 externalDocs:
   description: Dokumentasjon på Skatteetatens GitHub
-  url: https://skatteetaten.github.io/api-dokumentasjon/api/aksjonaer
+  url: https://skatteetaten.github.io/api-dokumentasjon/api/formuesgrunnlageiendomsskatt
 servers:
 - description: Ekstern deling (Test)
-  url: https://aksjonaerivirksomhet.api.skatteetaten-test.no/v1
+  url: https://formuesgrunnlageiendomsskatt.api.skatteetaten-test.no/v1
 - description: Produksjon (Prod)
-  url: https://aksjonaerivirksomhet.api.skatteetaten.no/v1
+  url: https://formuesgrunnlageiendomsskatt.api.skatteetaten.no/v1
 paths:
-  /{rettighetspakke}/aksjonaerer/{organisasjonsnummer}:
+  /{rettighetspakke}/{gjelderPeriode}/{kommunenummer}/{eksternidentifikator}:
     get:
-      description: Informasjon om en virksomhets aksjonærer pr. 31.12 sist kalenderår
-      operationId: hentAksjonaerIVirksomhet
+      description: Hent formuesgrunnlageiendomsskatt for en identifikator.
+      operationId: hentFormuesgrunnlagEiendomsskatt
       parameters:
       - description: "Datakonsumenter plasseres i en rettighetspakke (per datasett)\
           \ basert på en juridisk vurdering. Rettighetspakken styrer skjermingsregler,\
@@ -32,25 +34,36 @@ paths:
         schema:
           type: string
         style: simple
-      - description: Organisasjonsnummer for virksomhet
+      - description: Perioden
+        example: "2022"
         explode: false
         in: path
-        name: organisasjonsnummer
+        name: gjelderPeriode
         required: true
         schema:
           type: string
         style: simple
-      - description: Kalenderåret det skal hentes opplysninger fra. Returnerer siste
-          tilgjengelige dersom ikke oppgitt.
-        explode: true
-        in: query
-        name: kalenderaar
-        required: false
+      - description: Kommunenummer
+        example: "0301"
+        explode: false
+        in: path
+        name: kommunenummer
+        required: true
         schema:
           type: string
-        style: form
+        style: simple
+      - description: Ekstern identifikator
+        example: "000000000000000"
+        explode: false
+        in: path
+        name: eksternidentifikator
+        required: true
+        schema:
+          type: string
+        style: simple
       - description: "Korrelasjonsid, unik identifikator for den tekniske forespø\
           rselen. Må være på UUID-format"
+        example: 123e4567-e89b-12d3-a456-426655440000
         explode: false
         in: header
         name: Korrelasjonsid
@@ -64,212 +77,637 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Aksjeselskap'
+                $ref: '#/components/schemas/FormuesgrunnlagForEiendomsskatt'
           description: Gyldig respons
         default:
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Feil'
-          description: "Diverse feilmeldinger, se egen dokumentasjon"
-      summary: Hent aksjonærer i en virksomhet
+          description: Alle feil fra applikasjonen kommer på følgende format
+      summary: Hent formuesgrunnlageiendomsskatt for en identifikator
       tags:
-      - aksjonaerIVirksomhet
+      - Formuesgrunnlag eiendomsskatt
       x-accepts: application/json
 components:
   schemas:
     Feil:
       description: Feilstruktur for alle feilmeldinger.
       example:
-        melding: melding
-        kode: kode
-        korrelasjonsid: korrelasjonsid
+        melding: Oppgitt rettighetspakke er ugyldig.
+        kode: FGS-0xx
+        korrelasjonsid: 123e4567-e89b-12d3-a456-426655440000
       properties:
         kode:
           description: "Feilkode, for maskinell håndtering"
+          example: FGS-0xx
           type: string
         melding:
           description: Beskrivelse av feilen som har oppstått
+          example: Oppgitt rettighetspakke er ugyldig.
           type: string
         korrelasjonsid:
           description: Korrelasjonsid
+          example: 123e4567-e89b-12d3-a456-426655440000
           type: string
-    Aksjeselskap:
-      description: ""
+      type: object
+    FormuesgrunnlagForEiendomsskatt:
+      description: "Formuesgrunnlaget for en fast eiendom som formuesbojekt, som grunnlag\
+        \ for eiendomsskatt"
       example:
-        identifikator: identifikator
-        kalenderaar: kalenderaar
-        aksjonaerer:
-        - aksjer:
-          - antallAksjer: 0
-            aksjeklasse: aksjeklasse
-            isinnummer: isinnummer
-          - antallAksjer: 0
-            aksjeklasse: aksjeklasse
-            isinnummer: isinnummer
-          landkode: landkode
-          postnummer: postnummer
-          personidentifikator: personidentifikator
-          navn: navn
-          foedselsaar: foedselsaar
-          organisasjonsnummer: organisasjonsnummer
-        - aksjer:
-          - antallAksjer: 0
-            aksjeklasse: aksjeklasse
-            isinnummer: isinnummer
-          - antallAksjer: 0
-            aksjeklasse: aksjeklasse
-            isinnummer: isinnummer
-          landkode: landkode
-          postnummer: postnummer
-          personidentifikator: personidentifikator
-          navn: navn
-          foedselsaar: foedselsaar
-          organisasjonsnummer: organisasjonsnummer
-        totaltAntallAksjer: 6
+        eiendomsopplysninger:
+        - ""
+        - ""
+        adresseopplysninger:
+        - ""
+        - ""
+        skattleggingsperiode: 1000
+        eiendomsidentifikator:
+          skatteetatensEiendomsidentifikator: skatteetatensEiendomsidentifikator
+          eksternIdentifikator: eksternIdentifikator
+        eiendomsrelasjoner:
+        - ""
+        - ""
+        formuesopplysninger:
+          spesifikasjonForFlerboligbygning:
+            beliggenhetskode: beliggenhetskode
+            useksjonertBoenhet:
+            - ""
+            - ""
+            beregnetMarkedsverdi: 7
+          formuestype: formuestype
+          spesifikasjonForBolig:
+            beregningstype: beregningstype
+            beliggenhetskode: beliggenhetskode
+            grunnlagForBeregnetMarkedsverdi:
+              boligverdi: 5
+              aarForDokumentertMarkedsverdi: aarForDokumentertMarkedsverdi
+              justertMarkedsverdi: 2
+              dokumentertMarkedsverdi: 5
+            boligegenskaper:
+              primaerromareal: 6
+              boligtype: boligtype
+              byggeaar: byggeaar
+            beregnetMarkedsverdi: 1
       properties:
-        aksjonaerer:
-          description: ""
+        skattleggingsperiode:
+          description: er årstallet som oppgave eller likning gjelder for (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/fa86c460-d685-11e7-9676-0050568351d2'>Begrepsreferanse</a>)
+          format: int64
+          minimum: 1000
+          type: integer
+        eiendomsidentifikator:
+          $ref: '#/components/schemas/Eiendomsidentifikator'
+        formuesopplysninger:
+          $ref: '#/components/schemas/Formuesopplysninger'
+        adresseopplysninger:
+          description: Vegadresse og eventuelt andre opplysninger som stedsangir en
+            gitt fast eiendom
           items:
-            $ref: '#/components/schemas/Aksjonaer'
+            allOf:
+            - $ref: '#/components/schemas/Adresseopplysninger'
+            xml:
+              name: adresseopplysninger
           type: array
-        totaltAntallAksjer:
-          description: mengde som utgjør eller kan uttrykkes i et visst tall (<a href='https://data.skatteetaten.no/begrep/20b2e145-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-          format: int64
-          type: integer
-        identifikator:
-          description: (<a href='https://data.skatteetaten.no/begreper/dcfb4778-e484-11e6-9cb3-005056821322'>Begrepsreferanse</a>)
-          type: string
-        kalenderaar:
-          description: årstall er et tall som angir årets nummer i tidsregningen i
-            den gregorianske kalender (<a href='https://data.skatteetaten.no/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-          format: year
-          type: string
-    Aksje:
-      description: ""
-      example:
-        antallAksjer: 0
-        aksjeklasse: aksjeklasse
-        isinnummer: isinnummer
+          xml:
+            wrapped: true
+        eiendomsrelasjoner:
+          description: "Relasjon mellom fast eiendom som formuesobjekt hvor en fast\
+            \ eiendom kan være enten forelder i relasjonen eller barn. Eksempel: Relasjonen\
+            \ samlet hvor flere formuesobjekt som fast eiendom skal ses på som et\
+            \ formuesobjekt, og har en hovedeiendom (forelder) og tilleggseiendommer\
+            \ (barn)"
+          items:
+            allOf:
+            - $ref: '#/components/schemas/Eiendomsrelasjon'
+            xml:
+              name: eiendomsrelasjon
+          type: array
+          xml:
+            wrapped: true
+        eiendomsopplysninger:
+          description: Angir opplysninger om eiendommer
+          items:
+            allOf:
+            - $ref: '#/components/schemas/Eiendomsopplysninger'
+            xml:
+              name: eiendomsopplysninger
+          type: array
+          xml:
+            wrapped: true
+      type: object
+    Adresseopplysninger:
+      description: Vegadresse og ev. andre opplysninger som stedsangir en gitt fast
+        eiendom
       properties:
-        isinnummer:
-          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
-            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-          maxLength: 4000
+        poststed:
+          $ref: '#/components/schemas/Poststed'
+        grunnkrets:
+          $ref: '#/components/schemas/Grunnkrets'
+        vegadresse:
+          $ref: '#/components/schemas/Vegadresse'
+        opplysningenesOpphav:
+          description: "Kodeliste som beskriver hvor opplysningene i entitet stammer\
+            \ fra, for eksempel 31 desember skattelggingsperiode eller oppdatert matrikkelinformasjon\
+            \ som har oppstått etter 31 desember skattleggingsperiode (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/805aef00-3de1-4da5-901e-80b58a9e8a32'>Kodelistereferanse</a>)"
           type: string
-        antallAksjer:
-          description: mengde som utgjør eller kan uttrykkes i et visst tall (<a href='https://data.skatteetaten.no/begrep/20b2e145-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-          format: int64
-          type: integer
-        aksjeklasse:
-          description: "Lovlige verdier for kodelisten ligger her: https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml\
-            \ (<a href='https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml'>Kodelistereferanse</a>)"
-          type: string
-    Aksjonaer:
-      description: (<a href='https://data.skatteetaten.no/begrep/20b2e177-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-      example:
-        aksjer:
-        - antallAksjer: 0
-          aksjeklasse: aksjeklasse
-          isinnummer: isinnummer
-        - antallAksjer: 0
-          aksjeklasse: aksjeklasse
-          isinnummer: isinnummer
-        landkode: landkode
-        postnummer: postnummer
-        personidentifikator: personidentifikator
-        navn: navn
-        foedselsaar: foedselsaar
-        organisasjonsnummer: organisasjonsnummer
+      type: object
+    Eiendomsopplysninger:
+      description: Angir opplysninger om eiendommer
       properties:
-        personidentifikator:
-          description: "ellevesifret identifikasjonsnummer for personer bosatt i Norge,\
-            \ der de seks første sifrene angir fødselsdato og de fem siste personnummer.\
-            \ (<a href='https://data.skatteetaten.no/begrep/5138da10-be20-11e6-8004-005056825ca0'>Begrepsreferanse</a>)"
-          maxLength: 11
-          minLength: 11
-          pattern: "[0-9]+"
+        identifikatorFraMatrikkelen:
+          description: (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
           type: string
-        organisasjonsnummer:
-          description: 9 sifret nummer gitt de som er registrert i Enhetsregisteret.
-            (<a href='https://data.skatteetaten.no/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-          maxLength: 9
-          minLength: 9
-          pattern: "[0-9]+"
-          type: string
-        navn:
-          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
-            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-          maxLength: 4000
-          type: string
-        foedselsaar:
-          description: årstall er et tall som angir årets nummer i tidsregningen i
-            den gregorianske kalender (<a href='https://data.skatteetaten.no/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-          format: year
-          type: string
-        postnummer:
-          description: nummer på et poststed (<a href='https://data.skatteetaten.no/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+        matrikkelnummer:
+          $ref: '#/components/schemas/Matrikkelnummer'
+        kommunenummer:
+          description: nummer for kommune (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e0f3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
           maxLength: 4
           minLength: 4
           pattern: "([0-9]){4}"
           type: string
-        aksjer:
-          description: ""
-          items:
-            $ref: '#/components/schemas/Aksje'
-          type: array
-        landkode:
-          description: koder for land etter ISO 3166-1 Alpha-2 (<a href='https://data.skatteetaten.no/begrep/20b2e112-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-          maxLength: 2
-          minLength: 2
-          pattern: "([A-Z]){2}"
+        boenhetIBoligselskap:
+          $ref: '#/components/schemas/BoenhetIBoligselskap'
+        bruksnavn:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
           type: string
-    Antall:
-      description: mengde som utgjør eller kan uttrykkes i et visst tall (<a href='https://data.skatteetaten.no/begrep/20b2e145-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+        etablertDato:
+          description: "gir verdier for år, måned og dag. Kodes som en tekststreng\
+            \ etter datoformatering spesifisert i  ISO 8601 (ISO 8601:2004 Data elements\
+            \ and interchange formats -- Information interchange -- Representation\
+            \ of dates and times). Eksempel : 1998-12-21 eller 19981221. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52aed-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: date
+          type: string
+        utgaattIMatrikkel:
+          description: "gir verdier for år, måned og dag. Kodes som en tekststreng\
+            \ etter datoformatering spesifisert i  ISO 8601 (ISO 8601:2004 Data elements\
+            \ and interchange formats -- Information interchange -- Representation\
+            \ of dates and times). Eksempel : 1998-12-21 eller 19981221. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52aed-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: date
+          type: string
+        boligselskapEiendomUtgaattIMatrikkel:
+          description: "gir verdier for år, måned og dag. Kodes som en tekststreng\
+            \ etter datoformatering spesifisert i  ISO 8601 (ISO 8601:2004 Data elements\
+            \ and interchange formats -- Information interchange -- Representation\
+            \ of dates and times). Eksempel : 1998-12-21 eller 19981221. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52aed-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: date
+          type: string
+        opplysningenesOpphav:
+          description: "Kodeliste som beskriver hvor opplysningene i entitet stammer\
+            \ fra, for eksempel 31 desember skattelggingsperiode eller oppdatert matrikkelinformasjon\
+            \ som har oppstått etter 31 desember skattleggingsperiode (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/805aef00-3de1-4da5-901e-80b58a9e8a32'>Kodelistereferanse</a>)"
+          type: string
+      type: object
+    Eiendomsrelasjon:
+      description: "Relasjon mellom fast eiendom som formuesobjekt hvor en fast eiendom\
+        \ kan være enten forelder i relasjonen eller barn. Eksempel: Relasjonen samlet\
+        \ hvor flere formuesobjekt som fast eiendom skal ses på som et formuesobjekt,\
+        \ og har en hovedeiendom (forelder) og tilleggseiendommer (barn)"
+      properties:
+        relasjonstype:
+          description: "Kodeliste som beskriver type relasjon mellom eiendommer, for\
+            \ eksempel en splittet relasjon eller seksjonert (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/af719f1a-2ba5-4f54-92f7-26334a92c200'>Kodelistereferanse</a>)"
+          type: string
+        relasjonsrolle:
+          description: "Kodeliste som beskriver roller en fast eiendom som formuesobjekt\
+            \ har i en eiendomsrelasjon til en eller flere andre fast eiendom som\
+            \ formuesobjekt, da i enten rollen forelder (parent) eller barn (child)\
+            \ (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/6ea96ba6-c118-4c40-a077-3723ef719a19'>Kodelistereferanse</a>)"
+          type: string
+        relasjonsmedlemmer:
+          description: Angir hvilke eiendommer som har en søsken-relasjon til denne
+            eiendommen
+          items:
+            allOf:
+            - $ref: '#/components/schemas/Eiendomsidentifikator'
+            xml:
+              name: eiendomsidentifikator
+          type: array
+          xml:
+            wrapped: true
+        forelder:
+          $ref: '#/components/schemas/Eiendomsidentifikator'
+      type: object
+    Formuesopplysninger:
+      description: Opplysninger som har betydning for beregning av formuesverdi på
+        formuesobjekt.
+      example:
+        spesifikasjonForFlerboligbygning:
+          beliggenhetskode: beliggenhetskode
+          useksjonertBoenhet:
+          - ""
+          - ""
+          beregnetMarkedsverdi: 7
+        formuestype: formuestype
+        spesifikasjonForBolig:
+          beregningstype: beregningstype
+          beliggenhetskode: beliggenhetskode
+          grunnlagForBeregnetMarkedsverdi:
+            boligverdi: 5
+            aarForDokumentertMarkedsverdi: aarForDokumentertMarkedsverdi
+            justertMarkedsverdi: 2
+            dokumentertMarkedsverdi: 5
+          boligegenskaper:
+            primaerromareal: 6
+            boligtype: boligtype
+            byggeaar: byggeaar
+          beregnetMarkedsverdi: 1
+      properties:
+        formuestype:
+          description: Klassifisering for hvordan en fast eiendom skal behandles i
+            forbindelse med formuesbeskatning. (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/2a3772ae-593a-4989-a70e-7aa1ee165faa'>Kodelistereferanse</a>)
+          type: string
+        spesifikasjonForBolig:
+          $ref: '#/components/schemas/FormuespesifikasjonForBolig'
+        spesifikasjonForFlerboligbygning:
+          $ref: '#/components/schemas/FormuesspesifikasjonFlerboligbygning'
+      type: object
+    FormuespesifikasjonForBolig:
+      description: Opplysninger som har betydning for beregning av formuesverdi spesifikt
+        for bolig og boenhet i boligselskap
+      example:
+        beregningstype: beregningstype
+        beliggenhetskode: beliggenhetskode
+        grunnlagForBeregnetMarkedsverdi:
+          boligverdi: 5
+          aarForDokumentertMarkedsverdi: aarForDokumentertMarkedsverdi
+          justertMarkedsverdi: 2
+          dokumentertMarkedsverdi: 5
+        boligegenskaper:
+          primaerromareal: 6
+          boligtype: boligtype
+          byggeaar: byggeaar
+        beregnetMarkedsverdi: 1
+      properties:
+        boligegenskaper:
+          $ref: '#/components/schemas/Boligegenskaper'
+        beliggenhetskode:
+          description: "En verdi mellom 1-7 som angir hvor tettbygd området boligen\
+            \ ligger i er, basert på antall innbyggere (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/20b4d3dc-2d8d-443e-ac66-6154dd92ad49'>Kodelistereferanse</a>)"
+          type: string
+        beregnetMarkedsverdi:
+          description: "en sum av penger i hele kroner brukt i en kontekst. Dette\
+            \ kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        beregningstype:
+          description: Kodeliste som angir om en beregnet markedsverdi er basert på
+            maskinell beregning eller dokumentert markedsverdi (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/210836b0-a125-4b2e-b37c-40aa08636eed'>Kodelistereferanse</a>)
+          type: string
+        grunnlagForBeregnetMarkedsverdi:
+          $ref: '#/components/schemas/GrunnlagForBeregnetMarkedsverdi'
+      type: object
+    FormuesspesifikasjonFlerboligbygning:
+      description: Opplysninger som har betydning for beregning av formuesverdi spesifikt
+        for flerboligbygning
+      example:
+        beliggenhetskode: beliggenhetskode
+        useksjonertBoenhet:
+        - ""
+        - ""
+        beregnetMarkedsverdi: 7
+      properties:
+        beliggenhetskode:
+          description: "En verdi mellom 1-7 som angir hvor tettbygd området boligen\
+            \ ligger i er, basert på antall innbyggere (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/20b4d3dc-2d8d-443e-ac66-6154dd92ad49'>Kodelistereferanse</a>)"
+          type: string
+        beregnetMarkedsverdi:
+          description: "en sum av penger i hele kroner brukt i en kontekst. Dette\
+            \ kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        useksjonertBoenhet:
+          description: Boenhet som ikke har seksjonsnummer. Disse boenhetene er ikke
+            knyttet til andel i boligselskap. I en flerboligbygning vil det alltid
+            være minst 5 useksjonerte boenheter (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fd5f-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)
+          items:
+            allOf:
+            - $ref: '#/components/schemas/UseksjonertBoenhet'
+            xml:
+              name: useksjonertBoenhet
+          type: array
+          xml:
+            wrapped: true
+      type: object
+    UseksjonertBoenhet:
+      description: Boenhet som ikke har seksjonsnummer. Disse boenhetene er ikke knyttet
+        til andel i boligselskap. I en flerboligbygning vil det alltid være minst
+        5 useksjonerte boenheter (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fd5f-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)
+      properties:
+        boligegenskaper:
+          $ref: '#/components/schemas/Boligegenskaper'
+        bruksenhetsnummer:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+        beregnetMarkedsverdi:
+          description: "en sum av penger i hele kroner brukt i en kontekst. Dette\
+            \ kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        beregningstype:
+          description: Kodeliste som angir om en beregnet markedsverdi er basert på
+            maskinell beregning eller dokumentert markedsverdi (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/210836b0-a125-4b2e-b37c-40aa08636eed'>Kodelistereferanse</a>)
+          type: string
+        grunnlagForBeregnetMarkedsverdi:
+          $ref: '#/components/schemas/GrunnlagForBeregnetMarkedsverdi'
+        vegadresse:
+          $ref: '#/components/schemas/Vegadresse'
+      type: object
+    Heltall:
+      description: "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2, ...}\
+        \ (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
       format: int64
       type: integer
-    NorskIdentifikator:
-      description: (<a href='https://data.skatteetaten.no/begreper/dcfb4778-e484-11e6-9cb3-005056821322'>Begrepsreferanse</a>)
-      type: string
-    Aarstall:
-      description: årstall er et tall som angir årets nummer i tidsregningen i den
-        gregorianske kalender (<a href='https://data.skatteetaten.no/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-      format: year
+    Inntektsaar:
+      description: er årstallet som oppgave eller likning gjelder for (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/fa86c460-d685-11e7-9676-0050568351d2'>Begrepsreferanse</a>)
+      format: int64
+      minimum: 1000
+      type: integer
+    Eiendomsidentifikator:
+      description: Identifikator for en gitt fast eiendom eller del av fast eiendom
+      example:
+        skatteetatensEiendomsidentifikator: skatteetatensEiendomsidentifikator
+        eksternIdentifikator: eksternIdentifikator
+      properties:
+        skatteetatensEiendomsidentifikator:
+          description: (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          type: string
+        eksternIdentifikator:
+          description: (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          type: string
+      type: object
+    Poststed:
+      description: geografisk inndeling av postmottakere (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e122-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      properties:
+        poststedsnavn:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+        postnummer:
+          description: nummer på et poststed (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4
+          minLength: 4
+          pattern: "([0-9]){4}"
+          type: string
+      required:
+      - postnummer
+      - poststedsnavn
+      type: object
+    Grunnkrets:
+      description: "Et lite og geografisk sammenhengende område som er mest mulig\
+        \ ensartet når det gjelder natur og næringsgrunnlag, kommunikasjonsforhold\
+        \ og bygningsmessig struktur som grunnlag for utarbeidelse av detaljert regionalstatistikk\
+        \ (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/108097cc-25fc-11e9-85c0-005056821322'>Begrepsreferanse</a>)"
+      properties:
+        grunnkretsnavn:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+        grunnkretsnummer:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+      type: object
+    Vegadresse:
+      description: "Adresse for en bygning, bruksenhet, eiendom eller annet objekt\
+        \ som er registrert med adresse i matrikkelen (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e12d-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+      properties:
+        adressekode:
+          description: (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          type: string
+        adressenavn:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+        adressenummer:
+          $ref: '#/components/schemas/Adressenummer'
+        bruksenhetsnummer:
+          description: En bokstav og fire siffer som entydig identifiserer den enkelte
+            bruksenheten innenfor en adresserbar bygning eller bygningsdel (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e101-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          items:
+            allOf:
+            - $ref: '#/components/schemas/Tekst'
+            xml:
+              name: tekst
+          type: array
+          xml:
+            wrapped: true
+      type: object
+    OpplysningenesOpphav:
+      description: "Kodeliste som beskriver hvor opplysningene i entitet stammer fra,\
+        \ for eksempel 31 desember skattelggingsperiode eller oppdatert matrikkelinformasjon\
+        \ som har oppstått etter 31 desember skattleggingsperiode (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/805aef00-3de1-4da5-901e-80b58a9e8a32'>Kodelistereferanse</a>)"
       type: string
     Tekst:
       description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
-        tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+        tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
       maxLength: 4000
       type: string
-    Aksjeklasse:
-      description: "Lovlige verdier for kodelisten ligger her: https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml\
-        \ (<a href='https://skatteetaten.github.io/api-dokumentasjon/download/aksjeklasse_kodeliste.xml'>Kodelistereferanse</a>)"
+    Identifikator:
+      description: (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
       type: string
-    Foedselsnummer:
-      description: "ellevesifret identifikasjonsnummer for personer bosatt i Norge,\
-        \ der de seks første sifrene angir fødselsdato og de fem siste personnummer.\
-        \ (<a href='https://data.skatteetaten.no/begrep/5138da10-be20-11e6-8004-005056825ca0'>Begrepsreferanse</a>)"
-      maxLength: 11
-      minLength: 11
-      pattern: "[0-9]+"
-      type: string
-    Organisasjonsnummer:
-      description: 9 sifret nummer gitt de som er registrert i Enhetsregisteret. (<a
-        href='https://data.skatteetaten.no/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-      maxLength: 9
-      minLength: 9
-      pattern: "[0-9]+"
-      type: string
-    Postnummer:
-      description: nummer på et poststed (<a href='https://data.skatteetaten.no/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+    Matrikkelnummer:
+      description: offisiell benevnelse for hver enkel matrikkelenhet (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e115-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      properties:
+        kommunenummer:
+          description: nummer for kommune (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e0f3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4
+          minLength: 4
+          pattern: "([0-9]){4}"
+          type: string
+        gaardsnummer:
+          description: "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2,\
+            \ ...} (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        bruksnummer:
+          description: "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2,\
+            \ ...} (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        festenummer:
+          description: "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2,\
+            \ ...} (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        seksjonsnummer:
+          description: "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2,\
+            \ ...} (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+      required:
+      - bruksnummer
+      - gaardsnummer
+      - kommunenummer
+      type: object
+    Kommunenummer:
+      description: nummer for kommune (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e0f3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
       maxLength: 4
       minLength: 4
       pattern: "([0-9]){4}"
       type: string
-    Landkode:
-      description: koder for land etter ISO 3166-1 Alpha-2 (<a href='https://data.skatteetaten.no/begrep/20b2e112-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
-      maxLength: 2
-      minLength: 2
-      pattern: "([A-Z]){2}"
+    BoenhetIBoligselskap:
+      description: Boenhet som den skattepliktige eier og har bruksrett til i boligselskap
+        (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/410ab745-9202-11e6-8b61-82ab1fa1f30b'>Begrepsreferanse</a>)
+      properties:
+        boligselskap:
+          description: 9 sifret nummer gitt de som er registrert i Enhetsregisteret.
+            (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 9
+          minLength: 9
+          pattern: "[0-9]+"
+          type: string
+        enhetsnummerForBoenhetIBoligselskap:
+          $ref: '#/components/schemas/EnhetsnummerForBoenhetIBoligselskap'
+      type: object
+    Dato:
+      description: "gir verdier for år, måned og dag. Kodes som en tekststreng etter\
+        \ datoformatering spesifisert i  ISO 8601 (ISO 8601:2004 Data elements and\
+        \ interchange formats -- Information interchange -- Representation of dates\
+        \ and times). Eksempel : 1998-12-21 eller 19981221. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52aed-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+      format: date
+      type: string
+    Eiendomsrelasjonstype:
+      description: "Kodeliste som beskriver type relasjon mellom eiendommer, for eksempel\
+        \ en splittet relasjon eller seksjonert (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/af719f1a-2ba5-4f54-92f7-26334a92c200'>Kodelistereferanse</a>)"
+      type: string
+    Eiendomsrelasjonsrolle:
+      description: "Kodeliste som beskriver roller en fast eiendom som formuesobjekt\
+        \ har i en eiendomsrelasjon til en eller flere andre fast eiendom som formuesobjekt,\
+        \ da i enten rollen forelder (parent) eller barn (child) (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/6ea96ba6-c118-4c40-a077-3723ef719a19'>Kodelistereferanse</a>)"
+      type: string
+    Formuestype:
+      description: Klassifisering for hvordan en fast eiendom skal behandles i forbindelse
+        med formuesbeskatning. (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/2a3772ae-593a-4989-a70e-7aa1ee165faa'>Kodelistereferanse</a>)
+      type: string
+    Boligegenskaper:
+      description: "Informasjon for et gitt tidspunkt om boligens areal, boligtype\
+        \ og byggeår for en gitt boligeiendom eller ev. boenhet i flerboligbygning\
+        \ (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d3296-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)"
+      example:
+        primaerromareal: 6
+        boligtype: boligtype
+        byggeaar: byggeaar
+      properties:
+        primaerromareal:
+          description: "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2,\
+            \ ...} (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        boligtype:
+          description: Generell typebetegnelse for å beskrive fysiske kjennetegn ved
+            boligeiendom. Utledes fra bygningstype (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/c22fb86f-1284-4dd2-ba93-bef3b58c003c'>Kodelistereferanse</a>)
+            (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fcfc-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)
+          type: string
+        byggeaar:
+          description: årstall er et tall som angir årets nummer i tidsregningen i
+            den gregorianske kalender (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: year
+          type: string
+      type: object
+    Beliggenhetskode:
+      description: "En verdi mellom 1-7 som angir hvor tettbygd området boligen ligger\
+        \ i er, basert på antall innbyggere (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/20b4d3dc-2d8d-443e-ac66-6154dd92ad49'>Kodelistereferanse</a>)"
+      type: string
+    BeloepSomHeltall:
+      description: "en sum av penger i hele kroner brukt i en kontekst. Dette kan\
+        \ være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+      format: int64
+      type: integer
+    BeregningstypeForBeregnetMarkedsverdi:
+      description: Kodeliste som angir om en beregnet markedsverdi er basert på maskinell
+        beregning eller dokumentert markedsverdi (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/210836b0-a125-4b2e-b37c-40aa08636eed'>Kodelistereferanse</a>)
+      type: string
+    GrunnlagForBeregnetMarkedsverdi:
+      description: "Opplysninger som forklarer om en har verdsatt en boligeiendom\
+        \ på grunnlag av sjablong for boligeiendom, dokumentert markedsverdi for boligeiendom\
+        \ eller justert markedsverdi for boligeiendom"
+      example:
+        boligverdi: 5
+        aarForDokumentertMarkedsverdi: aarForDokumentertMarkedsverdi
+        justertMarkedsverdi: 2
+        dokumentertMarkedsverdi: 5
+      properties:
+        boligverdi:
+          description: "en sum av penger i hele kroner brukt i en kontekst. Dette\
+            \ kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        dokumentertMarkedsverdi:
+          description: "en sum av penger i hele kroner brukt i en kontekst. Dette\
+            \ kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        aarForDokumentertMarkedsverdi:
+          description: årstall er et tall som angir årets nummer i tidsregningen i
+            den gregorianske kalender (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          format: year
+          type: string
+        justertMarkedsverdi:
+          description: "en sum av penger i hele kroner brukt i en kontekst. Dette\
+            \ kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+      type: object
+    Postnummer:
+      description: nummer på et poststed (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 4
+      minLength: 4
+      pattern: "([0-9]){4}"
+      type: string
+    Adressenummer:
+      description: "Et nummer og en eventuell bokstav som entydig identifiserer eiendommer,\
+        \ anlegg, bygninger eller innganger til bygninger innenfor en adresserbar\
+        \ gate, veg, sti, plass eller område (<a href='http://begrepskatalog/begrep/20b2e0fa-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+      properties:
+        husnummer:
+          description: "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2,\
+            \ ...} (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        husbokstav:
+          description: vilkårlig lang sekvens av tegn inkludert aksenter og spesielle
+            tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+          maxLength: 4000
+          type: string
+      type: object
+    Organisasjonsnummer:
+      description: 9 sifret nummer gitt de som er registrert i Enhetsregisteret. (<a
+        href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      maxLength: 9
+      minLength: 9
+      pattern: "[0-9]+"
+      type: string
+    EnhetsnummerForBoenhetIBoligselskap:
+      description: Aksjeboenhetsnummer eller andelsnummer for en gitt boenhet i boligselskap
+        (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/108097ca-25fc-11e9-85c0-005056821322'>Begrepsreferanse</a>)
+      properties:
+        aksjeboenhetsnummer:
+          description: "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2,\
+            \ ...} (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+        andelsnummer:
+          description: "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2,\
+            \ ...} (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+          format: int64
+          type: integer
+      type: object
+    Boligtype:
+      description: Generell typebetegnelse for å beskrive fysiske kjennetegn ved boligeiendom.
+        Utledes fra bygningstype (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/c22fb86f-1284-4dd2-ba93-bef3b58c003c'>Kodelistereferanse</a>)
+        (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fcfc-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)
+      type: string
+    Aarstall:
+      description: årstall er et tall som angir årets nummer i tidsregningen i den
+        gregorianske kalender (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)
+      format: year
       type: string
 

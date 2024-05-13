@@ -2,8 +2,8 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import org.openapitools.client.model.Aksjeselskap;
 import org.openapitools.client.model.Feil;
+import org.openapitools.client.model.FormuesgrunnlagForEiendomsskatt;
 import java.util.UUID;
 
 import java.util.Collections;
@@ -27,15 +27,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:25:10.681580159Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class AksjonaerIVirksomhetApi {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:25:17.794277948Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+public class FormuesgrunnlagEiendomsskattApi {
     private ApiClient apiClient;
 
-    public AksjonaerIVirksomhetApi() {
+    public FormuesgrunnlagEiendomsskattApi() {
         this(new ApiClient());
     }
 
-    public AksjonaerIVirksomhetApi(ApiClient apiClient) {
+    public FormuesgrunnlagEiendomsskattApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -48,58 +48,69 @@ public class AksjonaerIVirksomhetApi {
     }
 
     /**
-     * Hent aksjonærer i en virksomhet
-     * Informasjon om en virksomhets aksjonærer pr. 31.12 sist kalenderår
+     * Hent formuesgrunnlageiendomsskatt for en identifikator
+     * Hent formuesgrunnlageiendomsskatt for en identifikator.
      * <p><b>200</b> - Gyldig respons
-     * <p><b>0</b> - Diverse feilmeldinger, se egen dokumentasjon
+     * <p><b>0</b> - Alle feil fra applikasjonen kommer på følgende format
      * @param rettighetspakke Datakonsumenter plasseres i en rettighetspakke (per datasett) basert på en juridisk vurdering. Rettighetspakken styrer skjermingsregler, filtrering og detaljering som benyttes når det gis innsyn i data i datasett. (required)
-     * @param organisasjonsnummer Organisasjonsnummer for virksomhet (required)
-     * @param kalenderaar Kalenderåret det skal hentes opplysninger fra. Returnerer siste tilgjengelige dersom ikke oppgitt. (optional)
+     * @param gjelderPeriode Perioden (required)
+     * @param kommunenummer Kommunenummer (required)
+     * @param eksternidentifikator Ekstern identifikator (required)
      * @param korrelasjonsid Korrelasjonsid, unik identifikator for den tekniske forespørselen. Må være på UUID-format (optional)
-     * @return Aksjeselskap
+     * @return FormuesgrunnlagForEiendomsskatt
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public Aksjeselskap hentAksjonaerIVirksomhet(String rettighetspakke, String organisasjonsnummer, String kalenderaar, UUID korrelasjonsid) throws RestClientException {
-        return hentAksjonaerIVirksomhetWithHttpInfo(rettighetspakke, organisasjonsnummer, kalenderaar, korrelasjonsid).getBody();
+    public FormuesgrunnlagForEiendomsskatt hentFormuesgrunnlagEiendomsskatt(String rettighetspakke, String gjelderPeriode, String kommunenummer, String eksternidentifikator, UUID korrelasjonsid) throws RestClientException {
+        return hentFormuesgrunnlagEiendomsskattWithHttpInfo(rettighetspakke, gjelderPeriode, kommunenummer, eksternidentifikator, korrelasjonsid).getBody();
     }
 
     /**
-     * Hent aksjonærer i en virksomhet
-     * Informasjon om en virksomhets aksjonærer pr. 31.12 sist kalenderår
+     * Hent formuesgrunnlageiendomsskatt for en identifikator
+     * Hent formuesgrunnlageiendomsskatt for en identifikator.
      * <p><b>200</b> - Gyldig respons
-     * <p><b>0</b> - Diverse feilmeldinger, se egen dokumentasjon
+     * <p><b>0</b> - Alle feil fra applikasjonen kommer på følgende format
      * @param rettighetspakke Datakonsumenter plasseres i en rettighetspakke (per datasett) basert på en juridisk vurdering. Rettighetspakken styrer skjermingsregler, filtrering og detaljering som benyttes når det gis innsyn i data i datasett. (required)
-     * @param organisasjonsnummer Organisasjonsnummer for virksomhet (required)
-     * @param kalenderaar Kalenderåret det skal hentes opplysninger fra. Returnerer siste tilgjengelige dersom ikke oppgitt. (optional)
+     * @param gjelderPeriode Perioden (required)
+     * @param kommunenummer Kommunenummer (required)
+     * @param eksternidentifikator Ekstern identifikator (required)
      * @param korrelasjonsid Korrelasjonsid, unik identifikator for den tekniske forespørselen. Må være på UUID-format (optional)
-     * @return ResponseEntity&lt;Aksjeselskap&gt;
+     * @return ResponseEntity&lt;FormuesgrunnlagForEiendomsskatt&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<Aksjeselskap> hentAksjonaerIVirksomhetWithHttpInfo(String rettighetspakke, String organisasjonsnummer, String kalenderaar, UUID korrelasjonsid) throws RestClientException {
+    public ResponseEntity<FormuesgrunnlagForEiendomsskatt> hentFormuesgrunnlagEiendomsskattWithHttpInfo(String rettighetspakke, String gjelderPeriode, String kommunenummer, String eksternidentifikator, UUID korrelasjonsid) throws RestClientException {
         Object localVarPostBody = null;
         
         // verify the required parameter 'rettighetspakke' is set
         if (rettighetspakke == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'rettighetspakke' when calling hentAksjonaerIVirksomhet");
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'rettighetspakke' when calling hentFormuesgrunnlagEiendomsskatt");
         }
         
-        // verify the required parameter 'organisasjonsnummer' is set
-        if (organisasjonsnummer == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'organisasjonsnummer' when calling hentAksjonaerIVirksomhet");
+        // verify the required parameter 'gjelderPeriode' is set
+        if (gjelderPeriode == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'gjelderPeriode' when calling hentFormuesgrunnlagEiendomsskatt");
+        }
+        
+        // verify the required parameter 'kommunenummer' is set
+        if (kommunenummer == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'kommunenummer' when calling hentFormuesgrunnlagEiendomsskatt");
+        }
+        
+        // verify the required parameter 'eksternidentifikator' is set
+        if (eksternidentifikator == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'eksternidentifikator' when calling hentFormuesgrunnlagEiendomsskatt");
         }
         
         // create path and map variables
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
         uriVariables.put("rettighetspakke", rettighetspakke);
-        uriVariables.put("organisasjonsnummer", organisasjonsnummer);
+        uriVariables.put("gjelderPeriode", gjelderPeriode);
+        uriVariables.put("kommunenummer", kommunenummer);
+        uriVariables.put("eksternidentifikator", eksternidentifikator);
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        localVarQueryParams.putAll(apiClient.parameterToMultiValueMap(null, "kalenderaar", kalenderaar));
-        
 
         if (korrelasjonsid != null)
         localVarHeaderParams.add("Korrelasjonsid", apiClient.parameterToString(korrelasjonsid));
@@ -113,7 +124,7 @@ public class AksjonaerIVirksomhetApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<Aksjeselskap> localReturnType = new ParameterizedTypeReference<Aksjeselskap>() {};
-        return apiClient.invokeAPI("/{rettighetspakke}/aksjonaerer/{organisasjonsnummer}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<FormuesgrunnlagForEiendomsskatt> localReturnType = new ParameterizedTypeReference<FormuesgrunnlagForEiendomsskatt>() {};
+        return apiClient.invokeAPI("/{rettighetspakke}/{gjelderPeriode}/{kommunenummer}/{eksternidentifikator}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }
