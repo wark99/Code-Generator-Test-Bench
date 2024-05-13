@@ -1,6 +1,6 @@
 /*
- * Synchronoss Network Address Book Web Services API
- * This document describes the various API's for the Synchronoss Network Address Book Web Services. This API is a RESTful API which returns XML and WBXML objects. Developers must make sure to read and understand the backward compatibility requirements as described in the WSG Backward Compatibility document.
+ * Api de cadastro de usuários
+ * crud usuários
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -20,7 +20,7 @@ import java.time.format.DateTimeParseException;
  * Class that add parsing/formatting support for Java 8+ {@code OffsetDateTime} class.
  * It's generated for java clients when {@code AbstractJavaCodegen#dateLibrary} specified as {@code java8}.
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:24:14.227374673Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:24:23.164900146Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class JavaTimeFormatter {
 
     private DateTimeFormatter offsetDateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;

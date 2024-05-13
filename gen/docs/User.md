@@ -1,13 +1,14 @@
 
 
-# WsgPublicNabV1UserIdAbContactsContactIdPicturePutRequest
+# User
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**myAttachment** | **List&lt;File&gt;** |  |  [optional] |
+|**name** | **String** |  |  [optional] |
+|**email** | **String** |  |  [optional] |
 
 
 

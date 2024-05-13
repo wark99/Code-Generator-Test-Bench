@@ -1,6 +1,6 @@
 /*
- * Synchronoss Network Address Book Web Services API
- * This document describes the various API's for the Synchronoss Network Address Book Web Services. This API is a RESTful API which returns XML and WBXML objects. Developers must make sure to read and understand the backward compatibility requirements as described in the WSG Backward Compatibility document.
+ * Api de cadastro de usuários
+ * crud usuários
  *
  * The version of the OpenAPI document: 1.0.0
  * 
