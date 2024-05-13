@@ -1,3452 +1,940 @@
 openapi: 3.1.0
 info:
-  contact:
-    email: rj.whitehead@nationalservicealliance.com
-  description: "This is the official Client API To interact with National Service\
-    \ Alliance (NSA)\n\n# Dates\nAll dates are in the ISO 8601 format - YYYY-MM-DD\
-    \ - ex. 2021-12-31\n\nSee this article for more information: [ISO 8601 article](https://en.wikipedia.org/wiki/ISO_8601)\n\
-    \n# Authenication\nAuthenication is handled via basic authentication. \n\nDev\
-    \ and Production credentials will be provided during the implimentation process\n\
-    \nSee this article for more information: [basic auth article](https://en.wikipedia.org/wiki/Basic_access_authentication)\n"
-  title: NSA Client API
-  version: 1.0.17
+  description: Documentation for the Public API
+  title: Syntax Public API
+  version: 1.0.0
 servers:
-- description: Dev Endpoint
-  url: https://dev1.nationalservicealliance.com/clientapi
-- description: Production Endpoint
-  url: https://nationalservicealliance.com/clientapi
-- description: SwaggerHub API Auto Mocking
-  url: https://virtserver.swaggerhub.com/nsalliance9/Client/1.0.14
-tags:
-- name: Availability
-- name: Create Dispatch
-- name: Cancel
-- name: Estimates
+- url: /
 paths:
-  /availability/availability.php:
-    post:
-      operationId: getAvailability
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AvailabilityRequest'
-      responses:
-        "200":
-          content:
-            application/json:
-              examples:
-                hasAvailability:
-                  value:
-                  - 2021-12-08
-                  - 2021-12-09
-                  - 2021-12-10
-                  - 2021-12-13
-                  - 2021-12-14
-                noAvailability:
-                  value: []
-              schema:
-                $ref: '#/components/schemas/AvailabilityResponse'
-          description: |
-            Successful request. You will get one of two responses:
-            1) an array of dates with availability
-            2) an empty array signifiying that there is no availability
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: User request error
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Provides availability by NSA based on provided parameters
-      tags:
-      - Availability
-      x-content-type: application/json
-      x-accepts: application/json
-  /availability/availabilityWithCODCost.php:
-    post:
-      operationId: getAvailabilityWithCODCost
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AvailabilityRequest'
-      responses:
-        "200":
-          content:
-            application/json:
-              examples:
-                hasAvailability:
-                  value:
-                    availability:
-                    - 2021-12-08
-                    - 2021-12-09
-                    - 2021-12-10
-                    - 2021-12-13
-                    - 2021-12-14
-                    cost:
-                      rateType: flatRate
-                      areaType: normal
-                      cost: 199.89
-                noAvailability:
-                  value:
-                    availability: []
-              schema:
-                $ref: '#/components/schemas/AvailabilityWithCODCostResponse'
-          description: |
-            Successful request. You will get one of two responses:
-            1) an array of dates with availability
-            2) an empty array signifiying that there is no availability
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: User request error
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Provides availability by NSA based on provided parameters and associated
-        COD Cost
-      tags:
-      - Availability
-      x-content-type: application/json
-      x-accepts: application/json
-  /availability/availabilityVirtualTech.php:
-    post:
-      operationId: getAvailabilityVirtualTech
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AvailabilityVirtualTechRequest'
-      responses:
-        "200":
-          content:
-            application/json:
-              examples:
-                hasAvailability:
-                  value:
-                  - date: 2022-04-05
-                    slots:
-                    - 0900-0930
-                    - 0930-1000
-                    - 1000-1030
-                    - 1300-1330
-                    - 1700-1730
-                  - date: 2022-04-06
-                    slots:
-                    - 0900-0930
-                    - 0930-1000
-                    - 1000-1030
-                    - 1300-1330
-                    - 1700-1730
-                noAvailability:
-                  value: []
-              schema:
-                $ref: '#/components/schemas/AvailabilityVirutalTechResponse'
-          description: |
-            Successful request. You will get one of two responses:
-            1) an array of dates with availability
-            2) an empty array signifiying that there is no availability
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: User request error
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Provides availability by NSA's virtual technicians
-      tags:
-      - Availability
-      x-content-type: application/json
-      x-accepts: application/json
-  /create/create.php:
-    post:
-      operationId: createDispatch
-      requestBody:
-        content:
-          application/json:
-            examples:
-              withParts:
-                summary: With Parts
-                value:
-                  bookingDetails:
-                    caseNumber: CASE111
-                    complaintCode: DEAD
-                    complaint: Bed will not raise or lower
-                    specialInstruction: please knock instead of ringing door bell
-                    scheduleDate: 2021-12-10
-                    timePreference: A
-                    preAuthorizationLimit: 249.99
-                    limitOfLiabilityRemaining: 555.55
-                    limitOfLiabilityTotal: 999.99
-                    deductibleAmount: 49.99
-                    planCode: Platinum
-                    relationshipCode: Salesforce portal
-                    authorizationNumber: Auth111
-                    suspectedRecall: false
-                    exclusions: "Gasket, Buttons, Power cord"
-                  customer:
-                    firstName: John
-                    lastName: Doe
-                    email: test@test.com
-                    phone1: 801-269-0123
-                    phone2: 999-999-9999
-                    phone3: 999-999-9999
-                    address1: 6762 South 1300 East
-                    address2: STE 1
-                    city: Salt Lake City
-                    state: UT
-                    zip: "84121"
-                    customerNumber: CUST1111
-                  product:
-                    dateOfPurchase: 2021-01-01
-                    productType: Adjustable Bed Base
-                    brand: ERGOMOTION
-                    serialNumber: SERIAL111
-                    serialNumber2: serial2
-                    modelNumber: MODEL111
-                    modelVersion: v2
-                    sellingDealer: Best Buy
-                  parts:
-                  - brand: Ergomotion
-                    partNumber: PART111
-                    description: DESC111
-                    quantity: 1
-                    costEach: 11.11
-                    hasCore: true
-                    coreCostEach: 150
-                    supplier: Encompass
-                  - brand: Ergomotion
-                    partNumber: PART222
-                    description: DESC222
-                    quantity: 2
-                    costEach: 22.22
-                    hasCore: false
-                    coreCostEach: 0
-                    supplier: Encompass
-              withoutParts:
-                summary: Without Parts
-                value:
-                  bookingDetails:
-                    caseNumber: CASE111
-                    complaintCode: DEAD
-                    complaint: Bed will not raise or lower
-                    specialInstruction: please knock instead of ringing door bell
-                    scheduleDate: 2021-12-10
-                    timePreference: A
-                    preAuthorizationLimit: 249.99
-                    deductibleAmount: 49.99
-                    planCode: Platinum
-                    authorizationNumber: Auth111
-                    relationshipCode: Salesforce portal
-                    suspectedRecall: false
-                    exclusions: "Gasket, Buttons, Power cord"
-                    noPartsNeeded: true
-                  customer:
-                    firstName: John
-                    lastName: Doe
-                    email: test@test.com
-                    phone1: 801-269-0123
-                    phone2: 999-999-9999
-                    phone3: 999-999-9999
-                    address1: 6762 South 1300 East
-                    address2: STE 1
-                    city: Salt Lake City
-                    state: UT
-                    zip: "84121"
-                    customerNumber: CUST1111
-                  product:
-                    dateOfPurchase: 2021-01-01
-                    productType: Adjustable Bed Base
-                    brand: ERGOMOTION
-                    serialNumber: SERIAL111
-                    serialNumber2: serial2
-                    modelNumber: MODEL111
-                    modelVersion: v2
-                    sellingDealer: Best Buy
-              requiredFieldsOnly:
-                summary: Required Fields Only
-                value:
-                  bookingDetails:
-                    caseNumber: CASE111
-                    complaint: Bed will not raise or lower
-                  customer:
-                    firstName: John
-                    lastName: Doe
-                    email: test@test.com
-                    phone1: 801-269-0123
-                    address1: 6762 South 1300 East
-                    city: Salt Lake City
-                    state: UT
-                    zip: "84121"
-                  product:
-                    productType: Adjustable Bed Base
-                    brand: ERGOMOTION
-                    serialNumber: SERIAL111
-                    modelNumber: MODEL111
-            schema:
-              $ref: '#/components/schemas/CreateRequest'
-      responses:
-        "200":
-          content:
-            application/json:
-              examples:
-                servicerAssigned:
-                  summary: Servicer Assigned
-                  value:
-                    dispatchNumber: DISPATCH111
-                    serviceProvider:
-                      depotName: Depot111
-                      serviceProviderName: ABC Repair Shop
-                      phoneNumber: 999-999-9999
-                      email: test@test.com
-                      partsShippingAddress:
-                        contact: John Doe
-                        email: test@test.com
-                        phone: 801-269-0123
-                        address1: 6762 South 1300 East
-                        address2: STE 1
-                        city: Salt Lake City
-                        state: UT
-                        zip: "84121"
-                servicerNotAssigned:
-                  summary: Servicer Not Assigned
-                  value:
-                    dispatchNumber: DISPATCH111
-              schema:
-                $ref: '#/components/schemas/CreateResponse'
-          description: |
-            Successful request.
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Create new Dispatch
-      tags:
-      - Create Dispatch
-      x-content-type: application/json
-      x-accepts: application/json
-  /create/createVirtualTech.php:
-    post:
-      operationId: createVirtualTechDispatch
-      requestBody:
-        content:
-          application/json:
-            examples:
-              withParts:
-                summary: With Parts
-                value:
-                  bookingDetails:
-                    caseNumber: CASE111
-                    complaintCode: DEAD
-                    complaint: Bed will not raise or lower
-                    specialInstruction: please knock instead of ringing door bell
-                    scheduleDate: 2021-12-10
-                    slot: 1300-1330
-                    preAuthorizationLimit: 249.99
-                    deductibleAmount: 49.99
-                    planCode: Platinum
-                    authorizationNumber: Auth111
-                    suspectedRecall: false
-                    exclusions: "Gasket, Buttons, Power cord"
-                    virtualBookingType: diagnosisOnly
-                  customer:
-                    firstName: John
-                    lastName: Doe
-                    email: test@test.com
-                    phone1: 801-269-0123
-                    phone2: 999-999-9999
-                    phone3: 999-999-9999
-                    address1: 6762 South 1300 East
-                    address2: STE 1
-                    city: Salt Lake City
-                    state: UT
-                    zip: "84121"
-                    customerNumber: CUST1111
-                  product:
-                    dateOfPurchase: 2021-01-01
-                    productType: Adjustable Bed Base
-                    brand: ERGOMOTION
-                    serialNumber: SERIAL111
-                    serialNumber2: serial2
-                    modelNumber: MODEL111
-                    modelVersion: v2
-                    sellingDealer: Best Buy
-                  parts:
-                  - brand: Ergomotion
-                    partNumber: PART111
-                    description: DESC111
-                    quantity: 1
-                    costEach: 11.11
-                    hasCore: true
-                    coreCostEach: 150
-                    supplier: Encompass
-                  - brand: Ergomotion
-                    partNumber: PART222
-                    description: DESC222
-                    quantity: 2
-                    costEach: 22.22
-                    hasCore: false
-                    coreCostEach: 0
-                    supplier: Encompass
-              withoutParts:
-                summary: Without Parts
-                value:
-                  bookingDetails:
-                    caseNumber: CASE111
-                    complaintCode: DEAD
-                    complaint: Bed will not raise or lower
-                    specialInstruction: please knock instead of ringing door bell
-                    scheduleDate: 2021-12-10
-                    slot: 1300-1330
-                    preAuthorizationLimit: 249.99
-                    deductibleAmount: 49.99
-                    planCode: Platinum
-                    authorizationNumber: Auth111
-                    suspectedRecall: false
-                    exclusions: "Gasket, Buttons, Power cord"
-                    virtualBookingType: diagnosisOnly
-                  customer:
-                    firstName: John
-                    lastName: Doe
-                    email: test@test.com
-                    phone1: 801-269-0123
-                    phone2: 999-999-9999
-                    phone3: 999-999-9999
-                    address1: 6762 South 1300 East
-                    address2: STE 1
-                    city: Salt Lake City
-                    state: UT
-                    zip: "84121"
-                    customerNumber: CUST1111
-                  product:
-                    dateOfPurchase: 2021-01-01
-                    productType: Adjustable Bed Base
-                    brand: ERGOMOTION
-                    serialNumber: SERIAL111
-                    serialNumber2: serial2
-                    modelNumber: MODEL111
-                    modelVersion: v2
-                    sellingDealer: Best Buy
-              requiredFieldsOnly:
-                summary: Required Fields Only
-                value:
-                  bookingDetails:
-                    caseNumber: CASE111
-                    complaintCode: DEAD
-                    complaint: Bed will not raise or lower
-                    scheduleDate: 2021-12-10
-                    slot: 1300-1330
-                  customer:
-                    firstName: John
-                    lastName: Doe
-                    email: test@test.com
-                    phone1: 801-269-0123
-                    address1: 6762 South 1300 East
-                    city: Salt Lake City
-                    state: UT
-                    zip: "84121"
-                  product:
-                    productType: Adjustable Bed Base
-                    brand: ERGOMOTION
-                    serialNumber: SERIAL111
-                    modelNumber: MODEL111
-            schema:
-              $ref: '#/components/schemas/CreateVirtualTechRequest'
-      responses:
-        "200":
-          content:
-            application/json:
-              examples:
-                servicerAssigned:
-                  summary: Servicer Assigned
-                  value:
-                    dispatchNumber: DISPATCH111
-                    serviceProvider:
-                      depotName: Depot111
-                      serviceProviderName: ABC Repair Shop
-                      phoneNumber: 999-999-9999
-                      email: test@test.com
-                      partsShippingAddress:
-                        contact: John Doe
-                        email: test@test.com
-                        phone: 801-269-0123
-                        address1: 6762 South 1300 East
-                        address2: STE 1
-                        city: Salt Lake City
-                        state: UT
-                        zip: "84121"
-                servicerNotAssigned:
-                  summary: Servicer Not Assigned
-                  value:
-                    dispatchNumber: DISPATCH111
-              schema:
-                $ref: '#/components/schemas/CreateResponse'
-          description: |
-            Successful request.
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Create new Virtual Tech Dispatch
-      tags:
-      - Create Dispatch
-      x-content-type: application/json
-      x-accepts: application/json
-  /cancel/cancel.php:
-    post:
-      operationId: cancelDispatch
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CancelRequest'
-      responses:
-        "200":
-          description: Successful cancellation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: User request error
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "409":
-          content:
-            application/json:
-              example:
-              - errorCode: "409"
-                errorMessage: Cannot cancel because dispatch is not in a cancellable
-                  state
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Cannot cancel because dispatch is not in a cancellable state
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Cancels an open dispatch
-      tags:
-      - Cancel
-      x-content-type: application/json
-      x-accepts: application/json
-  /estimates/estimates.php:
+  /public-api/v1/users/{userid}:
     get:
-      operationId: getEstiamtes
+      description: Retrieve user information by user ID.
       parameters:
-      - explode: true
-        in: query
-        name: status
+      - description: The ID of the user.
+        explode: false
+        in: path
+        name: userid
         required: true
         schema:
-          enum:
-          - open
-          - all
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_users__userid__get_200_response'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_users__userid__get_400_response'
+          description: User Not Found
+      summary: Get User by ID
+      tags:
+      - Get User Info
+      x-accepts: application/json
+  /public-api/v1/users/{username}:
+    get:
+      description: Retrieve user information by username.
+      parameters:
+      - description: The username of the user.
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
           type: string
-        style: form
-      - explode: true
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_users__userid__get_200_response'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_users__userid__get_400_response'
+          description: User Not Found
+      summary: Get User by Username
+      tags:
+      - Get User Info
+      x-accepts: application/json
+  /public-api/v1/asset/{assetid}:
+    get:
+      description: Retrieve asset information by asset ID.
+      parameters:
+      - description: The ID of the asset.
+        explode: false
+        in: path
+        name: assetid
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_asset__assetid__get_200_response'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_asset__assetid__get_400_response'
+          description: Asset Not Found
+      summary: Get Asset by ID
+      tags:
+      - Get Asset Info
+      x-accepts: application/json
+  /public-api/v1/inventory/collectibles/{userid}:
+    get:
+      description: Retrieve a user's collectibles.
+      parameters:
+      - description: The ID of the user.
+        explode: false
+        in: path
+        name: userid
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: The page number (optional).
+        explode: true
         in: query
         name: page
         required: false
         schema:
-          minimum: 1
-          type: integer
-        style: form
-      - description: "format: YYYY-MM-DD hh:mm:ss"
-        example: 2022-01-31 23:59:59
-        explode: true
-        in: query
-        name: updateTimeUTC
-        required: false
-        schema:
-          minimum: 1
           type: integer
         style: form
       responses:
         "200":
           content:
             application/json:
-              examples:
-                estimatesFound:
-                  summary: Estimate list with details
-                  value:
-                  - estimateID: 11111
-                    dipatchNumber: dispatch111
-                    caseNumber: case111
-                    estimateProcessedStatusCode: Approved
-                    total: 101.11
-                    deductible: 50
-                    totalAmountLessDeductible: 51.11
-                    submissionTimestamp: 2022-01-31 23:59:59
-                    processedTimestamp: 2022-01-31 23:59:59
-                    rejectProcessingNeeded: 2022-01-31 23:59:59
-                    unitAge: <1 Year
-                    causeOfFailure: Normal wear and tear failure
-                    declineReason: null
-                    lines:
-                    - lineID: 222
-                      amount: 50
-                      coverageTypeCode: Labor
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 223
-                      amount: 51.11
-                      coverageTypeCode: Parts
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 224
-                      amount: 10
-                      coverageTypeCode: Other
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 225
-                      amount: 11
-                      coverageTypeCode: Tax
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 226
-                      amount: 12
-                      coverageTypeCode: Mileage
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    parts:
-                    - estimatePartID: 333
-                      partBrand: Samsung
-                      partNumber: Part1
-                      description: Desc
-                      quantity: 2
-                      cost: 11.11
-                      extendedCost: 22.22
-                      requestedSupplier: Encompass
-                      alreadyUsed: "N"
-                      alreadyOrdered: "N"
-                      approved: "Y"
-                      createTimestamp: 2022-01-31 23:59:59
-                    - estimatePartID: 334
-                      partBrand: Samsung
-                      partNumber: Part2
-                      description: Desc2
-                      quantity: 1
-                      cost: 28.89
-                      extendedCost: 28.89
-                      requestedSupplier: Encompass
-                      alreadyUsed: "N"
-                      alreadyOrdered: "N"
-                      approved: "Y"
-                      createTimestamp: 2022-01-31 23:59:59
-                    notes:
-                    - estimateNoteID: 444
-                      note: This unit needs two parts
-                      userType: NsaAdmin
-                      creator: RJ
-                      createTimestamp: 2022-01-31 23:59:59
-                    - estimateNoteID: 445
-                      note: This is under the pre-auth. Please proceed
-                      userType: thirdParty
-                      creator: apiUser
-                      createTimestamp: 2022-01-31 23:59:59
-                  - estimateID: 22222
-                    dipatchNumber: dispatch111
-                    caseNumber: case111
-                    estimateProcessedStatusCode: Approved
-                    total: 101.11
-                    deductible: 50
-                    totalAmountLessDeductible: 51.11
-                    submissionTimestamp: 2022-01-31 23:59:59
-                    processedTimestamp: 2022-01-31 23:59:59
-                    rejectProcessingNeeded: 2022-01-31 23:59:59
-                    unitAge: <1 Year
-                    causeOfFailure: Normal wear and tear failure
-                    declineReason: null
-                    lines:
-                    - lineID: 222
-                      amount: 50
-                      coverageTypeCode: Labor
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 223
-                      amount: 51.11
-                      coverageTypeCode: Parts
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 224
-                      amount: 10
-                      coverageTypeCode: Other
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 225
-                      amount: 11
-                      coverageTypeCode: Tax
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 226
-                      amount: 12
-                      coverageTypeCode: Mileage
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    parts:
-                    - estimatePartID: 333
-                      partBrand: Samsung
-                      partNumber: Part1
-                      description: Desc
-                      quantity: 2
-                      cost: 11.11
-                      extendedCost: 22.22
-                      requestedSupplier: Encompass
-                      alreadyUsed: "N"
-                      alreadyOrdered: "N"
-                      approved: "Y"
-                      createTimestamp: 2022-01-31 23:59:59
-                    - estimatePartID: 334
-                      partBrand: Samsung
-                      partNumber: Part2
-                      description: Desc2
-                      quantity: 1
-                      cost: 28.89
-                      extendedCost: 28.89
-                      requestedSupplier: Encompass
-                      alreadyUsed: "N"
-                      alreadyOrdered: "N"
-                      approved: "Y"
-                      createTimestamp: 2022-01-31 23:59:59
-                    notes:
-                    - estimateNoteID: 444
-                      note: This unit needs two parts
-                      userType: NsaAdmin
-                      creator: RJ
-                      createTimestamp: 2022-01-31 23:59:59
-                    - estimateNoteID: 445
-                      note: This is under the pre-auth. Please proceed
-                      userType: thirdParty
-                      creator: apiUser
-                      createTimestamp: 2022-01-31 23:59:59
               schema:
-                $ref: '#/components/schemas/EstimateListResponse'
-          description: Successful request.
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Get estimates list
-      tags:
-      - Estimates
-      x-accepts: application/json
-  /estimates/estimate.php:
-    get:
-      operationId: getEstiamteByID
-      parameters:
-      - explode: true
-        in: query
-        name: estimateID
-        required: true
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              examples:
-                estimatesFound:
-                  summary: Estimate details
-                  value:
-                    estimateID: 11111
-                    dipatchNumber: dispatch111
-                    caseNumber: case111
-                    estimateProcessedStatusCode: Approved
-                    total: 101.11
-                    deductible: 50
-                    totalAmountLessDeductible: 51.11
-                    submissionTimestamp: 2022-01-31 23:59:59
-                    processedTimestamp: 2022-01-31 23:59:59
-                    rejectProcessingNeeded: 2022-01-31 23:59:59
-                    unitAge: <1 Year
-                    causeOfFailure: Normal wear and tear failure
-                    declineReason: null
-                    lines:
-                    - lineID: 222
-                      amount: 50
-                      coverageTypeCode: Labor
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 223
-                      amount: 51.11
-                      coverageTypeCode: Parts
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 224
-                      amount: 10
-                      coverageTypeCode: Other
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 225
-                      amount: 11
-                      coverageTypeCode: Tax
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    - lineID: 226
-                      amount: 12
-                      coverageTypeCode: Mileage
-                      procesesingReference: Ref111
-                      lineStatus: Approved
-                      notes: Approved
-                      createTimestamp: 2022-01-31 23:59:59
-                      processedTimestamp: 2022-01-31 23:59:59
-                    parts:
-                    - estimatePartID: 333
-                      partBrand: Samsung
-                      partNumber: Part1
-                      description: Desc
-                      quantity: 2
-                      cost: 11.11
-                      extendedCost: 22.22
-                      requestedSupplier: Encompass
-                      alreadyUsed: "N"
-                      alreadyOrdered: "N"
-                      approved: "Y"
-                      createTimestamp: 2022-01-31 23:59:59
-                    - estimatePartID: 334
-                      partBrand: Samsung
-                      partNumber: Part2
-                      description: Desc2
-                      quantity: 1
-                      cost: 28.89
-                      extendedCost: 28.89
-                      requestedSupplier: Encompass
-                      alreadyUsed: "N"
-                      alreadyOrdered: "N"
-                      approved: "Y"
-                      createTimestamp: 2022-01-31 23:59:59
-                    notes:
-                    - estimateNoteID: 444
-                      note: This unit needs two parts
-                      userType: NsaAdmin
-                      creator: RJ
-                      createTimestamp: 2022-01-31 23:59:59
-                    - estimateNoteID: 445
-                      note: This is under the pre-auth. Please proceed
-                      userType: thirdParty
-                      creator: apiUser
-                      createTimestamp: 2022-01-31 23:59:59
-              schema:
-                $ref: '#/components/schemas/EstimateObject'
-          description: Successful request.
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Get estimate by ID
-      tags:
-      - Estimates
-      x-accepts: application/json
-  /estimates/process.php:
-    post:
-      description: "action values:\n  \n  * approve\n  * partiallyApproved\n  * estDeclined\n\
-        \  * rejectWithResubmit\n  * partsUnAvail\n  * estimateHold\n"
-      operationId: processEstimate
-      requestBody:
-        content:
-          application/json:
-            examples:
-              process:
-                summary: Full Approval
-                value:
-                  estimateID: 1111
-                  action: approve
-                  processedReference: 135a
-              partialApproval:
-                description: Pass in only the part lines that are being approved
-                summary: Parital Approval
-                value:
-                  estimateID: 1111
-                  action: approve
-                  note: Looks good to me
-                  processedReference: 135a
-                  partsApproved:
-                  - 1111
-                  - 2222
-                  - 3333
-              estimateDecline:
-                summary: Estimate Decline
-                value:
-                  estimateID: 1111
-                  action: estDeclined
-                  note: Looks good to me
-                  processedReference: 135a
-              rejectWithResubmit:
-                summary: Reject with Resubmit
-                value:
-                  estimateID: 1111
-                  action: rejectWithResubmit
-                  note: Please provide the cause of failure
-                  processedReference: 135a
-              partsUnAvail:
-                summary: Accept parts unavailable estimate
-                value:
-                  estimateID: 1111
-                  action: partsUnAvail
-                  note: Please provide the cause of failure
-                  processedReference: 135a
-              estimateHold:
-                summary: Put estimate on hold
-                value:
-                  estimateID: 1111
-                  action: estimateHold
-                  note: Puting estimate on hold while waiting for response from customer
-                  processedReference: 135a
-            schema:
-              $ref: '#/components/schemas/EstimateProcessRequest'
-      responses:
-        "200":
-          description: |
-            Successful request.
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Process estimate
-      tags:
-      - Estimates
-      x-content-type: application/json
-      x-accepts: application/json
-  /status/status.php:
-    get:
-      operationId: getStatus
-      parameters:
-      - description: NSA dispatchNumber
-        explode: true
-        in: query
-        name: dispatchNumber
-        required: false
-        schema:
-          type: string
-        style: form
-      - description: Client provided case number
-        explode: true
-        in: query
-        name: caseNumber
-        required: false
-        schema:
-          type: string
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              examples:
-                json:
-                  value: "{\"clientCaseNumber\": \"CASE1111\",\"nsaDispatchNumber\"\
-                    : \"AAA2024011234567\",\"externalReference1\": \"REF1111\",\"\
-                    status\": {\"clientCaseNumber\": \"CASE1111\",\"authorizationNumber\"\
-                    : \"AUTH1111\",\"customerNumber\": \"CUST1111\",\"claimNumber\"\
-                    : \"CLAIM111\",\"preAuthAmount\": \"300.00\",\"deductible\": \"\
-                    50.00\",\"plan\": \"Clothes Dryer Plan\",\"exclusions\": \"Cosmetic\
-                    \ Damage (Scratches, Dents, Chipping etc.), Damage to Clothing\
-                    \ or Other Items, Dryer Fragrance/Humidity Center, Knobs-Dials-Buttons,\
-                    \ Lint Screens, Maintenance, Product Accessibility Issues and\
-                    \ Additional Fees, Venting\",\"createDate\": \"2024-01-30\",\"\
-                    closeDate\": \"2024-02-06\",\"currentScheduleDate\": \"2024-02-06\"\
-                    ,\"originalScheduleDate\": \"2024-02-02\",\"timeSlot\": \"08:00-17:00\"\
-                    ,\"headerStatus\": \"closed\",\"subStatusCode\": \"CP\",\"subStatusDescription\"\
-                    : \"Completed\",\"maxPartOrderDate\": \"2024-02-01\",\"maxPartSupplierETADate\"\
-                    : \"2024-02-05\",\"maxPartDueDate\": \"2024-02-05\",\"servicerName\"\
-                    : \"ABC SERVICER\",\"servicerPhoneNumber\": \"(801) 269-0123\"\
-                    ,\"servicerEmail\": \"test@test.com\",\"program\": \"serviceCallWithoutParts\"\
-                    ,\"productType\": \"Clothes Dryer - Electric\",\"brand\": \"ELECTROLUX\"\
-                    ,\"model\": \"EIED50LIW\",\"complaint\": \"Clothes Dryer - Electric\
-                    \ - CLOTHES ARW NOT DRYING\",\"servicePerformed\": \"TECH ONSITE\
-                    \ AND INSTALLED HEATER ELEMENT AND NOW UNIT IS WORKING\",\"cancelReason\"\
-                    : \"CANCEL1111\",\"partOrders\": [{\"orderNumber\": \"1111111\"\
-                    ,\"orderDate\": \"2024-02-01\",\"poNumber\": \"NSA-CASE1111-ORD-01\"\
-                    ,\"shipments\": [{\"shipmentDate\": \"2024-02-01\",\"trackingNumber\"\
-                    : \"270491167170\",\"shippingCompany\": \"fedex\"}]}],\"partShipToAddress\"\
-                    : {\"contact\": \"ABC SERVICER\",\"address1\": \"6762 South 1300\
-                    \ East\",\"address2\": \"Suite 1\",\"city\": \"Salt Lake City\"\
-                    ,\"state\": \"UT\",\"zip\": \"84121\",\"countryCode\": \"US\"\
-                    ,\"phone\": \"(801) 269-0123\",\"email\": \"test@test.com\"},\"\
-                    shipments\": [{\"shipmentType\": \"inbound\",\"shippingCompany\"\
-                    : \"FEDEX\",\"trackingNumber\": \"111111\"}],\"estimates\": [{\"\
-                    estimateID\": \"11111\",\"submissionStatusCode\": \"Submitted\"\
-                    ,\"processedStatusCode\": \"Approved\",\"totalAmount\": \"454.81\"\
-                    ,\"deductible\": \"50.00\",\"totalAmountLessDeductible\": \"404.81\"\
-                    ,\"createTimestamp\": \"2024-02-01T15:31:21Z\",\"submissionTimestamp\"\
-                    : \"2024-02-01T22:31:22Z\",\"declineReason\": null,\"processedTimestamp\"\
-                    : \"2024-02-01T16:26:36Z\",\"lines\": [{\"coverageTypeCode\":\
-                    \ \"Labor\",\"amount\": \"300.00\"},{\"coverageTypeCode\": \"\
-                    Parts\",\"amount\": \"154.81\"}],\"parts\": [{\"estimatePartID\"\
-                    : \"410179\",\"brand\": \"ELECTROLUX\",\"partNumber\": \"134792700\"\
-                    ,\"description\": \"HEATER,3 ELEMENT,5500W - 2024-02-05\",\"quantity\"\
-                    : \"1\",\"costEach\": \"154.81\",\"extendedCost\": \"154.81\"\
-                    ,\"alreadyUsed\": false,\"alreadyOrdered\": false}],\"notes\"\
-                    : [{\"noteID\": \"111111\",\"note\": \"PER TECH: it is not heating.\
-                    \ will need 134792700 heating element if labor is approved\",\"\
-                    createdBy\": \"user_name_aaaa\",\"createUserEntity\": \"nsaadmin\"\
-                    ,\"createTimestamp\": \"2024-02-01T16:26:36Z\"}],\"additionalQuestions\"\
-                    : [{\"questionCode\": \"unitAge\",\"answer\": \"5-10 Years\"},{\"\
-                    questionCode\": \"causeOfFailure\",\"answer\": \"Normal wear and\
-                    \ tear failure\"}]}],\"suspectedRecall\": \"0\",\"forceIceMakerCovered\"\
-                    : null},\"claims\": [{\"billingID\": \"111111\",\"billingType\"\
-                    : \"normal\",\"processedStatus\": \"Approved\",\"processedNotes\"\
-                    : null,\"previousProcessedNotes\": null,\"createTimestamp\": \"\
-                    2024-02-07 08:10:17\",\"batchedTimestamp\": \"2024-02-07 08:10:17\"\
-                    ,\"batchNumber\": \"1234\",\"totalAmount\": \"454.81\",\"deductible\"\
-                    : \"50.00\",\"totalAmountLessDeductible\": \"404.81\",\"lines\"\
-                    : [{\"coverageTypeCode\": \"Labor\",\"amount\": \"300.00\"},{\"\
-                    coverageTypeCode\": \"Parts\",\"amount\": \"154.81\"}]}],\"events\"\
-                    : [{\"eventID\": \"111111\",\"eventTimestamp\": \"2024-01-30T22:53:09Z\"\
-                    ,\"eventTypeID\": \"2\",\"eventTypeName\": \"SO Create\",\"eventDescription\"\
-                    : \"A dispatch was created. Dispatch number: ARW2024019057807\"\
-                    },{\"eventID\": \"222222\",\"eventTimestamp\": \"2024-02-01T06:25:59Z\"\
-                    ,\"eventTypeID\": \"25\",\"eventTypeName\": \"NsaAdmin Note\"\
-                    ,\"eventDescription\": \"NSA UPDATE: 2024-01-31 16:25:59 (Mountain\
-                    \ time)  --  test note\"}]}"
-              schema:
-                $ref: '#/components/schemas/StatusResponse'
-          description: Current status of the dispatch
+                $ref: '#/components/schemas/_public_api_v1_inventory_collectibles__userid__get_200_response'
+          description: Successful operation
         "400":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: User request error
-        "401":
-          content:
-            application/json:
-              example:
-              - errorCode: "401"
-                errorMessage: You are not authorized. Please validate your authentication
-                  details.
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Authentication error
-        "5XX":
-          content:
-            application/json:
-              example:
-              - errorCode: "500"
-                errorMessage: Unexpected server error
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Unexpected server error
-      security:
-      - basicAuth: []
-      summary: Provides status of dispatch by dispatchNumber or case number in the
-        url
+                $ref: '#/components/schemas/_public_api_v1_users__userid__get_400_response'
+          description: User Not Found
+      summary: Get User's Collectibles
       tags:
-      - Status
+      - Inventory and Collectibles
+      x-accepts: application/json
+  /public-api/v1/inventory/assets/{userid}/{assettypeid}:
+    get:
+      description: Retrieve a user's assets of a specific type.
+      parameters:
+      - description: The ID of the user.
+        explode: false
+        in: path
+        name: userid
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: "The ID of the asset type. Refer to the [Roblox Documentation](https://create.roblox.com/docs/reference/engine/enums/AssetType)\
+          \ for valid values."
+        explode: false
+        in: path
+        name: assettypeid
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: The page number (optional).
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_inventory_assets__userid___assettypeid__get_200_response'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_users__userid__get_400_response'
+          description: User Not Found
+      summary: Get User's Assets by Type
+      tags:
+      - Inventory and Collectibles
+      x-accepts: application/json
+  /public-api/v1/economy/my-balance:
+    get:
+      description: Retrieve the balance of the authenticated user.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_200_response'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_400_response'
+          description: Not Logged In
+      summary: Get My Balance
+      tags:
+      - Economy
+      x-accepts: application/json
+  /public-api/v1/users/my-profile:
+    get:
+      description: Retrieve the profile for the authenticated user.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_users_my_profile_get_200_response'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_400_response'
+          description: Not Logged In
+      summary: Get My Profile
+      tags:
+      - Get User Info
+      x-accepts: application/json
+  /public-api/v1/trade/list:
+    get:
+      description: List trades for the authenticated user.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade_list_get_200_response'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_400_response'
+          description: Not Logged In
+      summary: List Trades
+      tags:
+      - Trading
+      x-accepts: application/json
+  /public-api/v1/trade/{tradeid}:
+    get:
+      description: Retrieve trade information by trade ID.
+      parameters:
+      - description: The ID of the trade.
+        explode: false
+        in: path
+        name: tradeid
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                data:
+                  created_at: Unix Timestamp
+                  expires_at: Unix Timestamp
+                  id: Trade ID
+                  recipient_items:
+                  - asset:
+                      asset_rap: Asset Rap
+                      asset_type: Asset Type
+                      asset_type_value: Asset Type Value
+                      created_at: Unix Timestamp
+                      creator_id: Asset Creator ID
+                      creator_type: Type of Creator (group or user)
+                      description: Will the test be successful? Or go up in flames?!
+                      id: Asset ID
+                      is_for_sale: Asset Status
+                      is_limited: Asset Limted
+                      is_limited_unique: Asset Limited U
+                      name: Asset Name
+                      price_robux: Asset Price (R)
+                      price_tickets: Asset Price (T)
+                      sales: Amount Of Sales
+                      updated_at: Unix Timestamp
+                    price: Resell Price
+                    serial: Serial Owned
+                    uaid: User Asset ID
+                  recipient_robux: Robux Offered
+                  recipient_userid: User ID
+                  sender_items:
+                  - asset:
+                      asset_rap: Asset Rap
+                      asset_type: Asset Type
+                      asset_type_value: Asset Type Value
+                      created_at: Unix Timestamp
+                      creator_id: Asset Creator ID
+                      creator_type: Type of Creator (group or user)
+                      description: Asset Description
+                      id: Asset ID
+                      is_for_sale: Asset Status
+                      is_limited: Asset Limited
+                      is_limited_unique: Asset Limited U
+                      name: Asset Name
+                      price_robux: Asset Price (R)
+                      price_tickets: Asset Price (T)
+                      sales: Amount Of Sales
+                      updated_at: Unix Timestamp
+                    price: Resell Price
+                    serial: Serial Owned
+                    uaid: User Asset ID
+                  sender_robux: Robux Offered
+                  sender_userid: User ID
+                  status: Trade Status
+                message: ""
+                success: true
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade__tradeid__get_200_response'
+          description: Successful operation
+      summary: Get Trade by ID
+      tags:
+      - Trading
+      x-accepts: application/json
+  /public-api/v1/trade/create/{recipient_userid}:
+    parameters:
+    - description: The ID of the recipient user.
+      explode: false
+      in: path
+      name: recipient_userid
+      required: true
+      schema:
+        type: integer
+      style: simple
+    post:
+      description: Create a trade request with the specified recipient user.
+      parameters:
+      - description: The ID of the recipient user.
+        explode: false
+        in: path
+        name: recipient_userid
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_public_api_v1_trade_create__recipient_userid__post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                success: true
+                message: ""
+                tradeId: 1
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade_create__recipient_userid__post_200_response'
+          description: Trade request was successful
+        "400":
+          content:
+            application/json:
+              example:
+                success: false
+                message: error
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade_create__recipient_userid__post_400_response'
+          description: Bad request or error in trade creation
+      summary: Create Trade
+      tags:
+      - Trading
+      x-content-type: application/json
+      x-accepts: application/json
+  /public-api/v1/trade/accept/{tradeid}:
+    parameters:
+    - description: The ID of the trade.
+      explode: false
+      in: path
+      name: tradeid
+      required: true
+      schema:
+        type: integer
+      style: simple
+    post:
+      description: Accept a trade with the specified trade ID.
+      parameters:
+      - description: The ID of the trade.
+        explode: false
+        in: path
+        name: tradeid
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                success: true
+                message: success
+                data: null
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
+          description: Trade acceptance was successful
+        "400":
+          content:
+            application/json:
+              example:
+                success: false
+                message: error
+                data: null
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
+          description: Bad request or error in trade acceptance
+      summary: Accept Trade
+      tags:
+      - Trading
+      x-content-type: application/json
+      x-accepts: application/json
+  /public-api/v1/trade/decline/{tradeid}:
+    parameters:
+    - description: The ID of the trade.
+      explode: false
+      in: path
+      name: tradeid
+      required: true
+      schema:
+        type: integer
+      style: simple
+    post:
+      description: Accept a trade with the specified trade ID.
+      parameters:
+      - description: The ID of the trade.
+        explode: false
+        in: path
+        name: tradeid
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                success: true
+                message: success
+                data: null
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
+          description: Trade acceptance was successful
+        "400":
+          content:
+            application/json:
+              example:
+                success: false
+                message: error
+                data: null
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
+          description: Bad request or error in trade acceptance
+      summary: Accept Trade
+      tags:
+      - Trading
+      x-accepts: application/json
+  /public-api/v1/trade/cancel/{tradeid}:
+    parameters:
+    - description: The ID of the trade.
+      explode: false
+      in: path
+      name: tradeid
+      required: true
+      schema:
+        type: integer
+      style: simple
+    post:
+      description: Accept a trade with the specified trade ID.
+      parameters:
+      - description: The ID of the trade.
+        explode: false
+        in: path
+        name: tradeid
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                success: true
+                message: success
+                data: null
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
+          description: Trade acceptance was successful
+        "400":
+          content:
+            application/json:
+              example:
+                success: false
+                message: error
+                data: null
+              schema:
+                $ref: '#/components/schemas/_public_api_v1_trade_accept__tradeid__post_200_response'
+          description: Bad request or error in trade acceptance
+      summary: Accept Trade
+      tags:
+      - Trading
       x-accepts: application/json
 components:
   schemas:
-    AvailabilityRequest:
-      example:
-        brand: ERGOMOTION
-        productCategory: Adjustable Bed Base
-        zipCode: 84121
-        serialNumber: SERIAL111
+    _public_api_v1_users__userid__get_200_response_data:
       properties:
-        brand:
+        created_at:
+          type: integer
+        description:
           type: string
-        productCategory:
-          enum:
-          - ADJUSTABLE BED BASE
-          - AIR CONDITIONER
-          - AIR HANDLER
-          - AIR PURIFIER
-          - ANTENNA
-          - AUDIO
-          - BASEBOARD HEATER
-          - BOILER
-          - BUILT-IN GRILL
-          - BUSINESS SERVER CHASSIS
-          - CAMERA SYSTEM
-          - CELL PHONE
-          - CHAIR
-          - CLOTHES DRYER - ELECTRIC
-          - CLOTHES DRYER - GAS
-          - CLOTHES WASHER
-          - COOKTOP - ELECTRIC
-          - COOKTOP - GAS
-          - DEHUMIDIFER
-          - DESKTOP
-          - DISHWASHER
-          - DUCTWORK
-          - ELECTRICAL - BATTERIES
-          - ELECTRICAL - DOORBELL
-          - ELECTRICAL - INDOORS
-          - ELECTRICAL - OUTDOORS
-          - EVAPORATOR COIL
-          - EXHAUST - HOOD
-          - EXHAUST - TELESCOPING
-          - FIREPLACE
-          - FURNACE
-          - GARAGE DOOR MECHANICAL
-          - GARAGE DOOR OPENER
-          - GLYCOL BOILER
-          - HEAT PUMP
-          - HEAT PUMP GEOTHERMAL
-          - HUMIDIFER
-          - HVAC
-          - LAPTOP
-          - MAJOR APPLIANCE
-          - MICROWAVE
-          - MINI SPLIT AC
-          - MINI SPLIT AIR HANDLER
-          - MINI SPLIT HP
-          - NETWORKING CABLE
-          - OTHER
-          - PACKAGE AC
-          - PACKAGE GE (GAS ELECTRIC)
-          - PACKAGE HP (HEAT PUMP)
-          - PHONE
-          - PLUMBING - EXTERNAL SEWER LINES
-          - PLUMBING - INDOOR LEAK
-          - PLUMBING - INDOOR WATER LINES
-          - PLUMBING - OUTDOOR WATER LINES
-          - PLUMBING - STOPPAGE
-          - PLUMBING - SUMP PUMP
-          - PLUMBING - WATER FILTER
-          - PLUMBING - WATER HEATER
-          - PLUMBING - WELL PUMP
-          - POOL
-          - POOL HOTTUB COMBO
-          - POOL VENTS
-          - POWER ACCESSORIES
-          - PTAC
-          - PTAC - EXCHANGE
-          - PTAC - SEALED SYSTEM
-          - RANGE - ELECTRIC
-          - RANGE - GAS
-          - REFRIGERATOR
-          - REFRIGERATOR - SEALED SYSTEM
-          - REFRIGERATOR - SEALED SYSTEM - R134A
-          - REFRIGERATOR - SEALED SYSTEM/R600
-          - REFRIGERATORRV
-          - SPA-HOTTUB
-          - STAND ALONE FREEZER
-          - TABLET
-          - THERMOSTAT
-          - TRASH COMPACTOR
-          - TV
-          - WALL OVEN - ELECTRIC
-          - WALL OVEN - GAS
-          - WINECOOLER
-          - WOOD STOVE
+        id:
+          type: integer
+        is_banned:
+          type: boolean
+        last_online:
+          type: integer
+        membership:
           type: string
-        zipCode:
+        username:
           type: string
-        serialNumber:
-          description: "Populating serialNumber is optional. If present, it will allow\
-            \ for better servicer selection. We attempt to reassign the same unit\
-            \ to the same servicer that previously serviced it, if possible."
-          type: string
-      required:
-      - brand
-      - productCategory
-      - zipCode
-    AvailabilityVirtualTechRequest:
-      example:
-        brand: SAMSUNG
-        productCategory: Clothes Washer
+    _public_api_v1_economy_my_balance_get_200_response_data:
       properties:
-        productCategory:
-          enum:
-          - ADJUSTABLE BED BASE
-          - AIR CONDITIONER
-          - AIR HANDLER
-          - AIR PURIFIER
-          - ANTENNA
-          - AUDIO
-          - BASEBOARD HEATER
-          - BOILER
-          - BUILT-IN GRILL
-          - BUSINESS SERVER CHASSIS
-          - CAMERA SYSTEM
-          - CELL PHONE
-          - CHAIR
-          - CLOTHES DRYER - ELECTRIC
-          - CLOTHES DRYER - GAS
-          - CLOTHES WASHER
-          - COOKTOP - ELECTRIC
-          - COOKTOP - GAS
-          - DEHUMIDIFER
-          - DESKTOP
-          - DISHWASHER
-          - DUCTWORK
-          - ELECTRICAL - BATTERIES
-          - ELECTRICAL - DOORBELL
-          - ELECTRICAL - INDOORS
-          - ELECTRICAL - OUTDOORS
-          - EVAPORATOR COIL
-          - EXHAUST - HOOD
-          - EXHAUST - TELESCOPING
-          - FIREPLACE
-          - FURNACE
-          - GARAGE DOOR MECHANICAL
-          - GARAGE DOOR OPENER
-          - GLYCOL BOILER
-          - HEAT PUMP
-          - HEAT PUMP GEOTHERMAL
-          - HUMIDIFER
-          - HVAC
-          - LAPTOP
-          - MAJOR APPLIANCE
-          - MICROWAVE
-          - MINI SPLIT AC
-          - MINI SPLIT AIR HANDLER
-          - MINI SPLIT HP
-          - NETWORKING CABLE
-          - OTHER
-          - PACKAGE AC
-          - PACKAGE GE (GAS ELECTRIC)
-          - PACKAGE HP (HEAT PUMP)
-          - PHONE
-          - PLUMBING - EXTERNAL SEWER LINES
-          - PLUMBING - INDOOR LEAK
-          - PLUMBING - INDOOR WATER LINES
-          - PLUMBING - OUTDOOR WATER LINES
-          - PLUMBING - STOPPAGE
-          - PLUMBING - SUMP PUMP
-          - PLUMBING - WATER FILTER
-          - PLUMBING - WATER HEATER
-          - PLUMBING - WELL PUMP
-          - POOL
-          - POOL HOTTUB COMBO
-          - POOL VENTS
-          - POWER ACCESSORIES
-          - PTAC
-          - PTAC - EXCHANGE
-          - PTAC - SEALED SYSTEM
-          - RANGE - ELECTRIC
-          - RANGE - GAS
-          - REFRIGERATOR
-          - REFRIGERATOR - SEALED SYSTEM
-          - REFRIGERATOR - SEALED SYSTEM - R134A
-          - REFRIGERATOR - SEALED SYSTEM/R600
-          - REFRIGERATORRV
-          - SPA-HOTTUB
-          - STAND ALONE FREEZER
-          - TABLET
-          - THERMOSTAT
-          - TRASH COMPACTOR
-          - TV
-          - WALL OVEN - ELECTRIC
-          - WALL OVEN - GAS
-          - WINECOOLER
-          - WOOD STOVE
-          type: string
-        brand:
-          type: string
-      required:
-      - productCategory
-    AvailabilityVirutalTechResponse:
-      items:
-        $ref: '#/components/schemas/AvailabilityVirutalTechResponse_inner'
-      type: array
-    AvailabilityResponse:
-      items:
-        type: string
-      type: array
-    AvailabilityWithCODCostResponse:
+        robux:
+          description: The amount of Robux in the user's account.
+          type: integer
+        tickets:
+          description: The amount of Tickets in the user's account.
+          type: integer
+    _public_api_v1_asset__assetid__get_400_response:
       example:
-        cost:
-          rateType: flateRate
-          cost: 0.8008281904610115
-          areaType: normal
-        availability:
-        - availability
-        - availability
+        data: null
+        message: Asset not found
+        success: false
       properties:
-        availability:
+        description:
+          type: string
+    _public_api_v1_inventory_collectibles__userid__get_200_response_data_inner:
+      properties:
+        asset:
+          $ref: '#/components/schemas/_public_api_v1_inventory_collectibles__userid__get_200_response_data_inner_asset'
+        price:
+          type: integer
+        serial:
+          type: integer
+        uaid:
+          type: integer
+    _public_api_v1_trade_accept__tradeid__post_request:
+      properties:
+        TOTPCode:
+          type: integer
+    _public_api_v1_trade__tradeid__get_200_response_data:
+      example:
+        recipient_items:
+        - asset: "{}"
+        - asset: "{}"
+        sender_items:
+        - asset: "{}"
+        - asset: "{}"
+      properties:
+        recipient_items:
           items:
-            type: string
+            $ref: '#/components/schemas/_public_api_v1_trade__tradeid__get_200_response_data_recipient_items_inner'
           type: array
-        cost:
-          $ref: '#/components/schemas/AvailabilityWithCODCostResponse_cost'
-      required:
-      - availability
-    CreateRequest:
-      example:
-        product:
-          dateOfPurchase: 2021-01-01
-          productType: Adjustable Bed Base
-          brand: ERGOMOTION
-          serialNumber: SERIAL111
-          modelNumber: MODEL111
-          modelVersion: v2
-          sellingDealer: Best Buy
-        parts:
-        - - brand: Ergomotion
-            partNumber: PART111
-            description: DESC111
-            quantity: 1
-            costEach: 11.11
-            hasCore: true
-            coreCostEach: 150
-            supplier: Encompass
-          - brand: Ergomotion
-            partNumber: PART222
-            description: DESC222
-            quantity: 2
-            costEach: 22.22
-            hasCore: false
-            coreCostEach: 0
-            supplier: Encompass
-        - - brand: Ergomotion
-            partNumber: PART111
-            description: DESC111
-            quantity: 1
-            costEach: 11.11
-            hasCore: true
-            coreCostEach: 150
-            supplier: Encompass
-          - brand: Ergomotion
-            partNumber: PART222
-            description: DESC222
-            quantity: 2
-            costEach: 22.22
-            hasCore: false
-            coreCostEach: 0
-            supplier: Encompass
-        bookingDetails:
-          caseNumber: CASE111
-          complaint: Bed will not raise or lower
-          specialInstruction: please knock instead of ringing door bell
-          scheduleDate: 2021-12-10
-          timePreference: A
-          preAuthorizationLimit: 249.99
-          deductibleAmount: 49.99
-          planCode: Platinum
-          authorizationNumber: Auth111
-          suspectedRecall: false
-          exclusions: "Gasket, Buttons, Power cord "
-        customer:
-          firstName: John
-          lastName: Doe
-          email: test@test.com
-          phone1: 801-269-0123
-          phone2: 999-999-9999
-          phone3: 999-999-9999
-          address1: 6762 South 1300 East
-          address2: STE 1
-          city: Salt Lake City
-          state: UT
-          zip: "84121"
-          customerNumber: CUST1111
-      properties:
-        bookingDetails:
-          $ref: '#/components/schemas/CreateRequest_bookingDetails'
-        customer:
-          $ref: '#/components/schemas/CreateRequest_customer'
-        product:
-          $ref: '#/components/schemas/CreateRequest_product'
-        parts:
+        sender_items:
           items:
-            $ref: '#/components/schemas/CreateRequest_parts_inner'
+            $ref: '#/components/schemas/_public_api_v1_trade__tradeid__get_200_response_data_recipient_items_inner'
           type: array
-      required:
-      - bookingDetails
-      - customer
-      - product
-    CreateVirtualTechRequest:
+    _public_api_v1_users__userid__get_200_response:
       example:
-        product:
-          dateOfPurchase: 2021-01-01
-          productType: Adjustable Bed Base
-          brand: ERGOMOTION
-          serialNumber: SERIAL111
-          modelNumber: MODEL111
-          modelVersion: v2
-          sellingDealer: Best Buy
-        parts:
-        - - brand: Ergomotion
-            partNumber: PART111
-            description: DESC111
-            quantity: 1
-            costEach: 11.11
-            hasCore: true
-            coreCostEach: 150
-            supplier: Encompass
-          - brand: Ergomotion
-            partNumber: PART222
-            description: DESC222
-            quantity: 2
-            costEach: 22.22
-            hasCore: false
-            coreCostEach: 0
-            supplier: Encompass
-        - - brand: Ergomotion
-            partNumber: PART111
-            description: DESC111
-            quantity: 1
-            costEach: 11.11
-            hasCore: true
-            coreCostEach: 150
-            supplier: Encompass
-          - brand: Ergomotion
-            partNumber: PART222
-            description: DESC222
-            quantity: 2
-            costEach: 22.22
-            hasCore: false
-            coreCostEach: 0
-            supplier: Encompass
-        bookingDetails:
-          caseNumber: CASE111
-          complaint: Bed will not raise or lower
-          specialInstruction: please knock instead of ringing door bell
-          scheduleDate: 2021-12-10
-          timePreference: A
-          preAuthorizationLimit: 249.99
-          deductibleAmount: 49.99
-          planCode: Platinum
-          authorizationNumber: Auth111
-          suspectedRecall: false
-          exclusions: "Gasket, Buttons, Power cord "
-        customer:
-          firstName: John
-          lastName: Doe
-          email: test@test.com
-          phone1: 801-269-0123
-          phone2: 999-999-9999
-          phone3: 999-999-9999
-          address1: 6762 South 1300 East
-          address2: STE 1
-          city: Salt Lake City
-          state: UT
-          zip: "84121"
-          customerNumber: CUST1111
+        data:
+          created_at: Unix Timestamp
+          description: Example Description
+          id: Input ID
+          is_banned: Input Status
+          last_online: Unix Timestamp
+          membership: Input Membership
+          username: Input Username
+        message: ""
+        success: true
       properties:
-        bookingDetails:
-          $ref: '#/components/schemas/CreateVirtualTechRequest_bookingDetails'
-        customer:
-          $ref: '#/components/schemas/CreateRequest_customer'
-        product:
-          $ref: '#/components/schemas/CreateRequest_product'
-        parts:
-          items:
-            $ref: '#/components/schemas/CreateRequest_parts_inner'
-          type: array
-      required:
-      - bookingDetails
-      - customer
-      - product
-    CreateResponse:
+        data:
+          $ref: '#/components/schemas/_public_api_v1_users__userid__get_200_response_data'
+        message:
+          type: string
+        success:
+          type: boolean
+    _public_api_v1_trade_create__recipient_userid__post_400_response:
       example:
-        serviceProvider:
-          depotName: depotName
-          partsShippingAddress:
-            zip: zip
-            phone: phone
-            address2: address2
-            city: city
-            address1: address1
-            contact: contact
-            state: state
-            email: email
-          phoneNumber: phoneNumber
-          serviceProviderName: serviceProviderName
-          email: email
-        dispatchNumber:
-          dispatchNumber: DISPATCH111
+        success: true
+        message: message
       properties:
-        dispatchNumber:
+        success:
+          type: boolean
+        message:
+          type: string
+    _public_api_v1_trade__tradeid__get_200_response:
+      example:
+        data:
+          recipient_items:
+          - asset: "{}"
+          - asset: "{}"
+          sender_items:
+          - asset: "{}"
+          - asset: "{}"
+      properties:
+        data:
+          $ref: '#/components/schemas/_public_api_v1_trade__tradeid__get_200_response_data'
+    _public_api_v1_economy_my_balance_get_400_response:
+      example:
+        message: You are not logged in
+        success: false
+      properties:
+        description:
+          type: string
+    _public_api_v1_trade_list_get_200_response:
+      example:
+        data:
+        - created_at: Unix Timetamp
+          expires_at: Unix Timestamp
+          id: Trade ID
+          recipient_userid: User ID
+          sender_userid: Target User ID
+          status: Trade Status
+        message: ""
+        next_page: Next Page
+        page: Current Page
+        success: true
+        total_pages: Total Pages
+      properties:
+        data:
           example:
-            dispatchNumber: DISPATCH111
+          - created_at: Unix Timestamp
+            expires_at: Unix Timestamp
+            id: Trade ID
+            recipient_userid: User ID
+            sender_userid: Target User ID
+            status: Trade Status
+          items:
+            $ref: '#/components/schemas/_public_api_v1_trade_list_get_200_response_data_inner'
+          type: array
+        message:
           type: string
-        serviceProvider:
-          $ref: '#/components/schemas/CreateResponse_serviceProvider'
-      required:
-      - dispatchNumber
-    ErrorResponse:
-      items:
-        $ref: '#/components/schemas/ErrorResponse_inner'
-      type: array
-    CancelRequest:
-      example:
-        dispatchNumber: DISPATCH111
-        cancelReason: Cancelled by Customer
-        notes: The customer power cycled the unit and it sovled their problem
-      properties:
-        dispatchNumber:
-          description: This is NSA's unique reference id. It is returned as part of
-            the create response body
-          type: string
-        cancelReason:
-          enum:
-          - Cancelled by Client
-          - Cancelled by Customer
-          - Cancelled by NSA
-          type: string
-        notes:
-          type: string
-      required:
-      - cancelReason
-      - dispatchNumber
-      - notes
-    EstimateListResponse:
-      items:
-        $ref: '#/components/schemas/EstimateObject'
-      type: array
-    EstimateObject:
-      example:
-        estimateProcessedStatusCode: estimateProcessedStatusCode
-        notes:
-        - note: note
-          creator: creator
-          estimateNoteID: 4
-          userType: userType
-          createTimestamp: 2000-01-23T04:56:07.000+00:00
-        - note: note
-          creator: creator
-          estimateNoteID: 4
-          userType: userType
-          createTimestamp: 2000-01-23T04:56:07.000+00:00
-        dipatchNumber: dipatchNumber
-        rejectProcessingNeeded: 2000-01-23T04:56:07.000+00:00
-        processedTimestamp: 2000-01-23T04:56:07.000+00:00
-        totalAmountLessDeductible: 5.962133916683182
-        submissionTimestamp: 2000-01-23T04:56:07.000+00:00
-        unitAge: unitAge
-        causeOfFailure: causeOfFailure
-        total: 6.027456183070403
-        caseNumber: caseNumber
-        deductible: 1.4658129805029452
-        estimateID: 0
-        parts:
-        - approved: approved
-          quantity: 9
-          cost: 3.616076749251911
-          alreadyUsed: alreadyUsed
-          partBrand: partBrand
-          description: description
-          requestedSupplier: requestedSupplier
-          partNumber: partNumber
-          extendedCost: 2.027123023002322
-          alreadyOrdered: alreadyOrdered
-          estimatePartID: 7
-          createTimestamp: 2000-01-23T04:56:07.000+00:00
-        - approved: approved
-          quantity: 9
-          cost: 3.616076749251911
-          alreadyUsed: alreadyUsed
-          partBrand: partBrand
-          description: description
-          requestedSupplier: requestedSupplier
-          partNumber: partNumber
-          extendedCost: 2.027123023002322
-          alreadyOrdered: alreadyOrdered
-          estimatePartID: 7
-          createTimestamp: 2000-01-23T04:56:07.000+00:00
-        lines:
-        - lineStatus: lineStatus
-          amount: 2.3021358869347655
-          notes: notes
-          coverageTypeCode: coverageTypeCode
-          processedTimestamp: 2000-01-23T04:56:07.000+00:00
-          lineID: 5
-          procesesingReference: procesesingReference
-          createTimestamp: 2000-01-23T04:56:07.000+00:00
-        - lineStatus: lineStatus
-          amount: 2.3021358869347655
-          notes: notes
-          coverageTypeCode: coverageTypeCode
-          processedTimestamp: 2000-01-23T04:56:07.000+00:00
-          lineID: 5
-          procesesingReference: procesesingReference
-          createTimestamp: 2000-01-23T04:56:07.000+00:00
-        declineReason: declineReason
-      properties:
-        estimateID:
+        next_page:
           type: integer
-        dipatchNumber:
-          type: string
-        caseNumber:
-          type: string
-        estimateProcessedStatusCode:
-          type: string
-        total:
-          type: number
-        deductible:
-          type: number
-        totalAmountLessDeductible:
-          type: number
-        submissionTimestamp:
-          format: date-time
-          type: string
-        processedTimestamp:
-          format: date-time
-          type: string
-        rejectProcessingNeeded:
-          format: date-time
-          type: string
-        unitAge:
-          type: string
-        causeOfFailure:
-          type: string
-        declineReason:
-          type: string
-        lines:
-          items:
-            $ref: '#/components/schemas/EstimateObject_lines_inner'
-          type: array
-        parts:
-          items:
-            $ref: '#/components/schemas/EstimateObject_parts_inner'
-          type: array
-        notes:
-          items:
-            $ref: '#/components/schemas/EstimateObject_notes_inner'
-          type: array
-      required:
-      - caseNumber
-      - deductible
-      - dipatchNumber
-      - estimateID
-      - estimateProcessedStatusCode
-      - lines
-      - notes
-      - parts
-      - processedTimestamp
-      - rejectProcessingNeeded
-      - submissionTimestamp
-      - total
-      - totalAmountLessDeductible
-    EstimateProcessRequest:
-      example:
-        note: note
-        estimateID: 0
-        partsApproved:
-        - 6
-        - 6
-        action: approve
-        processedReference: processedReference
-      properties:
-        estimateID:
+        page:
           type: integer
-        action:
-          enum:
-          - approve
-          - partiallyApproved
-          - estDeclined
-          - rejectWithResubmit
-          - partsUnAvail
-          - estimateHold
-          type: string
-        note:
-          description: "Required if the following actions - rejectWithResubmit, partiallyApproved,\
-            \ estimateHold"
-          type: string
-        processedReference:
-          type: string
-        partsApproved:
-          description: Required if action = partiallyApproved
+        success:
+          type: boolean
+        total_pages:
+          type: integer
+    _public_api_v1_trade_create__recipient_userid__post_request:
+      properties:
+        RequesterOfferRobux:
+          type: integer
+        TargetOfferRobux:
+          type: integer
+        RequesterOfferUAIDs:
           items:
             type: integer
           type: array
-      required:
-      - action
-      - estimateID
-      - processedReference
-    StatusResponse:
-      example:
-        externalReference1: externalReference1
-        nsaDispatchNumber: nsaDispatchNumber
-        claims:
-        - totalAmount: totalAmount
-          billingID: billingID
-          processedStatus: processedStatus
-          processedNotes: ""
-          billingType: billingType
-          deductible: deductible
-          totalAmountLessDeductible: totalAmountLessDeductible
-          previousProcessedNotes: ""
-          batchedTimestamp: batchedTimestamp
-          lines:
-          - lines
-          - lines
-          createTimestamp: createTimestamp
-          batchNumber: batchNumber
-        - totalAmount: totalAmount
-          billingID: billingID
-          processedStatus: processedStatus
-          processedNotes: ""
-          billingType: billingType
-          deductible: deductible
-          totalAmountLessDeductible: totalAmountLessDeductible
-          previousProcessedNotes: ""
-          batchedTimestamp: batchedTimestamp
-          lines:
-          - lines
-          - lines
-          createTimestamp: createTimestamp
-          batchNumber: batchNumber
-        clientCaseNumber: clientCaseNumber
-        events:
-        - eventID: eventID
-          eventTypeID: eventTypeID
-          eventDescription: eventDescription
-          eventTypeName: eventTypeName
-          eventTimestamp: eventTimestamp
-        - eventID: eventID
-          eventTypeID: eventTypeID
-          eventDescription: eventDescription
-          eventTypeName: eventTypeName
-          eventTimestamp: eventTimestamp
-        status:
-          timeSlot: timeSlot
-          exclusions: exclusions
-          program: program
-          maxPartOrderDate: maxPartOrderDate
-          subStatusDescription: subStatusDescription
-          currentScheduleDate: currentScheduleDate
-          suspectedRecall: suspectedRecall
-          partOrders:
-          - orderNumber: orderNumber
-            orderDate: orderDate
-            poNumber: poNumber
-            shipments:
-            - shippingCompany: shippingCompany
-              shipmentDate: shipmentDate
-              trackingNumber: trackingNumber
-            - shippingCompany: shippingCompany
-              shipmentDate: shipmentDate
-              trackingNumber: trackingNumber
-          - orderNumber: orderNumber
-            orderDate: orderDate
-            poNumber: poNumber
-            shipments:
-            - shippingCompany: shippingCompany
-              shipmentDate: shipmentDate
-              trackingNumber: trackingNumber
-            - shippingCompany: shippingCompany
-              shipmentDate: shipmentDate
-              trackingNumber: trackingNumber
-          servicerEmail: servicerEmail
-          model: model
-          headerStatus: headerStatus
-          cancelReason: cancelReason
-          plan: plan
-          brand: brand
-          claimNumber: claimNumber
-          productType: productType
-          createDate: createDate
-          estimates:
-          - notes:
-            - note: note
-              createdBy: createdBy
-              createUserEntity: createUserEntity
-              noteID: noteID
-              createTimestamp: createTimestamp
-            - note: note
-              createdBy: createdBy
-              createUserEntity: createUserEntity
-              noteID: noteID
-              createTimestamp: createTimestamp
-            processedTimestamp: processedTimestamp
-            totalAmountLessDeductible: totalAmountLessDeductible
-            submissionStatusCode: submissionStatusCode
-            createTimestamp: createTimestamp
-            submissionTimestamp: submissionTimestamp
-            totalAmount: totalAmount
-            processedStatusCode: processedStatusCode
-            deductible: deductible
-            estimateID: estimateID
-            parts:
-            - quantity: quantity
-              alreadyUsed: true
-              costEach: costEach
-              description: description
-              partNumber: partNumber
-              extendedCost: extendedCost
-              alreadyOrdered: true
-              brand: brand
-              estimatePartID: estimatePartID
-            - quantity: quantity
-              alreadyUsed: true
-              costEach: costEach
-              description: description
-              partNumber: partNumber
-              extendedCost: extendedCost
-              alreadyOrdered: true
-              brand: brand
-              estimatePartID: estimatePartID
-            additionalQuestions:
-            - answer: answer
-              questionCode: questionCode
-            - answer: answer
-              questionCode: questionCode
-            lines:
-            - amount: amount
-              coverageTypeCode: Labor
-            - amount: amount
-              coverageTypeCode: Labor
-            declineReason: ""
-          - notes:
-            - note: note
-              createdBy: createdBy
-              createUserEntity: createUserEntity
-              noteID: noteID
-              createTimestamp: createTimestamp
-            - note: note
-              createdBy: createdBy
-              createUserEntity: createUserEntity
-              noteID: noteID
-              createTimestamp: createTimestamp
-            processedTimestamp: processedTimestamp
-            totalAmountLessDeductible: totalAmountLessDeductible
-            submissionStatusCode: submissionStatusCode
-            createTimestamp: createTimestamp
-            submissionTimestamp: submissionTimestamp
-            totalAmount: totalAmount
-            processedStatusCode: processedStatusCode
-            deductible: deductible
-            estimateID: estimateID
-            parts:
-            - quantity: quantity
-              alreadyUsed: true
-              costEach: costEach
-              description: description
-              partNumber: partNumber
-              extendedCost: extendedCost
-              alreadyOrdered: true
-              brand: brand
-              estimatePartID: estimatePartID
-            - quantity: quantity
-              alreadyUsed: true
-              costEach: costEach
-              description: description
-              partNumber: partNumber
-              extendedCost: extendedCost
-              alreadyOrdered: true
-              brand: brand
-              estimatePartID: estimatePartID
-            additionalQuestions:
-            - answer: answer
-              questionCode: questionCode
-            - answer: answer
-              questionCode: questionCode
-            lines:
-            - amount: amount
-              coverageTypeCode: Labor
-            - amount: amount
-              coverageTypeCode: Labor
-            declineReason: ""
-          servicerPhoneNumber: servicerPhoneNumber
-          preAuthAmount: preAuthAmount
-          customerNumber: customerNumber
-          servicePerformed: servicePerformed
-          partShipToAddress:
-            zip: zip
-            address2: address2
-            city: city
-            phone: phone
-            address1: address1
-            countryCode: countryCode
-            contact: contact
-            state: state
-            email: email
-          shipments:
-          - shippingCompany: shippingCompany
-            trackingNumber: trackingNumber
-            shipmentType: shipmentType
-          - shippingCompany: shippingCompany
-            trackingNumber: trackingNumber
-            shipmentType: shipmentType
-          maxPartDueDate: maxPartDueDate
-          closeDate: closeDate
-          forceIceMakerCovered: ""
-          authorizationNumber: authorizationNumber
-          subStatusCode: subStatusCode
-          complaint: complaint
-          deductible: deductible
-          maxPartSupplierETADate: maxPartSupplierETADate
-          originalScheduleDate: originalScheduleDate
-          servicerName: servicerName
-          clientCaseNumber: clientCaseNumber
-      properties:
-        clientCaseNumber:
-          type: string
-        nsaDispatchNumber:
-          type: string
-        externalReference1:
-          type: string
-        status:
-          $ref: '#/components/schemas/StatusResponse_status'
-        claims:
+        TargetOfferUAIDs:
           items:
-            $ref: '#/components/schemas/StatusResponse_claims_inner'
+            type: integer
           type: array
-        events:
-          items:
-            $ref: '#/components/schemas/StatusResponse_events_inner'
-          type: array
-      required:
-      - claims
-      - clientCaseNumber
-      - events
-      - externalReference1
-      - nsaDispatchNumber
-      - status
-    AvailabilityVirutalTechResponse_inner:
-      example:
-        date: date
-        slots:
-        - slots
-        - slots
-      properties:
-        date:
-          type: string
-        slots:
-          description: "Slots are in the following format: HHMM-HHMM. To provide the\
-            \ time slot of 1:00pm to 1:30 pm you would received 1300-1330"
-          items:
-            type: string
-          type: array
-    AvailabilityWithCODCostResponse_cost:
-      example:
-        rateType: flateRate
-        cost: 0.8008281904610115
-        areaType: normal
-      properties:
-        rateType:
-          enum:
-          - flateRate
-          - laborOnly
-          type: string
-        areaType:
-          enum:
-          - normal
-          - highCost
-          type: string
-        cost:
-          type: number
-    CreateRequest_bookingDetails:
-      example:
-        caseNumber: CASE111
-        complaint: Bed will not raise or lower
-        specialInstruction: please knock instead of ringing door bell
-        scheduleDate: 2021-12-10
-        timePreference: A
-        preAuthorizationLimit: 249.99
-        deductibleAmount: 49.99
-        planCode: Platinum
-        authorizationNumber: Auth111
-        suspectedRecall: false
-        exclusions: "Gasket, Buttons, Power cord "
-      properties:
-        caseNumber:
-          description: This is the clients unique case number
-          type: string
-        complaintCode:
-          description: Standardized codes for the complaint
-          type: string
-        complaint:
-          description: Explaination of the problem
-          type: string
-        specialInstruction:
-          type: string
-        scheduleDate:
-          description: "If left blank, it will be booked without a schedule date"
-          type: string
-        timePreference:
-          description: "A=Morning \nP=Afternoon\nE=Evening\nD=All Day\n"
-          enum:
-          - A
-          - P
-          - E
-          - D
-          type: string
-        preAuthorizationLimit:
-          description: Amount that is pre-approved for the repair (parts and labor)
-            before requiring an estimate
-          type: number
-        limitOfLiabilityRemaining:
-          description: Amount of the limit of liability that is remaining on the contract.
-          type: number
-        limitOfLiabilityTotal:
-          description: Amount of the limit of liability that began on the on the contract.
-          type: number
-        deductibleAmount:
-          description: Some cirumstances require the consumer to pay a trip/deductible/service
-            call fee directly to the service provider. That amount would be included
-            here.
-          type: number
-        planCode:
-          description: "For contact work, the consumer is usually part of a specific\
-            \ plan that comes with certain terms and conditions"
-          type: string
-        relationshipCode:
-          description: Allows NSA to associate this repair to an arbitrary group such
-            as a source system or billing group.
-          type: string
-        authorizationNumber:
-          description: Some clients require a special authorization number to be provided
-            at billing time. Please provide if required.
-          type: string
-        suspectedRecall:
-          description: If there is concern that this dispatch should be covered under
-            the workmanship guarantee
-          type: boolean
-        exclusions:
-          description: Delimited list of things not covered by the contract
-          type: string
-        noPartsNeeded:
-          description: Used to indicate that there are not parts required for this
-            repair and notification of the dispatch should not be delayed
-          type: boolean
-      required:
-      - caseNumber
-      - complaint
-    CreateRequest_customer:
-      example:
-        firstName: John
-        lastName: Doe
-        email: test@test.com
-        phone1: 801-269-0123
-        phone2: 999-999-9999
-        phone3: 999-999-9999
-        address1: 6762 South 1300 East
-        address2: STE 1
-        city: Salt Lake City
-        state: UT
-        zip: "84121"
-        customerNumber: CUST1111
-      properties:
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-        phone1:
-          type: string
-        phone2:
-          type: string
-        phone3:
-          type: string
-        address1:
-          type: string
-        address2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zip:
-          type: string
-        customerNumber:
-          description: Some clients would like to have the customer identifier provided
-            in reports. Please provide here if you would like to report on it later.
-          type: string
-      required:
-      - address1
-      - city
-      - email
-      - firstName
-      - lastName
-      - phone1
-      - state
-      - zip
-    CreateRequest_product:
-      example:
-        dateOfPurchase: 2021-01-01
-        productType: Adjustable Bed Base
-        brand: ERGOMOTION
-        serialNumber: SERIAL111
-        modelNumber: MODEL111
-        modelVersion: v2
-        sellingDealer: Best Buy
-      properties:
-        dateOfPurchase:
-          type: string
-        productType:
-          enum:
-          - ADJUSTABLE BED BASE
-          - AIR CONDITIONER
-          - AIR HANDLER
-          - AIR PURIFIER
-          - ANTENNA
-          - AUDIO
-          - BASEBOARD HEATER
-          - BOILER
-          - BUILT-IN GRILL
-          - BUSINESS SERVER CHASSIS
-          - CAMERA SYSTEM
-          - CELL PHONE
-          - CHAIR
-          - CLOTHES DRYER - ELECTRIC
-          - CLOTHES DRYER - GAS
-          - CLOTHES WASHER
-          - COOKTOP - ELECTRIC
-          - COOKTOP - GAS
-          - DEHUMIDIFER
-          - DESKTOP
-          - DISHWASHER
-          - DUCTWORK
-          - ELECTRICAL - BATTERIES
-          - ELECTRICAL - DOORBELL
-          - ELECTRICAL - INDOORS
-          - ELECTRICAL - OUTDOORS
-          - EVAPORATOR COIL
-          - EXHAUST - HOOD
-          - EXHAUST - TELESCOPING
-          - FIREPLACE
-          - FURNACE
-          - GARAGE DOOR MECHANICAL
-          - GARAGE DOOR OPENER
-          - GLYCOL BOILER
-          - HEAT PUMP
-          - HEAT PUMP GEOTHERMAL
-          - HUMIDIFER
-          - HVAC
-          - LAPTOP
-          - MAJOR APPLIANCE
-          - MICROWAVE
-          - MINI SPLIT AC
-          - MINI SPLIT AIR HANDLER
-          - MINI SPLIT HP
-          - NETWORKING CABLE
-          - OTHER
-          - PACKAGE AC
-          - PACKAGE GE (GAS ELECTRIC)
-          - PACKAGE HP (HEAT PUMP)
-          - PHONE
-          - PLUMBING - EXTERNAL SEWER LINES
-          - PLUMBING - INDOOR LEAK
-          - PLUMBING - INDOOR WATER LINES
-          - PLUMBING - OUTDOOR WATER LINES
-          - PLUMBING - STOPPAGE
-          - PLUMBING - SUMP PUMP
-          - PLUMBING - WATER FILTER
-          - PLUMBING - WATER HEATER
-          - PLUMBING - WELL PUMP
-          - POOL
-          - POOL HOTTUB COMBO
-          - POOL VENTS
-          - POWER ACCESSORIES
-          - PTAC
-          - PTAC - EXCHANGE
-          - PTAC - SEALED SYSTEM
-          - RANGE - ELECTRIC
-          - RANGE - GAS
-          - REFRIGERATOR
-          - REFRIGERATOR - SEALED SYSTEM
-          - REFRIGERATOR - SEALED SYSTEM - R134A
-          - REFRIGERATOR - SEALED SYSTEM/R600
-          - REFRIGERATORRV
-          - SPA-HOTTUB
-          - STAND ALONE FREEZER
-          - TABLET
-          - THERMOSTAT
-          - TRASH COMPACTOR
-          - TV
-          - WALL OVEN - ELECTRIC
-          - WALL OVEN - GAS
-          - WINECOOLER
-          - WOOD STOVE
-          type: string
-        brand:
-          enum:
-          - ADMIRAL
-          - AKAI
-          - ALPINE
-          - AMANA
-          - APPLE
-          - ASKO
-          - AVANTI
-          - BERTAZZONI
-          - BLOMBERG
-          - BLUE STAR
-          - BOSCH
-          - BRITELITE
-          - BROAN
-          - BROOKSTONE
-          - BROTHER
-          - CROSLEY
-          - CROWN
-          - CUSTOMATIC
-          - DACOR
-          - DANBY
-          - DCS
-          - ELECTROLUX
-          - ELEMENT
-          - EMERSON TV
-          - ERGOMOTION
-          - ESTATE
-          - FISHER
-          - FISHER & PAYKEL
-          - FRIGIDAIRE
-          - FUNAI
-          - FURRION
-          - GAGGENAU
-          - GE
-          - GREE
-          - HAIER
-          - HISENSE
-          - HITACHI
-          - HORIZON FITNESS
-          - HOTPOINT
-          - HTC
-          - INSIGNIA
-          - JANOME
-          - JENN-AIR
-          - JENSEN
-          - JVC
-          - KATERRA
-          - KENMORE
-          - KENWOOD ELECTRONICS
-          - KITCHENAID
-          - KOVA
-          - LG ELECTRONICS
-          - LIEBHERR
-          - MAGICCHEF
-          - MAGNAVOX
-          - MARVEL
-          - MAYTAG
-          - MIDEA
-          - MIELE APPLIANCE
-          - MITSUBISHI
-          - MONOPRICE
-          - MOTOROLA
-          - NEC
-          - OCTANE FITNESS
-          - OLIVIA
-          - ONN
-          - OPAL
-          - OSIM
-          - OTHER
-          - PANASONIC
-          - PERLICK
-          - PHILIPS
-          - PIONEER
-          - POLAROID
-          - PROSCAN
-          - RCA
-          - ROPER
-          - SAMSUNG
-          - SANSUI
-          - SANYO
-          - SCEPTRE
-          - SCOTSMAN
-          - SEARS
-          - SHARP
-          - SONY
-          - SPEED QUEEN
-          - SPIRIT FITNESS
-          - SUBZERO
-          - SUPERIORE
-          - TAPPAN
-          - TCL
-          - THERMADOR
-          - THOMPSON
-          - TMGCORE
-          - TOSHIBA
-          - TRIANGLE TUBE
-          - U-LINE
-          - VIKING
-          - VIKING APPLIANCE
-          - VIZIO
-          - WESTINGHOUSE
-          - WHIRLPOOL
-          - WINE ENTHUSIAST
-          - WOLF RANGE
-          - ZENITH
-          type: string
-        serialNumber:
-          description: "If unknown, please use value VERIFY_SERIAL"
-          type: string
-        serialNumber2:
-          description: Optional second serial number.
-          type: string
-        modelNumber:
-          description: "If unknown, please use value VERIFY_MODEL"
-          type: string
-        modelVersion:
-          type: string
-        sellingDealer:
-          type: string
-      required:
-      - brand
-      - modelNumber
-      - productType
-      - serialNumber
-    CreateRequest_parts_inner:
-      example:
-      - brand: Ergomotion
-        partNumber: PART111
-        description: DESC111
-        quantity: 1
-        costEach: 11.11
-        hasCore: true
-        coreCostEach: 150
-        supplier: Encompass
-      - brand: Ergomotion
-        partNumber: PART222
-        description: DESC222
-        quantity: 2
-        costEach: 22.22
-        hasCore: false
-        coreCostEach: 0
-        supplier: Encompass
-      properties:
-        brand:
-          description: Brand of part manufacturer not the brand of the unit. Sometimes
-            they are the same and sometimes they are different.
-          type: string
-        partNumber:
-          type: string
-        description:
-          type: string
-        quantity:
+        TOTPCode:
           type: integer
-        costEach:
-          type: number
-        hasCore:
-          type: boolean
-        coreCostEach:
-          type: number
-        supplier:
-          type: string
-      required:
-      - brand
-      - coreCostEach
-      - costEach
-      - description
-      - hasCore
-      - partNumber
-      - quantity
-      - supplier
-    CreateVirtualTechRequest_bookingDetails:
-      example:
-        caseNumber: CASE111
-        complaint: Bed will not raise or lower
-        specialInstruction: please knock instead of ringing door bell
-        scheduleDate: 2021-12-10
-        timePreference: A
-        preAuthorizationLimit: 249.99
-        deductibleAmount: 49.99
-        planCode: Platinum
-        authorizationNumber: Auth111
-        suspectedRecall: false
-        exclusions: "Gasket, Buttons, Power cord "
+    _public_api_v1_asset__assetid__get_200_response_data:
       properties:
-        caseNumber:
-          description: This is the clients unique case number
-          type: string
-        complaintCode:
-          description: Standardized codes for the complaint
-          type: string
-        complaint:
-          description: Explaination of the problem
-          type: string
-        specialInstruction:
-          type: string
-        scheduleDate:
-          description: Date provided from availabilityVirtualTech
-          type: string
-        slot:
-          description: Slot provided from availabilityVirtualTech
-          type: string
-        preAuthorizationLimit:
-          description: Amount that is pre-approved for the repair (parts and labor)
-            before requiring an estimate
-          type: number
-        deductibleAmount:
-          description: Some cirumstances require the consumer to pay a trip/deductible/service
-            call fee directly to the service provider. That amount would be included
-            here.
-          type: number
-        planCode:
-          description: "For contact work, the consumer is usually part of a specific\
-            \ plan that comes with certain terms and conditions"
-          type: string
-        authorizationNumber:
-          description: Some clients require a special authorization number to be provided
-            at billing time. Please provide if required.
-          type: string
-        suspectedRecall:
-          description: If there is concern that this dispatch should be covered under
-            the workmanship guarantee
-          type: boolean
-        exclusions:
-          description: Delimited list of things not covered by the contract
-          type: string
-        virtualBookingType:
-          description: "Indicates virtual booking type. I not provided, it defaults\
-            \ to diagnosisOnly"
-          enum:
-          - diagnosisOnly
-          - diagnosisAndRepairWalkthrough
-          type: string
-      required:
-      - caseNumber
-      - complaint
-      - scheduleDate
-      - slot
-    CreateResponse_serviceProvider_partsShippingAddress:
-      example:
-        zip: zip
-        phone: phone
-        address2: address2
-        city: city
-        address1: address1
-        contact: contact
-        state: state
-        email: email
-      properties:
-        contact:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        address1:
-          type: string
-        address2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zip:
-          type: string
-      required:
-      - address1
-      - city
-      - contact
-      - email
-      - phone
-      - state
-      - zip
-    CreateResponse_serviceProvider:
-      example:
-        depotName: depotName
-        partsShippingAddress:
-          zip: zip
-          phone: phone
-          address2: address2
-          city: city
-          address1: address1
-          contact: contact
-          state: state
-          email: email
-        phoneNumber: phoneNumber
-        serviceProviderName: serviceProviderName
-        email: email
-      properties:
-        depotName:
-          type: string
-        serviceProviderName:
-          type: string
-        phoneNumber:
-          type: string
-        email:
-          type: string
-        partsShippingAddress:
-          $ref: '#/components/schemas/CreateResponse_serviceProvider_partsShippingAddress'
-      required:
-      - depotName
-      - email
-      - phoneNumber
-      - serviceProviderName
-    ErrorResponse_inner:
-      example:
-        errorMessage: errorMessage
-        errorCode: errorCode
-      properties:
-        errorCode:
-          type: string
-        errorMessage:
-          type: string
-      required:
-      - errorCode
-      - errorMessage
-    EstimateObject_lines_inner:
-      example:
-        lineStatus: lineStatus
-        amount: 2.3021358869347655
-        notes: notes
-        coverageTypeCode: coverageTypeCode
-        processedTimestamp: 2000-01-23T04:56:07.000+00:00
-        lineID: 5
-        procesesingReference: procesesingReference
-        createTimestamp: 2000-01-23T04:56:07.000+00:00
-      properties:
-        lineID:
+        asset_rap:
           type: integer
-        amount:
-          type: number
-        coverageTypeCode:
+          nullable: true
+        asset_type:
           type: string
-        procesesingReference:
-          type: string
-        lineStatus:
-          type: string
-        notes:
-          type: string
-        createTimestamp:
-          format: date-time
-          type: string
-        processedTimestamp:
-          format: date-time
-          type: string
-      required:
-      - amount
-      - coverageTypeCode
-      - createTimestamp
-      - lineID
-      - lineStatus
-      - notes
-      - procesesingReference
-      - processedTimestamp
-    EstimateObject_parts_inner:
-      example:
-        approved: approved
-        quantity: 9
-        cost: 3.616076749251911
-        alreadyUsed: alreadyUsed
-        partBrand: partBrand
-        description: description
-        requestedSupplier: requestedSupplier
-        partNumber: partNumber
-        extendedCost: 2.027123023002322
-        alreadyOrdered: alreadyOrdered
-        estimatePartID: 7
-        createTimestamp: 2000-01-23T04:56:07.000+00:00
-      properties:
-        estimatePartID:
+        asset_type_value:
           type: integer
-        partBrand:
-          type: string
-        partNumber:
-          type: string
-        description:
-          type: string
-        quantity:
+        created_at:
           type: integer
-        cost:
-          type: number
-        extendedCost:
-          type: number
-        requestedSupplier:
-          type: string
-        alreadyUsed:
-          type: string
-        alreadyOrdered:
-          type: string
-        approved:
-          type: string
-        createTimestamp:
-          format: date-time
-          type: string
-      required:
-      - alreadyOrdered
-      - alreadyUsed
-      - approved
-      - cost
-      - createTimestamp
-      - description
-      - estimatePartID
-      - extendedCost
-      - partBrand
-      - partNumber
-      - quantity
-      - requestedSupplier
-    EstimateObject_notes_inner:
-      example:
-        note: note
-        creator: creator
-        estimateNoteID: 4
-        userType: userType
-        createTimestamp: 2000-01-23T04:56:07.000+00:00
-      properties:
-        estimateNoteID:
-          type: integer
-        note:
-          type: string
-        userType:
-          type: string
         creator:
-          type: string
-        createTimestamp:
-          format: date-time
-          type: string
-      required:
-      - createTimestamp
-      - creator
-      - estimateNoteID
-      - note
-      - userType
-    StatusResponse_status_partOrders_inner_shipments_inner:
-      example:
-        shippingCompany: shippingCompany
-        shipmentDate: shipmentDate
-        trackingNumber: trackingNumber
-      properties:
-        shipmentDate:
-          type: string
-        trackingNumber:
-          type: string
-        shippingCompany:
-          type: string
-      required:
-      - shipmentDate
-      - shippingCompany
-      - trackingNumber
-    StatusResponse_status_partOrders_inner:
-      example:
-        orderNumber: orderNumber
-        orderDate: orderDate
-        poNumber: poNumber
-        shipments:
-        - shippingCompany: shippingCompany
-          shipmentDate: shipmentDate
-          trackingNumber: trackingNumber
-        - shippingCompany: shippingCompany
-          shipmentDate: shipmentDate
-          trackingNumber: trackingNumber
-      properties:
-        orderNumber:
-          type: string
-        orderDate:
-          type: string
-        poNumber:
-          type: string
-        shipments:
-          items:
-            $ref: '#/components/schemas/StatusResponse_status_partOrders_inner_shipments_inner'
-          type: array
-      required:
-      - orderDate
-      - orderNumber
-      - poNumber
-      - shipments
-    StatusResponse_status_partShipToAddress:
-      example:
-        zip: zip
-        address2: address2
-        city: city
-        phone: phone
-        address1: address1
-        countryCode: countryCode
-        contact: contact
-        state: state
-        email: email
-      properties:
-        contact:
-          type: string
-        address1:
-          type: string
-        address2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zip:
-          type: string
-        countryCode:
-          type: string
-        phone:
-          type: string
-        email:
-          type: string
-      required:
-      - address1
-      - address2
-      - city
-      - contact
-      - countryCode
-      - email
-      - phone
-      - state
-      - zip
-    StatusResponse_status_shipments_inner:
-      example:
-        shippingCompany: shippingCompany
-        trackingNumber: trackingNumber
-        shipmentType: shipmentType
-      properties:
-        shipmentType:
-          type: string
-        shippingCompany:
-          type: string
-        trackingNumber:
-          type: string
-      required:
-      - shipmentType
-      - shippingCompany
-      - trackingNumber
-    StatusResponse_status_estimates_inner_lines_inner:
-      example:
-        amount: amount
-        coverageTypeCode: Labor
-      properties:
-        coverageTypeCode:
-          enum:
-          - Labor
-          - Parts
-          - Other
-          - Mileage
-          - Tax
-          - AdminFee
-          type: string
-        amount:
-          type: string
-      required:
-      - amount
-      - coverageTypeCode
-    StatusResponse_status_estimates_inner_parts_inner:
-      example:
-        quantity: quantity
-        alreadyUsed: true
-        costEach: costEach
-        description: description
-        partNumber: partNumber
-        extendedCost: extendedCost
-        alreadyOrdered: true
-        brand: brand
-        estimatePartID: estimatePartID
-      properties:
-        estimatePartID:
-          type: string
-        brand:
-          type: string
-        partNumber:
-          type: string
+          $ref: '#/components/schemas/_public_api_v1_asset__assetid__get_200_response_data_creator'
+        creator_id:
+          type: integer
+        creator_type:
+          type: integer
         description:
           type: string
-        quantity:
-          type: string
-        costEach:
-          type: string
-        extendedCost:
-          type: string
-        alreadyUsed:
+        id:
+          type: integer
+        is_for_sale:
           type: boolean
-        alreadyOrdered:
+        is_limited:
           type: boolean
-      required:
-      - alreadyOrdered
-      - alreadyUsed
-      - brand
-      - costEach
-      - description
-      - estimatePartID
-      - extendedCost
-      - partNumber
-      - quantity
-    StatusResponse_status_estimates_inner_notes_inner:
-      example:
-        note: note
-        createdBy: createdBy
-        createUserEntity: createUserEntity
-        noteID: noteID
-        createTimestamp: createTimestamp
+        is_limited_unique:
+          type: boolean
+        name:
+          type: string
+        price_robux:
+          type: integer
+        price_tickets:
+          type: integer
+        sales:
+          type: integer
+        updated_at:
+          type: integer
+    _public_api_v1_inventory_collectibles__userid__get_200_response_data_inner_asset:
       properties:
-        noteID:
-          type: string
-        note:
-          type: string
-        createdBy:
-          type: string
-        createUserEntity:
-          type: string
-        createTimestamp:
-          type: string
-      required:
-      - createTimestamp
-      - createUserEntity
-      - createdBy
-      - note
-      - noteID
-    StatusResponse_status_estimates_inner_additionalQuestions_inner:
-      example:
-        answer: answer
-        questionCode: questionCode
-      properties:
-        questionCode:
-          type: string
-        answer:
-          type: string
-      required:
-      - answer
-      - questionCode
-    StatusResponse_status_estimates_inner:
-      example:
-        notes:
-        - note: note
-          createdBy: createdBy
-          createUserEntity: createUserEntity
-          noteID: noteID
-          createTimestamp: createTimestamp
-        - note: note
-          createdBy: createdBy
-          createUserEntity: createUserEntity
-          noteID: noteID
-          createTimestamp: createTimestamp
-        processedTimestamp: processedTimestamp
-        totalAmountLessDeductible: totalAmountLessDeductible
-        submissionStatusCode: submissionStatusCode
-        createTimestamp: createTimestamp
-        submissionTimestamp: submissionTimestamp
-        totalAmount: totalAmount
-        processedStatusCode: processedStatusCode
-        deductible: deductible
-        estimateID: estimateID
-        parts:
-        - quantity: quantity
-          alreadyUsed: true
-          costEach: costEach
-          description: description
-          partNumber: partNumber
-          extendedCost: extendedCost
-          alreadyOrdered: true
-          brand: brand
-          estimatePartID: estimatePartID
-        - quantity: quantity
-          alreadyUsed: true
-          costEach: costEach
-          description: description
-          partNumber: partNumber
-          extendedCost: extendedCost
-          alreadyOrdered: true
-          brand: brand
-          estimatePartID: estimatePartID
-        additionalQuestions:
-        - answer: answer
-          questionCode: questionCode
-        - answer: answer
-          questionCode: questionCode
-        lines:
-        - amount: amount
-          coverageTypeCode: Labor
-        - amount: amount
-          coverageTypeCode: Labor
-        declineReason: ""
-      properties:
-        estimateID:
-          type: string
-        submissionStatusCode:
-          type: string
-        processedStatusCode:
-          type: string
-        totalAmount:
-          type: string
-        deductible:
-          type: string
-        totalAmountLessDeductible:
-          type: string
-        createTimestamp:
-          type: string
-        submissionTimestamp:
-          type: string
-        declineReason:
+        asset_rap:
+          type: integer
           nullable: true
-        processedTimestamp:
+        asset_type:
           type: string
-        lines:
-          items:
-            $ref: '#/components/schemas/StatusResponse_status_estimates_inner_lines_inner'
-          type: array
-        parts:
-          items:
-            $ref: '#/components/schemas/StatusResponse_status_estimates_inner_parts_inner'
-          type: array
-        notes:
-          items:
-            $ref: '#/components/schemas/StatusResponse_status_estimates_inner_notes_inner'
-          type: array
-        additionalQuestions:
-          items:
-            $ref: '#/components/schemas/StatusResponse_status_estimates_inner_additionalQuestions_inner'
-          type: array
-      required:
-      - additionalQuestions
-      - createTimestamp
-      - declineReason
-      - deductible
-      - estimateID
-      - lines
-      - notes
-      - parts
-      - processedStatusCode
-      - processedTimestamp
-      - submissionStatusCode
-      - submissionTimestamp
-      - totalAmount
-      - totalAmountLessDeductible
-    StatusResponse_status:
-      example:
-        timeSlot: timeSlot
-        exclusions: exclusions
-        program: program
-        maxPartOrderDate: maxPartOrderDate
-        subStatusDescription: subStatusDescription
-        currentScheduleDate: currentScheduleDate
-        suspectedRecall: suspectedRecall
-        partOrders:
-        - orderNumber: orderNumber
-          orderDate: orderDate
-          poNumber: poNumber
-          shipments:
-          - shippingCompany: shippingCompany
-            shipmentDate: shipmentDate
-            trackingNumber: trackingNumber
-          - shippingCompany: shippingCompany
-            shipmentDate: shipmentDate
-            trackingNumber: trackingNumber
-        - orderNumber: orderNumber
-          orderDate: orderDate
-          poNumber: poNumber
-          shipments:
-          - shippingCompany: shippingCompany
-            shipmentDate: shipmentDate
-            trackingNumber: trackingNumber
-          - shippingCompany: shippingCompany
-            shipmentDate: shipmentDate
-            trackingNumber: trackingNumber
-        servicerEmail: servicerEmail
-        model: model
-        headerStatus: headerStatus
-        cancelReason: cancelReason
-        plan: plan
-        brand: brand
-        claimNumber: claimNumber
-        productType: productType
-        createDate: createDate
-        estimates:
-        - notes:
-          - note: note
-            createdBy: createdBy
-            createUserEntity: createUserEntity
-            noteID: noteID
-            createTimestamp: createTimestamp
-          - note: note
-            createdBy: createdBy
-            createUserEntity: createUserEntity
-            noteID: noteID
-            createTimestamp: createTimestamp
-          processedTimestamp: processedTimestamp
-          totalAmountLessDeductible: totalAmountLessDeductible
-          submissionStatusCode: submissionStatusCode
-          createTimestamp: createTimestamp
-          submissionTimestamp: submissionTimestamp
-          totalAmount: totalAmount
-          processedStatusCode: processedStatusCode
-          deductible: deductible
-          estimateID: estimateID
-          parts:
-          - quantity: quantity
-            alreadyUsed: true
-            costEach: costEach
-            description: description
-            partNumber: partNumber
-            extendedCost: extendedCost
-            alreadyOrdered: true
-            brand: brand
-            estimatePartID: estimatePartID
-          - quantity: quantity
-            alreadyUsed: true
-            costEach: costEach
-            description: description
-            partNumber: partNumber
-            extendedCost: extendedCost
-            alreadyOrdered: true
-            brand: brand
-            estimatePartID: estimatePartID
-          additionalQuestions:
-          - answer: answer
-            questionCode: questionCode
-          - answer: answer
-            questionCode: questionCode
-          lines:
-          - amount: amount
-            coverageTypeCode: Labor
-          - amount: amount
-            coverageTypeCode: Labor
-          declineReason: ""
-        - notes:
-          - note: note
-            createdBy: createdBy
-            createUserEntity: createUserEntity
-            noteID: noteID
-            createTimestamp: createTimestamp
-          - note: note
-            createdBy: createdBy
-            createUserEntity: createUserEntity
-            noteID: noteID
-            createTimestamp: createTimestamp
-          processedTimestamp: processedTimestamp
-          totalAmountLessDeductible: totalAmountLessDeductible
-          submissionStatusCode: submissionStatusCode
-          createTimestamp: createTimestamp
-          submissionTimestamp: submissionTimestamp
-          totalAmount: totalAmount
-          processedStatusCode: processedStatusCode
-          deductible: deductible
-          estimateID: estimateID
-          parts:
-          - quantity: quantity
-            alreadyUsed: true
-            costEach: costEach
-            description: description
-            partNumber: partNumber
-            extendedCost: extendedCost
-            alreadyOrdered: true
-            brand: brand
-            estimatePartID: estimatePartID
-          - quantity: quantity
-            alreadyUsed: true
-            costEach: costEach
-            description: description
-            partNumber: partNumber
-            extendedCost: extendedCost
-            alreadyOrdered: true
-            brand: brand
-            estimatePartID: estimatePartID
-          additionalQuestions:
-          - answer: answer
-            questionCode: questionCode
-          - answer: answer
-            questionCode: questionCode
-          lines:
-          - amount: amount
-            coverageTypeCode: Labor
-          - amount: amount
-            coverageTypeCode: Labor
-          declineReason: ""
-        servicerPhoneNumber: servicerPhoneNumber
-        preAuthAmount: preAuthAmount
-        customerNumber: customerNumber
-        servicePerformed: servicePerformed
-        partShipToAddress:
-          zip: zip
-          address2: address2
-          city: city
-          phone: phone
-          address1: address1
-          countryCode: countryCode
-          contact: contact
-          state: state
-          email: email
-        shipments:
-        - shippingCompany: shippingCompany
-          trackingNumber: trackingNumber
-          shipmentType: shipmentType
-        - shippingCompany: shippingCompany
-          trackingNumber: trackingNumber
-          shipmentType: shipmentType
-        maxPartDueDate: maxPartDueDate
-        closeDate: closeDate
-        forceIceMakerCovered: ""
-        authorizationNumber: authorizationNumber
-        subStatusCode: subStatusCode
-        complaint: complaint
-        deductible: deductible
-        maxPartSupplierETADate: maxPartSupplierETADate
-        originalScheduleDate: originalScheduleDate
-        servicerName: servicerName
-        clientCaseNumber: clientCaseNumber
+        asset_type_value:
+          type: integer
+        created_at:
+          type: integer
+        creator_id:
+          type: integer
+        creator_type:
+          type: integer
+        description:
+          type: string
+        id:
+          type: integer
+        is_for_sale:
+          type: boolean
+        is_limited:
+          type: boolean
+        is_limited_unique:
+          type: boolean
+        name:
+          type: string
+        price_robux:
+          type: integer
+        price_tickets:
+          type: integer
+        sales:
+          type: integer
+        updated_at:
+          type: integer
+    _public_api_v1_trade_list_get_200_response_data_inner:
       properties:
-        clientCaseNumber:
+        created_at:
+          type: integer
+        expires_at:
+          type: integer
+        id:
+          type: integer
+        recipient_userid:
+          type: integer
+        sender_userid:
+          type: integer
+        status:
           type: string
-        authorizationNumber:
-          type: string
-        customerNumber:
-          type: string
-        claimNumber:
-          type: string
-        preAuthAmount:
-          type: string
-        deductible:
-          type: string
-        plan:
-          type: string
-        exclusions:
-          type: string
-        createDate:
-          type: string
-        closeDate:
-          type: string
-        currentScheduleDate:
-          type: string
-        originalScheduleDate:
-          type: string
-        timeSlot:
-          type: string
-        headerStatus:
-          type: string
-        subStatusCode:
-          type: string
-        subStatusDescription:
-          type: string
-        maxPartOrderDate:
-          type: string
-        maxPartSupplierETADate:
-          type: string
-        maxPartDueDate:
-          type: string
-        servicerName:
-          type: string
-        servicerPhoneNumber:
-          type: string
-        servicerEmail:
-          type: string
-        program:
-          type: string
-        productType:
-          type: string
-        brand:
-          type: string
-        model:
-          type: string
-        complaint:
-          type: string
-        servicePerformed:
-          type: string
-        cancelReason:
-          type: string
-        partOrders:
-          items:
-            $ref: '#/components/schemas/StatusResponse_status_partOrders_inner'
-          type: array
-        partShipToAddress:
-          $ref: '#/components/schemas/StatusResponse_status_partShipToAddress'
-        shipments:
-          items:
-            $ref: '#/components/schemas/StatusResponse_status_shipments_inner'
-          type: array
-        estimates:
-          items:
-            $ref: '#/components/schemas/StatusResponse_status_estimates_inner'
-          type: array
-        suspectedRecall:
-          type: string
-        forceIceMakerCovered:
-          nullable: true
-      required:
-      - authorizationNumber
-      - brand
-      - cancelReason
-      - claimNumber
-      - clientCaseNumber
-      - closeDate
-      - complaint
-      - createDate
-      - currentScheduleDate
-      - customerNumber
-      - deductible
-      - estimates
-      - exclusions
-      - forceIceMakerCovered
-      - headerStatus
-      - maxPartDueDate
-      - maxPartOrderDate
-      - maxPartSupplierETADate
-      - model
-      - originalScheduleDate
-      - partOrders
-      - partShipToAddress
-      - plan
-      - preAuthAmount
-      - productType
-      - program
-      - servicePerformed
-      - servicerEmail
-      - servicerName
-      - servicerPhoneNumber
-      - shipments
-      - subStatusCode
-      - subStatusDescription
-      - suspectedRecall
-      - timeSlot
-    StatusResponse_claims_inner:
+    _public_api_v1_users__userid__get_400_response:
       example:
-        totalAmount: totalAmount
-        billingID: billingID
-        processedStatus: processedStatus
-        processedNotes: ""
-        billingType: billingType
-        deductible: deductible
-        totalAmountLessDeductible: totalAmountLessDeductible
-        previousProcessedNotes: ""
-        batchedTimestamp: batchedTimestamp
-        lines:
-        - lines
-        - lines
-        createTimestamp: createTimestamp
-        batchNumber: batchNumber
+        data: null
+        message: User not found
+        success: false
       properties:
-        billingID:
+        description:
           type: string
-        billingType:
-          type: string
-        processedStatus:
-          type: string
-        processedNotes:
-          nullable: true
-        previousProcessedNotes:
-          nullable: true
-        createTimestamp:
-          type: string
-        batchedTimestamp:
-          type: string
-        batchNumber:
-          type: string
-        totalAmount:
-          type: string
-        deductible:
-          type: string
-        totalAmountLessDeductible:
-          type: string
-        lines:
-          items:
-            description: TODO default missing array inner type to string
-            type: string
-          type: array
-      required:
-      - batchNumber
-      - batchedTimestamp
-      - billingID
-      - billingType
-      - createTimestamp
-      - deductible
-      - lines
-      - previousProcessedNotes
-      - processedNotes
-      - processedStatus
-      - totalAmount
-      - totalAmountLessDeductible
-    StatusResponse_events_inner:
+    _public_api_v1_users_my_profile_get_200_response:
       example:
-        eventID: eventID
-        eventTypeID: eventTypeID
-        eventDescription: eventDescription
-        eventTypeName: eventTypeName
-        eventTimestamp: eventTimestamp
+        data:
+          created_at: Unix Timestamp
+          description: User Description
+          id: User ID
+          is_banned: User Status
+          last_online: Unix Timestamp
+          membership: User Memberhip
+          username: Username
+        message: ""
+        success: true
       properties:
-        eventID:
+        data:
+          $ref: '#/components/schemas/_public_api_v1_users__userid__get_200_response_data'
+    _public_api_v1_economy_my_balance_get_200_response:
+      example:
+        data:
+          robux: User Robux Amount
+          tickets: User Tickets Amount
+        message: ""
+        success: true
+      properties:
+        data:
+          $ref: '#/components/schemas/_public_api_v1_economy_my_balance_get_200_response_data'
+    _public_api_v1_trade_accept__tradeid__post_200_response:
+      example:
+        data: ""
+        success: true
+        message: message
+      properties:
+        success:
+          type: boolean
+        message:
           type: string
-        eventTimestamp:
+        data: {}
+    _public_api_v1_asset__assetid__get_200_response:
+      example:
+        data:
+          asset_rap: Rap of the item
+          asset_type: asset type
+          asset_type_value: asset type value
+          created_at: Unix Timestamp
+          creator:
+            creator_created_at: Unix Timestamp
+            creator_description: User Description
+            creator_id: User ID
+            creator_is_banned: User Status
+            creator_last_online: Unix Timestamp
+            creator_membership: User Membership
+            creator_username: Creator Name
+          creator_id: User ID
+          creator_type: Type of Creator (group or user)
+          description: Asset Description
+          id: Asset ID
+          is_for_sale: Asset Status
+          is_limited: Asset Limited
+          is_limited_unique: Asset Limited U
+          name: Asset Name
+          price_robux: Asset Price (R)
+          price_tickets: Asset Price (T)
+          sales: Amount Of Sales
+          updated_at: Unix Timestamp
+        message: ""
+        success: true
+      properties:
+        data:
+          $ref: '#/components/schemas/_public_api_v1_asset__assetid__get_200_response_data'
+    _public_api_v1_trade_create__recipient_userid__post_200_response:
+      example:
+        success: true
+        message: message
+        tradeId: 0
+      properties:
+        success:
+          type: boolean
+        message:
           type: string
-        eventTypeID:
+        tradeId:
+          type: integer
+    _public_api_v1_inventory_assets__userid___assettypeid__get_200_response:
+      example:
+        data:
+        - asset:
+            asset_rap: Asset Rap
+            asset_type: Asset Type
+            asset_type_value: Asset Type Value
+            created_at: Unix Timestamp
+            creator_id: User ID
+            creator_type: Type of Creator (group or user)
+            description: Asset Description
+            id: Asset ID
+            is_for_sale: Asset Status
+            is_limited: Asset Limited
+            is_limited_unique: Asset Limted U
+            name: Asset Name
+            price_robux: Asset Price (R)
+            price_tickets: Asset Price (T)
+            sales: Amount Of Sales
+            updated_at: Unix Timestamp
+          price: Resell Price
+          serial: Serial Owner
+          uaid: User Asset ID
+        message: ""
+        next_page: Next Page
+        page: Current Page
+        success: true
+        total_pages: Total Pages
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/_public_api_v1_inventory_collectibles__userid__get_200_response_data_inner'
+          type: array
+    _public_api_v1_inventory_collectibles__userid__get_200_response:
+      example:
+        data:
+        - asset:
+            asset_rap: Asset Rap
+            asset_type: Asset Type
+            asset_type_value: Asset Type Value
+            created_at: Unix Timestamp
+            creator_id: User ID
+            creator_type: Type of Creator (group or user)
+            description: Asset Description
+            id: Asset ID
+            is_for_sale: Asset Status
+            is_limited: Asset Limited
+            is_limited_unique: Asset Limited U
+            name: Asset Name
+            price_robux: Asset Price (R)
+            price_tickets: Asset Price (T)
+            sales: Amount Of Sales
+            updated_at: Unis Timestamp
+          price: Resell Price
+          serial: Serial Owned
+          uaid: User Asset ID
+        message: ""
+        next_page: Next Page
+        page: Current Page
+        success: true
+        total_pages: Total Pages
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/_public_api_v1_inventory_collectibles__userid__get_200_response_data_inner'
+          type: array
+    _public_api_v1_asset__assetid__get_200_response_data_creator:
+      properties:
+        creator_created_at:
+          type: integer
+        creator_description:
           type: string
-        eventTypeName:
+        creator_id:
+          type: integer
+        creator_is_banned:
+          type: boolean
+        creator_last_online:
+          type: integer
+        creator_membership:
           type: string
-        eventDescription:
+        creator_username:
           type: string
-      required:
-      - eventDescription
-      - eventID
-      - eventTimestamp
-      - eventTypeID
-      - eventTypeName
-  securitySchemes:
-    basicAuth:
-      scheme: basic
-      type: http
+    _public_api_v1_trade__tradeid__get_200_response_data_recipient_items_inner:
+      example:
+        asset: "{}"
+      properties:
+        asset:
+          properties: {}
+          type: object
 
