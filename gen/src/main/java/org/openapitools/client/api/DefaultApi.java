@@ -2,10 +2,9 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import org.openapitools.client.model.Customer;
-import org.openapitools.client.model.Inventory;
-import org.openapitools.client.model.Item;
-import org.openapitools.client.model.Order;
+import org.openapitools.client.model.Evaluation;
+import org.openapitools.client.model.Lesson;
+import org.openapitools.client.model.User;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:14:30.119819481Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:14:37.454999481Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class DefaultApi {
     private ApiClient apiClient;
 
@@ -49,135 +48,52 @@ public class DefaultApi {
     }
 
     /**
-     * Delete_Customer
+     * Добавить оценку ученика по занятию
      * 
-     * <p><b>204</b> - No Content
-     * @param customerId  (required)
+     * <p><b>200</b> - Успешное добавление
+     * @param id ID занятия (required)
+     * @param evaluation Данные новой оценки (required)
+     * @return Evaluation
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public void customersCustomerIdDelete(Integer customerId) throws RestClientException {
-        customersCustomerIdDeleteWithHttpInfo(customerId);
+    public Evaluation lessonsIdEvaluationsPost(Long id, Evaluation evaluation) throws RestClientException {
+        return lessonsIdEvaluationsPostWithHttpInfo(id, evaluation).getBody();
     }
 
     /**
-     * Delete_Customer
+     * Добавить оценку ученика по занятию
      * 
-     * <p><b>204</b> - No Content
-     * @param customerId  (required)
-     * @return ResponseEntity&lt;Void&gt;
+     * <p><b>200</b> - Успешное добавление
+     * @param id ID занятия (required)
+     * @param evaluation Данные новой оценки (required)
+     * @return ResponseEntity&lt;Evaluation&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<Void> customersCustomerIdDeleteWithHttpInfo(Integer customerId) throws RestClientException {
-        Object localVarPostBody = null;
+    public ResponseEntity<Evaluation> lessonsIdEvaluationsPostWithHttpInfo(Long id, Evaluation evaluation) throws RestClientException {
+        Object localVarPostBody = evaluation;
         
-        // verify the required parameter 'customerId' is set
-        if (customerId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'customerId' when calling customersCustomerIdDelete");
+        // verify the required parameter 'id' is set
+        if (id == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'id' when calling lessonsIdEvaluationsPost");
+        }
+        
+        // verify the required parameter 'evaluation' is set
+        if (evaluation == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'evaluation' when calling lessonsIdEvaluationsPost");
         }
         
         // create path and map variables
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("customerId", customerId);
+        uriVariables.put("id", id);
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
 
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/customers/{customerId}", HttpMethod.DELETE, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * customerID
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Customer not found
-     * @param customerId  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void customersCustomerIdGet(Integer customerId) throws RestClientException {
-        customersCustomerIdGetWithHttpInfo(customerId);
-    }
-
-    /**
-     * customerID
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Customer not found
-     * @param customerId  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> customersCustomerIdGetWithHttpInfo(Integer customerId) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'customerId' is set
-        if (customerId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'customerId' when calling customersCustomerIdGet");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("customerId", customerId);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/customers/{customerId}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Update_Customer
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Customer not found
-     * @param customer  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void customersCustomerIdPut(Customer customer) throws RestClientException {
-        customersCustomerIdPutWithHttpInfo(customer);
-    }
-
-    /**
-     * Update_Customer
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Customer not found
-     * @param customer  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> customersCustomerIdPutWithHttpInfo(Customer customer) throws RestClientException {
-        Object localVarPostBody = customer;
-        
-        // verify the required parameter 'customer' is set
-        if (customer == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'customer' when calling customersCustomerIdPut");
-        }
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { 
             "application/json"
@@ -186,247 +102,84 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/customers/{customerId}", HttpMethod.PUT, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<Evaluation> localReturnType = new ParameterizedTypeReference<Evaluation>() {};
+        return apiClient.invokeAPI("/lessons/{id}/evaluations", HttpMethod.POST, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * Get_Customers
+     * Получить информацию о занятии по ID
      * 
-     * <p><b>200</b> - OK
+     * <p><b>200</b> - Успешный запрос
+     * @param id ID занятия (required)
+     * @return Lesson
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public void customersGet() throws RestClientException {
-        customersGetWithHttpInfo();
+    public Lesson lessonsIdGet(Long id) throws RestClientException {
+        return lessonsIdGetWithHttpInfo(id).getBody();
     }
 
     /**
-     * Get_Customers
+     * Получить информацию о занятии по ID
      * 
-     * <p><b>200</b> - OK
-     * @return ResponseEntity&lt;Void&gt;
+     * <p><b>200</b> - Успешный запрос
+     * @param id ID занятия (required)
+     * @return ResponseEntity&lt;Lesson&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<Void> customersGetWithHttpInfo() throws RestClientException {
+    public ResponseEntity<Lesson> lessonsIdGetWithHttpInfo(Long id) throws RestClientException {
         Object localVarPostBody = null;
         
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/customers", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * New_Customer
-     * 
-     * <p><b>201</b> - Created
-     * @param customer  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void customersPost(Customer customer) throws RestClientException {
-        customersPostWithHttpInfo(customer);
-    }
-
-    /**
-     * New_Customer
-     * 
-     * <p><b>201</b> - Created
-     * @param customer  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> customersPostWithHttpInfo(Customer customer) throws RestClientException {
-        Object localVarPostBody = customer;
-        
-        // verify the required parameter 'customer' is set
-        if (customer == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'customer' when calling customersPost");
-        }
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/customers", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Get_Inventory
-     * 
-     * <p><b>200</b> - OK
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void inventoryGet() throws RestClientException {
-        inventoryGetWithHttpInfo();
-    }
-
-    /**
-     * Get_Inventory
-     * 
-     * <p><b>200</b> - OK
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> inventoryGetWithHttpInfo() throws RestClientException {
-        Object localVarPostBody = null;
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/inventory", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Delete_Inventory
-     * 
-     * <p><b>204</b> - No Content
-     * @param inventoryId  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void inventoryInventoryIdDelete(Integer inventoryId) throws RestClientException {
-        inventoryInventoryIdDeleteWithHttpInfo(inventoryId);
-    }
-
-    /**
-     * Delete_Inventory
-     * 
-     * <p><b>204</b> - No Content
-     * @param inventoryId  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> inventoryInventoryIdDeleteWithHttpInfo(Integer inventoryId) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'inventoryId' is set
-        if (inventoryId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'inventoryId' when calling inventoryInventoryIdDelete");
+        // verify the required parameter 'id' is set
+        if (id == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'id' when calling lessonsIdGet");
         }
         
         // create path and map variables
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("inventoryId", inventoryId);
+        uriVariables.put("id", id);
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
 
-        final String[] localVarAccepts = {  };
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = {  };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/inventory/{inventoryId}", HttpMethod.DELETE, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<Lesson> localReturnType = new ParameterizedTypeReference<Lesson>() {};
+        return apiClient.invokeAPI("/lessons/{id}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * InventoryID
+     * Добавить занятие
      * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Inventory entry not found
-     * @param inventoryId  (required)
+     * <p><b>200</b> - Успешное добавление
+     * @param lesson Данные нового занятия (required)
+     * @return Lesson
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public void inventoryInventoryIdGet(Integer inventoryId) throws RestClientException {
-        inventoryInventoryIdGetWithHttpInfo(inventoryId);
+    public Lesson lessonsPost(Lesson lesson) throws RestClientException {
+        return lessonsPostWithHttpInfo(lesson).getBody();
     }
 
     /**
-     * InventoryID
+     * Добавить занятие
      * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Inventory entry not found
-     * @param inventoryId  (required)
-     * @return ResponseEntity&lt;Void&gt;
+     * <p><b>200</b> - Успешное добавление
+     * @param lesson Данные нового занятия (required)
+     * @return ResponseEntity&lt;Lesson&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<Void> inventoryInventoryIdGetWithHttpInfo(Integer inventoryId) throws RestClientException {
-        Object localVarPostBody = null;
+    public ResponseEntity<Lesson> lessonsPostWithHttpInfo(Lesson lesson) throws RestClientException {
+        Object localVarPostBody = lesson;
         
-        // verify the required parameter 'inventoryId' is set
-        if (inventoryId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'inventoryId' when calling inventoryInventoryIdGet");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("inventoryId", inventoryId);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/inventory/{inventoryId}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Update_Inventory
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Inventory entry not found
-     * @param inventory  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void inventoryInventoryIdPut(Inventory inventory) throws RestClientException {
-        inventoryInventoryIdPutWithHttpInfo(inventory);
-    }
-
-    /**
-     * Update_Inventory
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Inventory entry not found
-     * @param inventory  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> inventoryInventoryIdPutWithHttpInfo(Inventory inventory) throws RestClientException {
-        Object localVarPostBody = inventory;
-        
-        // verify the required parameter 'inventory' is set
-        if (inventory == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'inventory' when calling inventoryInventoryIdPut");
+        // verify the required parameter 'lesson' is set
+        if (lesson == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'lesson' when calling lessonsPost");
         }
         
 
@@ -435,7 +188,9 @@ public class DefaultApi {
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
 
-        final String[] localVarAccepts = {  };
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { 
             "application/json"
@@ -444,34 +199,74 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/inventory/{inventoryId}", HttpMethod.PUT, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<Lesson> localReturnType = new ParameterizedTypeReference<Lesson>() {};
+        return apiClient.invokeAPI("/lessons", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * New_Inventory
+     * Получить список учеников
      * 
-     * <p><b>201</b> - Created
-     * @param inventory  (required)
+     * <p><b>200</b> - Успешный запрос
+     * @return List&lt;User&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public void inventoryPost(Inventory inventory) throws RestClientException {
-        inventoryPostWithHttpInfo(inventory);
+    public List<User> usersGet() throws RestClientException {
+        return usersGetWithHttpInfo().getBody();
     }
 
     /**
-     * New_Inventory
+     * Получить список учеников
      * 
-     * <p><b>201</b> - Created
-     * @param inventory  (required)
-     * @return ResponseEntity&lt;Void&gt;
+     * <p><b>200</b> - Успешный запрос
+     * @return ResponseEntity&lt;List&lt;User&gt;&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<Void> inventoryPostWithHttpInfo(Inventory inventory) throws RestClientException {
-        Object localVarPostBody = inventory;
+    public ResponseEntity<List<User>> usersGetWithHttpInfo() throws RestClientException {
+        Object localVarPostBody = null;
         
-        // verify the required parameter 'inventory' is set
-        if (inventory == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'inventory' when calling inventoryPost");
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {  };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] {  };
+
+        ParameterizedTypeReference<List<User>> localReturnType = new ParameterizedTypeReference<List<User>>() {};
+        return apiClient.invokeAPI("/users", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Добавить одного ученика
+     * 
+     * <p><b>200</b> - Успешное добавление
+     * @param user Данные нового ученика (required)
+     * @return User
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public User usersPost(User user) throws RestClientException {
+        return usersPostWithHttpInfo(user).getBody();
+    }
+
+    /**
+     * Добавить одного ученика
+     * 
+     * <p><b>200</b> - Успешное добавление
+     * @param user Данные нового ученика (required)
+     * @return ResponseEntity&lt;User&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<User> usersPostWithHttpInfo(User user) throws RestClientException {
+        Object localVarPostBody = user;
+        
+        // verify the required parameter 'user' is set
+        if (user == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'user' when calling usersPost");
         }
         
 
@@ -480,7 +275,9 @@ public class DefaultApi {
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
 
-        final String[] localVarAccepts = {  };
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { 
             "application/json"
@@ -489,451 +286,7 @@ public class DefaultApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/inventory", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Get_Item
-     * 
-     * <p><b>200</b> - OK
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void itemsGet() throws RestClientException {
-        itemsGetWithHttpInfo();
-    }
-
-    /**
-     * Get_Item
-     * 
-     * <p><b>200</b> - OK
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> itemsGetWithHttpInfo() throws RestClientException {
-        Object localVarPostBody = null;
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/items", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Delete_Item
-     * 
-     * <p><b>204</b> - No Content
-     * @param itemId  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void itemsItemIdDelete(Integer itemId) throws RestClientException {
-        itemsItemIdDeleteWithHttpInfo(itemId);
-    }
-
-    /**
-     * Delete_Item
-     * 
-     * <p><b>204</b> - No Content
-     * @param itemId  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> itemsItemIdDeleteWithHttpInfo(Integer itemId) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'itemId' is set
-        if (itemId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'itemId' when calling itemsItemIdDelete");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("itemId", itemId);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/items/{itemId}", HttpMethod.DELETE, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * ItemID
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Item not found
-     * @param itemId  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void itemsItemIdGet(Integer itemId) throws RestClientException {
-        itemsItemIdGetWithHttpInfo(itemId);
-    }
-
-    /**
-     * ItemID
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Item not found
-     * @param itemId  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> itemsItemIdGetWithHttpInfo(Integer itemId) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'itemId' is set
-        if (itemId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'itemId' when calling itemsItemIdGet");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("itemId", itemId);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/items/{itemId}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Update_Item
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Item not found
-     * @param item  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void itemsItemIdPut(Item item) throws RestClientException {
-        itemsItemIdPutWithHttpInfo(item);
-    }
-
-    /**
-     * Update_Item
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Item not found
-     * @param item  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> itemsItemIdPutWithHttpInfo(Item item) throws RestClientException {
-        Object localVarPostBody = item;
-        
-        // verify the required parameter 'item' is set
-        if (item == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'item' when calling itemsItemIdPut");
-        }
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/items/{itemId}", HttpMethod.PUT, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * New_Item
-     * 
-     * <p><b>201</b> - Created
-     * @param item  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void itemsPost(Item item) throws RestClientException {
-        itemsPostWithHttpInfo(item);
-    }
-
-    /**
-     * New_Item
-     * 
-     * <p><b>201</b> - Created
-     * @param item  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> itemsPostWithHttpInfo(Item item) throws RestClientException {
-        Object localVarPostBody = item;
-        
-        // verify the required parameter 'item' is set
-        if (item == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'item' when calling itemsPost");
-        }
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/items", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Get_Orders
-     * 
-     * <p><b>200</b> - OK
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void ordersGet() throws RestClientException {
-        ordersGetWithHttpInfo();
-    }
-
-    /**
-     * Get_Orders
-     * 
-     * <p><b>200</b> - OK
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> ordersGetWithHttpInfo() throws RestClientException {
-        Object localVarPostBody = null;
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/orders", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Delete_Order
-     * 
-     * <p><b>204</b> - No Content
-     * @param orderId  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void ordersOrderIdDelete(Integer orderId) throws RestClientException {
-        ordersOrderIdDeleteWithHttpInfo(orderId);
-    }
-
-    /**
-     * Delete_Order
-     * 
-     * <p><b>204</b> - No Content
-     * @param orderId  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> ordersOrderIdDeleteWithHttpInfo(Integer orderId) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'orderId' is set
-        if (orderId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'orderId' when calling ordersOrderIdDelete");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("orderId", orderId);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/orders/{orderId}", HttpMethod.DELETE, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * OrderID
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Order not found
-     * @param orderId  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void ordersOrderIdGet(Integer orderId) throws RestClientException {
-        ordersOrderIdGetWithHttpInfo(orderId);
-    }
-
-    /**
-     * OrderID
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Order not found
-     * @param orderId  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> ordersOrderIdGetWithHttpInfo(Integer orderId) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'orderId' is set
-        if (orderId == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'orderId' when calling ordersOrderIdGet");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("orderId", orderId);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/orders/{orderId}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Update_Order
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Order not found
-     * @param order  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void ordersOrderIdPut(Order order) throws RestClientException {
-        ordersOrderIdPutWithHttpInfo(order);
-    }
-
-    /**
-     * Update_Order
-     * 
-     * <p><b>200</b> - OK
-     * <p><b>404</b> - Order not found
-     * @param order  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> ordersOrderIdPutWithHttpInfo(Order order) throws RestClientException {
-        Object localVarPostBody = order;
-        
-        // verify the required parameter 'order' is set
-        if (order == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'order' when calling ordersOrderIdPut");
-        }
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/orders/{orderId}", HttpMethod.PUT, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * New_Order
-     * 
-     * <p><b>201</b> - Created
-     * @param order  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void ordersPost(Order order) throws RestClientException {
-        ordersPostWithHttpInfo(order);
-    }
-
-    /**
-     * New_Order
-     * 
-     * <p><b>201</b> - Created
-     * @param order  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> ordersPostWithHttpInfo(Order order) throws RestClientException {
-        Object localVarPostBody = order;
-        
-        // verify the required parameter 'order' is set
-        if (order == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'order' when calling ordersPost");
-        }
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/orders", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<User> localReturnType = new ParameterizedTypeReference<User>() {};
+        return apiClient.invokeAPI("/users", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }

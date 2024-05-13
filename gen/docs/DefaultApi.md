@@ -1,37 +1,22 @@
 # DefaultApi
 
-All URIs are relative to *http://localhost*
+All URIs are relative to */api*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**customersCustomerIdDelete**](DefaultApi.md#customersCustomerIdDelete) | **DELETE** /customers/{customerId} | Delete_Customer |
-| [**customersCustomerIdGet**](DefaultApi.md#customersCustomerIdGet) | **GET** /customers/{customerId} | customerID |
-| [**customersCustomerIdPut**](DefaultApi.md#customersCustomerIdPut) | **PUT** /customers/{customerId} | Update_Customer |
-| [**customersGet**](DefaultApi.md#customersGet) | **GET** /customers | Get_Customers |
-| [**customersPost**](DefaultApi.md#customersPost) | **POST** /customers | New_Customer |
-| [**inventoryGet**](DefaultApi.md#inventoryGet) | **GET** /inventory | Get_Inventory |
-| [**inventoryInventoryIdDelete**](DefaultApi.md#inventoryInventoryIdDelete) | **DELETE** /inventory/{inventoryId} | Delete_Inventory |
-| [**inventoryInventoryIdGet**](DefaultApi.md#inventoryInventoryIdGet) | **GET** /inventory/{inventoryId} | InventoryID |
-| [**inventoryInventoryIdPut**](DefaultApi.md#inventoryInventoryIdPut) | **PUT** /inventory/{inventoryId} | Update_Inventory |
-| [**inventoryPost**](DefaultApi.md#inventoryPost) | **POST** /inventory | New_Inventory |
-| [**itemsGet**](DefaultApi.md#itemsGet) | **GET** /items | Get_Item |
-| [**itemsItemIdDelete**](DefaultApi.md#itemsItemIdDelete) | **DELETE** /items/{itemId} | Delete_Item |
-| [**itemsItemIdGet**](DefaultApi.md#itemsItemIdGet) | **GET** /items/{itemId} | ItemID |
-| [**itemsItemIdPut**](DefaultApi.md#itemsItemIdPut) | **PUT** /items/{itemId} | Update_Item |
-| [**itemsPost**](DefaultApi.md#itemsPost) | **POST** /items | New_Item |
-| [**ordersGet**](DefaultApi.md#ordersGet) | **GET** /orders | Get_Orders |
-| [**ordersOrderIdDelete**](DefaultApi.md#ordersOrderIdDelete) | **DELETE** /orders/{orderId} | Delete_Order |
-| [**ordersOrderIdGet**](DefaultApi.md#ordersOrderIdGet) | **GET** /orders/{orderId} | OrderID |
-| [**ordersOrderIdPut**](DefaultApi.md#ordersOrderIdPut) | **PUT** /orders/{orderId} | Update_Order |
-| [**ordersPost**](DefaultApi.md#ordersPost) | **POST** /orders | New_Order |
+| [**lessonsIdEvaluationsPost**](DefaultApi.md#lessonsIdEvaluationsPost) | **POST** /lessons/{id}/evaluations | Добавить оценку ученика по занятию |
+| [**lessonsIdGet**](DefaultApi.md#lessonsIdGet) | **GET** /lessons/{id} | Получить информацию о занятии по ID |
+| [**lessonsPost**](DefaultApi.md#lessonsPost) | **POST** /lessons | Добавить занятие |
+| [**usersGet**](DefaultApi.md#usersGet) | **GET** /users | Получить список учеников |
+| [**usersPost**](DefaultApi.md#usersPost) | **POST** /users | Добавить одного ученика |
 
 
 
-## customersCustomerIdDelete
+## lessonsIdEvaluationsPost
 
-> customersCustomerIdDelete(customerId)
+> Evaluation lessonsIdEvaluationsPost(id, evaluation)
 
-Delete_Customer
+Добавить оценку ученика по занятию
 
 ### Example
 
@@ -46,14 +31,16 @@ import org.openapitools.client.api.DefaultApi;
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
+        defaultClient.setBasePath("/api");
 
         DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Integer customerId = 56; // Integer | 
+        Long id = 56L; // Long | ID занятия
+        Evaluation evaluation = new Evaluation(); // Evaluation | Данные новой оценки
         try {
-            apiInstance.customersCustomerIdDelete(customerId);
+            Evaluation result = apiInstance.lessonsIdEvaluationsPost(id, evaluation);
+            System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#customersCustomerIdDelete");
+            System.err.println("Exception when calling DefaultApi#lessonsIdEvaluationsPost");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -68,138 +55,12 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **customerId** | **Integer**|  | |
+| **id** | **Long**| ID занятия | |
+| **evaluation** | [**Evaluation**](Evaluation.md)| Данные новой оценки | |
 
 ### Return type
 
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **204** | No Content |  -  |
-
-
-## customersCustomerIdGet
-
-> customersCustomerIdGet(customerId)
-
-customerID
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Integer customerId = 56; // Integer | 
-        try {
-            apiInstance.customersCustomerIdGet(customerId);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#customersCustomerIdGet");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **customerId** | **Integer**|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Customer not found |  -  |
-
-
-## customersCustomerIdPut
-
-> customersCustomerIdPut(customer)
-
-Update_Customer
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Customer customer = new Customer(); // Customer | 
-        try {
-            apiInstance.customersCustomerIdPut(customer);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#customersCustomerIdPut");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **customer** | [**Customer**](Customer.md)|  | |
-
-### Return type
-
-null (empty response body)
+[**Evaluation**](Evaluation.md)
 
 ### Authorization
 
@@ -208,21 +69,20 @@ No authorization required
 ### HTTP request headers
 
 - **Content-Type**: application/json
-- **Accept**: Not defined
+- **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Customer not found |  -  |
+| **200** | Успешное добавление |  -  |
 
 
-## customersGet
+## lessonsIdGet
 
-> customersGet()
+> Lesson lessonsIdGet(id)
 
-Get_Customers
+Получить информацию о занятии по ID
 
 ### Example
 
@@ -237,13 +97,142 @@ import org.openapitools.client.api.DefaultApi;
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
+        defaultClient.setBasePath("/api");
+
+        DefaultApi apiInstance = new DefaultApi(defaultClient);
+        Long id = 56L; // Long | ID занятия
+        try {
+            Lesson result = apiInstance.lessonsIdGet(id);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#lessonsIdGet");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | **Long**| ID занятия | |
+
+### Return type
+
+[**Lesson**](Lesson.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Успешный запрос |  -  |
+
+
+## lessonsPost
+
+> Lesson lessonsPost(lesson)
+
+Добавить занятие
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.DefaultApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("/api");
+
+        DefaultApi apiInstance = new DefaultApi(defaultClient);
+        Lesson lesson = new Lesson(); // Lesson | Данные нового занятия
+        try {
+            Lesson result = apiInstance.lessonsPost(lesson);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#lessonsPost");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **lesson** | [**Lesson**](Lesson.md)| Данные нового занятия | |
+
+### Return type
+
+[**Lesson**](Lesson.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Успешное добавление |  -  |
+
+
+## usersGet
+
+> List&lt;User&gt; usersGet()
+
+Получить список учеников
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.DefaultApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("/api");
 
         DefaultApi apiInstance = new DefaultApi(defaultClient);
         try {
-            apiInstance.customersGet();
+            List<User> result = apiInstance.usersGet();
+            System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#customersGet");
+            System.err.println("Exception when calling DefaultApi#usersGet");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -259,7 +248,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-null (empty response body)
+[**List&lt;User&gt;**](User.md)
 
 ### Authorization
 
@@ -268,20 +257,20 @@ No authorization required
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: Not defined
+- **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | OK |  -  |
+| **200** | Успешный запрос |  -  |
 
 
-## customersPost
+## usersPost
 
-> customersPost(customer)
+> User usersPost(user)
 
-New_Customer
+Добавить одного ученика
 
 ### Example
 
@@ -296,14 +285,15 @@ import org.openapitools.client.api.DefaultApi;
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
+        defaultClient.setBasePath("/api");
 
         DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Customer customer = new Customer(); // Customer | 
+        User user = new User(); // User | Данные нового ученика
         try {
-            apiInstance.customersPost(customer);
+            User result = apiInstance.usersPost(user);
+            System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#customersPost");
+            System.err.println("Exception when calling DefaultApi#usersPost");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -318,11 +308,11 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **customer** | [**Customer**](Customer.md)|  | |
+| **user** | [**User**](User.md)| Данные нового ученика | |
 
 ### Return type
 
-null (empty response body)
+[**User**](User.md)
 
 ### Authorization
 
@@ -331,950 +321,11 @@ No authorization required
 ### HTTP request headers
 
 - **Content-Type**: application/json
-- **Accept**: Not defined
+- **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **201** | Created |  -  |
-
-
-## inventoryGet
-
-> inventoryGet()
-
-Get_Inventory
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        try {
-            apiInstance.inventoryGet();
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#inventoryGet");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-
-
-## inventoryInventoryIdDelete
-
-> inventoryInventoryIdDelete(inventoryId)
-
-Delete_Inventory
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Integer inventoryId = 56; // Integer | 
-        try {
-            apiInstance.inventoryInventoryIdDelete(inventoryId);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#inventoryInventoryIdDelete");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **inventoryId** | **Integer**|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **204** | No Content |  -  |
-
-
-## inventoryInventoryIdGet
-
-> inventoryInventoryIdGet(inventoryId)
-
-InventoryID
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Integer inventoryId = 56; // Integer | 
-        try {
-            apiInstance.inventoryInventoryIdGet(inventoryId);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#inventoryInventoryIdGet");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **inventoryId** | **Integer**|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Inventory entry not found |  -  |
-
-
-## inventoryInventoryIdPut
-
-> inventoryInventoryIdPut(inventory)
-
-Update_Inventory
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Inventory inventory = new Inventory(); // Inventory | 
-        try {
-            apiInstance.inventoryInventoryIdPut(inventory);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#inventoryInventoryIdPut");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **inventory** | [**Inventory**](Inventory.md)|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Inventory entry not found |  -  |
-
-
-## inventoryPost
-
-> inventoryPost(inventory)
-
-New_Inventory
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Inventory inventory = new Inventory(); // Inventory | 
-        try {
-            apiInstance.inventoryPost(inventory);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#inventoryPost");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **inventory** | [**Inventory**](Inventory.md)|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **201** | Created |  -  |
-
-
-## itemsGet
-
-> itemsGet()
-
-Get_Item
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        try {
-            apiInstance.itemsGet();
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#itemsGet");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-
-
-## itemsItemIdDelete
-
-> itemsItemIdDelete(itemId)
-
-Delete_Item
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Integer itemId = 56; // Integer | 
-        try {
-            apiInstance.itemsItemIdDelete(itemId);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#itemsItemIdDelete");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **itemId** | **Integer**|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **204** | No Content |  -  |
-
-
-## itemsItemIdGet
-
-> itemsItemIdGet(itemId)
-
-ItemID
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Integer itemId = 56; // Integer | 
-        try {
-            apiInstance.itemsItemIdGet(itemId);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#itemsItemIdGet");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **itemId** | **Integer**|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Item not found |  -  |
-
-
-## itemsItemIdPut
-
-> itemsItemIdPut(item)
-
-Update_Item
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Item item = new Item(); // Item | 
-        try {
-            apiInstance.itemsItemIdPut(item);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#itemsItemIdPut");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **item** | [**Item**](Item.md)|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Item not found |  -  |
-
-
-## itemsPost
-
-> itemsPost(item)
-
-New_Item
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Item item = new Item(); // Item | 
-        try {
-            apiInstance.itemsPost(item);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#itemsPost");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **item** | [**Item**](Item.md)|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **201** | Created |  -  |
-
-
-## ordersGet
-
-> ordersGet()
-
-Get_Orders
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        try {
-            apiInstance.ordersGet();
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#ordersGet");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-
-
-## ordersOrderIdDelete
-
-> ordersOrderIdDelete(orderId)
-
-Delete_Order
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Integer orderId = 56; // Integer | 
-        try {
-            apiInstance.ordersOrderIdDelete(orderId);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#ordersOrderIdDelete");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **orderId** | **Integer**|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **204** | No Content |  -  |
-
-
-## ordersOrderIdGet
-
-> ordersOrderIdGet(orderId)
-
-OrderID
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Integer orderId = 56; // Integer | 
-        try {
-            apiInstance.ordersOrderIdGet(orderId);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#ordersOrderIdGet");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **orderId** | **Integer**|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Order not found |  -  |
-
-
-## ordersOrderIdPut
-
-> ordersOrderIdPut(order)
-
-Update_Order
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Order order = new Order(); // Order | 
-        try {
-            apiInstance.ordersOrderIdPut(order);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#ordersOrderIdPut");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **order** | [**Order**](Order.md)|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | OK |  -  |
-| **404** | Order not found |  -  |
-
-
-## ordersPost
-
-> ordersPost(order)
-
-New_Order
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.DefaultApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
-
-        DefaultApi apiInstance = new DefaultApi(defaultClient);
-        Order order = new Order(); // Order | 
-        try {
-            apiInstance.ordersPost(order);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#ordersPost");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **order** | [**Order**](Order.md)|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **201** | Created |  -  |
+| **200** | Успешное добавление |  -  |
 
