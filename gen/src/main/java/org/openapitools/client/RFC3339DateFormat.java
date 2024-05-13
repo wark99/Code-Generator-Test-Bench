@@ -1,6 +1,6 @@
 /*
- * sila-app
- * Документация к API проекта [sila-app](https://github.com/YuryVolynets/sila-app)
+ * SDefender License Server
+ * Just one end point to check licenses.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
