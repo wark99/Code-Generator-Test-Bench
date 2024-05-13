@@ -1,14 +1,13 @@
 
 
-# PlaylistDisplayResponse
+# WsgPublicNabV1UserIdAbContactsContactIdPicturePutRequest
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**id** | **Integer** |  |  [optional] |
-|**name** | **String** |  |  |
+|**myAttachment** | **List&lt;File&gt;** |  |  [optional] |
 
 
 
