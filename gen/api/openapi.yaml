@@ -1,645 +1,148 @@
 openapi: 3.1.0
 info:
-  contact:
-    email: apiteam@swagger.io
-  description: |-
-    This is a sample  Inventory Management System Server based on the OpenAPI 3.1 specification.  You can find out more about
-    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the  Inventory Management System, we've switched to the design first approach!
-    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Swagger amnaAlkhateeb - OpenAPI 3.1
-  version: 1.0.0
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
+  description: Image Detection API
+  title: Analyzer
+  version: 0.1.1
 servers:
-- url: https://petstore3.swagger.io/api/v3
-tags:
-- externalDocs:
-    description: Find out more
-    url: http://swagger.io
-  name: category
-- description: operation about Supplier
-  externalDocs:
-    description: Find out more about our Inventory
-    url: http://swagger.io
-  name: Supplier
-- description: Operations about broduct
-  name: product
-- description: Operations about order
-  name: order
+- url: /
 paths:
-  /product:
+  /:
+    get:
+      operationId: index__get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+      summary: Index
+      x-accepts: application/json
+  /list/:
+    get:
+      operationId: read_root_list__get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+      summary: Read Root
+      x-accepts: application/json
+  /upload/:
     post:
-      description: Add a new product to the  Inventory
-      operationId: addProduct
+      operationId: upload_file_upload__post
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/product'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/product'
+              $ref: '#/components/schemas/Body_upload_file_upload__post'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Upload File
+      x-content-type: multipart/form-data
+      x-accepts: application/json
+  /user/:
+    post:
+      operationId: get_user_data_user__post
+      requestBody:
+        content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/product'
-        description: Create a new product in the  Inventory
+              $ref: '#/components/schemas/Body_get_user_data_user__post'
         required: true
       responses:
         "200":
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/product'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/product'
-          description: Successful operation
-        "405":
-          description: Invalid input
-      security:
-      - Inventory_auth:
-        - write:products
-        - read:products
-      summary: Add a new product to the  Inventory
-      tags:
-      - product
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-    put:
-      description: Update an existing product by Id
-      operationId: updateProduct
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/product'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/product'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/product'
-        description: Update an existent product in the  Inventory
-        required: true
-      responses:
-        "200":
+              schema: {}
+          description: Successful Response
+        "422":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/product'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/product'
-          description: Successful operation
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Product not found
-        "405":
-          description: Validation exception
-      security:
-      - Inventory_auth:
-        - write:products
-        - read:products
-      summary: Update an existing product
-      tags:
-      - product
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /product/findByTags:
-    get:
-      description: "Multiple tags can be provided with comma separated strings. Use\
-        \ tag1, tag2, tag3 for testing."
-      operationId: findProductsByTags
-      parameters:
-      - description: Tags to filter by
-        explode: true
-        in: query
-        name: tags
-        required: false
-        schema:
-          items:
-            type: string
-          type: array
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Product'
-                type: array
-            application/xml:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Product'
-                type: array
-          description: successful operation
-        "400":
-          description: Invalid tag value
-      security:
-      - Inventory_auth:
-        - write:products
-        - read:products
-      summary: Finds Products by tags
-      tags:
-      - product
-      x-accepts: "application/json,application/xml"
-  /product/{productId}:
-    delete:
-      description: delete a product
-      operationId: deleteProduct
-      parameters:
-      - description: ""
-        explode: false
-        in: header
-        name: api_key
-        required: false
-        schema:
-          type: string
-        style: simple
-      - description: Product id to delete
-        explode: false
-        in: path
-        name: productId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      responses:
-        "400":
-          description: Invalid product value
-      security:
-      - Inventory_auth:
-        - write:products
-        - read:products
-      summary: Deletes a product
-      tags:
-      - product
-      x-accepts: application/json
-    get:
-      description: Returns a single product
-      operationId: getProductById
-      parameters:
-      - description: ID of product to return
-        explode: false
-        in: path
-        name: productId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Product'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Product'
-          description: successful operation
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Product not found
-      security:
-      - api_key: []
-      - Inventory_auth:
-        - write:products
-        - read:products
-      summary: Find product by ID
-      tags:
-      - product
-      x-accepts: "application/json,application/xml"
-    post:
-      description: ""
-      operationId: updateProductWithForm
-      parameters:
-      - description: ID of product that needs to be updated
-        explode: false
-        in: path
-        name: productId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      - description: Name of product that needs to be updated
-        explode: true
-        in: query
-        name: name
-        required: false
-        schema:
-          type: string
-        style: form
-      - description: price of product that needs to be updated
-        explode: true
-        in: query
-        name: price
-        required: false
-        schema:
-          type: integer
-        style: form
-      responses:
-        "405":
-          description: Invalid input
-      security:
-      - Inventory_auth:
-        - write:products
-        - read:products
-      summary: Updates a product in the store with form data
-      tags:
-      - product
-      x-accepts: application/json
-  /Supplier:
-    post:
-      description: This can only be done by the logged in Supplier
-      operationId: createSupplier
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Suppliers'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Suppliers'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Suppliers'
-        description: Created Supplier object
-      responses:
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Suppliers'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Suppliers'
-          description: successful operation
-      summary: Create Supplier
-      tags:
-      - Supplier
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /Supplier/createWithList:
-    post:
-      description: Creates list of Suppliers with given input array
-      operationId: createSuppliersWithListInput
-      requestBody:
-        content:
-          application/json:
-            schema:
-              items:
-                $ref: '#/components/schemas/Suppliers'
-              type: array
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Suppliers'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Suppliers'
-          description: Successful operation
-        default:
-          description: successful operation
-      summary: Creates list of Suppliers with given input array
-      tags:
-      - Supplier
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /Supplier/login:
-    get:
-      description: ""
-      operationId: loginUser
-      parameters:
-      - description: The Supplier name for login
-        explode: true
-        in: query
-        name: username
-        required: false
-        schema:
-          type: string
-        style: form
-      - description: The password for login in clear text
-        explode: true
-        in: query
-        name: password
-        required: false
-        schema:
-          type: string
-        style: form
-      responses:
-        "200":
-          content:
-            application/xml:
-              schema:
-                type: string
-            application/json:
-              schema:
-                type: string
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              explode: false
-              schema:
-                format: int32
-                type: integer
-              style: simple
-            X-Expires-After:
-              description: date in UTC when token expires
-              explode: false
-              schema:
-                format: date-time
-                type: string
-              style: simple
-        "400":
-          description: Invalid username/password supplied
-      summary: Logs Supplier into the system
-      tags:
-      - Supplier
-      x-accepts: "application/json,application/xml"
-  /Suppliers/logout:
-    get:
-      description: ""
-      operationId: logoutSupplier
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-      summary: Logs out current logged in Supplier session
-      tags:
-      - Supplier
-      x-accepts: application/json
-  /Suppliers/{username}:
-    delete:
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-      - description: The name that needs to be deleted
-        explode: false
-        in: path
-        name: username
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        "400":
-          description: Invalid username supplied
-        "404":
-          description: User not found
-      summary: Delete Supplier
-      tags:
-      - Supplier
-      x-accepts: application/json
-    get:
-      description: ""
-      operationId: getUserByName
-      parameters:
-      - description: 'The name that needs to be fetched. Use user1 for testing. '
-        explode: false
-        in: path
-        name: username
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Suppliers'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Suppliers'
-          description: successful operation
-        "400":
-          description: Invalid username supplied
-        "404":
-          description: User not found
-      summary: Get Supplier by Supplier name
-      tags:
-      - Supplier
-      x-accepts: "application/json,application/xml"
-    put:
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-      - description: name that need to be deleted
-        explode: false
-        in: path
-        name: username
-        required: true
-        schema:
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Suppliers'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Suppliers'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Suppliers'
-        description: Update an existent user in the store
-      responses:
-        default:
-          description: successful operation
-      summary: Update Supplier
-      tags:
-      - Supplier
-      x-content-type: application/json
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get User Data
+      x-content-type: application/x-www-form-urlencoded
       x-accepts: application/json
 components:
-  requestBodies:
-    Product:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Product'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Product'
-      description: Product object that needs to be added to the Inventory
   schemas:
-    Order:
+    Body_get_user_data_user__post:
       properties:
-        id:
-          example: 10
-          format: int64
-          type: integer
-        productId:
-          example: 198772
-          format: int64
-          type: integer
-        TotalAmount:
-          example: 7
-          format: int32
-          type: integer
-        Date:
-          format: date-time
+        username:
+          title: Username
           type: string
-        status:
-          description: Order Status
-          enum:
-          - placed
-          - approved
-          - delivered
-          example: approved
-          type: string
-        complete:
-          type: boolean
-      xml:
-        name: order
-    Suppliers:
-      example:
-        supplierName: fehguy
-        address:
-        - zip: "94301"
-          city: Palo Alto
-          street: 437 Lytton
-          state: CA
-        - zip: "94301"
-          city: Palo Alto
-          street: 437 Lytton
-          state: CA
-        id: 100000
-      properties:
-        id:
-          example: 100000
-          format: int64
-          type: integer
-        supplierName:
-          example: fehguy
-          type: string
-        address:
-          items:
-            $ref: '#/components/schemas/Address'
-          type: array
-          xml:
-            name: addresses
-            wrapped: true
-      xml:
-        name: Suppliers
-    Address:
-      example:
-        zip: "94301"
-        city: Palo Alto
-        street: 437 Lytton
-        state: CA
-      properties:
-        street:
-          example: 437 Lytton
-          type: string
-        city:
-          example: Palo Alto
-          type: string
-        state:
-          example: CA
-          type: string
-        zip:
-          example: "94301"
-          type: string
-      xml:
-        name: address
-    Category:
-      example:
-        name: cover
-        id: 1
-      properties:
-        id:
-          example: 1
-          format: int64
-          type: integer
-        name:
-          example: cover
-          type: string
-      xml:
-        name: category
-    Tag:
-      example:
-        name: name
-        id: 0
-      properties:
-        id:
-          format: int64
-          type: integer
-        name:
-          type: string
-      xml:
-        name: tag
-    product:
-      example:
-        name: book
-        id: 10
-        category:
-          name: cover
-          id: 1
-        tags:
-        - name: name
-          id: 0
-        - name: name
-          id: 0
-      properties:
-        id:
-          example: 10
-          format: int64
-          type: integer
-        name:
-          example: book
-          type: string
-        category:
-          $ref: '#/components/schemas/Category'
-        tags:
-          items:
-            $ref: '#/components/schemas/Tag'
-          type: array
-          xml:
-            wrapped: true
       required:
-      - name
-      xml:
-        name: product
-    ApiResponse:
+      - username
+      title: Body_get_user_data_user__post
+    Body_upload_file_upload__post:
       properties:
-        code:
-          format: int32
-          type: integer
+        image_file:
+          format: binary
+          title: Image File
+          type: string
+        username:
+          title: Username
+          type: string
+      required:
+      - image_file
+      - username
+      title: Body_upload_file_upload__post
+    HTTPValidationError:
+      example:
+        detail:
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+      title: HTTPValidationError
+    ValidationError:
+      example:
+        msg: msg
+        loc:
+        - ValidationError_loc_inner
+        - ValidationError_loc_inner
+        type: type
+      properties:
+        loc:
+          items:
+            $ref: '#/components/schemas/ValidationError_loc_inner'
+          type: array
+        msg:
+          title: Message
+          type: string
         type:
+          title: Error Type
           type: string
-        message:
-          type: string
-      xml:
-        name: '##default'
-  securitySchemes:
-    Inventory_auth:
-      flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
-          scopes:
-            write:products: modify products in your account
-            read:products: read your products
-      type: oauth2
-    api_key:
-      in: header
-      name: api_key
-      type: apiKey
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ValidationError_loc_inner:
+      anyOf:
+      - type: string
+      - type: integer
 

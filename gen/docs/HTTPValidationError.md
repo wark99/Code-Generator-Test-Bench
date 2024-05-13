@@ -1,14 +1,13 @@
 
 
-# Tag
+# HTTPValidationError
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**id** | **Long** |  |  [optional] |
-|**name** | **String** |  |  [optional] |
+|**detail** | [**List&lt;ValidationError&gt;**](ValidationError.md) |  |  [optional] |
 
 
 
