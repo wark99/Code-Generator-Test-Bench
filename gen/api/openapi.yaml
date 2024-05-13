@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  description: Endpoint to upload merchant's invoice for every order approved by Drip.
+  title: Invoice uploader
+  version: 1.0.1
+servers:
+- description: Sandbox
+  url: https://rgcqz988gj.execute-api.us-east-1.amazonaws.com/v1/file-processor
+- description: Production
+  url: https://api.usedrip.com.br/file/v1
+security:
+- ApiKeyAuth: []
+paths:
+  /upload/nf:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/_upload_nf_post_request'
+      responses:
+        "200":
+          description: File uploaded successfully
+        "400":
+          $ref: '#/components/responses/BadRequest'
+      summary: Upload invoice file and data
+      x-content-type: multipart/form-data
+      x-accepts: application/json
+components:
+  responses:
+    BadRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      description: Invalid request
+  schemas:
+    Error:
+      properties:
+        message:
+          type: string
+    _upload_nf_post_request:
+      properties:
+        orderCode:
+          description: Order identifier
+          type: string
+        nota:
+          description: Invoice file
+          format: binary
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      in: header
+      name: X-API-KEY
+      type: apiKey
+
