@@ -1,0 +1,386 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: apiteam@beakon.com
+  description: Access the Beakon incident feed.
+  termsOfService: https://beakon.com/acceptable-use-policy
+  title: Beakon API
+  version: 1.0.6
+externalDocs:
+  description: Find out more about Beakon
+  url: https://beakon.com
+servers:
+- url: https://api.beakon.com
+tags:
+- description: Incident management
+  externalDocs:
+    description: Find out more
+    url: https://beakon.com
+  name: incident
+paths:
+  /incidents:
+    get:
+      description: Finds all incidents after applying filters. Returns results in
+        reverse chronological order.
+      parameters:
+      - description: Tag values that need to be considered for filter
+        explode: true
+        in: query
+        name: tags
+        required: false
+        schema:
+          items:
+            $ref: '#/components/schemas/Tag'
+          type: array
+        style: form
+      - description: "Restrict incidents to those containing an alert after startTimestamp,\
+          \ which is a UNIX timestamp (seconds since the January 1, 1970)."
+        examples:
+          October 1, 2023 00:00:00 PT:
+            value: 1696143600
+        explode: true
+        in: query
+        name: startTimestamp
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: "Restrict incidents to those containing an alert before endTimestamp,\
+          \ which is a UNIX timestamp (seconds since the January 1, 1970)."
+        examples:
+          October 1, 2023 00:02:00 PT:
+            value: 1696143720
+        explode: true
+        in: query
+        name: endTimestamp
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Incident'
+                type: array
+          description: successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Invalid parameter value
+        "403":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Missing or invalid authentication token
+      security:
+      - api_key:
+        - read:incidents
+      summary: Finds Incidents
+      tags:
+      - incident
+      x-accepts: application/json
+components:
+  schemas:
+    ErrorModel:
+      properties:
+        message:
+          type: string
+        code:
+          maximum: 600
+          minimum: 100
+          type: integer
+      required:
+      - code
+      - message
+    Tag:
+      enum:
+      - deadlyassault
+      - bomb
+      - hostage
+      - robbery
+      - shots
+      - shooting
+      - stabbing
+      - suspicious
+      - threat
+      - trespass
+      - vandalism
+      - explosion
+      - hazmat
+      - outdoorfire
+      - rescue
+      - structurefire
+      - collision
+      - hazard
+      - closure
+      - transit
+      - looting
+      - peacefulassembly
+      - dangerousassembly
+      - gas
+      - power
+      - utilitydamage
+      - deadly
+      - hate
+      - injury
+      - massinjury
+      - officerinvolved
+      - correction
+      type: string
+    Alert:
+      example:
+        severity: medium
+        dateCreated: 2000-01-23
+        urgency: active
+        description: Firefighters have received a 911 report of a vehicle collision
+          with injuries.
+        certainty: reported
+        location: "748 Junipero Serra Boulevard, San Francisco, CA, USA"
+        geometry: ""
+        _id: 654586faf440a71db02490bc
+        title: Vehicle Collision With Injuries
+        tags:
+        - null
+        - null
+      properties:
+        _id:
+          description: UUID
+          example: 654586faf440a71db02490bc
+          format: uuid
+          type: string
+        tags:
+          items:
+            $ref: '#/components/schemas/Tag'
+          type: array
+        dateCreated:
+          format: date
+          type: string
+        location:
+          example: "748 Junipero Serra Boulevard, San Francisco, CA, USA"
+          type: string
+        geometry: {}
+        title:
+          example: Vehicle Collision With Injuries
+          type: string
+        description:
+          example: Firefighters have received a 911 report of a vehicle collision
+            with injuries.
+          type: string
+        certainty:
+          enum:
+          - reported
+          - responded
+          - debunked
+          example: reported
+          type: string
+        urgency:
+          enum:
+          - active
+          example: active
+          type: string
+        severity:
+          enum:
+          - low
+          - medium
+          - high
+          example: medium
+          type: string
+    Incident:
+      example:
+        alerts:
+        - severity: medium
+          dateCreated: 2000-01-23
+          urgency: active
+          description: Firefighters have received a 911 report of a vehicle collision
+            with injuries.
+          certainty: reported
+          location: "748 Junipero Serra Boulevard, San Francisco, CA, USA"
+          geometry: ""
+          _id: 654586faf440a71db02490bc
+          title: Vehicle Collision With Injuries
+          tags:
+          - null
+          - null
+        - severity: medium
+          dateCreated: 2000-01-23
+          urgency: active
+          description: Firefighters have received a 911 report of a vehicle collision
+            with injuries.
+          certainty: reported
+          location: "748 Junipero Serra Boulevard, San Francisco, CA, USA"
+          geometry: ""
+          _id: 654586faf440a71db02490bc
+          title: Vehicle Collision With Injuries
+          tags:
+          - null
+          - null
+        _id: 654586faf440a71db02490bd
+      properties:
+        _id:
+          description: UUID
+          example: 654586faf440a71db02490bd
+          format: uuid
+          type: string
+        alerts:
+          items:
+            $ref: '#/components/schemas/Alert'
+          type: array
+    Geometry:
+      description: GeoJSon geometry
+      externalDocs:
+        url: http://geojson.org/geojson-spec.html#geometry-objects
+      properties:
+        type:
+          description: the geometry type
+          enum:
+          - Point
+          - LineString
+          - Polygon
+          - MultiPoint
+          - MultiLineString
+          - MultiPolygon
+          type: string
+      required:
+      - type
+    Point3D:
+      description: Point in 3D space
+      items:
+        type: number
+      maxItems: 3
+      minItems: 2
+      type: array
+    Point:
+      allOf:
+      - $ref: '#/components/schemas/Geometry'
+      - properties:
+          coordinates:
+            $ref: '#/components/schemas/Point3D'
+      description: GeoJSon geometry
+      externalDocs:
+        url: http://geojson.org/geojson-spec.html#id2
+    LineString:
+      allOf:
+      - $ref: '#/components/schemas/Geometry'
+      - properties:
+          coordinates:
+            items:
+              $ref: '#/components/schemas/Point3D'
+            type: array
+      description: GeoJSon geometry
+      externalDocs:
+        url: http://geojson.org/geojson-spec.html#id3
+    Polygon:
+      allOf:
+      - $ref: '#/components/schemas/Geometry'
+      - properties:
+          coordinates:
+            items:
+              items:
+                $ref: '#/components/schemas/Point3D'
+              type: array
+            type: array
+      description: GeoJSon geometry
+      externalDocs:
+        url: http://geojson.org/geojson-spec.html#id4
+    MultiPoint:
+      allOf:
+      - $ref: '#/components/schemas/Geometry'
+      - properties:
+          coordinates:
+            items:
+              $ref: '#/components/schemas/Point3D'
+            type: array
+      description: GeoJSon geometry
+      externalDocs:
+        url: http://geojson.org/geojson-spec.html#id5
+    MultiLineString:
+      allOf:
+      - $ref: '#/components/schemas/Geometry'
+      - properties:
+          coordinates:
+            items:
+              items:
+                $ref: '#/components/schemas/Point3D'
+              type: array
+            type: array
+      description: GeoJSon geometry
+      externalDocs:
+        url: http://geojson.org/geojson-spec.html#id6
+    MultiPolygon:
+      allOf:
+      - $ref: '#/components/schemas/Geometry'
+      - properties:
+          coordinates:
+            items:
+              items:
+                items:
+                  $ref: '#/components/schemas/Point3D'
+                type: array
+              type: array
+            type: array
+      description: GeoJSon geometry
+      externalDocs:
+        url: http://geojson.org/geojson-spec.html#id6
+    GeometryCollection:
+      description: GeoJSon geometry collection
+      externalDocs:
+        url: http://geojson.org/geojson-spec.html#geometrycollection
+      properties:
+        type:
+          enum:
+          - GeometryCollection
+          type: string
+        geometries:
+          items:
+            $ref: '#/components/schemas/Geometry'
+          type: array
+      required:
+      - geometries
+      - type
+    Feature:
+      description: GeoJSon Feature
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.2
+      properties:
+        type:
+          enum:
+          - Feature
+          type: string
+        id:
+          type: integer
+        geometry:
+          $ref: '#/components/schemas/GeometryCollection'
+        properties:
+          type: object
+      required:
+      - geometry
+      - id
+      - type
+    FeatureCollection:
+      description: GeoJSon Feature collection
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.3
+      properties:
+        type:
+          enum:
+          - FeatureCollection
+          type: string
+        features:
+          items:
+            $ref: '#/components/schemas/Feature'
+          type: array
+      required:
+      - features
+      - type
+  securitySchemes:
+    api_key:
+      in: header
+      name: x-api-key
+      type: apiKey
+
