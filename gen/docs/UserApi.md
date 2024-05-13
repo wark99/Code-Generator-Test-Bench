@@ -1,22 +1,21 @@
 # UserApi
 
-All URIs are relative to *http://poosd.com/api/v1*
+All URIs are relative to *https://api.perch.fit*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**pHPDeleteUserPhpDelete**](UserApi.md#pHPDeleteUserPhpDelete) | **DELETE** /PHP/deleteUser.php | Delete a user |
-| [**pHPLoginUserPhpPost**](UserApi.md#pHPLoginUserPhpPost) | **POST** /PHP/loginUser.php | Log in a user |
-| [**pHPRegisterUserPhpPost**](UserApi.md#pHPRegisterUserPhpPost) | **POST** /PHP/registerUser.php | Register a new user |
+| [**createUser**](UserApi.md#createUser) | **POST** /users/create | Create a user |
+| [**filterUsers**](UserApi.md#filterUsers) | **POST** /v2/users | Filter users |
+| [**getUser**](UserApi.md#getUser) | **GET** /v2/user | Get user |
+| [**updateUser**](UserApi.md#updateUser) | **POST** /v2/users/update | Update a user |
 
 
 
-## pHPDeleteUserPhpDelete
+## createUser
 
-> pHPDeleteUserPhpDelete(userid)
+> CreateUserResponse createUser(createUserParams)
 
-Delete a user
-
-This endpoint allows for the deletion of a user by providing the user&#39;s ID.
+Create a user
 
 ### Example
 
@@ -25,20 +24,26 @@ This endpoint allows for the deletion of a user by providing the user&#39;s ID.
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
+import org.openapitools.client.auth.*;
 import org.openapitools.client.models.*;
 import org.openapitools.client.api.UserApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://poosd.com/api/v1");
+        defaultClient.setBasePath("https://api.perch.fit");
+        
+        // Configure HTTP bearer authorization: ApiKeyAuth
+        HttpBearerAuth ApiKeyAuth = (HttpBearerAuth) defaultClient.getAuthentication("ApiKeyAuth");
+        ApiKeyAuth.setBearerToken("BEARER TOKEN");
 
         UserApi apiInstance = new UserApi(defaultClient);
-        Integer userid = 56; // Integer | The ID of the user to be deleted.
+        CreateUserParams createUserParams = new CreateUserParams(); // CreateUserParams | Create a new user
         try {
-            apiInstance.pHPDeleteUserPhpDelete(userid);
+            CreateUserResponse result = apiInstance.createUser(createUserParams);
+            System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#pHPDeleteUserPhpDelete");
+            System.err.println("Exception when calling UserApi#createUser");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -53,35 +58,174 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **userid** | **Integer**| The ID of the user to be deleted. | |
+| **createUserParams** | [**CreateUserParams**](CreateUserParams.md)| Create a new user | [optional] |
 
 ### Return type
 
-null (empty response body)
+[**CreateUserResponse**](CreateUserResponse.md)
 
 ### Authorization
 
-No authorization required
+[ApiKeyAuth](../README.md#ApiKeyAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success, user created. |  -  |
+| **400** |  |  -  |
+| **404** |  |  -  |
+| **429** |  |  -  |
+
+
+## filterUsers
+
+> FilterUsersResponse filterUsers(filterUsersParams)
+
+Filter users
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.UserApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.perch.fit");
+        
+        // Configure HTTP bearer authorization: ApiKeyAuth
+        HttpBearerAuth ApiKeyAuth = (HttpBearerAuth) defaultClient.getAuthentication("ApiKeyAuth");
+        ApiKeyAuth.setBearerToken("BEARER TOKEN");
+
+        UserApi apiInstance = new UserApi(defaultClient);
+        FilterUsersParams filterUsersParams = new FilterUsersParams(); // FilterUsersParams | Filters on users. Requires at least one of `id` or `group_id`.
+        try {
+            FilterUsersResponse result = apiInstance.filterUsers(filterUsersParams);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling UserApi#filterUsers");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **filterUsersParams** | [**FilterUsersParams**](FilterUsersParams.md)| Filters on users. Requires at least one of &#x60;id&#x60; or &#x60;group_id&#x60;. | [optional] |
+
+### Return type
+
+[**FilterUsersResponse**](FilterUsersResponse.md)
+
+### Authorization
+
+[ApiKeyAuth](../README.md#ApiKeyAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success, here are matching users. |  -  |
+| **400** |  |  -  |
+| **404** |  |  -  |
+| **429** |  |  -  |
+
+
+## getUser
+
+> GetUserResponse getUser()
+
+Get user
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.UserApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://api.perch.fit");
+        
+        // Configure HTTP bearer authorization: ApiKeyAuth
+        HttpBearerAuth ApiKeyAuth = (HttpBearerAuth) defaultClient.getAuthentication("ApiKeyAuth");
+        ApiKeyAuth.setBearerToken("BEARER TOKEN");
+
+        UserApi apiInstance = new UserApi(defaultClient);
+        try {
+            GetUserResponse result = apiInstance.getUser();
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling UserApi#getUser");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**GetUserResponse**](GetUserResponse.md)
+
+### Authorization
+
+[ApiKeyAuth](../README.md#ApiKeyAuth)
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: Not defined
+- **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | The user has been successfully deleted. |  -  |
+| **200** | Success, here is your user. |  -  |
+| **429** |  |  -  |
 
 
-## pHPLoginUserPhpPost
+## updateUser
 
-> pHPLoginUserPhpPost(phPLoginUserPhpPostRequest)
+> GenericSuccessResponse updateUser(updateUserParams)
 
-Log in a user
-
-This endpoint allows users to log in by providing their login credentials.
+Update a user
 
 ### Example
 
@@ -90,20 +234,26 @@ This endpoint allows users to log in by providing their login credentials.
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
+import org.openapitools.client.auth.*;
 import org.openapitools.client.models.*;
 import org.openapitools.client.api.UserApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://poosd.com/api/v1");
+        defaultClient.setBasePath("https://api.perch.fit");
+        
+        // Configure HTTP bearer authorization: ApiKeyAuth
+        HttpBearerAuth ApiKeyAuth = (HttpBearerAuth) defaultClient.getAuthentication("ApiKeyAuth");
+        ApiKeyAuth.setBearerToken("BEARER TOKEN");
 
         UserApi apiInstance = new UserApi(defaultClient);
-        PHPLoginUserPhpPostRequest phPLoginUserPhpPostRequest = new PHPLoginUserPhpPostRequest(); // PHPLoginUserPhpPostRequest | 
+        UpdateUserParams updateUserParams = new UpdateUserParams(); // UpdateUserParams | Update a user. All fields are optional except `id`, this endpoint acts as a PATCH.
         try {
-            apiInstance.pHPLoginUserPhpPost(phPLoginUserPhpPostRequest);
+            GenericSuccessResponse result = apiInstance.updateUser(updateUserParams);
+            System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#pHPLoginUserPhpPost");
+            System.err.println("Exception when calling UserApi#updateUser");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -118,89 +268,27 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **phPLoginUserPhpPostRequest** | [**PHPLoginUserPhpPostRequest**](PHPLoginUserPhpPostRequest.md)|  | |
+| **updateUserParams** | [**UpdateUserParams**](UpdateUserParams.md)| Update a user. All fields are optional except &#x60;id&#x60;, this endpoint acts as a PATCH. | [optional] |
 
 ### Return type
 
-null (empty response body)
+[**GenericSuccessResponse**](GenericSuccessResponse.md)
 
 ### Authorization
 
-No authorization required
+[ApiKeyAuth](../README.md#ApiKeyAuth)
 
 ### HTTP request headers
 
 - **Content-Type**: application/json
-- **Accept**: Not defined
+- **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | The user has been successfully logged in. |  -  |
-
-
-## pHPRegisterUserPhpPost
-
-> pHPRegisterUserPhpPost(phPRegisterUserPhpPostRequest)
-
-Register a new user
-
-This endpoint allows for the registration of a new user by providing the necessary details.
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.UserApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://poosd.com/api/v1");
-
-        UserApi apiInstance = new UserApi(defaultClient);
-        PHPRegisterUserPhpPostRequest phPRegisterUserPhpPostRequest = new PHPRegisterUserPhpPostRequest(); // PHPRegisterUserPhpPostRequest | 
-        try {
-            apiInstance.pHPRegisterUserPhpPost(phPRegisterUserPhpPostRequest);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#pHPRegisterUserPhpPost");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **phPRegisterUserPhpPostRequest** | [**PHPRegisterUserPhpPostRequest**](PHPRegisterUserPhpPostRequest.md)|  | |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: Not defined
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | The user has been successfully registered. |  -  |
+| **200** | Success, user updated. |  -  |
+| **400** |  |  -  |
+| **404** |  |  -  |
+| **429** |  |  -  |
 

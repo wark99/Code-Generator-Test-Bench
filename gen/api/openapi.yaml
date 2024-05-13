@@ -1,214 +1,1188 @@
 openapi: 3.1.0
 info:
   contact:
-    email: SLP-02@ucf.edu
-  description: COP4331 - Processes of Object Oriented Software Development
-  title: SLP-02-Small-Project
-  version: 1.0.0
+    email: support@perch.fit
+  description: "Perch API for accessing data from Perch. See our [API Guide](https://docs.google.com/document/d/1ms6LFNwFN4C4WkrfWs8Hlu5igFBpNLhNr7uLEkGmvJA)\
+    \ for guidance on best practices. <br/> <br/> Find out more about Perch at [https://perch.fit](https://perch.fit)\
+    \ or by contacting us at [support@perch.fit](mailto:support@perch.fit)."
+  termsOfService: https://perch.fit/policies/api
+  title: Perch API
+  version: 1.2.0
 servers:
-- description: Main (production) server
-  url: http://poosd.com/api/v1
+- description: Production API endpoint
+  url: https://api.perch.fit/
 tags:
-- description: Operations related to contacts
-  name: Contact
-- description: Operations related to users
+- description: Access exercises in Perch.
+  name: Exercise
+- description: Access sets tracked or recorded on Perch.
+  name: Set
+- description: Access stats in Perch.
+  name: Stat
+- description: Access users in Perch.
   name: User
 paths:
-  /PHP/createContact.php:
-    post:
-      description: This endpoint allows for the creation of a new contact by providing
-        the necessary details.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_PHP_createContact_php_post_request'
-        required: true
-      responses:
-        "200":
-          description: The contact has been successfully created.
-      summary: Create a new contact
-      tags:
-      - Contact
-      x-content-type: application/json
-      x-accepts: application/json
-  /PHP/deleteContact.php:
-    delete:
-      description: This endpoint allows for the deletion of a contact by providing
-        the contact's ID.
-      parameters:
-      - description: The ID of the contact to be deleted.
-        explode: true
-        in: query
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          description: The contact has been successfully deleted.
-      summary: Delete a contact
-      tags:
-      - Contact
-      x-accepts: application/json
-  /PHP/deleteUser.php:
-    delete:
-      description: This endpoint allows for the deletion of a user by providing the
-        user's ID.
-      parameters:
-      - description: The ID of the user to be deleted.
-        explode: true
-        in: query
-        name: userid
-        required: true
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          description: The user has been successfully deleted.
-      summary: Delete a user
-      tags:
-      - User
-      x-accepts: application/json
-  /PHP/loginUser.php:
-    post:
-      description: This endpoint allows users to log in by providing their login credentials.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_PHP_loginUser_php_post_request'
-        required: true
-      responses:
-        "200":
-          description: The user has been successfully logged in.
-      summary: Log in a user
-      tags:
-      - User
-      x-content-type: application/json
-      x-accepts: application/json
-  /PHP/registerUser.php:
-    post:
-      description: This endpoint allows for the registration of a new user by providing
-        the necessary details.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/_PHP_registerUser_php_post_request'
-        required: true
-      responses:
-        "200":
-          description: The user has been successfully registered.
-      summary: Register a new user
-      tags:
-      - User
-      x-content-type: application/json
-      x-accepts: application/json
-  /PHP/searchContact.php:
+  /v3/exercises:
     get:
-      description: This endpoint allows users to search for a contact by providing
-        a search query and user ID.
-      parameters:
-      - description: The query used to search for the contact.
-        explode: true
-        in: query
-        name: searchquery
-        required: true
-        schema:
-          type: string
-        style: form
-      - description: The user ID associated with the contact.
-        explode: true
-        in: query
-        name: userid
-        required: true
-        schema:
-          type: string
-        style: form
+      description: Get all Exercises for the requester's organization. Same effect
+        as POST /v3/exercises with an empty body.
+      operationId: getExercises
       responses:
         "200":
-          description: The search results have been returned.
-      summary: Search for a contact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterExercisesResponse'
+          description: Success.
+        "429":
+          $ref: '#/components/responses/RateLimitResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Exercises
       tags:
-      - Contact
+      - Exercise
       x-accepts: application/json
-  /PHP/updateContact.php:
-    put:
-      description: This endpoint allows users to update the details of an existing
-        contact by providing the new information.
+    post:
+      operationId: filterExercises
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/_PHP_updateContact_php_put_request'
+              $ref: '#/components/schemas/FilterExercisesParams'
+        description: "Parameters on which to filter exercises. Without any filters,\
+          \ Exercises returned implicity include all those available to the requester."
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterExercisesResponse'
+          description: Success
+        "400":
+          $ref: '#/components/responses/BadParamsResponse'
+        "404":
+          $ref: '#/components/responses/MissingResponse'
+        "429":
+          $ref: '#/components/responses/RateLimitResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Filter exercises
+      tags:
+      - Exercise
+      x-content-type: application/json
+      x-accepts: application/json
+    summary: Fetch exercises from Perch.
+  /v3/sets:
+    post:
+      operationId: filterSets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterSetsParams'
+        description: "Filters on Sets. Requires at least one filter, multiple may\
+          \ be specified and will be combined to find matching records. If neither\
+          \ `user_id` nor `group_id` is specified, the default behavior or this endpoint\
+          \ is to return only Sets with the same `user_id` as the requester."
         required: true
       responses:
         "200":
-          description: The contact has been successfully updated.
-      summary: Update a contact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterSetsResponse'
+          description: "Success, here are matching sets"
+        "400":
+          $ref: '#/components/responses/BadParamsResponse'
+        "404":
+          $ref: '#/components/responses/MissingResponse'
+        "429":
+          $ref: '#/components/responses/RateLimitResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Filter sets
       tags:
-      - Contact
+      - Set
+      x-content-type: application/json
+      x-accepts: application/json
+  /stats:
+    get:
+      operationId: getStats
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterStatsResponse'
+          description: "Success, here are all stats"
+        "429":
+          $ref: '#/components/responses/RateLimitResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get stats for the logged in user
+      tags:
+      - Stat
+      x-accepts: application/json
+    post:
+      operationId: filterStats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterStatsParams'
+        description: Parameters on which to filter stats.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterStatsResponse'
+          description: "Success, here are matching exercises"
+        "400":
+          $ref: '#/components/responses/BadParamsResponse'
+        "404":
+          $ref: '#/components/responses/MissingResponse'
+        "429":
+          $ref: '#/components/responses/RateLimitResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Filter stats
+      tags:
+      - Stat
+      x-content-type: application/json
+      x-accepts: application/json
+  /v2/user:
+    get:
+      operationId: getUser
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserResponse'
+          description: "Success, here is your user."
+        "429":
+          $ref: '#/components/responses/RateLimitResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user
+      tags:
+      - User
+      x-accepts: application/json
+  /v2/users:
+    post:
+      operationId: filterUsers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterUsersParams'
+        description: Filters on users. Requires at least one of `id` or `group_id`.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterUsersResponse'
+          description: "Success, here are matching users."
+        "400":
+          $ref: '#/components/responses/BadParamsResponse'
+        "404":
+          $ref: '#/components/responses/MissingResponse'
+        "429":
+          $ref: '#/components/responses/RateLimitResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Filter users
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/create:
+    post:
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserParams'
+        description: Create a new user
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+          description: "Success, user created."
+        "400":
+          $ref: '#/components/responses/BadParamsResponse'
+        "404":
+          $ref: '#/components/responses/MissingResponse'
+        "429":
+          $ref: '#/components/responses/RateLimitResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a user
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts: application/json
+  /v2/users/update:
+    post:
+      operationId: updateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserParams'
+        description: "Update a user. All fields are optional except `id`, this endpoint\
+          \ acts as a PATCH."
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccessResponse'
+          description: "Success, user updated."
+        "400":
+          $ref: '#/components/responses/BadParamsResponse'
+        "404":
+          $ref: '#/components/responses/MissingResponse'
+        "429":
+          $ref: '#/components/responses/RateLimitResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a user
+      tags:
+      - User
       x-content-type: application/json
       x-accepts: application/json
 components:
+  responses:
+    BadParamsResponse:
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+                type: string
+              info:
+                additionalProperties:
+                  items:
+                    type: string
+      description: Request is missing required parameters or includes invalid or unrecognized
+        parameters.
+    MissingResponse:
+      content: {}
+      description: Could not find an object you tried to retrive / filter.
+    RateLimitResponse:
+      content: {}
+      description: Rate limit exceeded
   schemas:
-    _PHP_loginUser_php_post_request:
-      properties:
-        login:
-          description: The login name of the user.
-          type: string
-        password:
-          description: The password of the user.
-          type: string
-    _PHP_updateContact_php_put_request:
+    Group:
       properties:
         id:
-          description: The ID of the contact to be updated.
-          type: string
-        name:
-          description: The updated full name of the contact.
-          type: string
-        phone:
-          description: The updated phone number of the contact.
-          type: string
-        email:
-          description: The updated email address of the contact.
-          type: string
-        userid:
-          description: The user ID associated with the contact.
-          type: string
-    _PHP_createContact_php_post_request:
-      properties:
-        name:
-          description: The full name of the contact.
-          type: string
-        email:
-          description: The email address of the contact.
-          type: string
-        phone:
-          description: The phone number of the contact.
-          type: string
-        userid:
-          description: The user ID associated with the contact.
+          example: 1
           type: integer
-    _PHP_registerUser_php_post_request:
+        name:
+          example: Perch
+          type: string
+      required:
+      - id
+      - name
+      - type
+    User:
+      example:
+        gender: null
+        img_url: https://s3.amazonaws.com/bucket/image-file
+        org_id: 5
+        name: name
+        active: true
+        created_at: 1551376897
+        last_name: last_name
+        weight: 185
+        id: 1
+        first_name: first_name
+        email: email
+        height: 72
       properties:
-        firstName:
-          description: The first name of the user.
+        id:
+          type: integer
+        active:
+          description: "Users can be deactivated. Once they are, you will stop seeing\
+            \ them and their data in responses. Organization administrators control\
+            \ user deactivation."
+          type: boolean
+        email:
+          format: email
           type: string
-        lastName:
-          description: The last name of the user.
+        org_id:
+          type: integer
+        created_at:
+          example: 1551376897
+          format: unix
+          type: integer
+        first_name:
           type: string
-        login:
-          description: The login name of the user.
+        last_name:
           type: string
-        password:
-          description: The password of the user.
+        name:
+          description: Concatenated first and last name
           type: string
-        confirm_password:
-          description: The confirmation of the password.
+        gender:
+          $ref: '#/components/schemas/Gender'
+        height:
+          example: 72
+          format: in
+          type: number
+        weight:
+          example: 185
+          format: lbs
+          type: number
+        img_url:
+          example: https://s3.amazonaws.com/bucket/image-file
+          format: url
           type: string
+      required:
+      - active
+      - created_at
+      - id
+      - org_id
+    Rep:
+      description: "The object representing an individual rep tracked by a Perch camera.\
+        \ You'll notice the lack of mean power stats, which are calculated simply\
+        \ by converting the corresponding mean velocity to `m/s` and multiplying by\
+        \ the weight in `kg`. Peak power stats are given in strange units. This is\
+        \ to make those fields independent from the `Set.weight`, which is an editable\
+        \ field required to calculate the actual power (i.e. in units of watts). Equations\
+        \ to convert these stats to watts are provided."
+      properties:
+        concentric_mean_velocity_z:
+          description: The average vertical component of velocity for the concentric
+            phase of the rep.
+          example: 28.71
+          format: in / s
+          type: number
+        eccentric_mean_velocity_z:
+          description: The average vertical component of velocity for the eccentric
+            phase of the rep.
+          example: -26.45
+          format: in / s
+          type: number
+        concentric_peak_velocity_z:
+          description: The maximum instantaneous vertical component of velocity for
+            the concentric phase of the rep.
+          example: 42.96
+          format: in / s
+          type: number
+        concentric_time_to_peak_velocity_z:
+          description: The time (in seconds) the athelete took to achieve peak velocity
+            (on the Z axis) during the concentric phase of the movement.
+          format: s
+          type: number
+        concentric_time_to_peak_power_z:
+          description: The time (in seconds) the athelete took to achieve peak power
+            during the concentric phase of the movement.
+          format: s
+          type: number
+        concentric_velocity_at_100_ms_z:
+          description: The instantaneous velocity at 100ms into the concentric phase
+            of the movement.
+          format: in / s
+          type: number
+        eccentric_peak_velocity_z:
+          description: The maximum instantaneous vertical component of velocity for
+            the eccentric phase of the rep.
+          example: 3.31
+          format: in / s
+          type: number
+        concentric_peak_power_per_mass_z:
+          description: "Convert to peak power in watts: `(m/in)**2 * concentric_peak_power_per_mass_z\
+            \ * kg/lbs * Set.weight`"
+          example: 15160.17
+          format: in^2 / sec^3
+          type: number
+    SetError:
+      description: An object describing any reported issues from the user.
+      properties:
+        missed_reps:
+          description: Whether the user indicated that reps were missed.
+          type: boolean
+        ghost_reps:
+          description: Whether the user indicated that some reps that were tracked
+            were not actually performed.
+          type: boolean
+        wrong_values:
+          description: Whether the user indicated that some/all of the tracked metrics
+            appeared incorrect.
+          type: boolean
+        ghost_rep_indices:
+          items:
+            description: An index into the `Set.reps` array corresponding to a rep
+              that was tracked that wasn"t performed by the user.
+            type: integer
+          type: array
+    Set:
+      description: An object representing a set tracked by or entered into Perch.
+      properties:
+        id:
+          description: Unique id for the set
+          type: integer
+        created_at:
+          example: 1561742528
+          format: unix
+          type: number
+        user_id:
+          type: integer
+        org_id:
+          description: The ID of the organization the user who performed the set belongs
+            to.
+          type: integer
+        exercise_id:
+          type: integer
+        weight:
+          description: The weight the lift was performed with.
+          format: lbs
+          type: number
+        pct_1rm:
+          description: "The percentage [0.0 - 1.0] this set\"s weight is of the user\"\
+            s One Rep Max (1RM) for this exercise."
+          example: 0.25
+          type: number
+        tracked:
+          description: Delineates whether this set was tracked by a Perch camera (`true`)
+            or manually entered into Perch.
+          type: boolean
+        bands_used:
+          description: Whether bands were used for this set.
+          type: boolean
+        chains_used:
+          description: Whether chains were used for this set.
+          type: boolean
+        start_time:
+          allOf:
+          - $ref: '#/components/schemas/UnixTimestamp'
+          - description: When the set was started.
+        end_time:
+          allOf:
+          - $ref: '#/components/schemas/UnixTimestamp'
+          - description: When the set was completed.
+        error:
+          $ref: '#/components/schemas/SetError'
+        reps:
+          description: Contains all reps the Perch device tracked. `Set.error.ghost_rep_indices`
+            optionally contains indices into this array that were marked by the user
+            as erroneous and should be ignored.
+          items:
+            $ref: '#/components/schemas/Rep'
+          type: array
+        num_reps:
+          description: "The number of VALID reps on this set. This is the same as\
+            \ then length of the Reps array, unless the user marked an error and removed\
+            \ ghost reps. In that case, this count of reps reflects the removal of\
+            \ those ghost reps."
+          type: integer
+        num_tracked_reps:
+          description: The number of reps the Perch camera tracked for this set. This
+            will always be exactly the length of the Reps array.
+          type: integer
+        first_limb:
+          description: "In a unilateral exercise, this is the limb with which the\
+            \ athlete began their reps."
+          enum:
+          - RIGHT
+          - LEFT
+          type: string
+        limb_pattern:
+          $ref: '#/components/schemas/LimbPattern'
+        min_mean_power:
+          description: "The minimum of `Rep.concentric_mean_velocity_z * Set.weight`\
+            \ across all reps. Convert to watts: `m/in * N/lbs * min_mean_power`"
+          example: 1409.24
+          format: in * lbs / s
+          type: number
+        avg_mean_power:
+          description: "The mean of `Rep.concentric_mean_velocity_z * Set.weight`\
+            \ across all reps. Convert to watts: `m/in * N/lbs * avg_mean_power`"
+          example: 1409.24
+          format: in * lbs / s
+          type: number
+        max_mean_power:
+          description: "The max of `Rep.concentric_mean_velocity_z * Set.weight` across\
+            \ all reps. Convert to watts: `m/in * N/lbs * max_mean_power`"
+          example: 1536.75
+          format: in * lbs / s
+          type: number
+        min_mean_velocity:
+          description: "The minimum of `Rep.concentric_mean_velocity_z` across all\
+            \ reps. Convert to m/s: `m/in * min_mean_velocity`"
+          example: 31.32
+          format: in / s
+          type: number
+        avg_mean_velocity:
+          description: "The mean of `Rep.concentric_mean_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * avg_mean_velocity`"
+          example: 31.32
+          format: in / s
+          type: number
+        max_mean_velocity:
+          description: "The max of `Rep.concentric_mean_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * max_mean_velocity`"
+          example: 34.15
+          format: in / s
+          type: number
+        avg_ecc_mean_velocity:
+          description: "The mean of `Rep.eccentric_mean_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * avg_ecc_mean_velocity`"
+          example: 31.46
+          format: in / s
+          type: number
+        max_ecc_mean_velocity:
+          description: "The max of `Rep.eccentric_mean_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * max_ecc_mean_velocity`"
+          example: 39.12
+          format: in / s
+          type: number
+        min_ecc_mean_velocity:
+          description: "The min of `Rep.eccentric_mean_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * min_ecc_mean_velocity`"
+          example: 26.45
+          format: in / s
+          type: number
+        min_peak_power:
+          description: "The minimum of `Rep.concentric_peak_power_per_mass_z * Set.weight`\
+            \ across all reps. Convert to watts: `m/in * m/in * kg/lbs * min_peak_power`"
+          example: 2458751.45
+          format: (in^2 * lbs) / sec^3
+          type: number
+        avg_peak_power:
+          description: "The mean of `Rep.concentric_peak_power_per_mass_z * Set.weight`\
+            \ across all reps. Convert to watts: `m/in * m/in * kg/lbs * avg_peak_power`"
+          example: 2458751.45
+          format: (in^2 * lbs) / sec^3
+          type: number
+        max_peak_power:
+          description: "The max of `Rep.concentric_peak_power_per_mass_z * Set.weight`\
+            \ across all reps. Convert to watts: `m/in * m/in * kg/lbs * max_peak_power`"
+          example: 2458751.45
+          format: (in^2 * lbs) / sec^3
+          type: number
+        min_peak_velocity:
+          description: "The minimum of `Rep.concentric_peak_velocity_z` across all\
+            \ reps. Convert to m/s: `m/in * min_peak_velocity`"
+          example: 49.48
+          format: in / s
+          type: number
+        avg_peak_velocity:
+          description: "The mean of `Rep.concentric_peak_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * avg_peak_velocity`"
+          example: 49.48
+          format: in / s
+          type: number
+        max_peak_velocity:
+          description: "The max of `Rep.concentric_peak_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * max_peak_velocity`"
+          example: 55.98
+          format: in / s
+          type: number
+        avg_ecc_peak_velocity:
+          description: "The mean of `Rep.eccentric_peak_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * avg_ecc_peak_velocity`"
+          example: 48.3508597416838
+          format: in / s
+          type: number
+        max_ecc_peak_velocity:
+          description: "The max of `Rep.eccentric_peak_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * max_ecc_peak_velocity`"
+          example: 56.4116308796593
+          format: in / s
+          type: number
+        min_ecc_peak_velocity:
+          description: "The min of `Rep.eccentric_peak_velocity_z` across all reps.\
+            \ Convert to m/s: `m/in * min_ecc_peak_velocity`"
+          example: 41.24
+          format: in / s
+          type: number
+        avg_ecc_time:
+          description: "The mean of `(Rep.eccentric_end_time - Rep.eccentric_end_time)`\
+            \ across all reps. Convert to seconds: `us/s * avg_ecc_time`"
+          example: 758960.86
+          format: microsecond
+          type: number
+        max_ecc_time:
+          description: "The max of `(Rep.eccentric_end_time - Rep.eccentric_end_time)`\
+            \ across all reps. Convert to seconds: `us/s * max_ecc_time`"
+          example: 850079.962962687
+          format: microsecond
+          type: number
+        min_ecc_time:
+          description: "The min of `(Rep.eccentric_end_time - Rep.eccentric_end_time)`\
+            \ across all reps. Convert to seconds: `us/s * min_ecc_time`"
+          example: 603388.29
+          format: microsecond
+          type: number
+        max_velocity_at_100_ms:
+          description: "The maximum value of `Rep.concentric_velocity_at_100_ms` across\
+            \ all reps. Convert to m/s: `m/in * max_velocity_at_100_ms`"
+          format: in / s
+          type: number
+        avg_velocity_at_100_ms:
+          description: "The average value of `Rep.concentric_velocity_at_100_ms` across\
+            \ all reps. Convert to m/s: `m/in * avg_velocity_at_100_ms`"
+          format: in / s
+          type: number
+        min_velocity_at_100_ms:
+          description: "The minimum value of `Rep.concentric_velocity_at_100_ms` across\
+            \ all reps. Convert to m/s: `m/in * min_velocity_at_100_ms`"
+          format: in / s
+          type: number
+        max_time_to_peak_velocity:
+          description: The maximum value of `Rep.concentric_time_to_peak_velocity`
+            across all reps.
+          format: s
+          type: number
+        avg_time_to_peak_velocity:
+          description: The average value of `Rep.concentric_time_to_peak_velocity`
+            across all reps.
+          format: s
+          type: number
+        min_time_to_peak_velocity:
+          description: The minimum value of `Rep.concentric_time_to_peak_velocity`
+            across all reps.
+          format: s
+          type: number
+        max_time_to_peak_power:
+          description: The maximum value of `Rep.concentric_time_to_peak_power` across
+            all reps.
+          format: s
+          type: number
+        avg_time_to_peak_power:
+          description: The average value of `Rep.concentric_time_to_peak_power` across
+            all reps.
+          format: s
+          type: number
+        min_time_to_peak_power:
+          description: The minimum value of `Rep.concentric_time_to_peak_power` across
+            all reps.
+          format: s
+          type: number
+      required:
+      - created_at
+      - exercise_id
+      - id
+      - org_id
+      - start_time
+      - tracked
+      - user_id
+      - weight
+    Exercise:
+      example:
+        org_id: 6
+        limbed: true
+        name: name
+        tracked: true
+        id: 0
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        org_id:
+          description: (Optional) Integer ID of the customer Group (aka Organization)
+            that owns this exercise. Exercises with an `org_id` of `null` are considered
+            "global" (meaning no Group owns the exercise and it is useable by any
+            customer). Exercises with a non-null value for `org_id` are "owned" by
+            the corresponding customer organization and only visible to / usable by
+            that customer.
+          type: integer
+        limbed:
+          description: "Whether or not the exercise is performed on right and left\
+            \ limbs individually. E.g. Back Squat is not limbed, whereas Split Squat\
+            \ is limbed."
+          type: boolean
+        tracked:
+          description: Whether this exercise is tracked by the Perch camera or data
+            is manually entered.
+          type: boolean
+      required:
+      - id
+      - limbed
+      - name
+    Stat:
+      example:
+        unit: LBS
+        user_id: 0
+        exercise_id: 5
+        type: ONE_RM
+        value: 1.4658129805029452
+        timestamp: 6
+      properties:
+        user_id:
+          type: integer
+        type:
+          description: A descriptor for what this recorded stat is.
+          enum:
+          - ONE_RM
+          type: string
+        timestamp:
+          description: Time at which the stat was recorded.
+          format: unix
+          type: integer
+        unit:
+          description: The unit for this stat"s value.
+          enum:
+          - LBS
+          - KG
+          type: string
+        value:
+          description: The value recorded in this stat.
+          type: number
+        exercise_id:
+          description: "If this stat is associated with an exercise, this is the id\
+            \ of said exercise. Otherwise, null."
+          type: integer
+      required:
+      - timestamp
+      - type
+      - unit
+      - user_id
+      - value
+    Gender:
+      enum:
+      - MALE
+      - FEMALE
+      - OTHER
+      type: string
+    LimbPattern:
+      description: Denotes the pattern used with executing a unilateral movement.
+      enum:
+      - ALTERNATING
+      - SEQUENTIAL
+      - SINGLE
+      type: string
+    InclusiveFilter:
+      enum:
+      - ONLY
+      - INCLUDE
+      - EXCLUDE
+      type: string
+    UnixTimestamp:
+      example: 1561742528
+      format: unix
+      type: number
+    ApiPageParams:
+      properties:
+        limit:
+          description: Limit the number of data items returned per page. This will
+            default to (and be capped at) the configured page size for each individual
+            endpoint.
+          type: integer
+        next_token:
+          description: The `next_token` from a previous page response.
+          type: string
+    FilterSetsParams:
+      allOf:
+      - $ref: '#/components/schemas/ApiPageParams'
+      - properties:
+          id:
+            description: Retrieve a single set with this ID (response data will be
+              a single object not an array).
+            type: integer
+          user_id:
+            description: Retrieve only sets for the user with ID = `user_id`.
+            type: integer
+          group_id:
+            description: "Retrieve only sets for users in the group with the corresponding\
+              \ `id`. This can be set to the `org_id` of a user, which would filter\
+              \ for all users in said organization."
+            type: integer
+          exercise_id:
+            description: Retrieve only sets for the exercise with ID = `exercise_id`.
+            type: integer
+          begin_time:
+            $ref: '#/components/schemas/UnixTimestamp'
+          end_time:
+            $ref: '#/components/schemas/UnixTimestamp'
+          untracked:
+            $ref: '#/components/schemas/InclusiveFilter'
+          include_reps:
+            default: false
+            description: "By specifying `include_reps = true`, the `reps` field will\
+              \ be included on Sets returned. Otherwise, it will be omitted."
+            type: boolean
+      example:
+        include_reps: false
+        user_id: 1
+        group_id: 5
+        exercise_id: 5
+        limit: 0
+        end_time: 1561742528
+        begin_time: 1561742528
+        untracked: null
+        id: 6
+        next_token: next_token
+    FilterExercisesParams:
+      allOf:
+      - $ref: '#/components/schemas/ApiPageParams'
+      - properties:
+          id:
+            description: Retrieve a single exercise with this ID (response data will
+              be a single object not an array).
+            type: integer
+          untracked:
+            $ref: '#/components/schemas/InclusiveFilter'
+          inactive:
+            $ref: '#/components/schemas/InclusiveFilter'
+      example:
+        inactive: null
+        limit: 0
+        untracked: null
+        id: 6
+        next_token: next_token
+    FilterStatsParams:
+      allOf:
+      - $ref: '#/components/schemas/ApiPageParams'
+      - properties:
+          user_id:
+            description: Retrieve only stats for the user with ID = `user_id`.
+            type: integer
+          group_id:
+            description: Retrieve only stats for users in the group with ID = `group_id`.
+            type: integer
+          exercise_id:
+            description: Retrieve only sets for the exercise with ID = `exercise_id`.
+            type: integer
+          begin_time:
+            $ref: '#/components/schemas/UnixTimestamp'
+          end_time:
+            $ref: '#/components/schemas/UnixTimestamp'
+          type:
+            description: A descriptor for what this recorded stat represents.
+            enum:
+            - ONE_RM
+            type: string
+      example:
+        user_id: 6
+        group_id: 1
+        exercise_id: 5
+        limit: 0
+        end_time: 1561742528
+        begin_time: 1561742528
+        next_token: next_token
+        type: ONE_RM
+    FilterUsersParams:
+      allOf:
+      - $ref: '#/components/schemas/ApiPageParams'
+      - properties:
+          id:
+            description: Retrieve a single user with this ID (response data will be
+              a single object not an array).
+            type: integer
+          group_id:
+            description: Retrieve users who are members of a group (with id `group_id`).
+            type: integer
+      example:
+        group_id: 1
+        limit: 0
+        id: 6
+        next_token: next_token
+    CreateUserParams:
+      example:
+        data:
+          gender: null
+          last_name: last_name
+          weight: 185
+          first_name: first_name
+          email: email
+          height: 72
+      properties:
+        data:
+          $ref: '#/components/schemas/CreateUserParams_data'
+    UpdateUserParams:
+      example:
+        data:
+          gender: null
+          active: true
+          last_name: last_name
+          weight: 185
+          id: 0
+          first_name: first_name
+          height: 72
+      properties:
+        data:
+          $ref: '#/components/schemas/UpdateUserParams_data'
+    ApiPageResponse:
+      properties:
+        truncated:
+          description: Indicates that the result set was truncated and there are more
+            results.
+          type: boolean
+          nullable: false
+        next_token:
+          description: "When `truncated = true`, `next_token` will be non-null and\
+            \ can be used to retrieve further results. Send `next_token` in a subsequent\
+            \ request to the same endpoint using the same POST body to get the next\
+            \ set of results."
+          type: string
+          nullable: true
+      required:
+      - truncated
+    GenericSuccessResponse:
+      example:
+        success: true
+      properties:
+        success:
+          description: Whether the action succeeded.
+          type: boolean
+    FilterExercisesResponse:
+      allOf:
+      - $ref: '#/components/schemas/ApiPageResponse'
+      - properties:
+          data:
+            $ref: '#/components/schemas/FilterExercisesResponse_allOf_data'
+      example:
+        data: ""
+        truncated: true
+        next_token: next_token
+    FilterSetsResponse:
+      allOf:
+      - $ref: '#/components/schemas/ApiPageResponse'
+      - properties:
+          data:
+            $ref: '#/components/schemas/FilterSetsResponse_allOf_data'
+          refs:
+            $ref: '#/components/schemas/FilterSetsResponse_allOf_refs'
+      example:
+        data: ""
+        refs:
+          exercises:
+          - org_id: 6
+            limbed: true
+            name: name
+            tracked: true
+            id: 0
+          - org_id: 6
+            limbed: true
+            name: name
+            tracked: true
+            id: 0
+          users:
+          - gender: null
+            img_url: https://s3.amazonaws.com/bucket/image-file
+            org_id: 5
+            name: name
+            active: true
+            created_at: 1551376897
+            last_name: last_name
+            weight: 185
+            id: 1
+            first_name: first_name
+            email: email
+            height: 72
+          - gender: null
+            img_url: https://s3.amazonaws.com/bucket/image-file
+            org_id: 5
+            name: name
+            active: true
+            created_at: 1551376897
+            last_name: last_name
+            weight: 185
+            id: 1
+            first_name: first_name
+            email: email
+            height: 72
+        truncated: true
+        next_token: next_token
+    FilterUsersResponse:
+      allOf:
+      - $ref: '#/components/schemas/ApiPageResponse'
+      - properties:
+          data:
+            $ref: '#/components/schemas/FilterUsersResponse_allOf_data'
+      example:
+        data: ""
+        truncated: true
+        next_token: next_token
+    GetUserResponse:
+      example:
+        data:
+          gender: null
+          img_url: https://s3.amazonaws.com/bucket/image-file
+          org_id: 5
+          name: name
+          active: true
+          created_at: 1551376897
+          last_name: last_name
+          weight: 185
+          id: 1
+          first_name: first_name
+          email: email
+          height: 72
+      properties:
+        data:
+          $ref: '#/components/schemas/User'
+    CreateUserResponse:
+      allOf:
+      - $ref: '#/components/schemas/GenericSuccessResponse'
+      - properties:
+          id:
+            description: The `id` of the User created.
+            type: integer
+      example:
+        success: true
+        id: 0
+    FilterStatsResponse:
+      allOf:
+      - $ref: '#/components/schemas/ApiPageResponse'
+      - properties:
+          data:
+            items:
+              $ref: '#/components/schemas/Stat'
+            type: array
+      example:
+        data:
+        - unit: LBS
+          user_id: 0
+          exercise_id: 5
+          type: ONE_RM
+          value: 1.4658129805029452
+          timestamp: 6
+        - unit: LBS
+          user_id: 0
+          exercise_id: 5
+          type: ONE_RM
+          value: 1.4658129805029452
+          timestamp: 6
+        truncated: true
+        next_token: next_token
+    CreateUserParams_data:
+      example:
+        gender: null
+        last_name: last_name
+        weight: 185
+        first_name: first_name
+        email: email
+        height: 72
+      properties:
+        email:
+          format: email
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        gender:
+          $ref: '#/components/schemas/Gender'
+        height:
+          description: Height in floating point inches.
+          example: 72
+          format: in
+          type: number
+        weight:
+          description: Weight in floating point inches.
+          example: 185
+          format: lbs
+          type: number
+      required:
+      - first_name
+      - last_name
+    UpdateUserParams_data:
+      example:
+        gender: null
+        active: true
+        last_name: last_name
+        weight: 185
+        id: 0
+        first_name: first_name
+        height: 72
+      properties:
+        id:
+          description: ID of user you want to update.
+          type: integer
+        active:
+          description: A boolean indicating if the user is active.
+          type: boolean
+        first_name:
+          type: string
+        last_name:
+          type: string
+        gender:
+          $ref: '#/components/schemas/Gender'
+        height:
+          description: Height in floating point inches.
+          example: 72
+          format: in
+          type: number
+        weight:
+          description: Weight in floating point inches.
+          example: 185
+          format: lbs
+          type: number
+      required:
+      - id
+    FilterExercisesResponse_allOf_data:
+      oneOf:
+      - items:
+          $ref: '#/components/schemas/Exercise'
+      - $ref: '#/components/schemas/Exercise'
+    FilterSetsResponse_allOf_data:
+      oneOf:
+      - items:
+          $ref: '#/components/schemas/Set'
+      - $ref: '#/components/schemas/Set'
+    FilterSetsResponse_allOf_refs:
+      example:
+        exercises:
+        - org_id: 6
+          limbed: true
+          name: name
+          tracked: true
+          id: 0
+        - org_id: 6
+          limbed: true
+          name: name
+          tracked: true
+          id: 0
+        users:
+        - gender: null
+          img_url: https://s3.amazonaws.com/bucket/image-file
+          org_id: 5
+          name: name
+          active: true
+          created_at: 1551376897
+          last_name: last_name
+          weight: 185
+          id: 1
+          first_name: first_name
+          email: email
+          height: 72
+        - gender: null
+          img_url: https://s3.amazonaws.com/bucket/image-file
+          org_id: 5
+          name: name
+          active: true
+          created_at: 1551376897
+          last_name: last_name
+          weight: 185
+          id: 1
+          first_name: first_name
+          email: email
+          height: 72
+      properties:
+        exercises:
+          items:
+            $ref: '#/components/schemas/Exercise'
+          type: array
+        users:
+          items:
+            $ref: '#/components/schemas/User'
+          type: array
+    FilterUsersResponse_allOf_data:
+      oneOf:
+      - items:
+          $ref: '#/components/schemas/User'
+      - $ref: '#/components/schemas/User'
+  securitySchemes:
+    ApiKeyAuth:
+      scheme: bearer
+      type: http
 

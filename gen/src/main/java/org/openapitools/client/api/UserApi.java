@@ -2,8 +2,13 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import org.openapitools.client.model.PHPLoginUserPhpPostRequest;
-import org.openapitools.client.model.PHPRegisterUserPhpPostRequest;
+import org.openapitools.client.model.CreateUserParams;
+import org.openapitools.client.model.CreateUserResponse;
+import org.openapitools.client.model.FilterUsersParams;
+import org.openapitools.client.model.FilterUsersResponse;
+import org.openapitools.client.model.GenericSuccessResponse;
+import org.openapitools.client.model.GetUserResponse;
+import org.openapitools.client.model.UpdateUserParams;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:20:33.856729607Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:20:41.221792118Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class UserApi {
     private ApiClient apiClient;
 
@@ -47,31 +52,33 @@ public class UserApi {
     }
 
     /**
-     * Delete a user
-     * This endpoint allows for the deletion of a user by providing the user&#39;s ID.
-     * <p><b>200</b> - The user has been successfully deleted.
-     * @param userid The ID of the user to be deleted. (required)
+     * Create a user
+     * 
+     * <p><b>200</b> - Success, user created.
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * <p><b>429</b>
+     * @param createUserParams Create a new user (optional)
+     * @return CreateUserResponse
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public void pHPDeleteUserPhpDelete(Integer userid) throws RestClientException {
-        pHPDeleteUserPhpDeleteWithHttpInfo(userid);
+    public CreateUserResponse createUser(CreateUserParams createUserParams) throws RestClientException {
+        return createUserWithHttpInfo(createUserParams).getBody();
     }
 
     /**
-     * Delete a user
-     * This endpoint allows for the deletion of a user by providing the user&#39;s ID.
-     * <p><b>200</b> - The user has been successfully deleted.
-     * @param userid The ID of the user to be deleted. (required)
-     * @return ResponseEntity&lt;Void&gt;
+     * Create a user
+     * 
+     * <p><b>200</b> - Success, user created.
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * <p><b>429</b>
+     * @param createUserParams Create a new user (optional)
+     * @return ResponseEntity&lt;CreateUserResponse&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<Void> pHPDeleteUserPhpDeleteWithHttpInfo(Integer userid) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'userid' is set
-        if (userid == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'userid' when calling pHPDeleteUserPhpDelete");
-        }
+    public ResponseEntity<CreateUserResponse> createUserWithHttpInfo(CreateUserParams createUserParams) throws RestClientException {
+        Object localVarPostBody = createUserParams;
         
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
@@ -79,90 +86,138 @@ public class UserApi {
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
 
-        localVarQueryParams.putAll(apiClient.parameterToMultiValueMap(null, "userid", userid));
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { 
+            "application/json"
+         };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] { "ApiKeyAuth" };
+
+        ParameterizedTypeReference<CreateUserResponse> localReturnType = new ParameterizedTypeReference<CreateUserResponse>() {};
+        return apiClient.invokeAPI("/users/create", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Filter users
+     * 
+     * <p><b>200</b> - Success, here are matching users.
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * <p><b>429</b>
+     * @param filterUsersParams Filters on users. Requires at least one of &#x60;id&#x60; or &#x60;group_id&#x60;. (optional)
+     * @return FilterUsersResponse
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public FilterUsersResponse filterUsers(FilterUsersParams filterUsersParams) throws RestClientException {
+        return filterUsersWithHttpInfo(filterUsersParams).getBody();
+    }
+
+    /**
+     * Filter users
+     * 
+     * <p><b>200</b> - Success, here are matching users.
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * <p><b>429</b>
+     * @param filterUsersParams Filters on users. Requires at least one of &#x60;id&#x60; or &#x60;group_id&#x60;. (optional)
+     * @return ResponseEntity&lt;FilterUsersResponse&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<FilterUsersResponse> filterUsersWithHttpInfo(FilterUsersParams filterUsersParams) throws RestClientException {
+        Object localVarPostBody = filterUsersParams;
         
 
-        final String[] localVarAccepts = {  };
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { 
+            "application/json"
+         };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] { "ApiKeyAuth" };
+
+        ParameterizedTypeReference<FilterUsersResponse> localReturnType = new ParameterizedTypeReference<FilterUsersResponse>() {};
+        return apiClient.invokeAPI("/v2/users", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Get user
+     * 
+     * <p><b>200</b> - Success, here is your user.
+     * <p><b>429</b>
+     * @return GetUserResponse
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public GetUserResponse getUser() throws RestClientException {
+        return getUserWithHttpInfo().getBody();
+    }
+
+    /**
+     * Get user
+     * 
+     * <p><b>200</b> - Success, here is your user.
+     * <p><b>429</b>
+     * @return ResponseEntity&lt;GetUserResponse&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<GetUserResponse> getUserWithHttpInfo() throws RestClientException {
+        Object localVarPostBody = null;
+        
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = {  };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {  };
+        String[] localVarAuthNames = new String[] { "ApiKeyAuth" };
 
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/PHP/deleteUser.php", HttpMethod.DELETE, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<GetUserResponse> localReturnType = new ParameterizedTypeReference<GetUserResponse>() {};
+        return apiClient.invokeAPI("/v2/user", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * Log in a user
-     * This endpoint allows users to log in by providing their login credentials.
-     * <p><b>200</b> - The user has been successfully logged in.
-     * @param phPLoginUserPhpPostRequest  (required)
+     * Update a user
+     * 
+     * <p><b>200</b> - Success, user updated.
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * <p><b>429</b>
+     * @param updateUserParams Update a user. All fields are optional except &#x60;id&#x60;, this endpoint acts as a PATCH. (optional)
+     * @return GenericSuccessResponse
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public void pHPLoginUserPhpPost(PHPLoginUserPhpPostRequest phPLoginUserPhpPostRequest) throws RestClientException {
-        pHPLoginUserPhpPostWithHttpInfo(phPLoginUserPhpPostRequest);
-    }
-
-    /**
-     * Log in a user
-     * This endpoint allows users to log in by providing their login credentials.
-     * <p><b>200</b> - The user has been successfully logged in.
-     * @param phPLoginUserPhpPostRequest  (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> pHPLoginUserPhpPostWithHttpInfo(PHPLoginUserPhpPostRequest phPLoginUserPhpPostRequest) throws RestClientException {
-        Object localVarPostBody = phPLoginUserPhpPostRequest;
-        
-        // verify the required parameter 'phPLoginUserPhpPostRequest' is set
-        if (phPLoginUserPhpPostRequest == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'phPLoginUserPhpPostRequest' when calling pHPLoginUserPhpPost");
-        }
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/PHP/loginUser.php", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Register a new user
-     * This endpoint allows for the registration of a new user by providing the necessary details.
-     * <p><b>200</b> - The user has been successfully registered.
-     * @param phPRegisterUserPhpPostRequest  (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void pHPRegisterUserPhpPost(PHPRegisterUserPhpPostRequest phPRegisterUserPhpPostRequest) throws RestClientException {
-        pHPRegisterUserPhpPostWithHttpInfo(phPRegisterUserPhpPostRequest);
+    public GenericSuccessResponse updateUser(UpdateUserParams updateUserParams) throws RestClientException {
+        return updateUserWithHttpInfo(updateUserParams).getBody();
     }
 
     /**
-     * Register a new user
-     * This endpoint allows for the registration of a new user by providing the necessary details.
-     * <p><b>200</b> - The user has been successfully registered.
-     * @param phPRegisterUserPhpPostRequest  (required)
-     * @return ResponseEntity&lt;Void&gt;
+     * Update a user
+     * 
+     * <p><b>200</b> - Success, user updated.
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * <p><b>429</b>
+     * @param updateUserParams Update a user. All fields are optional except &#x60;id&#x60;, this endpoint acts as a PATCH. (optional)
+     * @return ResponseEntity&lt;GenericSuccessResponse&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<Void> pHPRegisterUserPhpPostWithHttpInfo(PHPRegisterUserPhpPostRequest phPRegisterUserPhpPostRequest) throws RestClientException {
-        Object localVarPostBody = phPRegisterUserPhpPostRequest;
-        
-        // verify the required parameter 'phPRegisterUserPhpPostRequest' is set
-        if (phPRegisterUserPhpPostRequest == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'phPRegisterUserPhpPostRequest' when calling pHPRegisterUserPhpPost");
-        }
+    public ResponseEntity<GenericSuccessResponse> updateUserWithHttpInfo(UpdateUserParams updateUserParams) throws RestClientException {
+        Object localVarPostBody = updateUserParams;
         
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
@@ -170,16 +225,18 @@ public class UserApi {
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
 
-        final String[] localVarAccepts = {  };
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { 
             "application/json"
          };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {  };
+        String[] localVarAuthNames = new String[] { "ApiKeyAuth" };
 
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/PHP/registerUser.php", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<GenericSuccessResponse> localReturnType = new ParameterizedTypeReference<GenericSuccessResponse>() {};
+        return apiClient.invokeAPI("/v2/users/update", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }
