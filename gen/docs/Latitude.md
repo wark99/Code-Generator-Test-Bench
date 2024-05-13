@@ -2,6 +2,7 @@
 
 # Latitude
 
+Device latitude
 
 ## Properties
 

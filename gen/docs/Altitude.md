@@ -2,6 +2,7 @@
 
 # Altitude
 
+Device altitude
 
 ## Properties
 

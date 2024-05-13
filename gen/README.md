@@ -1,10 +1,10 @@
 # openapi-java-client
 
-AIRBIT Device Auto-registration REST API
+AIRBIT IoT Workspace REST API
 
-- API version: 1.0.0
+- API version: 2.0.1
 
-- Build date: 2024-05-13T19:22:58.353940352Z[Etc/UTC]
+- Build date: 2024-05-13T19:23:05.417254227Z[Etc/UTC]
 
 - Generator version: 7.4.0
 
@@ -45,7 +45,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>org.openapitools</groupId>
   <artifactId>openapi-java-client</artifactId>
-  <version>1.0.0</version>
+  <version>2.0.1</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -61,7 +61,7 @@ Add this dependency to your project's build file:
   }
 
   dependencies {
-     implementation "org.openapitools:openapi-java-client:1.0.0"
+     implementation "org.openapitools:openapi-java-client:2.0.1"
   }
 ```
 
@@ -75,7 +75,7 @@ mvn clean package
 
 Then manually install the following JARs:
 
-- `target/openapi-java-client-1.0.0.jar`
+- `target/openapi-java-client-2.0.1.jar`
 - `target/lib/*.jar`
 
 ## Getting Started
@@ -87,26 +87,26 @@ Please follow the [installation](#installation) instruction and execute the foll
 import org.openapitools.client.*;
 import org.openapitools.client.auth.*;
 import org.openapitools.client.model.*;
-import org.openapitools.client.api.DeviceAutoRegistrationApi;
+import org.openapitools.client.api.AddressesApi;
 
-public class DeviceAutoRegistrationApiExample {
+public class AddressesApiExample {
 
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://geo-api.air-bit.ru:8080");
+        defaultClient.setBasePath("http://geo-api.air-bit.ru:8081");
         
-        // Configure HTTP basic authorization: HTTPBasic
-        HttpBasicAuth HTTPBasic = (HttpBasicAuth) defaultClient.getAuthentication("HTTPBasic");
-        HTTPBasic.setUsername("YOUR USERNAME");
-        HTTPBasic.setPassword("YOUR PASSWORD");
+        // Configure HTTP basic authorization: AWSAuthenticator
+        HttpBasicAuth AWSAuthenticator = (HttpBasicAuth) defaultClient.getAuthentication("AWSAuthenticator");
+        AWSAuthenticator.setUsername("YOUR USERNAME");
+        AWSAuthenticator.setPassword("YOUR PASSWORD");
 
-        DeviceAutoRegistrationApi apiInstance = new DeviceAutoRegistrationApi(defaultClient);
-        ConfigCreateScheme configCreateScheme = new ConfigCreateScheme(); // ConfigCreateScheme | 
+        AddressesApi apiInstance = new AddressesApi(defaultClient);
+        CreateAddressNodeScheme createAddressNodeScheme = new CreateAddressNodeScheme(); // CreateAddressNodeScheme | 
         try {
-            ConfigScheme result = apiInstance.addConfigAutoRegistrationConfigsPost(configCreateScheme);
+            AddressNodeScheme result = apiInstance.addAddress(createAddressNodeScheme);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DeviceAutoRegistrationApi#addConfigAutoRegistrationConfigsPost");
+            System.err.println("Exception when calling AddressesApi#addAddress");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -119,52 +119,431 @@ public class DeviceAutoRegistrationApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *http://geo-api.air-bit.ru:8080*
+All URIs are relative to *http://geo-api.air-bit.ru:8081*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*DeviceAutoRegistrationApi* | [**addConfigAutoRegistrationConfigsPost**](docs/DeviceAutoRegistrationApi.md#addConfigAutoRegistrationConfigsPost) | **POST** /auto-registration/configs/ | Saving device configuration on the IoT platform
-*DeviceAutoRegistrationApi* | [**addDeviceAutoRegistrationDevicesPost**](docs/DeviceAutoRegistrationApi.md#addDeviceAutoRegistrationDevicesPost) | **POST** /auto-registration/devices/ | Adds device to the IoT platform
-*DeviceAutoRegistrationApi* | [**dataPushAutoRegistrationDataPushPost**](docs/DeviceAutoRegistrationApi.md#dataPushAutoRegistrationDataPushPost) | **POST** /auto-registration/data/push/ | Sending device measurement data to the IoT platform
-*DeviceAutoRegistrationApi* | [**deviceLogAutoRegistrationDevicesLogPost**](docs/DeviceAutoRegistrationApi.md#deviceLogAutoRegistrationDevicesLogPost) | **POST** /auto-registration/devices/log/ | Log device information
-*DeviceAutoRegistrationApi* | [**getConfigAutoRegistrationConfigsIdGet**](docs/DeviceAutoRegistrationApi.md#getConfigAutoRegistrationConfigsIdGet) | **GET** /auto-registration/configs/{id}/ | Get a single device configuration
-*DeviceAutoRegistrationApi* | [**getConfigsAutoRegistrationConfigsGet**](docs/DeviceAutoRegistrationApi.md#getConfigsAutoRegistrationConfigsGet) | **GET** /auto-registration/configs/ | Get a list of device configurations
-*DeviceAutoRegistrationApi* | [**getFirmwareAutoRegistrationFirmwaresIdGet**](docs/DeviceAutoRegistrationApi.md#getFirmwareAutoRegistrationFirmwaresIdGet) | **GET** /auto-registration/firmwares/{id}/ | Get a firmware data
-*DeviceAutoRegistrationApi* | [**getFirmwaresAutoRegistrationFirmwaresGet**](docs/DeviceAutoRegistrationApi.md#getFirmwaresAutoRegistrationFirmwaresGet) | **GET** /auto-registration/firmwares/ | Get a list of firmwares
-*DeviceAutoRegistrationApi* | [**updateConfigAutoRegistrationConfigsIdPut**](docs/DeviceAutoRegistrationApi.md#updateConfigAutoRegistrationConfigsIdPut) | **PUT** /auto-registration/configs/{id}/ | Update device configuration on the IoT platform
+*AddressesApi* | [**addAddress**](docs/AddressesApi.md#addAddress) | **POST** /addresses/ | Add address
+*AddressesApi* | [**createNorm**](docs/AddressesApi.md#createNorm) | **POST** /addresses/{addr_id}/norm/ | Add address norm
+*AddressesApi* | [**deleteAddress**](docs/AddressesApi.md#deleteAddress) | **DELETE** /addresses/{id}/ | Delete address by id
+*AddressesApi* | [**deleteNorm**](docs/AddressesApi.md#deleteNorm) | **DELETE** /addresses/{addr_id}/norm/{id}/ | Delete address norm by id
+*AddressesApi* | [**getAddress**](docs/AddressesApi.md#getAddress) | **GET** /addresses/{id}/ | Get address by id
+*AddressesApi* | [**getAddresses**](docs/AddressesApi.md#getAddresses) | **GET** /addresses/ | Get a list of addresses
+*AddressesApi* | [**getNorm**](docs/AddressesApi.md#getNorm) | **GET** /addresses/{addr_id}/norm/{id}/ | Get address norm
+*AddressesApi* | [**getNorms**](docs/AddressesApi.md#getNorms) | **GET** /addresses/{addr_id}/norm/ | Get a list of norms
+*AddressesApi* | [**updateAddress**](docs/AddressesApi.md#updateAddress) | **PUT** /addresses/{id}/ | Update address by id
+*AddressesApi* | [**updateNorm**](docs/AddressesApi.md#updateNorm) | **PUT** /addresses/{addr_id}/norm/{id}/ | Update address norm
+*AuthApi* | [**confirmRegister**](docs/AuthApi.md#confirmRegister) | **POST** /auth/confirm-register/{token}/ | User confirm register
+*AuthApi* | [**loginUser**](docs/AuthApi.md#loginUser) | **POST** /auth/login/ | User login
+*AuthApi* | [**logoutUser**](docs/AuthApi.md#logoutUser) | **POST** /auth/logout/ | User logout
+*AuthApi* | [**recovery**](docs/AuthApi.md#recovery) | **POST** /auth/recovery/ | User recovery password by email or phone
+*AuthApi* | [**registerUser**](docs/AuthApi.md#registerUser) | **POST** /auth/register/ | User register
+*AuthApi* | [**resetPassword**](docs/AuthApi.md#resetPassword) | **POST** /auth/reset/{token}/ | Reset user password
+*CompaniesApi* | [**createCompany**](docs/CompaniesApi.md#createCompany) | **POST** /companies/ | Add company
+*CompaniesApi* | [**deleteCompany**](docs/CompaniesApi.md#deleteCompany) | **DELETE** /companies/{id}/ | Delete company by id
+*CompaniesApi* | [**getCompanies**](docs/CompaniesApi.md#getCompanies) | **GET** /companies/ | Get a list of companies available to the user
+*CompaniesApi* | [**getCompany**](docs/CompaniesApi.md#getCompany) | **GET** /companies/{id}/ | Get company by id
+*CompaniesApi* | [**updateCompany**](docs/CompaniesApi.md#updateCompany) | **PUT** /companies/{id}/ | Update company by id
+*DashboardApi* | [**addDashboard**](docs/DashboardApi.md#addDashboard) | **POST** /dashboard/{dash_type}/ | Add dashboard
+*DashboardApi* | [**deleteDashboard**](docs/DashboardApi.md#deleteDashboard) | **DELETE** /dashboard/{id}/ | Delete dashboard by id
+*DashboardApi* | [**getDashboard**](docs/DashboardApi.md#getDashboard) | **GET** /dashboard/{id}/ | Get a list of dashboards
+*DashboardApi* | [**getDashboardFullStruct**](docs/DashboardApi.md#getDashboardFullStruct) | **GET** /dashboard/{id}/full-struct/ | Get full struct dashboard by id
+*DashboardApi* | [**getDashboards**](docs/DashboardApi.md#getDashboards) | **GET** /dashboard/ | Get a list of dashboards
+*DashboardApi* | [**updateDashboard**](docs/DashboardApi.md#updateDashboard) | **PUT** /dashboard/{id}/ | Update dashboard by id
+*DataApi* | [**getDataDevice**](docs/DataApi.md#getDataDevice) | **GET** /data/device/{id}/ | Get device data
+*DataApi* | [**getDataObject**](docs/DataApi.md#getDataObject) | **GET** /data/object/ | Get object data
+*DataApi* | [**getLastDataObject**](docs/DataApi.md#getLastDataObject) | **GET** /data/object/last-data/ | Get object last data
+*DataChannelsApi* | [**createDataChannel**](docs/DataChannelsApi.md#createDataChannel) | **POST** /data-channels/ | Add data channel
+*DataChannelsApi* | [**deleteDataChannel**](docs/DataChannelsApi.md#deleteDataChannel) | **DELETE** /data-channels/{id}/ | Delete data channel by id
+*DataChannelsApi* | [**getDataChannel**](docs/DataChannelsApi.md#getDataChannel) | **GET** /data-channels/{id}/ | Get data channel by id
+*DataChannelsApi* | [**getDataChannels**](docs/DataChannelsApi.md#getDataChannels) | **GET** /data-channels/ | Get a list of data channels
+*DataChannelsApi* | [**updateDataChannel**](docs/DataChannelsApi.md#updateDataChannel) | **PUT** /data-channels/{id}/ | Update data channel by id
+*DataConvertersApi* | [**copyConvGroup**](docs/DataConvertersApi.md#copyConvGroup) | **POST** /data-converters-group/{id}/copy/ | Copy converter group by id
+*DataConvertersApi* | [**createDataConverter**](docs/DataConvertersApi.md#createDataConverter) | **POST** /data-converters-group/{conv_gr_id}/data-converters/ | Add data converter
+*DataConvertersApi* | [**createDataConverterGroup**](docs/DataConvertersApi.md#createDataConverterGroup) | **POST** /data-converters-group/ | Add data converter group
+*DataConvertersApi* | [**deleteDataConverter**](docs/DataConvertersApi.md#deleteDataConverter) | **DELETE** /data-converters-group/{conv_gr_id}/data-converters/{id}/ | Delete data converter by id
+*DataConvertersApi* | [**deleteDataConverterGroup**](docs/DataConvertersApi.md#deleteDataConverterGroup) | **DELETE** /data-converters-group/{id}/ | Delete data converter group by id
+*DataConvertersApi* | [**getDataConverter**](docs/DataConvertersApi.md#getDataConverter) | **GET** /data-converters-group/{conv_gr_id}/data-converters/{id}/ | Get data converter by id
+*DataConvertersApi* | [**getDataConverterGroup**](docs/DataConvertersApi.md#getDataConverterGroup) | **GET** /data-converters-group/{id}/ | Get data converter group by id
+*DataConvertersApi* | [**getDataConverterGroups**](docs/DataConvertersApi.md#getDataConverterGroups) | **GET** /data-converters-group/ | Get a list of data converter groups
+*DataConvertersApi* | [**getDataConverters**](docs/DataConvertersApi.md#getDataConverters) | **GET** /data-converters-group/{conv_gr_id}/data-converters/ | Get a list of data converters
+*DataConvertersApi* | [**setFeatures**](docs/DataConvertersApi.md#setFeatures) | **POST** /data-converters-group/{id}/features/ | Set features to converter group
+*DataConvertersApi* | [**updateDataConverter**](docs/DataConvertersApi.md#updateDataConverter) | **PUT** /data-converters-group/{conv_gr_id}/data-converters/{id}/ | Update data converter by id
+*DataConvertersApi* | [**updateDataConverterGroup**](docs/DataConvertersApi.md#updateDataConverterGroup) | **PUT** /data-converters-group/{id}/ | Update data converter group by id
+*DeviceApi* | [**addDevice**](docs/DeviceApi.md#addDevice) | **POST** /devices/ | Add device
+*DeviceApi* | [**deleteDevice**](docs/DeviceApi.md#deleteDevice) | **DELETE** /devices/{id}/ | Delete device by id
+*DeviceApi* | [**getDevice**](docs/DeviceApi.md#getDevice) | **GET** /devices/{id}/ | Get device by id
+*DeviceApi* | [**getDevices**](docs/DeviceApi.md#getDevices) | **GET** /devices/ | Get a list of devices
+*DeviceApi* | [**updateDevice**](docs/DeviceApi.md#updateDevice) | **PUT** /devices/{id}/ | Update device by id
+*DeviceNetIdTypesApi* | [**addDeviceNetIdType**](docs/DeviceNetIdTypesApi.md#addDeviceNetIdType) | **POST** /device-netid-types/ | Add device net id type
+*DeviceNetIdTypesApi* | [**deleteDeviceNetIdType**](docs/DeviceNetIdTypesApi.md#deleteDeviceNetIdType) | **DELETE** /device-netid-types/{id}/ | Delete device net id type by id
+*DeviceNetIdTypesApi* | [**getDeviceNetIdType**](docs/DeviceNetIdTypesApi.md#getDeviceNetIdType) | **GET** /device-netid-types/{id}/ | Get device net id type by id
+*DeviceNetIdTypesApi* | [**getDeviceNetIdTypes**](docs/DeviceNetIdTypesApi.md#getDeviceNetIdTypes) | **GET** /device-netid-types/ | Get a list of device net id types
+*DeviceNetIdTypesApi* | [**updateDeviceNetIdType**](docs/DeviceNetIdTypesApi.md#updateDeviceNetIdType) | **PUT** /device-netid-types/{id}/ | Update device net id type by id
+*DictsApi* | [**approvedCompaniesUser**](docs/DictsApi.md#approvedCompaniesUser) | **GET** /dicts/approved-companies/ | Get a list of companies available to the user
+*DictsApi* | [**getAuthMethods**](docs/DictsApi.md#getAuthMethods) | **GET** /dicts/auth-methods/ | Get a list of enabled auth methods from config
+*DictsApi* | [**getLanguages**](docs/DictsApi.md#getLanguages) | **GET** /dicts/languages/ | Get a list of user languages
+*DictsApi* | [**getUserRoles**](docs/DictsApi.md#getUserRoles) | **GET** /dicts/user-roles/ | Get a list of user roles
+*ExternalAccountsApi* | [**createExternalAccount**](docs/ExternalAccountsApi.md#createExternalAccount) | **POST** /external-accounts/ | Add external account
+*ExternalAccountsApi* | [**deleteExternalAccount**](docs/ExternalAccountsApi.md#deleteExternalAccount) | **DELETE** /external-accounts/{id}/ | Delete external account by id
+*ExternalAccountsApi* | [**getExternalAccount**](docs/ExternalAccountsApi.md#getExternalAccount) | **GET** /external-accounts/{id}/ | Get external account by id
+*ExternalAccountsApi* | [**getExternalAccounts**](docs/ExternalAccountsApi.md#getExternalAccounts) | **GET** /external-accounts/ | Get a list of external accounts
+*ExternalAccountsApi* | [**updateExternalAccount**](docs/ExternalAccountsApi.md#updateExternalAccount) | **PUT** /external-accounts/{id}/ | Update external account by id
+*GroupsApi* | [**addGroup**](docs/GroupsApi.md#addGroup) | **POST** /groups/{type}/ | Add group
+*GroupsApi* | [**deleteGroup**](docs/GroupsApi.md#deleteGroup) | **DELETE** /groups/{type}/{id}/ | Delete group by id
+*GroupsApi* | [**getGroup**](docs/GroupsApi.md#getGroup) | **GET** /groups/{type}/{id}/ | Get group by id
+*GroupsApi* | [**getGroups**](docs/GroupsApi.md#getGroups) | **GET** /groups/{type}/ | Get a list of groups
+*GroupsApi* | [**updateGroup**](docs/GroupsApi.md#updateGroup) | **PUT** /groups/{type}/{id}/ | Update group by id
+*LibrariesApi* | [**createLibrary**](docs/LibrariesApi.md#createLibrary) | **POST** /libraries/add/ | Add library from source code
+*LibrariesApi* | [**createLibraryFromFile**](docs/LibrariesApi.md#createLibraryFromFile) | **POST** /libraries/from-file/ | Add library from file
+*LibrariesApi* | [**createLibraryFromUrl**](docs/LibrariesApi.md#createLibraryFromUrl) | **POST** /libraries/from-url/ | Add library from url
+*LibrariesApi* | [**deleteLibrary**](docs/LibrariesApi.md#deleteLibrary) | **DELETE** /libraries/{id}/ | Delete library by id
+*LibrariesApi* | [**getLibraries**](docs/LibrariesApi.md#getLibraries) | **GET** /libraries/ | Get a list of libraries
+*LibrariesApi* | [**getLibrary**](docs/LibrariesApi.md#getLibrary) | **GET** /libraries/{id}/ | Get library by id
+*LibrariesApi* | [**updateLibrary**](docs/LibrariesApi.md#updateLibrary) | **PUT** /libraries/{id}/ | Update library by id
+*ModbusApi* | [**createRegister**](docs/ModbusApi.md#createRegister) | **POST** /modbus/registers/ | Add modbus register
+*ModbusApi* | [**deleteRegister**](docs/ModbusApi.md#deleteRegister) | **DELETE** /modbus/registers/{id}/ | Delete modbus register by id
+*ModbusApi* | [**getRegister**](docs/ModbusApi.md#getRegister) | **GET** /modbus/registers/{id}/ | Get modbus register by id
+*ModbusApi* | [**getRegisters**](docs/ModbusApi.md#getRegisters) | **GET** /modbus/registers/ | Get a list of modbus registers
+*ModbusApi* | [**updateRegister**](docs/ModbusApi.md#updateRegister) | **PUT** /modbus/registers/{id}/ | Update modbus register by id
+*ObjectApi* | [**addObject**](docs/ObjectApi.md#addObject) | **POST** /objects/ | Add object
+*ObjectApi* | [**createObjectType**](docs/ObjectApi.md#createObjectType) | **POST** /objects/object-type/ | Add object type
+*ObjectApi* | [**deleteObject**](docs/ObjectApi.md#deleteObject) | **DELETE** /objects/{id}/ | Delete object by id
+*ObjectApi* | [**deleteObjectType**](docs/ObjectApi.md#deleteObjectType) | **DELETE** /objects/object-type/{id}/ | Delete object type by id
+*ObjectApi* | [**favoriteObject**](docs/ObjectApi.md#favoriteObject) | **POST** /objects/favorite/ | Add object to dashboard
+*ObjectApi* | [**fullObjectStruct**](docs/ObjectApi.md#fullObjectStruct) | **GET** /objects/{id}/full-object-struct/ | Metrics of the object
+*ObjectApi* | [**getObject**](docs/ObjectApi.md#getObject) | **GET** /objects/{id}/ | Get object by id
+*ObjectApi* | [**getObjectType**](docs/ObjectApi.md#getObjectType) | **GET** /objects/object-types/{id}/ | Get object type by id
+*ObjectApi* | [**getObjectTypeFullStruct**](docs/ObjectApi.md#getObjectTypeFullStruct) | **GET** /objects/object-types/{id}/full-struct/ | Get full struct of object type by id
+*ObjectApi* | [**getObjectTypes**](docs/ObjectApi.md#getObjectTypes) | **GET** /objects/object-types/ | Get a list of object types
+*ObjectApi* | [**getObjects**](docs/ObjectApi.md#getObjects) | **GET** /objects/ | Get a list of objects
+*ObjectApi* | [**updateObject**](docs/ObjectApi.md#updateObject) | **PUT** /objects/{id}/ | Update object by id
+*ObjectApi* | [**updateObjectTypes**](docs/ObjectApi.md#updateObjectTypes) | **PUT** /objects/object-type/{id}/ | Update object type by id
+*TasksApi* | [**createProcessAction**](docs/TasksApi.md#createProcessAction) | **POST** /tasks/process/{proc_id}/action/ | Add action
+*TasksApi* | [**createTask**](docs/TasksApi.md#createTask) | **POST** /tasks/ | Add task
+*TasksApi* | [**createTaskProcess**](docs/TasksApi.md#createTaskProcess) | **POST** /tasks/{task_id}/process/ | Add process
+*TasksApi* | [**deleteProcessAction**](docs/TasksApi.md#deleteProcessAction) | **DELETE** /tasks/process/{proc_id}/action/{id}/ | Delete action by id
+*TasksApi* | [**deleteTask**](docs/TasksApi.md#deleteTask) | **DELETE** /tasks/{id}/ | Delete task by id
+*TasksApi* | [**deleteTaskProcess**](docs/TasksApi.md#deleteTaskProcess) | **DELETE** /tasks/{task_id}/process/{id}/ | Delete process by id
+*TasksApi* | [**getProcessAction**](docs/TasksApi.md#getProcessAction) | **GET** /tasks/process/{proc_id}/action/{id}/ | Get action by id
+*TasksApi* | [**getTask**](docs/TasksApi.md#getTask) | **GET** /tasks/{id}/ | Get task by id
+*TasksApi* | [**getTaskProcess**](docs/TasksApi.md#getTaskProcess) | **GET** /tasks/{task_id}/process/{id}/ | Get process by id
+*TasksApi* | [**getTasks**](docs/TasksApi.md#getTasks) | **GET** /tasks/ | Get a list of tasks
+*TasksApi* | [**updateProcessAction**](docs/TasksApi.md#updateProcessAction) | **PUT** /tasks/process/{proc_id}/action/{id}/ | Update action by id
+*TasksApi* | [**updateTask**](docs/TasksApi.md#updateTask) | **PUT** /tasks/{id}/ | Update task by id
+*TasksApi* | [**updateTaskProcess**](docs/TasksApi.md#updateTaskProcess) | **PUT** /tasks/{task_id}/process/{id}/ | Update process by id
+*TemplatesApi* | [**addTemplate**](docs/TemplatesApi.md#addTemplate) | **POST** /templates/ | Add template
+*TemplatesApi* | [**deleteTemplate**](docs/TemplatesApi.md#deleteTemplate) | **DELETE** /templates/{id}/ | Delete template by id
+*TemplatesApi* | [**getTemplate**](docs/TemplatesApi.md#getTemplate) | **GET** /templates/{id}/ | Get template by id
+*TemplatesApi* | [**getTemplates**](docs/TemplatesApi.md#getTemplates) | **GET** /templates/ | Get a list of templates
+*TemplatesApi* | [**updateTemplate**](docs/TemplatesApi.md#updateTemplate) | **PUT** /templates/{id}/ | Update template by id
+*UserApi* | [**addUser**](docs/UserApi.md#addUser) | **POST** /users/ | Add user
+*UserApi* | [**changeCompanyUser**](docs/UserApi.md#changeCompanyUser) | **POST** /users/change-company/ | User change company
+*UserApi* | [**clearSessionUser**](docs/UserApi.md#clearSessionUser) | **POST** /users/clear-session/ | User clear session
+*UserApi* | [**deleteUser**](docs/UserApi.md#deleteUser) | **DELETE** /users/{id}/ | Delete user by id
+*UserApi* | [**getMe**](docs/UserApi.md#getMe) | **GET** /users/me/ | Get Me
+*UserApi* | [**getUser**](docs/UserApi.md#getUser) | **GET** /users/{id}/ | Get user by id
+*UserApi* | [**getUsers**](docs/UserApi.md#getUsers) | **GET** /users/ | Get a list of users
+*UserApi* | [**updateUser**](docs/UserApi.md#updateUser) | **PUT** /users/{id}/ | Update user by id
+*UtilityResourcesApi* | [**createConsumptionGroups**](docs/UtilityResourcesApi.md#createConsumptionGroups) | **POST** /utility-resources/ | Add utility resource
+*UtilityResourcesApi* | [**deleteConsumptionGroup**](docs/UtilityResourcesApi.md#deleteConsumptionGroup) | **DELETE** /utility-resources/{id}/ | Delete utility resource by id
+*UtilityResourcesApi* | [**getConsumptionGroup**](docs/UtilityResourcesApi.md#getConsumptionGroup) | **GET** /utility-resources/{id}/ | Get utility resource by id
+*UtilityResourcesApi* | [**getConsumptionGroups**](docs/UtilityResourcesApi.md#getConsumptionGroups) | **GET** /utility-resources/ | Get a list utility resources
+*UtilityResourcesApi* | [**updateConsumptionGroup**](docs/UtilityResourcesApi.md#updateConsumptionGroup) | **PUT** /utility-resources/{id}/ | Update utility resource by id
+*WidgetsApi* | [**addWidget**](docs/WidgetsApi.md#addWidget) | **POST** /widgets/ | Add widget
+*WidgetsApi* | [**deleteWidget**](docs/WidgetsApi.md#deleteWidget) | **DELETE** /widgets/{id}/ | Delete widget by id
+*WidgetsApi* | [**favoriteWidget**](docs/WidgetsApi.md#favoriteWidget) | **POST** /widgets/favorite/ | Add widget to dashboard
+*WidgetsApi* | [**getWidget**](docs/WidgetsApi.md#getWidget) | **GET** /widgets/{id}/ | Get widget by id
+*WidgetsApi* | [**getWidgets**](docs/WidgetsApi.md#getWidgets) | **GET** /widgets/{display_type}/ | Get list of widgets
+*WidgetsApi* | [**updateWidget**](docs/WidgetsApi.md#updateWidget) | **PUT** /widgets/{id}/ | Update widget
 
 
 ## Documentation for Models
 
+ - [Account](docs/Account.md)
+ - [ActionParams](docs/ActionParams.md)
+ - [Actions](docs/Actions.md)
+ - [AddActionScheme](docs/AddActionScheme.md)
+ - [AddProcessScheme](docs/AddProcessScheme.md)
+ - [Addr](docs/Addr.md)
+ - [AddrId](docs/AddrId.md)
+ - [AddrId1](docs/AddrId1.md)
+ - [AddressNodeNormScheme](docs/AddressNodeNormScheme.md)
+ - [AddressNodeNormSchemeCreator](docs/AddressNodeNormSchemeCreator.md)
+ - [AddressNodeScheme](docs/AddressNodeScheme.md)
+ - [AdvancedTimeBaseScheme](docs/AdvancedTimeBaseScheme.md)
  - [Altitude](docs/Altitude.md)
+ - [AppApiv2ConstansActionPrio1](docs/AppApiv2ConstansActionPrio1.md)
+ - [AppApiv2ConstansActions1](docs/AppApiv2ConstansActions1.md)
+ - [AppApiv2ConstansDataFormatInOut1](docs/AppApiv2ConstansDataFormatInOut1.md)
+ - [AuthMethods](docs/AuthMethods.md)
+ - [Cards](docs/Cards.md)
+ - [ClientId](docs/ClientId.md)
+ - [Color](docs/Color.md)
+ - [Color1](docs/Color1.md)
+ - [Comment](docs/Comment.md)
+ - [Comment1](docs/Comment1.md)
+ - [Comment2](docs/Comment2.md)
+ - [Comment3](docs/Comment3.md)
+ - [Comments](docs/Comments.md)
+ - [Comments1](docs/Comments1.md)
+ - [Comments10](docs/Comments10.md)
+ - [Comments11](docs/Comments11.md)
+ - [Comments2](docs/Comments2.md)
+ - [Comments3](docs/Comments3.md)
+ - [Comments4](docs/Comments4.md)
+ - [Comments5](docs/Comments5.md)
+ - [Comments6](docs/Comments6.md)
+ - [Comments7](docs/Comments7.md)
+ - [Comments8](docs/Comments8.md)
+ - [Comments9](docs/Comments9.md)
  - [CommonError](docs/CommonError.md)
  - [CompanyId](docs/CompanyId.md)
- - [Config](docs/Config.md)
- - [ConfigCreateScheme](docs/ConfigCreateScheme.md)
- - [ConfigScheme](docs/ConfigScheme.md)
- - [ConfigSchemeCreator](docs/ConfigSchemeCreator.md)
+ - [CompanyId1](docs/CompanyId1.md)
+ - [CompanyId2](docs/CompanyId2.md)
+ - [CompanyScheme](docs/CompanyScheme.md)
+ - [ConstantValue](docs/ConstantValue.md)
+ - [ConsumptionGroupBaseScheme](docs/ConsumptionGroupBaseScheme.md)
+ - [ConsumptionGroupId](docs/ConsumptionGroupId.md)
+ - [ConvAttach](docs/ConvAttach.md)
+ - [ConvClass](docs/ConvClass.md)
+ - [ConvGroupId](docs/ConvGroupId.md)
+ - [ConvId](docs/ConvId.md)
+ - [ConverterGroupBaseSchemeInput](docs/ConverterGroupBaseSchemeInput.md)
+ - [ConverterGroupBaseSchemeInputCreator](docs/ConverterGroupBaseSchemeInputCreator.md)
+ - [ConverterGroupBaseSchemeOutput](docs/ConverterGroupBaseSchemeOutput.md)
+ - [CreateAddressNode](docs/CreateAddressNode.md)
+ - [CreateAddressNodeScheme](docs/CreateAddressNodeScheme.md)
+ - [CreateAddressNormScheme](docs/CreateAddressNormScheme.md)
+ - [CreateAdvancedTimeScheme](docs/CreateAdvancedTimeScheme.md)
+ - [CreateAmqpDetailedUriScheme](docs/CreateAmqpDetailedUriScheme.md)
+ - [CreateCompanyScheme](docs/CreateCompanyScheme.md)
+ - [CreateConsumptionGroupScheme](docs/CreateConsumptionGroupScheme.md)
+ - [CreateConverterGroupScheme](docs/CreateConverterGroupScheme.md)
+ - [CreateDataChannelScheme](docs/CreateDataChannelScheme.md)
+ - [CreateDeviceNetIdTypeScheme](docs/CreateDeviceNetIdTypeScheme.md)
+ - [CreateDeviceScheme](docs/CreateDeviceScheme.md)
+ - [CreateExternalAccountScheme](docs/CreateExternalAccountScheme.md)
+ - [CreateExternalAccountTagScheme](docs/CreateExternalAccountTagScheme.md)
+ - [CreateGroupScheme](docs/CreateGroupScheme.md)
+ - [CreateGroupTag](docs/CreateGroupTag.md)
+ - [CreateKafkaDetailedUriScheme](docs/CreateKafkaDetailedUriScheme.md)
+ - [CreateLNSPayloadProcessScheme](docs/CreateLNSPayloadProcessScheme.md)
+ - [CreateMetricScheme](docs/CreateMetricScheme.md)
+ - [CreateModbusRegisterScheme](docs/CreateModbusRegisterScheme.md)
+ - [CreateMqttDetailedUri](docs/CreateMqttDetailedUri.md)
+ - [CreateNormProcessScheme](docs/CreateNormProcessScheme.md)
+ - [CreateObjectScheme](docs/CreateObjectScheme.md)
+ - [CreateObjectTypeScheme](docs/CreateObjectTypeScheme.md)
+ - [CreateObjectWidgetPlotSettingsScheme](docs/CreateObjectWidgetPlotSettingsScheme.md)
+ - [CreateObjectWidgetScheme](docs/CreateObjectWidgetScheme.md)
+ - [CreateRawDataProcessScheme](docs/CreateRawDataProcessScheme.md)
+ - [CreateSendToAMQPBrokerScheme](docs/CreateSendToAMQPBrokerScheme.md)
+ - [CreateSendToApiLNSScheme](docs/CreateSendToApiLNSScheme.md)
+ - [CreateSendToEmailScheme](docs/CreateSendToEmailScheme.md)
+ - [CreateSendToHTTPScheme](docs/CreateSendToHTTPScheme.md)
+ - [CreateSendToMQTTScheme](docs/CreateSendToMQTTScheme.md)
+ - [CreateSendToSMSScheme](docs/CreateSendToSMSScheme.md)
+ - [CreateSendToTelegramScheme](docs/CreateSendToTelegramScheme.md)
+ - [CreateSimpleTimeScheme](docs/CreateSimpleTimeScheme.md)
+ - [CreateTaskTimeScheme](docs/CreateTaskTimeScheme.md)
+ - [CreateTemplateScheme](docs/CreateTemplateScheme.md)
+ - [CreateUserScheme](docs/CreateUserScheme.md)
  - [Created](docs/Created.md)
- - [DateTime](docs/DateTime.md)
+ - [DashboardCardScheme](docs/DashboardCardScheme.md)
+ - [DashboardCardSchemeObj](docs/DashboardCardSchemeObj.md)
+ - [DashboardFullStructScheme](docs/DashboardFullStructScheme.md)
+ - [DashboardScheme](docs/DashboardScheme.md)
+ - [DashboardType](docs/DashboardType.md)
+ - [DashboardWidgetScheme](docs/DashboardWidgetScheme.md)
+ - [DashboardWidgetSchemeWidget](docs/DashboardWidgetSchemeWidget.md)
+ - [Data](docs/Data.md)
+ - [DataChannelBaseScheme](docs/DataChannelBaseScheme.md)
+ - [DataDirection](docs/DataDirection.md)
+ - [DataHex](docs/DataHex.md)
+ - [DateFrom](docs/DateFrom.md)
+ - [DateTo](docs/DateTo.md)
+ - [DayOfMonth](docs/DayOfMonth.md)
+ - [DayOfWeek](docs/DayOfWeek.md)
+ - [DefaultStatus](docs/DefaultStatus.md)
  - [Detail](docs/Detail.md)
  - [DeviceDataScheme](docs/DeviceDataScheme.md)
- - [DeviceInfoScheme](docs/DeviceInfoScheme.md)
- - [DeviceNameScheme](docs/DeviceNameScheme.md)
- - [FirmwareScheme](docs/FirmwareScheme.md)
- - [Force](docs/Force.md)
+ - [DeviceNetIdTypeScheme](docs/DeviceNetIdTypeScheme.md)
+ - [DeviceScheme](docs/DeviceScheme.md)
+ - [DictItemBaseScheme](docs/DictItemBaseScheme.md)
+ - [DictItemScheme](docs/DictItemScheme.md)
+ - [Email](docs/Email.md)
+ - [EndDate](docs/EndDate.md)
+ - [EndDate1](docs/EndDate1.md)
+ - [EndDate2](docs/EndDate2.md)
+ - [Endian](docs/Endian.md)
+ - [EndingType](docs/EndingType.md)
+ - [EndingType1](docs/EndingType1.md)
+ - [Expression](docs/Expression.md)
+ - [ExternalAccountBaseScheme](docs/ExternalAccountBaseScheme.md)
+ - [ExternalAccountTagsBaseScheme](docs/ExternalAccountTagsBaseScheme.md)
+ - [Fport](docs/Fport.md)
+ - [FromEmail](docs/FromEmail.md)
+ - [Front](docs/Front.md)
+ - [FullName](docs/FullName.md)
+ - [FullName1](docs/FullName1.md)
+ - [GraphClass](docs/GraphClass.md)
+ - [Group](docs/Group.md)
+ - [GroupFullStructScheme](docs/GroupFullStructScheme.md)
+ - [GroupIds](docs/GroupIds.md)
+ - [GroupScheme](docs/GroupScheme.md)
+ - [GroupTagScheme](docs/GroupTagScheme.md)
+ - [GroupType](docs/GroupType.md)
+ - [Groups](docs/Groups.md)
+ - [Groups1](docs/Groups1.md)
+ - [Groups2](docs/Groups2.md)
  - [HTTPValidationError](docs/HTTPValidationError.md)
+ - [Hours](docs/Hours.md)
+ - [Icon](docs/Icon.md)
+ - [Icon1](docs/Icon1.md)
+ - [Id](docs/Id.md)
+ - [Id1](docs/Id1.md)
+ - [IntervalTypes](docs/IntervalTypes.md)
+ - [Items](docs/Items.md)
+ - [LastLogin](docs/LastLogin.md)
  - [Latitude](docs/Latitude.md)
- - [LocationScheme](docs/LocationScheme.md)
+ - [ListDictItemScheme](docs/ListDictItemScheme.md)
+ - [Locale](docs/Locale.md)
  - [Longitude](docs/Longitude.md)
+ - [Mac](docs/Mac.md)
+ - [Methods](docs/Methods.md)
+ - [MetricType](docs/MetricType.md)
+ - [MetricValues](docs/MetricValues.md)
+ - [Metrics](docs/Metrics.md)
+ - [Minutes](docs/Minutes.md)
+ - [ModbusRegisterBaseScheme](docs/ModbusRegisterBaseScheme.md)
+ - [Month](docs/Month.md)
  - [Name](docs/Name.md)
- - [Personalization](docs/Personalization.md)
- - [Settings](docs/Settings.md)
- - [SlaveProfile](docs/SlaveProfile.md)
- - [State](docs/State.md)
+ - [Name1](docs/Name1.md)
+ - [Name2](docs/Name2.md)
+ - [Name3](docs/Name3.md)
+ - [Name4](docs/Name4.md)
+ - [NumExpr](docs/NumExpr.md)
+ - [NumExpr1](docs/NumExpr1.md)
+ - [NumExpr2](docs/NumExpr2.md)
+ - [ObjScheme](docs/ObjScheme.md)
+ - [ObjectBaseScheme](docs/ObjectBaseScheme.md)
+ - [ObjectDataScheme](docs/ObjectDataScheme.md)
+ - [ObjectFullStructScheme](docs/ObjectFullStructScheme.md)
+ - [ObjectLastDataScheme](docs/ObjectLastDataScheme.md)
+ - [ObjectMetricScheme](docs/ObjectMetricScheme.md)
+ - [ObjectMetricValueScheme](docs/ObjectMetricValueScheme.md)
+ - [ObjectTypeBaseScheme](docs/ObjectTypeBaseScheme.md)
+ - [ObjectTypeFullStructScheme](docs/ObjectTypeFullStructScheme.md)
+ - [ObjectTypeScheme](docs/ObjectTypeScheme.md)
+ - [ObjectTypes](docs/ObjectTypes.md)
+ - [ObjectTypes1](docs/ObjectTypes1.md)
+ - [ObjectTypesDataScheme](docs/ObjectTypesDataScheme.md)
+ - [ObjectWidgetPlotSettingsBaseScheme](docs/ObjectWidgetPlotSettingsBaseScheme.md)
+ - [ObjectWidgetScheme](docs/ObjectWidgetScheme.md)
+ - [PageAddressNodeNormScheme](docs/PageAddressNodeNormScheme.md)
+ - [PageAddressNodeScheme](docs/PageAddressNodeScheme.md)
+ - [PageCompanyScheme](docs/PageCompanyScheme.md)
+ - [PageConsumptionGroupBaseScheme](docs/PageConsumptionGroupBaseScheme.md)
+ - [PageConverterGroupBaseScheme](docs/PageConverterGroupBaseScheme.md)
+ - [PageDataChannelBaseScheme](docs/PageDataChannelBaseScheme.md)
+ - [PageDeviceDataScheme](docs/PageDeviceDataScheme.md)
+ - [PageDeviceNetIdTypeScheme](docs/PageDeviceNetIdTypeScheme.md)
+ - [PageDeviceScheme](docs/PageDeviceScheme.md)
+ - [PageDictItemScheme](docs/PageDictItemScheme.md)
+ - [PageExternalAccountBaseScheme](docs/PageExternalAccountBaseScheme.md)
+ - [PageGroupScheme](docs/PageGroupScheme.md)
+ - [PageModbusRegisterBaseScheme](docs/PageModbusRegisterBaseScheme.md)
+ - [PageObjectBaseScheme](docs/PageObjectBaseScheme.md)
+ - [PageObjectDataScheme](docs/PageObjectDataScheme.md)
+ - [PageObjectLastDataScheme](docs/PageObjectLastDataScheme.md)
+ - [PageObjectTypeBaseScheme](docs/PageObjectTypeBaseScheme.md)
+ - [PageObjectWidgetScheme](docs/PageObjectWidgetScheme.md)
+ - [PageTaskTimeScheme](docs/PageTaskTimeScheme.md)
+ - [PageTemplateScheme](docs/PageTemplateScheme.md)
+ - [PageUserBaseScheme](docs/PageUserBaseScheme.md)
+ - [Pagination](docs/Pagination.md)
+ - [ParamName](docs/ParamName.md)
+ - [ParamName1](docs/ParamName1.md)
+ - [ParentId](docs/ParentId.md)
+ - [Password](docs/Password.md)
+ - [Period](docs/Period.md)
+ - [Phone](docs/Phone.md)
+ - [Phone1](docs/Phone1.md)
+ - [Phone2](docs/Phone2.md)
+ - [Port](docs/Port.md)
+ - [Port1](docs/Port1.md)
+ - [PostAddress](docs/PostAddress.md)
+ - [PostAddress1](docs/PostAddress1.md)
+ - [Prefix](docs/Prefix.md)
+ - [Prefix1](docs/Prefix1.md)
+ - [Prefix2](docs/Prefix2.md)
+ - [Prefix3](docs/Prefix3.md)
+ - [Prio](docs/Prio.md)
+ - [ProcessActionBaseScheme](docs/ProcessActionBaseScheme.md)
+ - [ProcessBaseScheme](docs/ProcessBaseScheme.md)
+ - [ProcessParams](docs/ProcessParams.md)
+ - [ProcessScheme](docs/ProcessScheme.md)
+ - [Processes](docs/Processes.md)
+ - [Proto](docs/Proto.md)
+ - [Protocol](docs/Protocol.md)
+ - [PurposeClass](docs/PurposeClass.md)
+ - [Qos](docs/Qos.md)
+ - [RegisterTypes](docs/RegisterTypes.md)
+ - [RepetitionsCount](docs/RepetitionsCount.md)
+ - [RepetitionsCount1](docs/RepetitionsCount1.md)
+ - [ResetPasswordScheme](docs/ResetPasswordScheme.md)
+ - [SelfMetrics](docs/SelfMetrics.md)
+ - [SimpleTimeBaseScheme](docs/SimpleTimeBaseScheme.md)
+ - [Site](docs/Site.md)
+ - [Site1](docs/Site1.md)
+ - [Status](docs/Status.md)
+ - [StatusUser](docs/StatusUser.md)
+ - [TaggedGroups](docs/TaggedGroups.md)
+ - [Tags](docs/Tags.md)
+ - [Tags1](docs/Tags1.md)
+ - [TaskTimeBaseScheme](docs/TaskTimeBaseScheme.md)
+ - [TaskTimeScheme](docs/TaskTimeScheme.md)
+ - [TasksEndingTypes](docs/TasksEndingTypes.md)
+ - [TemplId](docs/TemplId.md)
+ - [TemplateScheme](docs/TemplateScheme.md)
+ - [TimeField](docs/TimeField.md)
+ - [TimeField1](docs/TimeField1.md)
+ - [Title](docs/Title.md)
+ - [Title1](docs/Title1.md)
+ - [Topic](docs/Topic.md)
+ - [Tz](docs/Tz.md)
+ - [Tz1](docs/Tz1.md)
+ - [Unit](docs/Unit.md)
+ - [Unit1](docs/Unit1.md)
+ - [Unit2](docs/Unit2.md)
+ - [Unit3](docs/Unit3.md)
+ - [UpId](docs/UpId.md)
+ - [UpdateObjectWidget](docs/UpdateObjectWidget.md)
+ - [UpdateObjectWidgetPlotSettingsScheme](docs/UpdateObjectWidgetPlotSettingsScheme.md)
+ - [UpdateObjectWidgetPlotsInner](docs/UpdateObjectWidgetPlotsInner.md)
  - [Updated](docs/Updated.md)
- - [UserAuditScheme](docs/UserAuditScheme.md)
+ - [UriDetailedField](docs/UriDetailedField.md)
+ - [UriDetailedFieldAnyOf](docs/UriDetailedFieldAnyOf.md)
+ - [UriFullManual](docs/UriFullManual.md)
+ - [UserAuditSchemeInput](docs/UserAuditSchemeInput.md)
+ - [UserAuditSchemeOutput](docs/UserAuditSchemeOutput.md)
+ - [UserBaseScheme](docs/UserBaseScheme.md)
+ - [UserId](docs/UserId.md)
+ - [UserRecoveryPasswordScheme](docs/UserRecoveryPasswordScheme.md)
+ - [UserRegisterScheme](docs/UserRegisterScheme.md)
  - [UserRole](docs/UserRole.md)
+ - [Username](docs/Username.md)
+ - [Username1](docs/Username1.md)
  - [ValidationError](docs/ValidationError.md)
  - [ValidationErrorLocInner](docs/ValidationErrorLocInner.md)
+ - [ViewClass](docs/ViewClass.md)
+ - [WeekChoices](docs/WeekChoices.md)
+ - [WeekDays](docs/WeekDays.md)
+ - [WidgetDisplayType](docs/WidgetDisplayType.md)
+ - [Widgets](docs/Widgets.md)
+ - [WlDomain](docs/WlDomain.md)
+ - [WlDomain1](docs/WlDomain1.md)
 
 
 <a id="documentation-for-authorization"></a>
@@ -172,19 +551,11 @@ Class | Method | HTTP request | Description
 
 
 Authentication schemes defined for the API:
-<a id="HTTPBasic"></a>
-### HTTPBasic
+<a id="AWSAuthenticator"></a>
+### AWSAuthenticator
 
 
 - **Type**: HTTP basic authentication
-
-<a id="APIKeyHeader"></a>
-### APIKeyHeader
-
-
-- **Type**: API key
-- **API key parameter name**: X-API-Key
-- **Location**: HTTP header
 
 
 ## Recommendation

@@ -7,9 +7,13 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**modelId** | **Integer** | the device model identifier |  |
-|**serial** | **String** | the device serial number |  |
-|**data** | **String** | device measurements data |  |
+|**extId** | **Integer** | unique packet id |  |
+|**dataConverterId** | **Integer** | unique data converter id |  |
+|**created** | **OffsetDateTime** | state creation time |  |
+|**deviceDate** | **OffsetDateTime** | state device date time |  |
+|**parsedData** | **Object** |  |  |
+|**netProtocolData** | **Object** |  |  |
+|**specificData** | **Object** |  |  |
 
 
 

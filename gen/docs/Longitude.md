@@ -2,6 +2,7 @@
 
 # Longitude
 
+Device longitude
 
 ## Properties
 

@@ -2,7 +2,7 @@
 
 # CompanyId
 
-unique identifier of the owner's company, returned only for Superadmin
+Unique identifier of the owner's company, returned only for Superadmin
 
 ## Properties
 

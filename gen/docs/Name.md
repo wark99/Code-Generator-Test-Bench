@@ -2,7 +2,7 @@
 
 # Name
 
-user name
+process action name
 
 ## Properties
 
