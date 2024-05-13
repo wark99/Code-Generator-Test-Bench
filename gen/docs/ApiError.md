@@ -1,0 +1,14 @@
+
+
+# ApiError
+
+
+## Properties
+
+| Name | Type | Description | Notes |
+|------------ | ------------- | ------------- | -------------|
+|**message** | **String** |  |  |
+|**field** | **String** |  |  [optional] |
+
+
+
