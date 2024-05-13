@@ -1,0 +1,174 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: hello@essense.io
+    name: Essense Team
+    url: https://www.essense.io/
+  termsOfService: https://www.essense.io/terms-of-service
+  title: Essense Public API
+  version: 0.0.1
+servers:
+- url: /
+paths:
+  /projects:
+    post:
+      description: Create a project.
+      operationId: create_project_projects_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectSchema'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectSchema'
+          description: Successful Response
+        "401":
+          description: Invalid or expired token.
+      security:
+      - HTTPBearer: []
+      summary: Create Project
+      tags:
+      - projects
+      x-content-type: application/json
+      x-accepts: application/json
+  /projects/{project_id}/feedback:
+    post:
+      description: Import feedback for the project.
+      operationId: import_feedback_projects__project_id__feedback_post
+      parameters:
+      - description: Id of the project to import feedback.
+        explode: false
+        in: path
+        name: project_id
+        required: true
+        schema:
+          description: Id of the project to import feedback.
+          title: Project Id
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/FeedbackSchema'
+              type: array
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "401":
+          description: Invalid or expired token.
+      security:
+      - HTTPBearer: []
+      summary: Import Feedback
+      tags:
+      - feedback
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  schemas:
+    CreateProjectSchema:
+      example:
+        image: Image
+        title: Title
+      properties:
+        image:
+          $ref: '#/components/schemas/Image'
+        title:
+          $ref: '#/components/schemas/Title'
+      title: CreateProjectSchema
+    FeedbackSchema:
+      example:
+        date: 0
+        metadata: ""
+        user_id: User_Id
+        comment: comment
+        title: Title_1
+      properties:
+        date:
+          description: Timestamp in milliseconds when the review was created.
+          title: Date
+          type: integer
+        comment:
+          description: The review comment content.
+          title: Comment
+          type: string
+        title:
+          $ref: '#/components/schemas/Title_1'
+        user_id:
+          $ref: '#/components/schemas/User_Id'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+      required:
+      - comment
+      - date
+      title: FeedbackSchema
+    ProjectSchema:
+      example:
+        image: Image
+        id: id
+        title: Title
+      properties:
+        image:
+          $ref: '#/components/schemas/Image'
+        title:
+          $ref: '#/components/schemas/Title'
+        id:
+          description: Id of the project.
+          title: Id
+          type: string
+      required:
+      - id
+      - image
+      - title
+      title: ProjectSchema
+    Image:
+      anyOf:
+      - type: string
+      - nullable: true
+      description: Url of thumbnail for the project.
+      title: Image
+    Title:
+      anyOf:
+      - type: string
+      - nullable: true
+      description: Title of the project.
+      title: Title
+    Title_1:
+      anyOf:
+      - type: string
+      - nullable: true
+      description: Title of the review.
+      title: Title
+    User_Id:
+      anyOf:
+      - type: string
+      - nullable: true
+      description: User name (could be anonymized) or id or email or something.
+      title: User Id
+    Metadata_anyOf_value:
+      anyOf:
+      - type: string
+      - type: integer
+    Metadata:
+      anyOf:
+      - additionalProperties:
+          $ref: '#/components/schemas/Metadata_anyOf_value'
+      - nullable: true
+      description: "Any additional data for the review, for example, rating of the\
+        \ product."
+      title: Metadata
+  securitySchemes:
+    HTTPBearer:
+      scheme: bearer
+      type: http
+
