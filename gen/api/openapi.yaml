@@ -1,0 +1,961 @@
+openapi: 3.1.0
+info:
+  description: "Convert standard OpenAPI requests to Internal API s**t show, respond\
+    \ with normalized data and messaging"
+  title: Proxy API Adapter
+  version: 1.1.1
+servers:
+- description: API Adapter Server
+  url: https://adapter.sandbox.local
+security:
+- internal-JWT: []
+tags:
+- name: Authentication
+- description: Project field definitions
+  name: Profiles
+- description: File containers with metadata
+  name: Records
+- description: "Digital files such as documents, attachments, etc."
+  name: Records/Files
+paths:
+  /oauth/token:
+    post:
+      description: Request authentication token
+      operationId: auth-login
+      requestBody:
+        content:
+          application/json:
+            examples:
+              client-credentials:
+                summary: Initial Authentication
+                value:
+                  grant_type: client_credentials
+            schema:
+              $ref: '#/components/schemas/Request.Authentication.ClientCredentials'
+        required: true
+      responses:
+        "200":
+          $ref: '#/components/responses/Authentication.200'
+        "401":
+          $ref: '#/components/responses/Authentication.401'
+        "406":
+          $ref: '#/components/responses/Authentication.406'
+        "422":
+          $ref: '#/components/responses/Authentication.422'
+      security:
+      - Basic-Auth: []
+      tags:
+      - Authentication
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/records/files/create:
+    post:
+      description: Upload new file
+      operationId: upload-new-file
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/upload_new_file_request'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                - file_name: abc.pdf
+                  nuid: b20f8ce0-8a67-4489-acc4-10e5cd9b6b33
+                  page_count: 1
+              schema:
+                $ref: '#/components/schemas/upload_new_file_201_response'
+          description: Created
+        "401":
+          content:
+            application/json:
+              example:
+                success: false
+                message: You are not authorized to perform this request.
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Authentication failed
+        "403":
+          content:
+            application/json:
+              examples:
+                profile-access-denied:
+                  summary: Profile Access Denied
+                  value:
+                    success: false
+                    message: Access denied to the requested Profile
+                image-access-denied:
+                  summary: Image Access Denied
+                  value:
+                    success: false
+                    message: Access denied to the requested Image
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Unauthorized access
+        "404":
+          content:
+            application/json:
+              examples:
+                profile-not-found:
+                  summary: Profile not found
+                  value:
+                    success: false
+                    message: "There was a problem processing the request in {the Internal\
+                      \ API}"
+                    errors:
+                    - Requested Profile not found
+                image-not-found:
+                  summary: Image Not Found
+                  value:
+                    success: false
+                    message: Requested Image not found
+                tab-not-found:
+                  summary: Tab Not Found
+                  value:
+                    success: false
+                    message: Requested Tab not found
+              schema:
+                $ref: '#/components/schemas/upload_new_file_404_response'
+          description: Not Found
+        "406":
+          content:
+            application/json:
+              examples:
+                details-from-esd:
+                  summary: Errors from Internal API
+                  value:
+                  - '"profile_id" is required'
+                  - '"document_id" is missing or invalid'
+                  - "There was a problem processing the request in {the Internal API}"
+                details-from-adapter:
+                  summary: Errors from Adapter Proxy
+                  value:
+                  - '"sha1_check" does not match uploaded file'
+                  - Could not find data for request parameter "file"
+              schema:
+                $ref: '#/components/schemas/Response.Errors'
+          description: Not Acceptable (Validation errors)
+        "422":
+          content:
+            application/json:
+              example:
+                success: false
+                message: "There was a problem processing the request in {the Internal\
+                  \ API}"
+                errors:
+                - Duplicate Bookmark detected
+              schema:
+                $ref: '#/components/schemas/Response.Errors'
+          description: Unprocessable Entity
+      tags:
+      - Records/Files
+      x-content-type: multipart/form-data
+      x-accepts: application/json
+  /v1/records/files/replace:
+    put:
+      description: Upload new version of a file
+      operationId: upload-file-revision
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/upload_file_revision_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                - nuid: b20f8ce0-8a67-4489-acc4-10e5cd9b6b33
+                  file_name: abc.pdf
+                  page_count: 1
+              schema:
+                $ref: '#/components/schemas/Response.Success.Array.Objects'
+          description: OK
+        "401":
+          content:
+            application/json:
+              example:
+                success: false
+                message: You are not authorized to perform this request.
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Authentication failed
+        "403":
+          content:
+            application/json:
+              examples:
+                profile-access-denied:
+                  summary: Profile Access Denied
+                  value:
+                    success: false
+                    message: Access denied to the requested Profile
+                image-access-denied:
+                  summary: Image Access Denied
+                  value:
+                    success: false
+                    message: Access denied to the requested Image
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Unauthorized access
+        "406":
+          content:
+            application/json:
+              examples:
+                details-from-esd:
+                  summary: Errors from Internal API
+                  value:
+                  - '"profile_id" is required'
+                  - '"profile_id" must be a positive (non-zero) integer'
+                  - '"document_id" is missing or invalid'
+                  - '"old_nuid" is required'
+                  - '"old_nuid" is not a valid UUID'
+                  - "There was a problem processing the request in {the Internal API}"
+                details-from-adapter:
+                  summary: Errors from Proxy API
+                  value:
+                  - '"sha1_check" does not match uploaded file'
+                  - Could not find data for request parameter "file"
+              schema:
+                $ref: '#/components/schemas/Response.Errors'
+          description: Not Acceptable (Validation errors)
+        "422":
+          content:
+            application/json:
+              example:
+                success: false
+                message: "There was a problem processing the request in {the Internal\
+                  \ API}"
+                errors:
+                - Duplicate data detected
+              schema:
+                $ref: '#/components/schemas/Response.Errors'
+          description: Unprocessable Entity
+      tags:
+      - Records/Files
+      x-content-type: multipart/form-data
+      x-accepts: application/json
+  /v1/records/files/view:
+    get:
+      description: Fetch file objects based on provided IDs
+      operationId: view-record-files
+      parameters:
+      - $ref: '#/components/parameters/Param.profile_id.required'
+      - description: "Send multiple IDs by duplicating the parameter name for each\
+          \ ID: <br/>`document_ids[]=ID_1&document_ids[]=ID_2&...`"
+        explode: true
+        in: query
+        name: "document_ids[]"
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                success-response:
+                  summary: Successful response
+                  value:
+                  - success: true
+                    data:
+                    - id: 1
+                      files:
+                      - download_link: '"https://docuview-lbs.sima.io/docuvieware?nuid=c5e990d2-...&profile_id=1367&doc_id=RFA0MDhwe..."'
+                        filename: abc.pdf
+                        nuid: b20f8ce0-8a67-4489-acc4-10e5cd9b6b33
+                        uploaded_on: 2023-02-18
+                        uploaded_by: Admin
+                        version: 1
+                        view_link: '"https://docuview-lbs.sima.io/docuvieware?nuid=c5e990d2-...&profile_id=1367&doc_id=RFA0MDhwe..."'
+              schema:
+                $ref: '#/components/schemas/Response.Success.Array.Objects'
+          description: OK
+          x-Note: Values in "data" are not necessarily delivered as intuitive type
+        "403":
+          content:
+            application/json:
+              examples:
+                profile-access-denied:
+                  summary: Profile Access Denied
+                  value:
+                    success: false
+                    message: Access denied to the requested Profile
+                image-access-denied:
+                  summary: Image Access Denied
+                  value:
+                    success: false
+                    message: Access denied to the requested Image
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Unauthorized access
+        "406":
+          content:
+            application/json:
+              example:
+                success: false
+                message: Invalid parameters received
+                errors:
+                - '"profile_id" is required'
+                - '"profile_id" must be a positive (non-zero) integer'
+                - Required parameter "image_id" is missing or invalid
+                - '"page" must be a positive (non-zero) integer'
+                - '"page_size" must be a positive (non-zero) integer'
+                - '"order" must be "asc" or "desc"'
+                - '"order_by" must "create_on" or "path"'
+              schema:
+                $ref: '#/components/schemas/Response.Errors'
+          description: Not Acceptable (Validation errors)
+      tags:
+      - Records/Files
+      x-accepts: application/json
+  /v1/profiles/describe:
+    get:
+      description: Describe Record fields in a Profile
+      operationId: describe-profile-fields
+      parameters:
+      - $ref: '#/components/parameters/Param.profile_id.required'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/describe_profile_fields_200_response'
+          description: OK
+          x-Note: Values in "data" are not necessarily delivered as intuitive type
+        "406":
+          content:
+            application/json:
+              example:
+                success: false
+                message: Invalid parameters received
+                errors:
+                - Access denied to the requested Profile
+                - "Missing or invalid parameter: \"profile_id\""
+              schema:
+                $ref: '#/components/schemas/Response.Errors'
+          description: Not Acceptable (Validation errors)
+      tags:
+      - Profiles
+      x-accepts: application/json
+  /v1/records/create:
+    post:
+      description: Create file containers with metadata
+      operationId: create-record
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_record_request'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  document_id: cUtlSmVHVXp1QmZQQjd5eTh4R3pBQT09X1-1ZthKwMt-VjnUwGQCYtBi
+              schema:
+                $ref: '#/components/schemas/Response.Success.Object'
+          description: Created
+        "403":
+          content:
+            application/json:
+              example:
+                success: false
+                message: Access denied to the requested Profile
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Unauthorized access
+        "404":
+          content:
+            application/json:
+              example:
+                success: false
+                message: "There was a problem processing the request in {the Internal\
+                  \ API}"
+                errors:
+                - Requested Profile not found
+              schema:
+                $ref: '#/components/schemas/Response.Errors'
+          description: Not Found
+        "406":
+          content:
+            application/json:
+              examples:
+                create-esd-validation:
+                  summary: Validation errors from Internal API
+                  value:
+                    success: false
+                    message: Invalid parameters received
+                    errors:
+                    - Profile has no usable fields
+                    - '"fields" content is required to create a new Record'
+                create-empty-profile_id:
+                  summary: '"profile_id" is missing or has no value'
+                  value:
+                    success: false
+                    message: '"profile_id" is required'
+                create-profile_id-positive-integer:
+                  summary: '"profile_id" is incorrect data type'
+                  value:
+                    success: false
+                    message: '"profile_id" must be a positive (non-zero) integer'
+              schema:
+                $ref: '#/components/schemas/Response.Errors'
+          description: Not Acceptable (Validation errors)
+        "422":
+          content:
+            application/json:
+              example:
+                success: false
+                message: "There was a problem processing the request in {the Internal\
+                  \ API}"
+                errors:
+                - Duplicate data detected
+                - Access denied to the requested Profile
+              schema:
+                $ref: '#/components/schemas/Response.Errors'
+          description: Unprocessable Entity
+      tags:
+      - Records
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/records/search:
+    post:
+      description: Search files and metadata in a container
+      operationId: search-records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/search_records_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                - document_id: Y293YVY1bm8yU3dWT0lSLytOUHU4UT09X1-kmYhvY7B3SRqG-_ZHL8Y9
+                  address: 30 Rockefeller Ave
+                  city: New York City
+                  state: NY
+                  district: "14"
+                - document_id: 1X90TU4UHUOtyLSl0TWd3Uy8mb1YVY392Y-GqRS3B7YvhYmk-_9Y8LHZ
+                  address: 1600 Pennsylvania Ave
+                  city: "Washington, D.C."
+                  state: ""
+                  district: "11"
+              schema:
+                $ref: '#/components/schemas/Response.Success.Array.Objects'
+          description: OK
+          x-Note: Values in "data" are not necessarily delivered as intuitive type
+        "403":
+          content:
+            application/json:
+              example:
+                success: false
+                message: Access denied to the requested Profile
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Unauthorized access
+        "404":
+          content:
+            application/json:
+              examples:
+                Profile not found:
+                  summary: Profile not found
+                  value:
+                    status: false
+                    message: Requested Profile not found
+                Image not found:
+                  summary: Image not found
+                  value:
+                    status: false
+                    message: Requested Image not found
+                Tab not found:
+                  summary: Tab not found
+                  value:
+                    status: false
+                    message: Requested Tab not found
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Not Found
+        "406":
+          content:
+            application/json:
+              examples:
+                search-esd-validation:
+                  summary: Validation errors from Internal API
+                  value:
+                    success: false
+                    message: Invalid parameters received
+                    errors:
+                    - Every "search_fields" entry must have a "field_name" and "field_value"
+                    - Some search fields are not valid for the selected Profile
+                    - Requested Profile not found
+                search-empty-profile_id:
+                  summary: '"profile_id" is missing or has no value'
+                  value:
+                    success: false
+                    message: '"profile_id" is required'
+                search-profile_id-positive-integer:
+                  summary: '"profile_id" is incorrect data type'
+                  value:
+                    success: false
+                    message: '"profile_id" must be a positive (non-zero) integer'
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Not Acceptable (Validation errors)
+        "422":
+          content:
+            application/json:
+              examples:
+                No searchable fields:
+                  summary: Profile has no searchable fields
+                  value:
+                    status: false
+                    message: Profile has no searchable fields
+              schema:
+                $ref: '#/components/schemas/Response.Information'
+          description: Not Acceptable (Validation errors)
+      tags:
+      - Records
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  parameters:
+    Param.profile_id.required:
+      explode: true
+      in: query
+      name: profile_id
+      required: true
+      schema:
+        $ref: '#/components/schemas/Param.profile_id'
+      style: form
+  responses:
+    Success:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response.Success'
+      description: Request completed successfully
+    Information:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response.Information'
+      description: General response with a single message
+    Errors:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response.Errors'
+      description: Failure response with specific error messages
+    Fail.Mixed:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response.Auth.Fail.Mixed'
+      description: ""
+    Authentication.Fail.Mixed:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response.Auth.Fail.Mixed'
+      description: Authentication failed
+    Authentication.Fail.Token:
+      content:
+        application/json:
+          example:
+            success: false
+            message: Authentication failed
+            errors:
+            - Access token is invalid
+          schema:
+            $ref: '#/components/schemas/Response.Errors'
+      description: Authentication failed
+    Authorization.Fail.Mixed:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response.Auth.Fail.Mixed'
+      description: Authorization failed
+    NotFound.Fail.Mixed:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response.Auth.Fail.Mixed'
+      description: Not Found
+    Invalid.Errors:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response.Errors'
+      description: Not Acceptable (Validation errors)
+    Authentication.200:
+      content:
+        application/json:
+          schema:
+            properties:
+              access_token:
+                description: JSON Web Token
+                type: string
+              expires_in:
+                type: integer
+              refresh_expires_in:
+                type: integer
+              scope:
+                type: string
+              token_type:
+                type: string
+              not-before-policy:
+                type: integer
+      description: OK
+    Authentication.401:
+      content:
+        application/json:
+          examples:
+            Example.Authentication.401.Errors:
+              summary: Error details
+              value:
+                success: false
+                message: Authentication failed
+                errors:
+                - Invalid client or Invalid client credentials
+            Example.Authentication.401.Information:
+              summary: Summary error
+              value:
+                success: false
+                message: Authorization failed
+            Example.Authentication.401.Adapter:
+              summary: Summary error
+              value:
+                success: false
+                message: Access token could not be found
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/Response.Errors'
+            - $ref: '#/components/schemas/Response.Information'
+      description: Authentication failed
+    Authentication.406:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response.Errors'
+            - type: object
+      description: Not Acceptable (Validation errors)
+    Authentication.422:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response.Information'
+            - type: object
+      description: Misconfigured Account
+  schemas:
+    AbstractController: {}
+    Integer.Positive:
+      format: int64
+      minimum: 1
+      title: Positive Integer
+      type: integer
+    Type.Mixed: {}
+    String.UUID:
+      format: uuid
+      title: UUID
+      type: string
+    Param.document_id:
+      title: "Parameter: document_id"
+      type: string
+    Param.profile_id:
+      allOf:
+      - $ref: '#/components/schemas/Integer.Positive'
+      title: "Parameter: profile_id"
+    Param.uuid:
+      allOf:
+      - $ref: '#/components/schemas/String.UUID'
+      title: "Parameter: uuid"
+    Request.Authentication.ClientCredentials:
+      description: Initial authentication
+      properties:
+        grant_type:
+          enum:
+          - client_credentials
+          type: string
+      required:
+      - grant_type
+      title: Initial Authentication
+    Response.Success:
+      oneOf:
+      - $ref: '#/components/schemas/Response.Success.Array'
+      - $ref: '#/components/schemas/Response.Success.Array.Objects'
+      - $ref: '#/components/schemas/Response.Success.Boolean'
+      - $ref: '#/components/schemas/Response.Success.Double'
+      - $ref: '#/components/schemas/Response.Success.Integer'
+      - $ref: '#/components/schemas/Response.Success.Number'
+      - $ref: '#/components/schemas/Response.Success.Object'
+      - $ref: '#/components/schemas/Response.Success.String'
+      title: "Response: Generic Success"
+    Response.Success.Array:
+      properties:
+        success:
+          type: boolean
+        data:
+          items:
+            allOf:
+            - $ref: '#/components/schemas/Type.Mixed'
+            - title: Mixed
+          type: array
+      title: "Response: Success, \"data\" as Array"
+    Response.Success.Array.Objects:
+      example:
+        data:
+        - "{}"
+        - "{}"
+        success: true
+      properties:
+        success:
+          type: boolean
+        data:
+          items:
+            title: Objects
+            type: object
+          type: array
+      title: "Response: Success, \"data\" as Array of Objects"
+    Response.Success.Boolean:
+      properties:
+        success:
+          type: boolean
+        data:
+          type: boolean
+      title: "Response: Success, \"data\" as Boolean"
+    Response.Success.Double:
+      properties:
+        success:
+          type: boolean
+        data:
+          format: double
+          type: number
+      title: "Response: Success, \"data\" as Double"
+    Response.Success.Integer:
+      properties:
+        success:
+          type: boolean
+        data:
+          format: int64
+          minimum: 1
+          type: integer
+      title: "Response: Success, \"data\" as Integer"
+    Response.Success.Number:
+      properties:
+        success:
+          type: boolean
+        data:
+          minimum: 1
+          type: number
+      title: "Response: Success, \"data\" as general Number"
+    Response.Success.Object:
+      example:
+        data: "{}"
+        success: true
+      properties:
+        success:
+          type: boolean
+        data:
+          title: Object
+          type: object
+      title: "Response: Success, \"data\" as Object"
+    Response.Success.String:
+      properties:
+        success:
+          type: boolean
+        data:
+          type: string
+      title: "Response: Success, \"data\" as String"
+    Response.Errors:
+      example:
+        success: true
+        message: message
+        errors:
+        - errors
+        - errors
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        errors:
+          items:
+            title: Strings
+            type: string
+          type: array
+      title: "Response: Fail, with \"errors\" Array"
+    Response.Information:
+      example:
+        success: true
+        message: message
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      title: "Response: Fail, summary \"message\" only"
+    Response.Auth.Fail.Mixed:
+      oneOf:
+      - $ref: '#/components/schemas/Response.Errors'
+      - $ref: '#/components/schemas/Response.Information'
+      title: "Response: Fail, summary \"message\" and/or \"errors\" Array"
+    Param.file:
+      allOf:
+      - $ref: '#/components/schemas/AbstractController'
+      format: binary
+      title: "Parameter: file"
+    Param.sha1_check:
+      allOf:
+      - $ref: '#/components/schemas/AbstractController'
+      description: SHA-1 hash of the submitted file
+      title: "Parameter: sha1_check"
+    upload_new_file_request:
+      properties:
+        document_id:
+          $ref: '#/components/schemas/Param.document_id'
+        file:
+          $ref: '#/components/schemas/Param.file'
+        profile_id:
+          $ref: '#/components/schemas/Param.profile_id'
+        sha1_check:
+          $ref: '#/components/schemas/Param.sha1_check'
+      required:
+      - document_id
+      - file
+      - profile_id
+      - sha1_check
+    upload_new_file_201_response_data_inner:
+      example:
+        nuid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        file_name: file_name
+      properties:
+        file_name:
+          type: string
+        nuid:
+          format: uuid
+          title: UUID
+          type: string
+    upload_new_file_201_response:
+      example:
+        data:
+        - nuid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          file_name: file_name
+        - nuid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          file_name: file_name
+        status: true
+      properties:
+        status:
+          type: boolean
+        data:
+          items:
+            $ref: '#/components/schemas/upload_new_file_201_response_data_inner'
+          type: array
+    upload_new_file_404_response:
+      oneOf:
+      - $ref: '#/components/schemas/Response.Errors'
+      - $ref: '#/components/schemas/Response.Information'
+    upload_file_revision_request:
+      properties:
+        file:
+          $ref: '#/components/schemas/Param.file'
+        old_nuid:
+          $ref: '#/components/schemas/Param.uuid'
+        profile_id:
+          $ref: '#/components/schemas/Param.profile_id'
+        sha1_check:
+          $ref: '#/components/schemas/Param.sha1_check'
+      required:
+      - file
+      - old_nuid
+      - profile_id
+      - sha1_check
+    describe_profile_fields_200_response_data_inner:
+      example:
+        input_data_type: input_data_type
+        name: name
+        label: label
+        required: true
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        input_data_type:
+          type: string
+        required:
+          type: boolean
+    describe_profile_fields_200_response:
+      example:
+        data:
+        - input_data_type: input_data_type
+          name: name
+          label: label
+          required: true
+        - input_data_type: input_data_type
+          name: name
+          label: label
+          required: true
+        success: true
+      properties:
+        success:
+          type: boolean
+        data:
+          items:
+            $ref: '#/components/schemas/describe_profile_fields_200_response_data_inner'
+          type: array
+    create_record_request:
+      properties:
+        profile_id: {}
+        fields:
+          type: object
+      required:
+      - fields
+      - profile_id
+    search_records_request_search_fields_inner:
+      properties:
+        field_name:
+          type: string
+        field_value:
+          type: string
+    search_records_request:
+      properties:
+        profile_id: {}
+        search_fields:
+          items:
+            $ref: '#/components/schemas/search_records_request_search_fields_inner'
+          type: array
+      required:
+      - profile_id
+      - search_fields
+  securitySchemes:
+    Basic-Auth:
+      description: "Client Authentication, Basic token"
+      scheme: basic
+      type: http
+    internal-JWT:
+      bearerFormat: JWT
+      description: Authentication with JSON Web Token
+      scheme: bearer
+      type: http
+
