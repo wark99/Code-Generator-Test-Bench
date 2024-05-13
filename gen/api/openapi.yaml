@@ -1,278 +1,821 @@
 openapi: 3.1.0
 info:
-  contact:
-    email: engineering@lifebeacon.com
-    name: API Support
-  description: |
-    The Personal Emergency Response System (PERS) API enables partners to receive PERS alarms and location data via HTTP webhook.
-
-    **Alarm Types**
-
-    | Code | Alarm Type | Description |
-    |---|---|---|
-    | E100 | Medical Alarm (Primary Button) | The medical alarm button was activated. |
-    | E101 | Personal Emergency Alarm (Pendant Button) | The personal emergency button was activated. |
-    | E111 | Smoke Alarm | Smoke was detected by a compatible smoke detector. |
-    | E301 | AC Power Loss | The device has lost AC power. |
-    | E302 | Low Battery | The device battery is low. |
-    | E308 | System Shutdown | The device is powering off due to low battery. |
-    | E601 | Manual Test | A manually triggered test signal. |
-    | E602 | Periodic Test | The device sent a recurring test signal. |
-    | E641 | Fall Alarm | The device detected a fall. |
-    | E643 | Geofence Exit | The user has exited a geofence area. |
-    | E644 | Geofence Enter | The user has entered a geofence area. |
-    | E646 | Remote Patient Monitoring (RPM) Alarm | A compatible remote patient monitoring device reported an alarm. |
-    | R100 | Medical Alarm Cancel | A medical alarm was cancelled by the user. |
-    **Provisioning**
-
-    Webhooks must be configured by LiveFree support. To configure your webhook, contact support with your webhook URL and authentication info.
-  title: LiveFree PERS API
-  version: 1.0.0
+  description: The API for patient management for MisterEd system.
+  title: Patient Management API
+  version: 2.5.0
+  x-logo:
+    url: https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png
 servers:
 - url: /
+paths:
+  /login/:
+    post:
+      operationId: user_validation_login__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginData'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: User Validation
+      x-content-type: application/json
+      x-accepts: application/json
+  /create-account/:
+    post:
+      operationId: create_new_account_create_account__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountCreationRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCreationResponse'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Create New Account
+      x-content-type: application/json
+      x-accepts: application/json
+  /{patient_id}/account-info/:
+    delete:
+      operationId: delete_account_information__patient_id__account_info__delete
+      parameters:
+      - explode: false
+        in: path
+        name: patient_id
+        required: true
+        schema:
+          title: Patient Id
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Delete Account Information
+      x-accepts: application/json
+    put:
+      operationId: update_account_information__patient_id__account_info__put
+      parameters:
+      - explode: false
+        in: path
+        name: patient_id
+        required: true
+        schema:
+          title: Patient Id
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountInformationRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Update Account Information
+      x-content-type: application/json
+      x-accepts: application/json
+  /{patient_id}/:
+    get:
+      operationId: get_user_health_info__patient_id___get
+      parameters:
+      - explode: false
+        in: path
+        name: patient_id
+        required: true
+        schema: {}
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserHealthInfoResponse'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get User Health Info
+      x-accepts: application/json
+  /{patient_id}/health-info/:
+    delete:
+      operationId: delete_user_health_info__patient_id__health_info__delete
+      parameters:
+      - explode: false
+        in: path
+        name: patient_id
+        required: true
+        schema:
+          title: Patient Id
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Delete User Health Info
+      x-accepts: application/json
+    put:
+      operationId: update_user_health_info__patient_id__health_info__put
+      parameters:
+      - explode: false
+        in: path
+        name: patient_id
+        required: true
+        schema:
+          title: Patient Id
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserHealthInfoRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Update User Health Info
+      x-content-type: application/json
+      x-accepts: application/json
+  /{patient_id}/triages/:
+    get:
+      operationId: get_triage_list__patient_id__triages__get
+      parameters:
+      - explode: false
+        in: path
+        name: patient_id
+        required: true
+        schema: {}
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriageListResponse'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Triage List
+      x-accepts: application/json
+  /{patient_id}/triages/{triage_id}:
+    delete:
+      operationId: delete_triage__patient_id__triages__triage_id__delete
+      parameters:
+      - explode: false
+        in: path
+        name: patient_id
+        required: true
+        schema:
+          title: Patient Id
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: triage_id
+        required: true
+        schema:
+          title: Triage Id
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Delete Triage
+      x-accepts: application/json
+    get:
+      operationId: get_specific_triage__patient_id__triages__triage_id__get
+      parameters:
+      - explode: false
+        in: path
+        name: patient_id
+        required: true
+        schema: {}
+        style: simple
+      - explode: false
+        in: path
+        name: triage_id
+        required: true
+        schema: {}
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriageDetailResponse'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Specific Triage
+      x-accepts: application/json
+    put:
+      operationId: update_triage__patient_id__triages__triage_id__put
+      parameters:
+      - explode: false
+        in: path
+        name: patient_id
+        required: true
+        schema:
+          title: Patient Id
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: triage_id
+        required: true
+        schema:
+          title: Triage Id
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTriageRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Update Triage
+      x-content-type: application/json
+      x-accepts: application/json
 components:
-  responses:
-    "4XXClientError":
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/ClientErrorResult'
-        application/json:
-          schema:
-            $ref: '#/components/schemas/SimpleErrorResult'
-        text/plain:
-          schema:
-            $ref: '#/components/schemas/TextErrorResult'
-      description: Client error
-    "5XXServerError":
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/ServerErrorResult'
-        application/json:
-          schema:
-            $ref: '#/components/schemas/SimpleErrorResult'
-        text/plain:
-          schema:
-            $ref: '#/components/schemas/TextErrorResult'
-      description: Server error
   schemas:
-    ClientErrorResult:
-      description: A problem details object (see https://datatracker.ietf.org/doc/html/rfc7807).
+    AccountCreationRequest:
+      example:
+        health_info:
+          allergies: allergies
+          complications: complications
+          blood_type: blood_type
+          weight: 6.027456183070403
+          blood_pressure: 1.4658129805029452
+          height: 0.8008281904610115
+        account_info:
+          password: password
+          last: last
+          province: province
+          phone: phone
+          city: city
+          str_name: str_name
+          str_num: str_num
+          postal_code: postal_code
+          first: first
+          email: email
+          username: username
       properties:
-        type:
-          description: A URI reference that identifies the problem type.
-          format: uri-reference
-          nullable: true
-          type: string
-        title:
-          description: A summary of the problem type.
-          nullable: true
-          type: string
-        status:
-          description: The HTTP status code.
-          format: int32
-          nullable: true
-          type: integer
-        detail:
-          description: An explanation specific to this occurrence of the problem.
-          nullable: true
-          type: string
-    DeviceEvent:
-      anyOf:
-      - required:
-        - event
-      - required:
-        - location
-      description: This is the request body that will be sent to your webhook URL.
-      properties:
-        id:
-          description: A unique identifier for this event.
-          format: uuid
-        device:
-          $ref: '#/components/schemas/DeviceEventDevice'
-        event:
-          $ref: '#/components/schemas/DeviceEventEvent'
-        location:
-          $ref: '#/components/schemas/DeviceEventLocation'
+        account_info:
+          $ref: '#/components/schemas/AccountInformationCreation'
+        health_info:
+          $ref: '#/components/schemas/UserHealthInfoCreation'
       required:
-      - device
-      - id
-    DeviceEventDevice:
-      description: Information about the device that reported the event.
-      properties:
-        id:
-          description: A unique identifier for the customer device where this event
-            originated. The format of this ID may vary depending on the station where
-            the device is assigned.
-          type: string
-        type:
-          $ref: '#/components/schemas/DeviceType'
-        serialNumber:
-          description: The manufacturer serial number for the device.
-          type: string
-        imei:
-          description: International Mobile Equipment Identity.
-          type: string
-        phoneNumber:
-          description: This is an E.164 formatted phone number. Examples include +14035551111
-            and +918067218000. This will always lead with a + and include only numbers
-            afterwards (no dashes).
-          pattern: "^\\+[1-9]\\d{1,14}$"
-          type: string
-        batteryPercentage:
-          description: The battery percentage at the time when this event occurred.
-            This is an integer between 0 and 100. This value may not be present for
-            all events.
-          format: int32
-          maximum: 100
-          minimum: 0
-          nullable: true
-          type: integer
-      required:
-      - id
-      - phoneNumber
-      - type
-    DeviceEventEvent:
-      description: Information about the event/alarm that was reported by the customer
-        device. This property may be null or not present if this is a location-only
-        message.
-      properties:
-        timestamp:
-          description: The time when the event occurred.
-          format: date-time
-          type: string
-        type:
-          $ref: '#/components/schemas/DeviceEventType'
-        code:
-          description: The Contact ID event code.
-          type: string
-        zone:
-          description: The zone number reporting the event/alarm.
-          format: int32
-          maximum: 255
-          minimum: 0
-          type: integer
-      required:
-      - code
-      - timestamp
-      - type
-      - zone
-    DeviceEventLocation:
-      description: Information about the location where the device was located at
-        the time of this event/alarm. Thie property may not be present for all events.
-      properties:
-        timestamp:
-          description: The time when the event occurred.
-          format: date-time
-          type: string
-        fixType:
-          $ref: '#/components/schemas/GpsFixType'
-        latitude:
-          format: double
-          maximum: 90
-          minimum: -90
-          type: number
-        longitude:
-          format: double
-          maximum: 180
-          minimum: -180
-          type: number
-        speed:
-          format: double
-          minimum: 0
-          nullable: true
-          type: number
-        heading:
-          format: double
-          maximum: 360
-          minimum: 0
-          nullable: true
-          type: number
-        gpsText:
-          description: The raw location data reported by the device. For GPS fix types
-            this will be in NMEA message structure.
-          nullable: true
-          type: string
-      required:
-      - fixType
-      - latitude
-      - longitude
-      - timestamp
-    DeviceEventType:
-      description: |
-        The type of event. This will determine the format of the code property. At this time all events use Contact ID (CID) format.
-        * CID - A Contact ID event.
-      enum:
-      - CID
-      format: DeviceEventType
-      type: string
-    DeviceType:
-      description: |
-        The model of device that reported the event.
-        * LifeBeacon - LifeBeacon Gen-1
-        * EZCare - EZ-Care (7700, Landline)
-        * EZCarePlus - EZ-Care Plus (7600, Cellular)
-        * LifeBeaconGen2 - LifeBeacon Gen-2 (8200, Mobile PERS)
-        * Duo - Duo (7800, Landline + Cellular)
-        * Unknown - An unknown device type
-      enum:
-      - LifeBeacon
-      - EZCare
-      - EZCarePlus
-      - LifeBeaconGen2
-      - Duo
-      - Unknown
-      format: DeviceType
-      type: string
-    GpsFixType:
-      description: |
-        The type of signal or technique being used by the GPS receiver to determine its location.
-        * GPS - A standard GPS signal.
-        * DGPS - A differential GPS signal, which provides increased accuracy over standard GPS.
-        * Estimated - An estimated location, which is based on a known point of origin and measurements of speed, heading, and elapsed time.
-        * Manual - A location that has been manually entered.
-        * Wifi - A location based on available Wifi networks in the area.
-        * CellTower - A location based on cell towers detected in the area.
-        * Invalid - There is no GPS signal being received or there are not enough sources available for proper location determination.
-      enum:
-      - GPS
-      - DGPS
-      - Estimated
-      - Manual
-      - Wifi
-      - CellTower
-      - Invalid
-      format: GpsFixType
-      type: string
-    ServerErrorResult:
-      description: A problem details object (see https://datatracker.ietf.org/doc/html/rfc7807).
-      properties:
-        type:
-          description: A URI reference that identifies the problem type.
-          format: uri-reference
-          nullable: true
-          type: string
-        title:
-          description: A summary of the problem type.
-          nullable: true
-          type: string
-        status:
-          description: The HTTP status code.
-          format: int32
-          nullable: true
-          type: integer
-        detail:
-          description: An explanation specific to this occurrence of the problem.
-          nullable: true
-          type: string
-    SimpleErrorResult:
+      - account_info
+      - health_info
+      title: AccountCreationRequest
+    AccountCreationResponse:
+      example:
+        patient_id: "12345"
+        user_name: John Doe
+        message: Account created successfully.
+        username: johndoe12345
       properties:
         message:
-          description: An explanation of the problem.
-          nullable: true
+          example: Account created successfully.
+          title: Message
           type: string
-    TextErrorResult:
-      nullable: true
-      type: string
+        patient_id:
+          example: "12345"
+          title: Patient Id
+          type: string
+        user_name:
+          example: John Doe
+          title: User Name
+          type: string
+        username:
+          example: johndoe12345
+          title: Username
+          type: string
+      required:
+      - message
+      - patient_id
+      - user_name
+      - username
+      title: AccountCreationResponse
+    AccountInformationCreation:
+      example:
+        password: password
+        last: last
+        province: province
+        phone: phone
+        city: city
+        str_name: str_name
+        str_num: str_num
+        postal_code: postal_code
+        first: first
+        email: email
+        username: username
+      properties:
+        username:
+          title: Username
+          type: string
+        password:
+          title: Password
+          type: string
+        first:
+          title: First
+          type: string
+        last:
+          title: Last
+          type: string
+        phone:
+          title: Phone
+          type: string
+        email:
+          title: Email
+          type: string
+        str_num:
+          title: Str Num
+          type: string
+        str_name:
+          title: Str Name
+          type: string
+        city:
+          title: City
+          type: string
+        province:
+          title: Province
+          type: string
+        postal_code:
+          title: Postal Code
+          type: string
+      required:
+      - city
+      - email
+      - first
+      - last
+      - password
+      - phone
+      - postal_code
+      - province
+      - str_name
+      - str_num
+      - username
+      title: AccountInformationCreation
+    HTTPValidationError:
+      example:
+        detail:
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+      title: HTTPValidationError
+    LoginData:
+      example:
+        password: password
+        username: username
+      properties:
+        username:
+          title: Username
+          type: string
+        password:
+          title: Password
+          type: string
+      required:
+      - password
+      - username
+      title: LoginData
+    LoginResponse:
+      example:
+        success: true
+        message: Login successful
+      properties:
+        success:
+          example: true
+          title: Success
+          type: boolean
+        message:
+          example: Login successful
+          title: Message
+          type: string
+      required:
+      - message
+      - success
+      title: LoginResponse
+    ResponseMessage:
+      example:
+        message: Operation successful.
+      properties:
+        message:
+          example: Operation successful.
+          title: Message
+          type: string
+      required:
+      - message
+      title: ResponseMessage
+    TriageDetailResponse:
+      example:
+        summary: "44-year-old male with acute chest pain, ..."
+        triage_id: "45382"
+        patient_id: "12345"
+        available_date: 1944-06-06
+      properties:
+        patient_id:
+          example: "12345"
+          title: Patient Id
+          type: string
+        triage_id:
+          example: "45382"
+          title: Triage Id
+          type: string
+        available_date:
+          example: 1944-06-06
+          title: Available Date
+          type: string
+        summary:
+          example: "44-year-old male with acute chest pain, ..."
+          title: Summary
+          type: string
+      required:
+      - available_date
+      - patient_id
+      - summary
+      - triage_id
+      title: TriageDetailResponse
+    TriageHistoryItem:
+      properties:
+        patient_id:
+          example: "12345"
+          title: Patient Id
+          type: string
+        triage_id:
+          example: "45382"
+          title: Triage Id
+          type: string
+        available_date:
+          example: 1944-06-06
+          title: Available Date
+          type: string
+        summary:
+          example: "44-year-old male with acute chest pain, shortness of breath, and\
+            \ sweating presented. Vital signs: BP 160/95 mmHg, HR 110 bpm, RR 22 breaths/min,\
+            \ Temp 98.6°F, O2 Sat 92%. Pain described as sharp, radiating to left\
+            \ arm, rated 8/10. ECG showed ST-segment elevation in leads II, III, aVF,\
+            \ categorized as Triage Level 2. Administered chewable aspirin, nitroglycerin,\
+            \ prepared for further emergency procedures. Family updated."
+          title: Summary
+          type: string
+      required:
+      - available_date
+      - patient_id
+      - summary
+      - triage_id
+      title: TriageHistoryItem
+    TriageListResponse:
+      example:
+        triage_history:
+          triage_history:
+          - available_date: 1944-06-06
+            patient_id: "12345"
+            summary: "44-year-old male with acute chest pain, shortness of breath,\
+              \ and sweating presented. Vital signs: BP 160/95 mmHg, HR 110 bpm, RR\
+              \ 22 breaths/min, Temp 98.6°F, O2 Sat 92%. Pain described as sharp,\
+              \ radiating to left arm, rated 8/10. ECG showed ST-segment elevation\
+              \ in leads II, III, aVF, categorized as Triage Level 2. Administered\
+              \ chewable aspirin, nitroglycerin, prepared for further emergency procedures.\
+              \ Family updated."
+            triage_id: "45382"
+          - available_date: 1975-07-15
+            patient_id: "12345"
+            summary: "75-year-old male, Triage Level 1, showed severe respiratory\
+              \ distress, cyanosis, altered consciousness. Immediate airway management,\
+              \ high-flow oxygen initiated, critical care team mobilized for advanced\
+              \ support."
+            triage_id: "10439"
+          - available_date: 1980-03-23
+            patient_id: "12345"
+            summary: "80-year-old male, Triage Level 2, with persistent chest pain,\
+              \ mild dyspnea, history of hypertension. Administered nitroglycerin,\
+              \ continuous ECG monitoring, cardiology alerted for comprehensive cardiac\
+              \ assessment."
+            triage_id: "86241"
+      properties:
+        triage_history:
+          example:
+            triage_history:
+            - available_date: 1944-06-06
+              patient_id: "12345"
+              summary: "44-year-old male with acute chest pain, shortness of breath,\
+                \ and sweating presented. Vital signs: BP 160/95 mmHg, HR 110 bpm,\
+                \ RR 22 breaths/min, Temp 98.6°F, O2 Sat 92%. Pain described as sharp,\
+                \ radiating to left arm, rated 8/10. ECG showed ST-segment elevation\
+                \ in leads II, III, aVF, categorized as Triage Level 2. Administered\
+                \ chewable aspirin, nitroglycerin, prepared for further emergency\
+                \ procedures. Family updated."
+              triage_id: "45382"
+            - available_date: 1975-07-15
+              patient_id: "12345"
+              summary: "75-year-old male, Triage Level 1, showed severe respiratory\
+                \ distress, cyanosis, altered consciousness. Immediate airway management,\
+                \ high-flow oxygen initiated, critical care team mobilized for advanced\
+                \ support."
+              triage_id: "10439"
+            - available_date: 1980-03-23
+              patient_id: "12345"
+              summary: "80-year-old male, Triage Level 2, with persistent chest pain,\
+                \ mild dyspnea, history of hypertension. Administered nitroglycerin,\
+                \ continuous ECG monitoring, cardiology alerted for comprehensive\
+                \ cardiac assessment."
+              triage_id: "86241"
+          items:
+            $ref: '#/components/schemas/TriageHistoryItem'
+          type: array
+      required:
+      - triage_history
+      title: TriageListResponse
+    UpdateAccountInformationRequest:
+      example:
+        phone: 555-1234
+        email: johndoe@example.com
+      properties:
+        phone:
+          example: 555-1234
+          title: Phone
+          type: string
+        email:
+          example: johndoe@example.com
+          title: Email
+          type: string
+      title: UpdateAccountInformationRequest
+    UpdateTriageRequest:
+      example:
+        summary: "44-year-old male with acute chest pain, shortness of breath, and\
+          \ sweating presented. Vital signs: BP 160/95 mmHg, HR 110 bpm, RR 22 breaths/min,\
+          \ Temp 98.6°F, O2 Sat 92%. Pain described as sharp, radiating to left arm,\
+          \ rated 8/10. ECG showed ST-segment elevation in leads II, III, aVF, categorized\
+          \ as Triage Level 2. Administered chewable aspirin, nitroglycerin, prepared\
+          \ for further emergency procedures. Family updated."
+        available_date: 1944-06-06
+      properties:
+        available_date:
+          example: 1944-06-06
+          title: Available Date
+          type: string
+        summary:
+          example: "44-year-old male with acute chest pain, shortness of breath, and\
+            \ sweating presented. Vital signs: BP 160/95 mmHg, HR 110 bpm, RR 22 breaths/min,\
+            \ Temp 98.6°F, O2 Sat 92%. Pain described as sharp, radiating to left\
+            \ arm, rated 8/10. ECG showed ST-segment elevation in leads II, III, aVF,\
+            \ categorized as Triage Level 2. Administered chewable aspirin, nitroglycerin,\
+            \ prepared for further emergency procedures. Family updated."
+          title: Summary
+          type: string
+      title: UpdateTriageRequest
+    UpdateUserHealthInfoRequest:
+      example:
+        allergies: "Peanuts, Shellfish"
+        complications: "Hypertension, Diabetes Type 2"
+        blood_type: A+
+        weight: 68.5
+        blood_pressure: 120.8
+        height: 175.3
+      properties:
+        height:
+          example: 175.3
+          title: Height
+          type: number
+        weight:
+          example: 68.5
+          title: Weight
+          type: number
+        blood_type:
+          example: A+
+          title: Blood Type
+          type: string
+        blood_pressure:
+          example: 120.8
+          title: Blood Pressure
+          type: number
+        allergies:
+          example: "Peanuts, Shellfish"
+          title: Allergies
+          type: string
+        complications:
+          example: "Hypertension, Diabetes Type 2"
+          title: Complications
+          type: string
+      title: UpdateUserHealthInfoRequest
+    UserHealthInfoCreation:
+      example:
+        allergies: allergies
+        complications: complications
+        blood_type: blood_type
+        weight: 6.027456183070403
+        blood_pressure: 1.4658129805029452
+        height: 0.8008281904610115
+      properties:
+        height:
+          title: Height
+          type: number
+        weight:
+          title: Weight
+          type: number
+        blood_type:
+          title: Blood Type
+          type: string
+        blood_pressure:
+          title: Blood Pressure
+          type: number
+        allergies:
+          title: Allergies
+          type: string
+        complications:
+          title: Complications
+          type: string
+      required:
+      - allergies
+      - blood_pressure
+      - blood_type
+      - complications
+      - height
+      - weight
+      title: UserHealthInfoCreation
+    UserHealthInfoResponse:
+      example:
+        allergies: "Peanuts, Shellfish"
+        complications: "Hypertension, Diabetes Type 2"
+        patient_id: "12345"
+        blood_type: A+
+        weight: 68.5
+        blood_pressure: 120.8
+        height: 175.3
+      properties:
+        patient_id:
+          example: "12345"
+          title: Patient Id
+          type: string
+        height:
+          example: 175.3
+          title: Height
+          type: number
+        weight:
+          example: 68.5
+          title: Weight
+          type: number
+        blood_type:
+          example: A+
+          title: Blood Type
+          type: string
+        blood_pressure:
+          example: 120.8
+          title: Blood Pressure
+          type: number
+        allergies:
+          example: "Peanuts, Shellfish"
+          title: Allergies
+          type: string
+        complications:
+          example: "Hypertension, Diabetes Type 2"
+          title: Complications
+          type: string
+      required:
+      - allergies
+      - blood_pressure
+      - blood_type
+      - complications
+      - height
+      - patient_id
+      - weight
+      title: UserHealthInfoResponse
+    ValidationError:
+      example:
+        msg: msg
+        loc:
+        - ValidationError_loc_inner
+        - ValidationError_loc_inner
+        type: type
+      properties:
+        loc:
+          items:
+            $ref: '#/components/schemas/ValidationError_loc_inner'
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ValidationError_loc_inner:
+      anyOf:
+      - type: string
+      - type: integer
 

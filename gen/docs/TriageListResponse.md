@@ -1,13 +1,13 @@
 
 
-# SimpleErrorResult
+# TriageListResponse
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**message** | **String** | An explanation of the problem. |  [optional] |
+|**triageHistory** | [**List&lt;TriageHistoryItem&gt;**](TriageHistoryItem.md) |  |  |
 
 
 
