@@ -20,118 +20,106 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.openapitools.client.model.ValidationErrorLocInner;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * ValidationError
+ * DeviceDataScheme
  */
 @JsonPropertyOrder({
-  ValidationError.JSON_PROPERTY_LOC,
-  ValidationError.JSON_PROPERTY_MSG,
-  ValidationError.JSON_PROPERTY_TYPE
+  DeviceDataScheme.JSON_PROPERTY_MODEL_ID,
+  DeviceDataScheme.JSON_PROPERTY_SERIAL,
+  DeviceDataScheme.JSON_PROPERTY_DATA
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:22:58.353940352Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class ValidationError {
-  public static final String JSON_PROPERTY_LOC = "loc";
-  private List<ValidationErrorLocInner> loc = new ArrayList<>();
+public class DeviceDataScheme {
+  public static final String JSON_PROPERTY_MODEL_ID = "model_id";
+  private Integer modelId;
 
-  public static final String JSON_PROPERTY_MSG = "msg";
-  private String msg;
+  public static final String JSON_PROPERTY_SERIAL = "serial";
+  private String serial;
 
-  public static final String JSON_PROPERTY_TYPE = "type";
-  private String type;
+  public static final String JSON_PROPERTY_DATA = "data";
+  private String data;
 
-  public ValidationError() {
+  public DeviceDataScheme() {
   }
 
-  public ValidationError loc(List<ValidationErrorLocInner> loc) {
+  public DeviceDataScheme modelId(Integer modelId) {
     
-    this.loc = loc;
-    return this;
-  }
-
-  public ValidationError addLocItem(ValidationErrorLocInner locItem) {
-    if (this.loc == null) {
-      this.loc = new ArrayList<>();
-    }
-    this.loc.add(locItem);
+    this.modelId = modelId;
     return this;
   }
 
    /**
-   * Get loc
-   * @return loc
+   * the device model identifier
+   * @return modelId
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_LOC)
+  @JsonProperty(JSON_PROPERTY_MODEL_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public List<ValidationErrorLocInner> getLoc() {
-    return loc;
+  public Integer getModelId() {
+    return modelId;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_LOC)
+  @JsonProperty(JSON_PROPERTY_MODEL_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setLoc(List<ValidationErrorLocInner> loc) {
-    this.loc = loc;
+  public void setModelId(Integer modelId) {
+    this.modelId = modelId;
   }
 
 
-  public ValidationError msg(String msg) {
+  public DeviceDataScheme serial(String serial) {
     
-    this.msg = msg;
+    this.serial = serial;
     return this;
   }
 
    /**
-   * Get msg
-   * @return msg
+   * the device serial number
+   * @return serial
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_MSG)
+  @JsonProperty(JSON_PROPERTY_SERIAL)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getMsg() {
-    return msg;
+  public String getSerial() {
+    return serial;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_MSG)
+  @JsonProperty(JSON_PROPERTY_SERIAL)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setMsg(String msg) {
-    this.msg = msg;
+  public void setSerial(String serial) {
+    this.serial = serial;
   }
 
 
-  public ValidationError type(String type) {
+  public DeviceDataScheme data(String data) {
     
-    this.type = type;
+    this.data = data;
     return this;
   }
 
    /**
-   * Get type
-   * @return type
+   * device measurements data
+   * @return data
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonProperty(JSON_PROPERTY_DATA)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getType() {
-    return type;
+  public String getData() {
+    return data;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonProperty(JSON_PROPERTY_DATA)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setType(String type) {
-    this.type = type;
+  public void setData(String data) {
+    this.data = data;
   }
 
   @Override
@@ -142,24 +130,24 @@ public class ValidationError {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ValidationError validationError = (ValidationError) o;
-    return Objects.equals(this.loc, validationError.loc) &&
-        Objects.equals(this.msg, validationError.msg) &&
-        Objects.equals(this.type, validationError.type);
+    DeviceDataScheme deviceDataScheme = (DeviceDataScheme) o;
+    return Objects.equals(this.modelId, deviceDataScheme.modelId) &&
+        Objects.equals(this.serial, deviceDataScheme.serial) &&
+        Objects.equals(this.data, deviceDataScheme.data);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(loc, msg, type);
+    return Objects.hash(modelId, serial, data);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValidationError {\n");
-    sb.append("    loc: ").append(toIndentedString(loc)).append("\n");
-    sb.append("    msg: ").append(toIndentedString(msg)).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("class DeviceDataScheme {\n");
+    sb.append("    modelId: ").append(toIndentedString(modelId)).append("\n");
+    sb.append("    serial: ").append(toIndentedString(serial)).append("\n");
+    sb.append("    data: ").append(toIndentedString(data)).append("\n");
     sb.append("}");
     return sb.toString();
   }

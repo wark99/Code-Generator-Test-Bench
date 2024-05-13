@@ -1,13 +1,13 @@
 
 
-# HTTPValidationError
+# CompanyId
 
+unique identifier of the owner's company, returned only for Superadmin
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**detail** | [**List&lt;ValidationError&gt;**](ValidationError.md) |  |  [optional] |
 
 
 

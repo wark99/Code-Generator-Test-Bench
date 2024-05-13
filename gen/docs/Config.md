@@ -1,13 +1,13 @@
 
 
-# HTTPValidationError
+# Config
 
+the device base64 encoded configuration
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**detail** | [**List&lt;ValidationError&gt;**](ValidationError.md) |  |  [optional] |
 
 
 

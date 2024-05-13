@@ -57,9 +57,10 @@ import java.util.function.Supplier;
 import java.time.OffsetDateTime;
 
 import org.openapitools.client.auth.Authentication;
+import org.openapitools.client.auth.HttpBasicAuth;
 import org.openapitools.client.auth.ApiKeyAuth;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:22:50.833453606Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:22:58.353940352Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
@@ -84,7 +85,7 @@ public class ApiClient extends JavaTimeFormatter {
 
     private long waitTimeMillis = 10;
 
-    private String basePath = "http://localhost";
+    private String basePath = "http://geo-api.air-bit.ru:8080";
 
     private RestTemplate restTemplate;
 
@@ -115,7 +116,8 @@ public class ApiClient extends JavaTimeFormatter {
 
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<String, Authentication>();
-        authentications.put("TokenAuth", new ApiKeyAuth("query", "key"));
+        authentications.put("HTTPBasic", new HttpBasicAuth());
+        authentications.put("APIKeyHeader", new ApiKeyAuth("header", "X-API-Key"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -199,6 +201,35 @@ public class ApiClient extends JavaTimeFormatter {
         return authentications.get(authName);
     }
 
+
+    /**
+     * Helper method to set username for the first HTTP basic authentication.
+     *
+     * @param username Username
+     */
+    public void setUsername(String username) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof HttpBasicAuth) {
+                ((HttpBasicAuth) auth).setUsername(username);
+                return;
+            }
+        }
+        throw new RuntimeException("No HTTP basic authentication configured!");
+    }
+
+    /**
+     * Helper method to set password for the first HTTP basic authentication.
+     * @param password Password
+     */
+    public void setPassword(String password) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof HttpBasicAuth) {
+                ((HttpBasicAuth) auth).setPassword(password);
+                return;
+            }
+        }
+        throw new RuntimeException("No HTTP basic authentication configured!");
+    }
 
 
     /**

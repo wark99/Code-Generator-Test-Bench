@@ -1,142 +1,39 @@
 openapi: 3.1.0
 info:
-  description: "<img src=\"https://i.imgur.com/ddJowmh.jpeg\" width=\"100\"/>\n<br/>\n\
-    # API лучшего сервиса отправки писем во входящие!\n<br/>\n## Удачного использо\
-    вания!\n<br/>\n<br/>\n**Во всех запросах указывайте параметр** key\n<br/>\n**П\
-    ример:** POST /api/send?key=ВАШ_ТОКЕН\n<br/>\n<br/>\n**Пример отправки на пару\
-    \ популярных языках:**\n> **NodeJs**\n```\nconst axios = require('axios');\n \
-    \ let data = JSON.stringify([\n    {\n      \"url\": \"https://url.com\",\n  \
-    \    \"to\": \"mail@mail.com\",\n      \"country_code\": \"cz\",\n      \"service_code\"\
-    : \"post\",\n      \"product\": \"test\",\n      \"is_delay\": false,\n      \"\
-    notify_id\": 1234 // Telegram ID user \n    }\n  ]);\n\n  let config = {\n   \
-    \ method: 'post',\n    maxBodyLength: Infinity,\n    url: 'https://azmail.link/api/send?key=TOKEN',\n\
-    \    headers: { \n      'Content-Type': 'application/json', \n      'Accept':\
-    \ 'application/json'\n    },\n    data : data\n  };\n\n  axios.request(config)\n\
-    \  .then((response) => {\n    console.log(JSON.stringify(response.data));\n  })\n\
-    \  .catch((error) => {\n    console.log(error);\n  });\n```\n> **Python**\n```\n\
-    import requests\nimport json\n\nurl = \"https://azmail.link/api/send?key=TOKEN\"\
-    \n\npayload = json.dumps([\n    {\n      \"url\": \"https://url.com\",\n     \
-    \ \"to\": \"mail@mail.com\",\n      \"country_code\": \"cz\",\n      \"service_code\"\
-    : \"post\",\n      \"product\": \"test\",\n      \"is_delay\": false,\n      \"\
-    notify_id\": 1234 // Telegram ID user \n    }\n])\nheaders = {\n  'Content-Type':\
-    \ 'application/json',\n  'Accept': 'application/json'\n}\n\nresponse = requests.request(\"\
-    POST\", url, headers=headers, data=payload)\n\nprint(response.json())\n```\n\n"
-  title: GosuMailAPI
-  version: 2.0.5
+  contact:
+    name: AIRBIT
+    url: https://air-bit.ru/
+  description: This API is intended to work with the application **AIRBIT IoT Workspace**
+    .
+  title: AIRBIT Device Auto-registration REST API
+  version: 1.0.0
 servers:
-- url: /
+- description: Mock Server
+  url: http://geo-api.air-bit.ru:8080/
 paths:
-  /api/country:
-    get:
-      operationId: get_country_api_country_get
-      parameters:
-      - explode: true
-        in: query
-        name: code
-        required: true
-        schema:
-          title: Code
-          type: string
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CountriesGetExampleResponse'
-          description: Успешный запрос
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - TokenAuth: []
-      summary: Get Country
-      tags:
-      - Countries Routing
-      x-accepts: application/json
-  /api/country/all:
-    get:
-      operationId: get_all_api_country_all_get
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CountriesGetAllExampleResponse'
-          description: Успешный запрос
-      security:
-      - TokenAuth: []
-      summary: Get All
-      tags:
-      - Countries Routing
-      x-accepts: application/json
-  /api/service:
-    get:
-      operationId: get_service_api_service_get
-      parameters:
-      - explode: true
-        in: query
-        name: country_code
-        required: true
-        schema:
-          title: Country Code
-          type: string
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServicesGetExampleResponse'
-          description: Успешный запрос
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - TokenAuth: []
-      summary: Get Service
-      tags:
-      - Services Routing
-      x-accepts: application/json
-  /api/service/all:
-    get:
-      operationId: get_all_api_service_all_get
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServicesGetAllExampleResponse'
-          description: Успешный запрос
-      security:
-      - TokenAuth: []
-      summary: Get All
-      tags:
-      - Services Routing
-      x-accepts: application/json
-  /api/send:
+  /auto-registration/devices/:
     post:
-      description: описание
-      operationId: send_mail_api_send_post
+      description: Used to add a device to the IoT platform for further use. Should
+        only be used after at least one log operation has been successfully completed.
+      operationId: add_device_auto_registration_devices__post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Items'
+              $ref: '#/components/schemas/DeviceNameScheme'
         required: true
       responses:
         "200":
           content:
             application/json:
+              schema: {}
+          description: Successful Response
+        "403":
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/SendResultExampleResponse'
-          description: Успешный запрос
+                $ref: '#/components/schemas/CommonError'
+          description: No access
         "422":
           content:
             application/json:
@@ -144,22 +41,84 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - TokenAuth: []
-      summary: Send Mail
+      - HTTPBasic: []
+      summary: Adds device to the IoT platform
       tags:
-      - Send mail Routing
+      - Device auto-registration
       x-content-type: application/json
       x-accepts: application/json
-  /api/send/status:
+  /auto-registration/devices/log/:
+    post:
+      description: Used to periodically log device information. Sent automatically
+        when the configuration software is connected to the device
+      operationId: device_log_auto_registration_devices_log__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceInfoScheme'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: No access
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - APIKeyHeader: []
+      summary: Log device information
+      tags:
+      - Device auto-registration
+      x-content-type: application/json
+      x-accepts: application/json
+  /auto-registration/configs/:
     get:
-      operationId: send_get_status_api_send_status_get
+      description: Get a list of device configurations saved on the IoT platform
+      operationId: get_configs_auto_registration_configs__get
       parameters:
-      - explode: true
+      - description: device model identifier
+        example: 98
+        explode: true
         in: query
-        name: tag
+        name: model_id
         required: true
         schema:
-          title: Tag
+          description: device model identifier
+          title: Model Id
+          type: integer
+        style: form
+      - description: device firmware version
+        example: "1.6"
+        explode: true
+        in: query
+        name: firmware
+        required: true
+        schema:
+          description: device firmware version
+          title: Firmware
+          type: string
+        style: form
+      - description: the part of the device configuration name (search by name)
+        example: config
+        explode: true
+        in: query
+        name: name
+        required: false
+        schema:
+          description: the part of the device configuration name (search by name)
+          title: Name
           type: string
         style: form
       responses:
@@ -167,8 +126,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SendGetResultExampleResponse'
-          description: Успешный запрос
+                items:
+                  $ref: '#/components/schemas/ConfigScheme'
+                type: array
+          description: Successful Response
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: No access
         "422":
           content:
             application/json:
@@ -176,241 +143,622 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - TokenAuth: []
-      summary: Send Get Status
+      - HTTPBasic: []
+      summary: Get a list of device configurations
       tags:
-      - Send mail Routing
+      - Device auto-registration
+      x-accepts: application/json
+    post:
+      description: Used to back up user configurations on the IoT platform for future
+        use
+      operationId: add_config_auto_registration_configs__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigCreateScheme'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigScheme'
+          description: Successful Response
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: No access
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - HTTPBasic: []
+      summary: Saving device configuration on the IoT platform
+      tags:
+      - Device auto-registration
+      x-content-type: application/json
+      x-accepts: application/json
+  /auto-registration/configs/{id}/:
+    get:
+      description: Get a single device configuration saved on the IoT platform
+      operationId: get_config_auto_registration_configs__id___get
+      parameters:
+      - description: unique config id
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          description: unique config id
+          title: Id
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigScheme'
+          description: Successful Response
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: No access
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: Config not found
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - HTTPBasic: []
+      summary: Get a single device configuration
+      tags:
+      - Device auto-registration
+      x-accepts: application/json
+    put:
+      description: Used to back up user configurations on the IoT platform for future
+        use
+      operationId: update_config_auto_registration_configs__id___put
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          title: Id
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigCreateScheme'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigScheme'
+          description: Successful Response
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: No access
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: Config not found
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - HTTPBasic: []
+      summary: Update device configuration on the IoT platform
+      tags:
+      - Device auto-registration
+      x-content-type: application/json
+      x-accepts: application/json
+  /auto-registration/firmwares/:
+    get:
+      description: Get a list of firmware available on the IoT platform
+      operationId: get_firmwares_auto_registration_firmwares__get
+      parameters:
+      - description: device model identifier
+        example: 98
+        explode: true
+        in: query
+        name: model_id
+        required: true
+        schema:
+          description: device model identifier
+          title: Model Id
+          type: integer
+        style: form
+      - description: the part of the firmware name (search by name)
+        example: pulse-14.05.01
+        explode: true
+        in: query
+        name: name
+        required: false
+        schema:
+          description: the part of the firmware name (search by name)
+          title: Name
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/FirmwareScheme'
+                type: array
+          description: Successful Response
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: No access
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - APIKeyHeader: []
+      summary: Get a list of firmwares
+      tags:
+      - Device auto-registration
+      x-accepts: application/json
+  /auto-registration/firmwares/{id}/:
+    get:
+      description: Get a firmware data available on the IoT platform
+      operationId: get_firmware_auto_registration_firmwares__id___get
+      parameters:
+      - description: unique firmware id
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          description: unique firmware id
+          title: Id
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirmwareScheme'
+          description: Successful Response
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: No access
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: Firmware not found
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - APIKeyHeader: []
+      summary: Get a firmware data
+      tags:
+      - Device auto-registration
+      x-accepts: application/json
+  /auto-registration/data/push/:
+    post:
+      description: Used to send to the IoT platform measurements of accumulated by
+        device for the period
+      operationId: data_push_auto_registration_data_push__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceDataScheme'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonError'
+          description: No access
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - HTTPBasic: []
+      summary: Sending device measurement data to the IoT platform
+      tags:
+      - Device auto-registration
+      x-content-type: application/json
       x-accepts: application/json
 components:
   schemas:
-    CountriesGetAllExampleResponse:
+    CommonError:
       example:
-        result:
-        - code: cz
-          full_code: czech
-          name: Чехия
-        - code: de
-          full_code: germany
-          name: Германия
-        status: success
+        detail: detail
       properties:
-        status:
-          example: success
-          title: Status
-          type: string
-        result:
-          example:
-          - code: cz
-            full_code: czech
-            name: Чехия
-          - code: de
-            full_code: germany
-            name: Германия
-          items: {}
-          type: array
+        detail:
+          $ref: '#/components/schemas/detail'
       required:
-      - result
-      - status
-      title: CountriesGetAllExampleResponse
-    CountriesGetExampleResponse:
+      - detail
+      title: CommonError
+    ConfigCreateScheme:
       example:
-        result:
-          code: cz
-          full_code: czech
-          name: Чехия
-        status: success
+        company_id: 0
+        name: name
+        model_id: 6
+        firmware: firmware
+        config: config
       properties:
-        status:
-          example: success
-          title: Status
+        company_id:
+          $ref: '#/components/schemas/company_id'
+        name:
+          title: Name
           type: string
-        result:
-          example:
-            code: cz
-            full_code: czech
-            name: Чехия
-          title: Result
-          type: object
+        model_id:
+          description: the device model identifier
+          title: Model Id
+          type: integer
+        firmware:
+          description: the device firmware version
+          title: Firmware
+          type: string
+        config:
+          description: the device base64 encoded configuration
+          format: base64
+          title: Config
+          type: string
       required:
-      - result
-      - status
-      title: CountriesGetExampleResponse
+      - config
+      - firmware
+      - model_id
+      - name
+      title: ConfigCreateScheme
+    ConfigScheme:
+      example:
+        creator:
+          role: null
+          name: Ivanov Ivan
+          id: 654
+          email: ivan.ivanov@air-bit.eu
+        company_id: 0
+        created: 2023-01-01T00:00:00Z
+        name: name
+        id: 6
+        model_id: 1
+        updated: 2023-01-02T00:00:00Z
+        firmware: firmware
+        config: Config
+        updater: null
+      properties:
+        company_id:
+          $ref: '#/components/schemas/company_id'
+        created:
+          $ref: '#/components/schemas/created'
+        creator:
+          $ref: '#/components/schemas/ConfigScheme_creator'
+        updated:
+          $ref: '#/components/schemas/updated'
+        updater:
+          $ref: '#/components/schemas/ConfigScheme_creator'
+        id:
+          description: configuration ID
+          title: Id
+          type: integer
+        name:
+          title: Name
+          type: string
+        model_id:
+          description: the device model identifier
+          title: Model Id
+          type: integer
+        firmware:
+          description: the device firmware version
+          title: Firmware
+          type: string
+        config:
+          $ref: '#/components/schemas/Config'
+      required:
+      - company_id
+      - config
+      - created
+      - creator
+      - firmware
+      - id
+      - model_id
+      - name
+      - updated
+      - updater
+      title: ConfigScheme
+    DeviceDataScheme:
+      example:
+        data: data
+        serial: serial
+        model_id: 0
+      properties:
+        model_id:
+          description: the device model identifier
+          title: Model Id
+          type: integer
+        serial:
+          description: the device serial number
+          title: Serial
+          type: string
+        data:
+          description: device measurements data
+          format: base64
+          title: Data
+          type: string
+      required:
+      - data
+      - model_id
+      - serial
+      title: DeviceDataScheme
+    DeviceInfoScheme:
+      example:
+        settings: Settings
+        personalization: Personalization
+        date_time: 2000-01-23T04:56:07.000+00:00
+        serial: serial
+        location:
+          altitude: 1
+          latitude: 0.8008281904610115
+          longitude: 6.027456183070403
+        model_id: 5
+        state: State
+        slave_profile: Slave_Profile
+        firmware: firmware
+      properties:
+        date_time:
+          $ref: '#/components/schemas/Date_Time'
+        location:
+          $ref: '#/components/schemas/LocationScheme'
+        model_id:
+          description: the device model identifier
+          title: Model Id
+          type: integer
+        serial:
+          description: the device serial number
+          title: Serial
+          type: string
+        firmware:
+          description: the device firmware version
+          title: Firmware
+          type: string
+        slave_profile:
+          $ref: '#/components/schemas/Slave_Profile'
+        settings:
+          $ref: '#/components/schemas/Settings'
+        state:
+          $ref: '#/components/schemas/State'
+        personalization:
+          $ref: '#/components/schemas/Personalization'
+      required:
+      - date_time
+      - firmware
+      - location
+      - model_id
+      - personalization
+      - serial
+      - settings
+      - slave_profile
+      - state
+      title: DeviceInfoScheme
+    DeviceNameScheme:
+      example:
+        date_time: 2000-01-23T04:56:07.000+00:00
+        serial: serial
+        name: name
+        force: true
+      properties:
+        date_time:
+          $ref: '#/components/schemas/Date_Time'
+        serial:
+          description: the device serial number
+          title: Serial
+          type: string
+        name:
+          description: the device firmware version
+          title: Name
+          type: string
+        force:
+          $ref: '#/components/schemas/Force'
+      required:
+      - date_time
+      - force
+      - name
+      - serial
+      title: DeviceNameScheme
+    FirmwareScheme:
+      example:
+        image: image
+        creator:
+          role: null
+          name: Ivanov Ivan
+          id: 654
+          email: ivan.ivanov@air-bit.eu
+        company_id: 0
+        created: 2023-01-01T00:00:00Z
+        name: name
+        id: 6
+        model_id: 1
+        updated: 2023-01-02T00:00:00Z
+        firmware: firmware
+        updater: null
+        desc: desc
+      properties:
+        company_id:
+          $ref: '#/components/schemas/company_id'
+        created:
+          $ref: '#/components/schemas/created'
+        creator:
+          $ref: '#/components/schemas/ConfigScheme_creator'
+        updated:
+          $ref: '#/components/schemas/updated'
+        updater:
+          $ref: '#/components/schemas/ConfigScheme_creator'
+        id:
+          description: firmware ID
+          title: Id
+          type: integer
+        name:
+          title: Name
+          type: string
+        desc:
+          title: Desc
+          type: string
+        model_id:
+          description: the device model identifier
+          title: Model Id
+          type: integer
+        firmware:
+          description: the device firmware version
+          title: Firmware
+          type: string
+        image:
+          description: the firmware base64 encoded image
+          format: base64
+          title: Image
+          type: string
+      required:
+      - company_id
+      - created
+      - creator
+      - desc
+      - firmware
+      - id
+      - image
+      - model_id
+      - name
+      - updated
+      - updater
+      title: FirmwareScheme
     HTTPValidationError:
       example:
-        error_message: Текст Ошибки
-        error_type: Тип Ошибки
-        status: error
+        detail:
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
+        - msg: msg
+          loc:
+          - ValidationError_loc_inner
+          - ValidationError_loc_inner
+          type: type
       properties:
-        status:
-          example: error
-          title: Status
-          type: string
-        error_message:
-          example: Текст Ошибки
-          title: Error Message
-          type: string
-        error_type:
-          example: Тип Ошибки
-          title: Error Type
-          type: object
-      required:
-      - error_message
-      - error_type
-      - status
-      title: ErrorResponseDefinition
-    SendGetResultExampleResponse:
-      example:
-        result:
-          country_code: cz
-          send_id: 10213
-          send_status: success
-          service_code: vinted
-          to: example@example.com
-        status: success
-      properties:
-        status:
-          example: success
-          title: Status
-          type: string
-        result:
-          example:
-            country_code: cz
-            send_id: 10213
-            send_status: success
-            service_code: vinted
-            to: example@example.com
-          title: Result
-          type: object
-      required:
-      - result
-      - status
-      title: SendGetResultExampleResponse
-    SendParams:
-      properties:
-        url:
-          example: https://example.com
-          title: Url
-          type: string
-        to:
-          example: example@gmail.com
-          title: To
-          type: string
-        country_code:
-          example: cz
-          title: Country Code
-          type: string
-        service_code:
-          example: vinted
-          title: Service Code
-          type: string
-        product:
-          example: Название товара (может встречаться в письме)
-          title: Product
-          type: string
-        is_delay:
-          default: false
-          example: письмо для отлеги или нет? (необязательный параметр)
-          title: Is Delay
-          type: boolean
-        notify_id:
-          default: 0
-          example: ID телеграм чата / пользователя. На который направлять результат
-            перехода по ссылке (необязательный параметр)
-          title: Notify Id
-          type: integer
-        url_img:
-          example: "https://example.com/image.jpg (необязательный параметр, кроме\
-            \ сервиса booking (страна: all_world, сервис: booking))"
-          title: Url Img
-          type: string
-      required:
-      - country_code
-      - service_code
-      - to
-      - url
-      title: SendParams
-    SendResultExampleResponse:
-      example:
-        result:
-          send_status: wait
-          tags:
-          - tag: tag1
-            to: example@example.com
-          - tag: tag2
-            to: example2@example.com
-        status: success
-      properties:
-        status:
-          example: success
-          title: Status
-          type: string
-        result:
-          example:
-            send_status: wait
-            tags:
-            - tag: tag1
-              to: example@example.com
-            - tag: tag2
-              to: example2@example.com
-          title: Result
-          type: object
-      required:
-      - result
-      - status
-      title: SendResultExampleResponse
-    ServicesGetAllExampleResponse:
-      example:
-        result:
-        - code: olx
-          country_code: cz
-          name: OLX
-        - code: vinted
-          country_code: de
-          name: Vinted
-        status: success
-      properties:
-        status:
-          example: success
-          title: Status
-          type: string
-        result:
-          example:
-          - code: olx
-            country_code: cz
-            name: OLX
-          - code: vinted
-            country_code: de
-            name: Vinted
-          items: {}
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
           type: array
-      required:
-      - result
-      - status
-      title: ServicesGetAllExampleResponse
-    ServicesGetExampleResponse:
+      title: HTTPValidationError
+    LocationScheme:
       example:
-        result:
-          code: olx
-          country_code: cz
-          name: OLX
-        status: success
+        altitude: 1
+        latitude: 0.8008281904610115
+        longitude: 6.027456183070403
       properties:
-        status:
-          example: success
-          title: Status
-          type: string
-        result:
-          example:
-            code: olx
-            country_code: cz
-            name: OLX
-          title: Result
-          type: object
+        latitude:
+          $ref: '#/components/schemas/Latitude'
+        longitude:
+          $ref: '#/components/schemas/Longitude'
+        altitude:
+          $ref: '#/components/schemas/Altitude'
       required:
-      - result
-      - status
-      title: ServicesGetExampleResponse
+      - altitude
+      - latitude
+      - longitude
+      title: LocationScheme
+    UserAuditScheme:
+      example:
+        role: null
+        name: Ivanov Ivan
+        id: 654
+        email: ivan.ivanov@air-bit.eu
+      properties:
+        email:
+          description: user email
+          example: ivan.ivanov@air-bit.eu
+          maxLength: 128
+          title: email
+          type: string
+        id:
+          description: unique user id
+          example: 654
+          title: id
+          type: integer
+        name:
+          $ref: '#/components/schemas/name'
+        role:
+          $ref: '#/components/schemas/UserRole'
+      required:
+      - email
+      - id
+      - name
+      - role
+      title: UserAuditScheme
+    UserRole:
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      title: UserRole
+      type: integer
     ValidationError:
+      example:
+        msg: msg
+        loc:
+        - ValidationError_loc_inner
+        - ValidationError_loc_inner
+        type: type
       properties:
         loc:
           items:
@@ -427,19 +775,119 @@ components:
       - msg
       - type
       title: ValidationError
-    Items:
+    detail:
       anyOf:
-      - items:
-          $ref: '#/components/schemas/SendParams'
-      - $ref: '#/components/schemas/SendParams'
-      title: Items
+      - type: string
+      - nullable: true
+      title: detail
+    company_id:
+      anyOf:
+      - type: integer
+      - nullable: true
+      description: "unique identifier of the owner's company, returned only for Superadmin"
+      title: company_id
+    created:
+      anyOf:
+      - format: date-time
+        type: string
+      - nullable: true
+      description: object creation time
+      example: 2023-01-01T00:00:00Z
+      title: created
+    ConfigScheme_creator:
+      anyOf:
+      - $ref: '#/components/schemas/UserAuditScheme'
+      - nullable: true
+    updated:
+      anyOf:
+      - format: date-time
+        type: string
+      - nullable: true
+      description: user name
+      example: 2023-01-02T00:00:00Z
+      title: updated
+    Config:
+      anyOf:
+      - format: base64
+        type: string
+      - nullable: true
+      description: the device base64 encoded configuration
+      title: Config
+    Date_Time:
+      anyOf:
+      - format: date-time
+        type: string
+      - nullable: true
+      description: the device date and time
+      title: Date Time
+    Slave_Profile:
+      anyOf:
+      - format: base64
+        type: string
+      - nullable: true
+      title: Slave Profile
+    Settings:
+      anyOf:
+      - format: base64
+        type: string
+      - nullable: true
+      description: current device settings (base64 encoded)
+      title: Settings
+    State:
+      anyOf:
+      - format: base64
+        type: string
+      - nullable: true
+      description: current device state (base64 encoded)
+      title: State
+    Personalization:
+      anyOf:
+      - format: base64
+        type: string
+      - nullable: true
+      description: the device base64 encoded personalization data
+      title: Personalization
+    Force:
+      anyOf:
+      - type: boolean
+      - nullable: true
+      description: "Adds a device to the IoT platform, forcefully replacing existing\
+        \ device information"
+      title: Force
+    Latitude:
+      anyOf:
+      - type: number
+      - nullable: true
+      title: Latitude
+    Longitude:
+      anyOf:
+      - type: number
+      - nullable: true
+      title: Longitude
+    Altitude:
+      anyOf:
+      - type: integer
+      - nullable: true
+      title: Altitude
+    name:
+      anyOf:
+      - type: string
+      - nullable: true
+      description: user name
+      example: Ivanov Ivan
+      title: name
     ValidationError_loc_inner:
       anyOf:
       - type: string
       - type: integer
   securitySchemes:
-    TokenAuth:
-      in: query
-      name: key
+    HTTPBasic:
+      description: "If there is a cookie session, it is not necessary to specify the\
+        \ authorization header."
+      scheme: basic
+      type: http
+    APIKeyHeader:
+      in: header
+      name: X-API-Key
       type: apiKey
 

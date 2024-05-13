@@ -20,38 +20,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.openapitools.client.model.ValidationError;
+import org.openapitools.client.model.Detail;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * HTTPValidationError
+ * CommonError
  */
 @JsonPropertyOrder({
-  HTTPValidationError.JSON_PROPERTY_DETAIL
+  CommonError.JSON_PROPERTY_DETAIL
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:22:58.353940352Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class HTTPValidationError {
+public class CommonError {
   public static final String JSON_PROPERTY_DETAIL = "detail";
-  private List<ValidationError> detail;
+  private Detail detail;
 
-  public HTTPValidationError() {
+  public CommonError() {
   }
 
-  public HTTPValidationError detail(List<ValidationError> detail) {
+  public CommonError detail(Detail detail) {
     
     this.detail = detail;
-    return this;
-  }
-
-  public HTTPValidationError addDetailItem(ValidationError detailItem) {
-    if (this.detail == null) {
-      this.detail = new ArrayList<>();
-    }
-    this.detail.add(detailItem);
     return this;
   }
 
@@ -59,18 +48,18 @@ public class HTTPValidationError {
    * Get detail
    * @return detail
   **/
-  @javax.annotation.Nullable
+  @javax.annotation.Nonnull
   @JsonProperty(JSON_PROPERTY_DETAIL)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public List<ValidationError> getDetail() {
+  public Detail getDetail() {
     return detail;
   }
 
 
   @JsonProperty(JSON_PROPERTY_DETAIL)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDetail(List<ValidationError> detail) {
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setDetail(Detail detail) {
     this.detail = detail;
   }
 
@@ -82,8 +71,8 @@ public class HTTPValidationError {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    HTTPValidationError htTPValidationError = (HTTPValidationError) o;
-    return Objects.equals(this.detail, htTPValidationError.detail);
+    CommonError commonError = (CommonError) o;
+    return Objects.equals(this.detail, commonError.detail);
   }
 
   @Override
@@ -94,7 +83,7 @@ public class HTTPValidationError {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class HTTPValidationError {\n");
+    sb.append("class CommonError {\n");
     sb.append("    detail: ").append(toIndentedString(detail)).append("\n");
     sb.append("}");
     return sb.toString();

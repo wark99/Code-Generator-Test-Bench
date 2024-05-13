@@ -1,13 +1,13 @@
 
 
-# HTTPValidationError
+# Personalization
 
+the device base64 encoded personalization data
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**detail** | [**List&lt;ValidationError&gt;**](ValidationError.md) |  |  [optional] |
 
 
 

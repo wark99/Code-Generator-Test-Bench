@@ -15,19 +15,18 @@ package org.openapitools.client.model;
 
 import java.util.Objects;
 import java.util.Arrays;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * ValidationErrorLocInner
+ * Latitude
  */
 @JsonPropertyOrder({
 })
-@JsonTypeName("ValidationError_loc_inner")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:22:58.353940352Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class ValidationErrorLocInner {
-  public ValidationErrorLocInner() {
+public class Latitude {
+  public Latitude() {
   }
   @Override
   public boolean equals(Object o) {
@@ -48,7 +47,7 @@ public class ValidationErrorLocInner {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValidationErrorLocInner {\n");
+    sb.append("class Latitude {\n");
     sb.append("}");
     return sb.toString();
   }
