@@ -1,10 +1,10 @@
 # openapi-java-client
 
-API ESG PMI - assessment
+concreateAI-test
 
-- API version: v1.0.2
+- API version: 1.0.0
 
-- Build date: 2024-05-13T19:16:04.261563944Z[Etc/UTC]
+- Build date: 2024-05-13T19:16:12.335744348Z[Etc/UTC]
 
 - Generator version: 7.4.0
 
@@ -44,7 +44,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>org.openapitools</groupId>
   <artifactId>openapi-java-client</artifactId>
-  <version>v1.0.2</version>
+  <version>1.0.0</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -60,7 +60,7 @@ Add this dependency to your project's build file:
   }
 
   dependencies {
-     implementation "org.openapitools:openapi-java-client:v1.0.2"
+     implementation "org.openapitools:openapi-java-client:1.0.0"
   }
 ```
 
@@ -74,7 +74,7 @@ mvn clean package
 
 Then manually install the following JARs:
 
-- `target/openapi-java-client-v1.0.2.jar`
+- `target/openapi-java-client-1.0.0.jar`
 - `target/lib/*.jar`
 
 ## Getting Started
@@ -86,21 +86,25 @@ Please follow the [installation](#installation) instruction and execute the foll
 import org.openapitools.client.*;
 import org.openapitools.client.auth.*;
 import org.openapitools.client.model.*;
-import org.openapitools.client.api.RetrieveApi;
+import org.openapitools.client.api.DefaultApi;
 
-public class RetrieveApiExample {
+public class DefaultApiExample {
 
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api-eseg.mindlogix.it");
+        defaultClient.setBasePath("https://localhost");
         
-        RetrieveApi apiInstance = new RetrieveApi(defaultClient);
-        Integer frameworkId = 56; // Integer | ID of a framework
+        // Configure HTTP bearer authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
+
+        DefaultApi apiInstance = new DefaultApi(defaultClient);
+        CreateUserAccountRequest createUserAccountRequest = new CreateUserAccountRequest(); // CreateUserAccountRequest | 
         try {
-            AllAreasModel result = apiInstance.getAllAreas(frameworkId);
+            CreateUserAccount200Response result = apiInstance.createUserAccount(createUserAccountRequest);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling RetrieveApi#getAllAreas");
+            System.err.println("Exception when calling DefaultApi#createUserAccount");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -113,57 +117,61 @@ public class RetrieveApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://api-eseg.mindlogix.it*
+All URIs are relative to *https://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*RetrieveApi* | [**getAllAreas**](docs/RetrieveApi.md#getAllAreas) | **GET** /areas/{framework_id} | 
-*RetrieveApi* | [**getAllFacts**](docs/RetrieveApi.md#getAllFacts) | **GET** /facts/{subarea_id}/{nace} | 
-*RetrieveApi* | [**getAllFrameworks**](docs/RetrieveApi.md#getAllFrameworks) | **GET** /frameworks | 
-*RetrieveApi* | [**getAllSubAreas**](docs/RetrieveApi.md#getAllSubAreas) | **GET** /subareas/{area_id} | 
-*RetrieveApi* | [**getArea**](docs/RetrieveApi.md#getArea) | **GET** /area/{id} | 
-*RetrieveApi* | [**getFact**](docs/RetrieveApi.md#getFact) | **GET** /fact/{id} | 
-*RetrieveApi* | [**getFramework**](docs/RetrieveApi.md#getFramework) | **GET** /framework/{id} | 
-*RetrieveApi* | [**getSubArea**](docs/RetrieveApi.md#getSubArea) | **GET** /subarea/{id} | 
-*ScoreApi* | [**calculateScore**](docs/ScoreApi.md#calculateScore) | **POST** /score | 
-*ServiceApi* | [**getNaceFromAteco**](docs/ServiceApi.md#getNaceFromAteco) | **GET** /ateco2nace/{ateco} | 
+*DefaultApi* | [**createUserAccount**](docs/DefaultApi.md#createUserAccount) | **POST** /v1/api/user/accounts | create user account
+*DefaultApi* | [**getAccounts**](docs/DefaultApi.md#getAccounts) | **GET** /v1/api/accounts | get accounts
+*DefaultApi* | [**getTransactions**](docs/DefaultApi.md#getTransactions) | **GET** /v1/api/transactions | get transactions
+*DefaultApi* | [**send**](docs/DefaultApi.md#send) | **POST** /v1/api/send | send
+*DefaultApi* | [**signin**](docs/DefaultApi.md#signin) | **POST** /api/v1/signin | signin
+*DefaultApi* | [**signup**](docs/DefaultApi.md#signup) | **POST** /api/v1/signup | signup
+*DefaultApi* | [**withdraw**](docs/DefaultApi.md#withdraw) | **POST** /v1/api/withdraw | withdraw
 
 
 ## Documentation for Models
 
- - [AllAreas](docs/AllAreas.md)
- - [AllAreasModel](docs/AllAreasModel.md)
- - [AllFacts](docs/AllFacts.md)
- - [AllFactsModel](docs/AllFactsModel.md)
- - [AllFrameworkModel](docs/AllFrameworkModel.md)
- - [AllFrameworks](docs/AllFrameworks.md)
- - [AllSubAreas](docs/AllSubAreas.md)
- - [AllSubAreasModel](docs/AllSubAreasModel.md)
- - [AreaResponseModel](docs/AreaResponseModel.md)
- - [AreaScore](docs/AreaScore.md)
- - [AtecoToNaceResponse](docs/AtecoToNaceResponse.md)
- - [FactResponseModel](docs/FactResponseModel.md)
- - [FrameworkResponseModel](docs/FrameworkResponseModel.md)
- - [GlobalScore](docs/GlobalScore.md)
- - [IndicatoriScore](docs/IndicatoriScore.md)
- - [KpiAnswerModel](docs/KpiAnswerModel.md)
- - [KpiDependOnModel](docs/KpiDependOnModel.md)
- - [KpiFileModel](docs/KpiFileModel.md)
- - [KpiResponseModel](docs/KpiResponseModel.md)
- - [KpiTypes](docs/KpiTypes.md)
- - [Language](docs/Language.md)
- - [ScoreBodyModel](docs/ScoreBodyModel.md)
- - [ScoreDataModel](docs/ScoreDataModel.md)
- - [ScoreResponseModel](docs/ScoreResponseModel.md)
- - [ScoreSubResponseModel](docs/ScoreSubResponseModel.md)
- - [SubAreaResponseModel](docs/SubAreaResponseModel.md)
- - [SubAreaScore](docs/SubAreaScore.md)
+ - [CreateUserAccount200Response](docs/CreateUserAccount200Response.md)
+ - [CreateUserAccount400Response](docs/CreateUserAccount400Response.md)
+ - [CreateUserAccountRequest](docs/CreateUserAccountRequest.md)
+ - [GetAccounts200Response](docs/GetAccounts200Response.md)
+ - [GetAccounts200ResponseDataInner](docs/GetAccounts200ResponseDataInner.md)
+ - [GetAccounts404Response](docs/GetAccounts404Response.md)
+ - [GetTransactions200Response](docs/GetTransactions200Response.md)
+ - [GetTransactions200ResponseDataInner](docs/GetTransactions200ResponseDataInner.md)
+ - [GetTransactions200ResponseMetadata](docs/GetTransactions200ResponseMetadata.md)
+ - [GetTransactions404Response](docs/GetTransactions404Response.md)
+ - [GetTransactions500Response](docs/GetTransactions500Response.md)
+ - [Send200Response](docs/Send200Response.md)
+ - [Send200ResponseData](docs/Send200ResponseData.md)
+ - [Send400Response](docs/Send400Response.md)
+ - [Send404Response](docs/Send404Response.md)
+ - [SendRequest](docs/SendRequest.md)
+ - [Signin200Response](docs/Signin200Response.md)
+ - [Signin200ResponseData](docs/Signin200ResponseData.md)
+ - [Signin400Response](docs/Signin400Response.md)
+ - [Signin404Response](docs/Signin404Response.md)
+ - [Signup200Response](docs/Signup200Response.md)
+ - [Signup200ResponseData](docs/Signup200ResponseData.md)
+ - [Signup400Response](docs/Signup400Response.md)
+ - [Signup500Response](docs/Signup500Response.md)
+ - [SignupRequest](docs/SignupRequest.md)
+ - [Withdraw200Response](docs/Withdraw200Response.md)
+ - [Withdraw200ResponseData](docs/Withdraw200ResponseData.md)
+ - [Withdraw404Response](docs/Withdraw404Response.md)
 
 
 <a id="documentation-for-authorization"></a>
 ## Documentation for Authorization
 
-Endpoints do not require authorization.
+
+Authentication schemes defined for the API:
+<a id="bearerAuth"></a>
+### bearerAuth
+
+
+- **Type**: HTTP Bearer Token authentication
 
 
 ## Recommendation
