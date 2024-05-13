@@ -1,0 +1,119 @@
+
+
+# AccountDetailsYodlee
+
+
+## Properties
+
+| Name | Type | Description | Notes |
+|------------ | ------------- | ------------- | -------------|
+|**availableCash** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**includeInNetWorth** | **Boolean** |  |  [optional] |
+|**moneyMarketBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**enrollmentDate** | **String** |  |  [optional] |
+|**estimatedDate** | **String** |  |  [optional] |
+|**memo** | **String** |  |  [optional] |
+|**guarantor** | **String** |  |  [optional] |
+|**interestPaidLastYear** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**lastUpdated** | **String** |  |  [optional] |
+|**balance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**homeInsuranceType** | **String** |  |  [optional] |
+|**id** | **Long** |  |  [optional] |
+|**cash** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**totalCreditLine** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**providerName** | **String** |  |  [optional] |
+|**valuationType** | **String** |  |  [optional] |
+|**marginBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**apr** | **Float** |  |  [optional] |
+|**availableCredit** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**isManual** | **Boolean** |  |  [optional] |
+|**profile** | [**AccountProfileYodlee**](AccountProfileYodlee.md) |  |  [optional] |
+|**escrowBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**nextLevel** | **String** |  |  [optional] |
+|**classification** | **String** |  |  [optional] |
+|**loanPayoffAmount** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**interestRateType** | **String** |  |  [optional] |
+|**loanPayByDate** | **String** |  |  [optional] |
+|**faceAmount** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**policyFromDate** | **String** |  |  [optional] |
+|**premiumPaymentTerm** | **String** |  |  [optional] |
+|**policyTerm** | **String** |  |  [optional] |
+|**repaymentPlanType** | **String** |  |  [optional] |
+|**aggregatedAccountType** | **String** |  |  [optional] |
+|**availableBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**accountStatus** | **String** |  |  [optional] |
+|**lifeInsuranceType** | **String** |  |  [optional] |
+|**fullAccountNumber** | **String** |  |  [optional] |
+|**premium** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**aggregationSource** | **String** |  |  [optional] |
+|**overDraftLimit** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**nickname** | **String** |  |  [optional] |
+|**term** | **String** |  |  [optional] |
+|**interestRate** | **Float** |  |  [optional] |
+|**deathBenefit** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**address** | [**AccountAddressYodlee**](AccountAddressYodlee.md) |  |  [optional] |
+|**cashValue** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**holder** | [**AccountHolderYodlee**](AccountHolderYodlee.md) |  |  [optional] |
+|**_401kLoan** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**homeValue** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**accountNumber** | **String** |  |  [optional] |
+|**createdDate** | **String** |  |  [optional] |
+|**interestPaidYTD** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**providerAccountId** | **Long** |  |  [optional] |
+|**collateral** | **String** |  |  [optional] |
+|**dataset** | [**AccountDatasetYodlee**](AccountDatasetYodlee.md) |  |  [optional] |
+|**runningBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**sourceId** | **String** |  |  [optional] |
+|**dueDate** | **String** |  |  [optional] |
+|**frequency** | **String** |  |  [optional] |
+|**maturityAmount** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**associatedProviderAccountId** | **List&lt;Long&gt;** |  |  [optional] |
+|**isAsset** | **Boolean** |  |  [optional] |
+|**principalBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**totalCashLimit** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**maturityDate** | **String** |  |  [optional] |
+|**minimumAmountDue** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**annualPercentageYield** | **Float** |  |  [optional] |
+|**accountType** | **String** |  |  [optional] |
+|**originationDate** | **String** |  |  [optional] |
+|**totalVestedBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**rewardBalance** | [**List&lt;RewardBalanceYodlee&gt;**](RewardBalanceYodlee.md) |  |  [optional] |
+|**sourceAccountStatus** | **String** |  |  [optional] |
+|**linkedAccountIds** | **List&lt;Long&gt;** |  |  [optional] |
+|**derivedApr** | **Float** |  |  [optional] |
+|**policyEffectiveDate** | **String** |  |  [optional] |
+|**totalUnvestedBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**annnuityBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**accountName** | **String** |  |  [optional] |
+|**totalCreditLimit** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**policyStatus** | **String** |  |  [optional] |
+|**shortBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**lender** | **String** |  |  [optional] |
+|**lastEmployeeContribututionAmount** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**providerId** | **String** |  |  [optional] |
+|**lastPaymentDate** | **String** |  |  [optional] |
+|**primaryRewardUnit** | **String** |  |  [optional] |
+|**lastPaymentAmount** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**remainingBalance** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**userClassification** | **String** |  |  [optional] |
+|**bankTransferCode** | [**List&lt;BankTransferCodeYodlee&gt;**](BankTransferCodeYodlee.md) |  |  [optional] |
+|**expirationDate** | **String** |  |  [optional] |
+|**coverage** | [**List&lt;CoverageYodlee&gt;**](CoverageYodlee.md) |  |  [optional] |
+|**cashApr** | **Float** |  |  [optional] |
+|**autoRefresh** | [**AutoRefreshYodlee**](AutoRefreshYodlee.md) |  |  [optional] |
+|**oauthMigrationStatus** | **String** |  |  [optional] |
+|**displayedName** | **String** |  |  [optional] |
+|**fullAccountNumberList** | [**FullAccountNumberListYodlee**](FullAccountNumberListYodlee.md) |  |  [optional] |
+|**amountDue** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**currentLevel** | **String** |  |  [optional] |
+|**originalLoanAmount** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**policyToDate** | **String** |  |  [optional] |
+|**loanPayoffDetails** | [**LoanPayoffDetailsYodlee**](LoanPayoffDetailsYodlee.md) |  |  [optional] |
+|**paymentProfile** | [**PaymentProfileYodlee**](PaymentProfileYodlee.md) |  |  [optional] |
+|**CONTAINER** | **String** |  |  [optional] |
+|**lastEmployeeContributionDate** | **String** |  |  [optional] |
+|**lastPayment** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+|**recurringPayment** | [**MoneyYodlee**](MoneyYodlee.md) |  |  [optional] |
+
+
+
