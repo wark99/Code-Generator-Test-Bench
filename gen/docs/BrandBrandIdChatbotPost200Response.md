@@ -1,0 +1,16 @@
+
+
+# BrandBrandIdChatbotPost200Response
+
+
+## Properties
+
+| Name | Type | Description | Notes |
+|------------ | ------------- | ------------- | -------------|
+|**result** | [**List&lt;Chatbot&gt;**](Chatbot.md) |  |  [optional] |
+|**code** | **String** |  |  [optional] |
+|**status** | **Integer** |  |  [optional] |
+|**desc** | **String** |  |  [optional] |
+
+
+
