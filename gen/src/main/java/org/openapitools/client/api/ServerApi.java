@@ -2,8 +2,7 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import org.openapitools.client.model.CreateProjectSchema;
-import org.openapitools.client.model.ProjectSchema;
+import org.openapitools.client.model.Ping;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,15 +25,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:25:25.807394581Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class ProjectsApi {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:25:32.920428042Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+public class ServerApi {
     private ApiClient apiClient;
 
-    public ProjectsApi() {
+    public ServerApi() {
         this(new ApiClient());
     }
 
-    public ProjectsApi(ApiClient apiClient) {
+    public ServerApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -47,34 +46,25 @@ public class ProjectsApi {
     }
 
     /**
-     * Create Project
-     * Create a project.
-     * <p><b>201</b> - Successful Response
-     * <p><b>401</b> - Invalid or expired token.
-     * @param createProjectSchema  (required)
-     * @return ProjectSchema
+     * ping
+     * ping endpoint
+     * <p><b>200</b> - Successfull
+     * @return Ping
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ProjectSchema createProjectProjectsPost(CreateProjectSchema createProjectSchema) throws RestClientException {
-        return createProjectProjectsPostWithHttpInfo(createProjectSchema).getBody();
+    public Ping ping() throws RestClientException {
+        return pingWithHttpInfo().getBody();
     }
 
     /**
-     * Create Project
-     * Create a project.
-     * <p><b>201</b> - Successful Response
-     * <p><b>401</b> - Invalid or expired token.
-     * @param createProjectSchema  (required)
-     * @return ResponseEntity&lt;ProjectSchema&gt;
+     * ping
+     * ping endpoint
+     * <p><b>200</b> - Successfull
+     * @return ResponseEntity&lt;Ping&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<ProjectSchema> createProjectProjectsPostWithHttpInfo(CreateProjectSchema createProjectSchema) throws RestClientException {
-        Object localVarPostBody = createProjectSchema;
-        
-        // verify the required parameter 'createProjectSchema' is set
-        if (createProjectSchema == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'createProjectSchema' when calling createProjectProjectsPost");
-        }
+    public ResponseEntity<Ping> pingWithHttpInfo() throws RestClientException {
+        Object localVarPostBody = null;
         
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
@@ -86,14 +76,12 @@ public class ProjectsApi {
             "application/json"
          };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
-         };
+        final String[] localVarContentTypes = {  };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] { "HTTPBearer" };
+        String[] localVarAuthNames = new String[] { "ApiKeyAuth" };
 
-        ParameterizedTypeReference<ProjectSchema> localReturnType = new ParameterizedTypeReference<ProjectSchema>() {};
-        return apiClient.invokeAPI("/projects", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<Ping> localReturnType = new ParameterizedTypeReference<Ping>() {};
+        return apiClient.invokeAPI("/ping", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }

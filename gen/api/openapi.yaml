@@ -1,174 +1,277 @@
 openapi: 3.1.0
 info:
   contact:
-    email: hello@essense.io
-    name: Essense Team
-    url: https://www.essense.io/
-  termsOfService: https://www.essense.io/terms-of-service
-  title: Essense Public API
-  version: 0.0.1
+    email: ml@stageinhome.com
+    name: StageInHome Support
+  description: "[StageInHome](https://stageinhome.com/) is a service that offers automatic\
+    \ virtual decoration for indoor spaces. The API allows users to upload images\
+    \ of their indoor spaces and receive digitally staged versions with different\
+    \ furniture and decor styles."
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://stageinhome.com/privacy-policy/
+  title: StageInHome API
+  version: 1.0.1
 servers:
-- url: /
+- url: https://api.stageinhome.com
+tags:
+- description: StgeInHome server
+  externalDocs:
+    description: Find out more
+    url: https://app.stageinhome.com/login/
+  name: server
+- description: Everything about automatic decoration
+  externalDocs:
+    description: Find out more
+    url: https://app.stageinhome.com/login/
+  name: decoration
 paths:
-  /projects:
+  /ping:
+    get:
+      description: ping endpoint
+      operationId: ping
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ping'
+          description: Successfull
+      security:
+      - ApiKeyAuth: []
+      summary: ping
+      tags:
+      - server
+      x-accepts: application/json
+  /auto_decoration:
     post:
-      description: Create a project.
-      operationId: create_project_projects_post
+      description: Generates an automatic decoration for a input image of an indoor
+        space in less than 20 seconds.
+      operationId: autoDecoration
+      parameters:
+      - description: TODO
+        explode: true
+        in: query
+        name: room_type
+        required: true
+        schema:
+          default: bedroom
+          enum:
+          - bedroom
+          - living_room
+          - dining_room
+          - bathroom
+          - kitchen
+          - office
+          - study_room
+          type: string
+        style: form
+      - description: TODO
+        explode: true
+        in: query
+        name: style
+        required: true
+        schema:
+          default: modern
+          enum:
+          - modern
+          - minimalist
+          - classic
+          - rustic
+          - industrial
+          - coastal
+          - scandinavian
+          - mediterranean
+          type: string
+        style: form
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CreateProjectSchema'
+              $ref: '#/components/schemas/autoDecoration_request'
+        description: Send an image
         required: true
       responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Decoration'
+          description: Image for decoration uploaded successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/room_type_error'
+          description: Bad Request
+      security:
+      - ApiKeyAuth: []
+      summary: Obtain a new automatic 'decoration' image from your input image.
+      tags:
+      - decoration
+      x-content-type: multipart/form-data
+      x-accepts: application/json
+  /retry_decoration:
+    post:
+      description: Generates a new decoration for an specific image identified previously
+        decorated. The room_type and style can't be modified and it will use the same
+        as the ones provided in the auto_decoration call.
+      operationId: retryDecoration
+      parameters:
+      - description: UIID provided in auto_decoration endpoint
+        explode: true
+        in: query
+        name: img_id
+        required: true
+        schema:
+          default: xyz1230x-xyz1-123x-567a-abc123xyz123
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetryDecoration'
+          description: Processing a new decoration for specific img_id
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/room_type_error'
+          description: Bad Request
+      security:
+      - ApiKeyAuth: []
+      summary: Retry a 'decoration' image using same img_id.
+      tags:
+      - decoration
+      x-accepts: application/json
+  /get_decoration:
+    get:
+      description: Get the full resolution decoration computed automatically using
+        the img_id provided in auto_decoration endpoint.
+      operationId: getDecoration
+      parameters:
+      - description: UUID from the decoration provided for auto_decoration endpoint.
+        explode: true
+        in: query
+        name: img_id
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: Retry id provided for retry_decoration endpoint.
+        explode: true
+        in: query
+        name: retry_id
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DecResult'
+          description: successful operation (Decoration DONE)
         "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectSchema'
-          description: Successful Response
-        "401":
-          description: Invalid or expired token.
-      security:
-      - HTTPBearer: []
-      summary: Create Project
-      tags:
-      - projects
-      x-content-type: application/json
-      x-accepts: application/json
-  /projects/{project_id}/feedback:
-    post:
-      description: Import feedback for the project.
-      operationId: import_feedback_projects__project_id__feedback_post
-      parameters:
-      - description: Id of the project to import feedback.
-        explode: false
-        in: path
-        name: project_id
-        required: true
-        schema:
-          description: Id of the project to import feedback.
-          title: Project Id
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              items:
-                $ref: '#/components/schemas/FeedbackSchema'
-              type: array
-        required: true
-      responses:
-        "201":
+                $ref: '#/components/schemas/DecNotDone'
+          description: successful operation (Decoration INPROGRESS)
+        "400":
           content:
             application/json:
-              schema: {}
-          description: Successful Response
-        "401":
-          description: Invalid or expired token.
+              schema:
+                $ref: '#/components/schemas/get_error'
+          description: Invalid status value
       security:
-      - HTTPBearer: []
-      summary: Import Feedback
+      - ApiKeyAuth: []
+      summary: Get a full resolution decoration from img_id.
       tags:
-      - feedback
-      x-content-type: application/json
+      - decoration
       x-accepts: application/json
 components:
   schemas:
-    CreateProjectSchema:
+    Ping:
       example:
-        image: Image
-        title: Title
+        ping: pong!
       properties:
-        image:
-          $ref: '#/components/schemas/Image'
-        title:
-          $ref: '#/components/schemas/Title'
-      title: CreateProjectSchema
-    FeedbackSchema:
+        ping:
+          example: pong!
+          type: string
+    Decoration:
       example:
-        date: 0
-        metadata: ""
-        user_id: User_Id
-        comment: comment
-        title: Title_1
+        img_id: xyz1230x-xyz1-123x-567a-abc123xyz123
       properties:
-        date:
-          description: Timestamp in milliseconds when the review was created.
-          title: Date
+        img_id:
+          example: xyz1230x-xyz1-123x-567a-abc123xyz123
+          type: string
+    RetryDecoration:
+      example:
+        img_id: xyz1230x-xyz1-123x-567a-abc123xyz123
+        retry_id: 1
+      properties:
+        img_id:
+          example: xyz1230x-xyz1-123x-567a-abc123xyz123
+          type: string
+        retry_id:
+          example: 1
+          format: int32
           type: integer
-        comment:
-          description: The review comment content.
-          title: Comment
-          type: string
-        title:
-          $ref: '#/components/schemas/Title_1'
-        user_id:
-          $ref: '#/components/schemas/User_Id'
-        metadata:
-          $ref: '#/components/schemas/Metadata'
-      required:
-      - comment
-      - date
-      title: FeedbackSchema
-    ProjectSchema:
+    room_type_error:
       example:
-        image: Image
-        id: id
-        title: Title
+        detail: room_type not acceptable.
       properties:
-        image:
-          $ref: '#/components/schemas/Image'
-        title:
-          $ref: '#/components/schemas/Title'
-        id:
-          description: Id of the project.
-          title: Id
+        detail:
+          example: room_type not acceptable.
           type: string
-      required:
-      - id
-      - image
-      - title
-      title: ProjectSchema
-    Image:
-      anyOf:
-      - type: string
-      - nullable: true
-      description: Url of thumbnail for the project.
-      title: Image
-    Title:
-      anyOf:
-      - type: string
-      - nullable: true
-      description: Title of the project.
-      title: Title
-    Title_1:
-      anyOf:
-      - type: string
-      - nullable: true
-      description: Title of the review.
-      title: Title
-    User_Id:
-      anyOf:
-      - type: string
-      - nullable: true
-      description: User name (could be anonymized) or id or email or something.
-      title: User Id
-    Metadata_anyOf_value:
-      anyOf:
-      - type: string
-      - type: integer
-    Metadata:
-      anyOf:
-      - additionalProperties:
-          $ref: '#/components/schemas/Metadata_anyOf_value'
-      - nullable: true
-      description: "Any additional data for the review, for example, rating of the\
-        \ product."
-      title: Metadata
+    get_error:
+      example:
+        detail: image with the specified id does not exist or is empty.
+      properties:
+        detail:
+          example: image with the specified id does not exist or is empty.
+          type: string
+    DecNotDone:
+      description: Decoration not ready
+      example:
+        STATUS: 0
+        decorations: decorations
+      properties:
+        decorations:
+          format: base64
+          type: string
+          example: null
+        STATUS:
+          example: 0
+          type: integer
+    DecResult:
+      description: Base64-encoded contents of the decoration
+      example:
+        STATUS: 1
+        decorations:
+        - BASE_64 encdoded image
+      properties:
+        decorations:
+          example:
+          - BASE_64 encdoded image
+          format: base64
+          type: string
+        STATUS:
+          example: 1
+          type: integer
+    autoDecoration_request:
+      properties:
+        init_image:
+          format: binary
+          type: string
   securitySchemes:
-    HTTPBearer:
-      scheme: bearer
-      type: http
+    ApiKeyAuth:
+      in: header
+      name: x-api-key
+      type: apiKey
 

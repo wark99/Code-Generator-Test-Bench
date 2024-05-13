@@ -1,13 +1,13 @@
 
 
-# Title
+# RoomTypeError
 
-Title of the project.
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
+|**detail** | **String** |  |  [optional] |
 
 
 

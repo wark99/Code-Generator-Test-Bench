@@ -1,13 +1,13 @@
 
 
-# Title1
+# Decoration
 
-Title of the review.
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
+|**imgId** | **String** |  |  [optional] |
 
 
 
