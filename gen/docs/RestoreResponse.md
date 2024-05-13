@@ -1,14 +1,13 @@
 
 
-# ContactCe
+# RestoreResponse
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**phone** | **String** |  |  [optional] |
-|**email** | **String** |  |  [optional] |
+|**newItemRevision** | **String** | new name of the restored item |  [optional] |
 
 
 
