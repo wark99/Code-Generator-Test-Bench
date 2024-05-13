@@ -59,7 +59,7 @@ import java.time.OffsetDateTime;
 import org.openapitools.client.auth.Authentication;
 import org.openapitools.client.auth.HttpBearerAuth;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:20:41.221792118Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:20:49.756884279Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
@@ -84,7 +84,7 @@ public class ApiClient extends JavaTimeFormatter {
 
     private long waitTimeMillis = 10;
 
-    private String basePath = "https://api.perch.fit";
+    private String basePath = "https://test.auditeurs.qualibat.eu/PAGC/v1";
 
     private RestTemplate restTemplate;
 
@@ -115,7 +115,7 @@ public class ApiClient extends JavaTimeFormatter {
 
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<String, Authentication>();
-        authentications.put("ApiKeyAuth", new HttpBearerAuth("bearer"));
+        authentications.put("BearerAuth", new HttpBearerAuth("bearer"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
