@@ -1,186 +1,348 @@
 openapi: 3.1.0
 info:
-  title: Standard Message Envelope
-  version: 1.0.0
+  contact:
+    email: itm.km23@muenchen.de
+  description: Schnittstellenspezifikation für die Übertragung von Kinddaten aus dem
+    kf+ über eine kinddatenEAI an die kita-app.
+  title: kita-app - kinddatenEAI Schnittstellenspezifikation
+  version: 0.0.2
 servers:
-- description: SwaggerHub API Auto Mocking
-  url: https://virtserver.swaggerhub.com/IT-Financial-Systems/composite-model/1.0.0
+- url: /
 paths:
-  /messageEnvelope:
-    post:
-      operationId: createStandardMessageEnvelope
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MessageEnvelope'
+  /kitaApp/v1/einrichtungen/{kibigWebId}/mitGruppenUndKindern:
+    get:
+      description: Liefert Kinddaten einer Einrichtung anhand der kibigWebId in Gruppen
+        gruppiert.
+      operationId: getGroupsWithKidsByKibigwebid
+      parameters:
+      - description: kibigWebId der Einrichtung für die Kinddaten abgerufen werden
+        explode: false
+        in: path
+        name: kibigWebId
         required: true
+        schema:
+          description: "KibigwebId 162(für München) - 001 (für Städtisch) - \\d (Art/Form\
+            \ der Einrichtung) - \\d{3} (Nummer der Einrichtung)"
+          example: 1620018207
+          type: string
+        style: simple
       responses:
-        "201":
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageEnvelope'
-          description: MessageEnvelope was successfully created
-        "400":
-          description: Bad Request
-      summary: Create a Standard Message Envelope
-      x-content-type: application/json
+                $ref: '#/components/schemas/Institute'
+          description: successful operation
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: not Found
+        "4XX":
+          description: Sonstiger Client Fehler (4xx)
+        "5XX":
+          description: Server Fehler (5xx)
+      summary: Liefert Kinddaten
+      tags:
+      - kinder
       x-accepts: application/json
 components:
   schemas:
-    MessageEnvelope:
-      description: Standard MessageEnvelope for message based event driven system
-        interactions
+    Institute:
       example:
-        messageHeader:
-          messageContext:
-            messageContentType: messageContentType
-            payloadHashValue: payloadHashValue
-            hashingAlgorithm: hashingAlgorithm
-            messageContentEncoding: messageContentEncoding
-          headerVersion: headerVersion
-          MultiPartMessageContextType:
-            messageSequenceSize: 6.027456183070403
-            messageSequenceNumber: 0.8008281904610115
-            messageCorrelationId: messageCorrelationId
-          sourceContext:
-            sourceId: sourceId
-            applicationId: applicationId
-            transactionId: transactionId
-          timestamp: 2000-01-23T04:56:07.000+00:00
-        payload: "{}"
-        augmentationPoint: "{}"
+        intituteName: Lerchenkinderhaus e. V.
+        instituteId: 1620028207
+        groups:
+        - children:
+          - birthday: 2009-10-07
+            firstName: Tina
+            lastName: Stark
+            careStart: 2012-08-01
+            address:
+              zipCode: 80935
+              streetNo: 21a
+              city: München
+              street: Thaddäus-Robl-Str.
+            childId: childId
+            careEnd: 2012-08-01
+            parents:
+            - firstName: Astrid
+              lastName: Lustig
+              parentType: sb1
+            - firstName: Astrid
+              lastName: Lustig
+              parentType: sb1
+          - birthday: 2009-10-07
+            firstName: Tina
+            lastName: Stark
+            careStart: 2012-08-01
+            address:
+              zipCode: 80935
+              streetNo: 21a
+              city: München
+              street: Thaddäus-Robl-Str.
+            childId: childId
+            careEnd: 2012-08-01
+            parents:
+            - firstName: Astrid
+              lastName: Lustig
+              parentType: sb1
+            - firstName: Astrid
+              lastName: Lustig
+              parentType: sb1
+          groupId: 9624
+          name: Die Mäuse
+        - children:
+          - birthday: 2009-10-07
+            firstName: Tina
+            lastName: Stark
+            careStart: 2012-08-01
+            address:
+              zipCode: 80935
+              streetNo: 21a
+              city: München
+              street: Thaddäus-Robl-Str.
+            childId: childId
+            careEnd: 2012-08-01
+            parents:
+            - firstName: Astrid
+              lastName: Lustig
+              parentType: sb1
+            - firstName: Astrid
+              lastName: Lustig
+              parentType: sb1
+          - birthday: 2009-10-07
+            firstName: Tina
+            lastName: Stark
+            careStart: 2012-08-01
+            address:
+              zipCode: 80935
+              streetNo: 21a
+              city: München
+              street: Thaddäus-Robl-Str.
+            childId: childId
+            careEnd: 2012-08-01
+            parents:
+            - firstName: Astrid
+              lastName: Lustig
+              parentType: sb1
+            - firstName: Astrid
+              lastName: Lustig
+              parentType: sb1
+          groupId: 9624
+          name: Die Mäuse
       properties:
-        messageHeader:
-          $ref: '#/components/schemas/MessageHeader'
-        augmentationPoint:
-          description: Augmentation within the messages are undefined elements which
-            allow any Implementer to add any structure within the message for any
-            defined purpose.
-          type: object
-        payload:
-          description: payload within the messages are domain specific elements which
-            allow any Implementer to add any structure within the message for any
-            business/technical purpose.
-          type: object
+        instituteId:
+          description: "kibigWebId der Einrichtung [KITA_ID_EXTERN]"
+          example: 1620028207
+          maxLength: 25
+          type: string
+        intituteName:
+          description: "Name der Einrichtung [KITA_KITANAME]"
+          example: Lerchenkinderhaus e. V.
+          maxLength: 128
+          type: string
+        groups:
+          items:
+            $ref: '#/components/schemas/Group'
+          type: array
       required:
-      - messageHeader
-      - payload
-    MessageHeader:
-      description: Message Header capture details of the source of message.
+      - instituteId
+    Group:
       example:
-        messageContext:
-          messageContentType: messageContentType
-          payloadHashValue: payloadHashValue
-          hashingAlgorithm: hashingAlgorithm
-          messageContentEncoding: messageContentEncoding
-        headerVersion: headerVersion
-        MultiPartMessageContextType:
-          messageSequenceSize: 6.027456183070403
-          messageSequenceNumber: 0.8008281904610115
-          messageCorrelationId: messageCorrelationId
-        sourceContext:
-          sourceId: sourceId
-          applicationId: applicationId
-          transactionId: transactionId
-        timestamp: 2000-01-23T04:56:07.000+00:00
+        children:
+        - birthday: 2009-10-07
+          firstName: Tina
+          lastName: Stark
+          careStart: 2012-08-01
+          address:
+            zipCode: 80935
+            streetNo: 21a
+            city: München
+            street: Thaddäus-Robl-Str.
+          childId: childId
+          careEnd: 2012-08-01
+          parents:
+          - firstName: Astrid
+            lastName: Lustig
+            parentType: sb1
+          - firstName: Astrid
+            lastName: Lustig
+            parentType: sb1
+        - birthday: 2009-10-07
+          firstName: Tina
+          lastName: Stark
+          careStart: 2012-08-01
+          address:
+            zipCode: 80935
+            streetNo: 21a
+            city: München
+            street: Thaddäus-Robl-Str.
+          childId: childId
+          careEnd: 2012-08-01
+          parents:
+          - firstName: Astrid
+            lastName: Lustig
+            parentType: sb1
+          - firstName: Astrid
+            lastName: Lustig
+            parentType: sb1
+        groupId: 9624
+        name: Die Mäuse
       properties:
-        headerVersion:
-          description: "The Universal MessageHeaderType version. Version should be\
-            \ check by processing nodes to ensure compatability. [Major_Version.Minor_Version]"
+        groupId:
+          description: "kitafinder+ ID der Gruppe [VER_GRUPPE_ID]"
+          example: 9624
+          maxLength: 25
           type: string
-        timestamp:
-          description: ISO Data Time Format.
-          format: date-time
+        name:
+          description: "Zugehörigkeit zur Kitagruppe zum Exportdatum [VER_GRUPPE]"
+          example: Die Mäuse
+          maxLength: 255
           type: string
-        sourceContext:
-          $ref: '#/components/schemas/SourceContext'
-        messageContext:
-          $ref: '#/components/schemas/MessageContext'
-        MultiPartMessageContextType:
-          $ref: '#/components/schemas/MultiPartMessageContextType'
+        children:
+          items:
+            $ref: '#/components/schemas/Child'
+          type: array
       required:
-      - headerVersion
-      - messageContext
-      - sourceContext
-      - timestamp
-    AugmentationPoint:
-      description: Augmentation within the messages are undefined elements which allow
-        any Implementer to add any structure within the message for any defined purpose.
-      type: object
-    Payload:
-      description: payload within the messages are domain specific elements which
-        allow any Implementer to add any structure within the message for any business/technical
-        purpose.
-      type: object
-    SourceContext:
+      - groupId
+    Child:
       example:
-        sourceId: sourceId
-        applicationId: applicationId
-        transactionId: transactionId
+        birthday: 2009-10-07
+        firstName: Tina
+        lastName: Stark
+        careStart: 2012-08-01
+        address:
+          zipCode: 80935
+          streetNo: 21a
+          city: München
+          street: Thaddäus-Robl-Str.
+        childId: childId
+        careEnd: 2012-08-01
+        parents:
+        - firstName: Astrid
+          lastName: Lustig
+          parentType: sb1
+        - firstName: Astrid
+          lastName: Lustig
+          parentType: sb1
       properties:
-        sourceId:
-          description: Meta information providing context about the client of this
-            message. A client context represents the absolute originator of a distributed
-            business transaction (e.g. sales channel in context of payment services
-            transaction processing.)
+        childId:
+          description: "Dieses Feld wird bei Bewerbungen vom erfassenden System, also\
+            \ vom Kita-Planer 2 selbst, vergeben und zur eindeutigen Identifizierung\
+            \ der Bewerbung/des Vertrags genutzt. Es handelt sich NICHT um eine ID\
+            \ des physischen Kindes. Die KIND_ID_EXTERN ist eindeutig für das Tripel:\
+            \ Kind, Bewerbungsprozess, Kita. Pro Kita und Bewerbungsprozess (z.B.\
+            \ andere Altersgruppe) gibt es also für das gleiche physische Kind eine\
+            \ unterschiedliche externe ID. [KITA_ID_EXTERN]"
+          maxLength: 25
           type: string
-        applicationId:
-          description: Provides the information about the application that created
-            the message.
+        firstName:
+          description: "Vorname des Kindes [KIND_VORNAME]"
+          example: Tina
+          maxLength: 128
           type: string
-        transactionId:
-          description: "Unique transaction identifier generated and provided by the\
-            \ absolute client. If the absolute client did not provide a transaction\
-            \ Id then the first intermediate processing node might produce on client's\
-            \ behalf. Various uses include - track, correlate, idempotency and troubleshoot\
-            \ transaction instances."
+        lastName:
+          description: "Nachname des Kindes [KIND_NACHNAME]"
+          example: Stark
+          maxLength: 128
           type: string
+        birthday:
+          description: "Geburtstag des Kindes [KIND_GEBURTSDATUM]"
+          example: 2009-10-07
+          format: date
+          type: string
+        careStart:
+          description: "Datum des Vertragsbeginns bzw. der aktuellen Vertragsänderung\
+            \ [VER_VERTRAG_AB]"
+          example: 2012-08-01
+          format: date
+          type: string
+        careEnd:
+          description: "Datum zu dem der Vertrag gekündigt ist (wenn explizit gekü\
+            ndigt wurde) [VER_KUENDIGUNG_ZUM]"
+          example: 2012-08-01
+          format: date
+          type: string
+        address:
+          $ref: '#/components/schemas/Child_address'
+        parents:
+          description: "Array mit Sorgeberechtigten für das Kind. Liste wird aus SB1,\
+            \ SB2 und ABW berechnet."
+          items:
+            $ref: '#/components/schemas/Child_parents_inner'
+          type: array
       required:
-      - applicationId
-      - sourceId
-      - transactionId
-    MultiPartMessageContextType:
-      description: Meta information providing context about a multi part message exchange.
+      - childId
+      - firstName
+      - lastName
+    Child_address:
+      description: "Adresse des Kindes. Wird aus der Adresse der SB1 | SB2 bzw. der\
+        \ abweichenden (ABW) Adresse berechnet. Berechnung abhängig von [WOHNHAFT_BEI]"
       example:
-        messageSequenceSize: 6.027456183070403
-        messageSequenceNumber: 0.8008281904610115
-        messageCorrelationId: messageCorrelationId
+        zipCode: 80935
+        streetNo: 21a
+        city: München
+        street: Thaddäus-Robl-Str.
       properties:
-        messageCorrelationId:
-          description: Used to correlate two or more messages.
+        street:
+          description: "Strasse des Kindes [SB1_STRASSE | SB2_STRASSE | ABW_STRASSE]"
+          example: Thaddäus-Robl-Str.
+          maxLength: 255
           type: string
-        messageSequenceNumber:
-          description: Used to sequence a group of messages in messageSequenceSize.
-          type: number
-        messageSequenceSize:
-          description: The number of messages within a group of correlated messages.
-          type: number
-      required:
-      - messageCorrelationId
-      - messageSequenceNumber
-      - messageSequenceSize
-    MessageContext:
+        streetNo:
+          description: "Hausnummer des Kindes [SB1_HAUSNUMMER | SB2_HAUSNUMMER | ABW_HAUSNUMMER]"
+          example: 21a
+          maxLength: 10
+          type: string
+        city:
+          description: "Wohnort des Kindes [SB1_ORT | SB2_ORT | ABW_ORT]"
+          example: München
+          maxLength: 255
+          type: string
+        zipCode:
+          description: "Postleitzahl des Wohnortes des Kindes [SB1_POSTLEITZAHL |\
+            \ SB2_POSTLEITZAHL | ABW_POSTLEITZAHL]"
+          example: 80935
+          maxLength: 255
+          type: string
+    Child_parents_inner:
       example:
-        messageContentType: messageContentType
-        payloadHashValue: payloadHashValue
-        hashingAlgorithm: hashingAlgorithm
-        messageContentEncoding: messageContentEncoding
+        firstName: Astrid
+        lastName: Lustig
+        parentType: sb1
       properties:
-        messageContentType:
-          description: Indicates the format of message payload.
+        parentType:
+          description: "sb1 (Sorgeberechtigter1), sb2 (Sorgeberechtigter2), abw (Abweichender\
+            \ Sorgeberechtigter)"
+          enum:
+          - sb1
+          - sb2
+          - abw
+          example: sb1
           type: string
-        messageContentEncoding:
-          description: Indicates the content encoding of message payload.
+        firstName:
+          description: "Vorname des Sorgeberechtigten [SB1_VORNAME | SB2_VORNAME |\
+            \ ABW_VORNAME]"
+          example: Astrid
+          maxLength: 255
           type: string
-        payloadHashValue:
-          description: Indicates the hash value of the below payload
-          type: string
-        hashingAlgorithm:
-          description: Indicates hashing algorithm
+        lastName:
+          description: "Nachname des Sorgeberechtigten [SB1_NACHNAME | SB2_NACHNAME\
+            \ | ABW_NACHNAME]"
+          example: Lustig
+          maxLength: 255
           type: string
       required:
-      - messageContentEncoding
-      - messageContentType
+      - firstName
+      - lastName
+      - parentType
+  securitySchemes:
+    oAuthSample:
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://sso.muenchen.de/auth/realms/muenchen.de/protocol/openid-connect/token
+      type: oauth2
 
