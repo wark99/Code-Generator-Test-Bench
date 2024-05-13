@@ -1,348 +1,547 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   contact:
     email: itm.km23@muenchen.de
-  description: Schnittstellenspezifikation für die Übertragung von Kinddaten aus dem
-    kf+ über eine kinddatenEAI an die kita-app.
-  title: kita-app - kinddatenEAI Schnittstellenspezifikation
-  version: 0.0.2
+  description: kita finder+ - K@rl Schnittstellenspezifikation für die Übertragung
+    von  Ereignissen aus dem Antragsmodul
+  title: kf+ - K@rl Schnittstellenspezifikation
+  version: "11"
 servers:
 - url: /
+security:
+- ApiKeyAuth: []
 paths:
-  /kitaApp/v1/einrichtungen/{kibigWebId}/mitGruppenUndKindern:
-    get:
-      description: Liefert Kinddaten einer Einrichtung anhand der kibigWebId in Gruppen
-        gruppiert.
-      operationId: getGroupsWithKidsByKibigwebid
-      parameters:
-      - description: kibigWebId der Einrichtung für die Kinddaten abgerufen werden
-        explode: false
-        in: path
-        name: kibigWebId
-        required: true
-        schema:
-          description: "KibigwebId 162(für München) - 001 (für Städtisch) - \\d (Art/Form\
-            \ der Einrichtung) - \\d{3} (Nummer der Einrichtung)"
-          example: 1620018207
-          type: string
-        style: simple
+  /api/kitafinder/antraege/fristablauf:
+    post:
+      description: Fristablauf (E1) Nur für Neuverträge wenn 4 Wochen nach Neuvertrag
+        kein Antrag gestellt wurde
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_api_kitafinder_antraege_fristablauf_post_request'
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Institute'
-          description: successful operation
+          description: Fristablauf übertragen
         "401":
-          description: Unauthorized
-        "403":
-          description: Forbidden
-        "404":
-          description: not Found
+          description: API key nicht angegeben oder ungültig
+          headers:
+            WWW_Authenticate:
+              explode: false
+              schema:
+                type: string
+              style: simple
         "4XX":
           description: Sonstiger Client Fehler (4xx)
         "5XX":
           description: Server Fehler (5xx)
-      summary: Liefert Kinddaten
+      summary: Fristablauf (E1)
       tags:
-      - kinder
+      - Anträge
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/kitafinder/antraege/regelsatz:
+    post:
+      description: Neuen Antrag auf Regelsatz erstellen (E2)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_api_kitafinder_antraege_regelsatz_post_request'
+      responses:
+        "201":
+          description: Create (E2) Antrag auf Regelsatz
+        "401":
+          description: API key nicht angegeben oder ungültig
+          headers:
+            WWW_Authenticate:
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "4XX":
+          description: Sonstiger Client Fehler (4xx)
+        "5XX":
+          description: Server Fehler (5xx)
+      summary: Neuen Antrag auf Regelsatz erstellen (E2)
+      tags:
+      - Anträge
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/kitafinder/antraege/ermaessigungselbsteinschaetzung:
+    post:
+      description: Neuen Antrag auf Ermäßigung mit Selbsteinschätzung erstellen (E3)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_api_kitafinder_antraege_ermaessigungselbsteinschaetzung_post_request'
+      responses:
+        "201":
+          description: Create (E3) Antrag auf Ermäßigung mit Selbsteinschätzung
+        "401":
+          description: API key nicht angegeben oder ungültig
+          headers:
+            WWW_Authenticate:
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "4XX":
+          description: Sonstiger Client Fehler (4xx)
+        "5XX":
+          description: Server Fehler (5xx)
+      summary: Neuen Antrag auf Ermäßigung mit Selbsteinschätzung erstellen (E3)
+      tags:
+      - Anträge
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/kitafinder/antraege/ermaessigungmitbelegen:
+    post:
+      description: Neuen Antrag auf Ermäßigung mit Belegen erstellen (E4)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_api_kitafinder_antraege_ermaessigungmitbelegen_post_request'
+      responses:
+        "201":
+          description: Create (E4) Antrag auf Ermäßigung mit Belegen
+        "401":
+          description: API key nicht angegeben oder ungültig
+          headers:
+            WWW_Authenticate:
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "4XX":
+          description: Sonstiger Client Fehler (4xx)
+        "5XX":
+          description: Server Fehler (5xx)
+      summary: Neuen Antrag auf Ermäßigung mit Belegen erstellen (E4)
+      tags:
+      - Anträge
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/kitafinder/antraege/unterlageneingang:
+    post:
+      description: Unterlageneingang (E5)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_api_kitafinder_antraege_unterlageneingang_post_request'
+      responses:
+        "200":
+          description: Update (E5) Unterlageneingang
+        "401":
+          description: API key nicht angegeben oder ungültig
+          headers:
+            WWW_Authenticate:
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "4XX":
+          description: Sonstiger Client Fehler (4xx)
+        "5XX":
+          description: Server Fehler (5xx)
+      summary: Unterlageneingang (E5)
+      tags:
+      - Anträge
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/kitafinder/antraege/unterlagenfristgesetzt:
+    post:
+      description: Frist für Unterlagen wurde gesetzt (E6)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_api_kitafinder_antraege_unterlagenfristgesetzt_post_request'
+      responses:
+        "200":
+          description: Update (E6) Frist für Unterlagen wurde gesetzt
+        "401":
+          description: API key nicht angegeben oder ungültig
+          headers:
+            WWW_Authenticate:
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "4XX":
+          description: Sonstiger Client Fehler (4xx)
+        "5XX":
+          description: Server Fehler (5xx)
+      summary: Frist für Unterlagen wurde gesetzt (E6)
+      tags:
+      - Anträge
+      x-content-type: application/json
       x-accepts: application/json
 components:
+  responses:
+    UnauthorizedError:
+      description: API key nicht angegeben oder ungültig
+      headers:
+        WWW_Authenticate:
+          explode: false
+          schema:
+            type: string
+          style: simple
+    ClientError:
+      description: Sonstiger Client Fehler (4xx)
+    ServerError:
+      description: Server Fehler (5xx)
   schemas:
-    Institute:
-      example:
-        intituteName: Lerchenkinderhaus e. V.
-        instituteId: 1620028207
-        groups:
-        - children:
-          - birthday: 2009-10-07
-            firstName: Tina
-            lastName: Stark
-            careStart: 2012-08-01
-            address:
-              zipCode: 80935
-              streetNo: 21a
-              city: München
-              street: Thaddäus-Robl-Str.
-            childId: childId
-            careEnd: 2012-08-01
-            parents:
-            - firstName: Astrid
-              lastName: Lustig
-              parentType: sb1
-            - firstName: Astrid
-              lastName: Lustig
-              parentType: sb1
-          - birthday: 2009-10-07
-            firstName: Tina
-            lastName: Stark
-            careStart: 2012-08-01
-            address:
-              zipCode: 80935
-              streetNo: 21a
-              city: München
-              street: Thaddäus-Robl-Str.
-            childId: childId
-            careEnd: 2012-08-01
-            parents:
-            - firstName: Astrid
-              lastName: Lustig
-              parentType: sb1
-            - firstName: Astrid
-              lastName: Lustig
-              parentType: sb1
-          groupId: 9624
-          name: Die Mäuse
-        - children:
-          - birthday: 2009-10-07
-            firstName: Tina
-            lastName: Stark
-            careStart: 2012-08-01
-            address:
-              zipCode: 80935
-              streetNo: 21a
-              city: München
-              street: Thaddäus-Robl-Str.
-            childId: childId
-            careEnd: 2012-08-01
-            parents:
-            - firstName: Astrid
-              lastName: Lustig
-              parentType: sb1
-            - firstName: Astrid
-              lastName: Lustig
-              parentType: sb1
-          - birthday: 2009-10-07
-            firstName: Tina
-            lastName: Stark
-            careStart: 2012-08-01
-            address:
-              zipCode: 80935
-              streetNo: 21a
-              city: München
-              street: Thaddäus-Robl-Str.
-            childId: childId
-            careEnd: 2012-08-01
-            parents:
-            - firstName: Astrid
-              lastName: Lustig
-              parentType: sb1
-            - firstName: Astrid
-              lastName: Lustig
-              parentType: sb1
-          groupId: 9624
-          name: Die Mäuse
+    AntragGemeinsamePflichtfelder:
+      required:
+      - einrichtungsjahr
+      - geburtsdatum
+      - id
+      - kf_kind_id
+      - kf_kita_id
+      - kita_kibig_id
+      - nachname
+      - timestamp
+      - vorname
+      type: object
+    AntragKopfdaten:
       properties:
-        instituteId:
-          description: "kibigWebId der Einrichtung [KITA_ID_EXTERN]"
-          example: 1620028207
-          maxLength: 25
+        id:
+          description: Eindeutige ID des Events
+          example: 123457
+          type: integer
+        timestamp:
+          description: Zeitstempel des Events (ISO 8601)
+          example: 2018-03-20T09:12:28Z
+          format: date-time
           type: string
-        intituteName:
-          description: "Name der Einrichtung [KITA_KITANAME]"
-          example: Lerchenkinderhaus e. V.
-          maxLength: 128
+        kf_kind_id:
+          description: "eindeutige ID für das Kind, KindmappenID aus Kita-Planer"
+          type: integer
+        nachname:
+          example: Müller
+          maxLength: 255
+          minLength: 1
           type: string
-        groups:
+        vorname:
+          example: Maximilian
+          maxLength: 255
+          minLength: 1
+          type: string
+        geburtsdatum:
+          description: Geburstdatum des Kindes
+          example: 15.04.2018
+          format: TT.MM.JJJJ
+          pattern: "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+          type: string
+        kf_kita_id:
+          description: Einrichtungs-ID aus Kita-Planer
+          type: integer
+        kind_kibig_id:
+          description: KiBiG-ID des Kindes
+          type: string
+        kita_kibig_id:
+          description: KiBiG-ID der Einrichtung
+          type: string
+        einrichtungsjahr:
+          description: "erste Jahreszahl des Kitajahre, z.B. 2021 bei 2021/2022"
+          example: "2021"
+          format: JJJJ
+          pattern: "^\\d{4}$"
+          type: string
+        antragsdatum:
+          description: Datum der Antragsstellung
+          example: 13.08.2022
+          format: TT.MM.JJJJ
+          pattern: "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+          type: string
+        antragsnummer:
+          type: integer
+      type: object
+    Fristablauf:
+      properties:
+        zeitraum_von:
+          description: Vertragsbeginn
+          example: 01.09.2021
+          format: TT.MM.JJJJ
+          pattern: "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+          type: string
+      required:
+      - kind_kibig_id
+      - kita_kibig_id
+      - zeitraum_von
+      type: object
+    AntragRegelsatz:
+      properties:
+        zeitraum_von:
+          description: Vertragsbeginn
+          example: 01.09.2021
+          format: TT.MM.JJJJ
+          pattern: "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+          type: string
+      required:
+      - zeitraum_von
+      type: object
+    AntragErmSelbsteinschaetzung:
+      properties:
+        zeitraum_von:
+          description: Vertragsbeginn
+          example: 01.09.2021
+          format: TT.MM.JJJJ
+          pattern: "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+          type: string
+        einkommenInCent:
+          description: Falls im Antrag Ermäßigung nach Einkommen beantragt wurde
+          type: integer
+        einkommensjahr:
+          description: Kalendervorvorjahr
+          example: "2021"
+          format: JJJJ
+          pattern: "^\\d{4}$"
+          type: string
+        bezugSozialleistungen:
+          description: "false - kein Bezug / keine Angabe, true - Bezug Sozialleistungen"
+          example: false
+          type: boolean
+        anzahlAeltererGeschwisterkinder:
+          description: Falls im Antrag Geschwisterkindermäßigung beantragt wurde
+          example: 2
+          type: integer
+      required:
+      - zeitraum_von
+      type: object
+    AntragErmMitBelegen:
+      properties:
+        zeitraum_von:
+          description: "Wenn Standardantrag oder Folgeantrag, dann 1.9. des aktuellen\
+            \ Einrichungsjahres Datumseingabe der Eltern"
+          example: 01.09.2021
+          format: TT.MM.JJJJ
+          pattern: "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+          type: string
+        berechnungsart_besuch:
+          description: Arten der Berechnung der Besuchsgebühren. Werden von K@RL definiert
+            und müssen im Antragsmodul konfigurierbar hinterlegt werden können.
+          example: Nur Einkommen des Kalendervorvorjahres
+          type: string
+        berechnungsart_verpflegung:
+          description: Arten der Berechnung der Verpflegungsgebühren. Werden von K@RL
+            definiert und müssen im Antragsmodul konfigurierbar hinterlegt werden
+            können.
+          example: volle Verpflegungsgebühr
+          type: string
+        einkommenInCent:
+          description: "Einkommenshöhe, anhand dessen die Gebührenhöhe in K@RL berechnet\
+            \ wird."
+          type: integer
+        einkommensjahr:
+          description: "vom SB je nach Antragsart, bei Ermäßigung aufgrund des Einkommens\
+            \ das Kalendervorvorjahr, bei Sozialleistungen das aktuelle Einrichtungsjahr"
+          example: "2021"
+          format: JJJJ
+          pattern: "^\\d{4}$"
+          type: string
+        unterlagenstatus:
+          $ref: '#/components/schemas/Unterlagenstatus'
+        bemerkung:
+          type: string
+        kennzeichen_individuelle_festsetzung:
+          description: "false - automatisch, true - individuelle Festsetzung durch\
+            \ SB in K@RL"
+          example: false
+          type: boolean
+        geschwisterkinder:
+          description: Pflicht bei Antrag auf Geschwisterermäßigung
           items:
-            $ref: '#/components/schemas/Group'
+            $ref: '#/components/schemas/AntragErmMitBelegen_geschwisterkinder_inner'
           type: array
       required:
-      - instituteId
-    Group:
-      example:
-        children:
-        - birthday: 2009-10-07
-          firstName: Tina
-          lastName: Stark
-          careStart: 2012-08-01
-          address:
-            zipCode: 80935
-            streetNo: 21a
-            city: München
-            street: Thaddäus-Robl-Str.
-          childId: childId
-          careEnd: 2012-08-01
-          parents:
-          - firstName: Astrid
-            lastName: Lustig
-            parentType: sb1
-          - firstName: Astrid
-            lastName: Lustig
-            parentType: sb1
-        - birthday: 2009-10-07
-          firstName: Tina
-          lastName: Stark
-          careStart: 2012-08-01
-          address:
-            zipCode: 80935
-            streetNo: 21a
-            city: München
-            street: Thaddäus-Robl-Str.
-          childId: childId
-          careEnd: 2012-08-01
-          parents:
-          - firstName: Astrid
-            lastName: Lustig
-            parentType: sb1
-          - firstName: Astrid
-            lastName: Lustig
-            parentType: sb1
-        groupId: 9624
-        name: Die Mäuse
+      - kennzeichen_individuelle_festsetzung
+      - unterlagenstatus
+      - zeitraum_von
+      type: object
+    AntragUnterlagenEingang:
+      type: object
+    AntragUnterlagenfristGesetzt:
       properties:
-        groupId:
-          description: "kitafinder+ ID der Gruppe [VER_GRUPPE_ID]"
-          example: 9624
-          maxLength: 25
+        wiedervorlagedatum:
+          example: 15.04.2018
+          format: TT.MM.JJJJ
+          pattern: "^\\d{2}\\.\\d{2}\\.\\d{4}$"
           type: string
-        name:
-          description: "Zugehörigkeit zur Kitagruppe zum Exportdatum [VER_GRUPPE]"
-          example: Die Mäuse
-          maxLength: 255
-          type: string
-        children:
-          items:
-            $ref: '#/components/schemas/Child'
-          type: array
-      required:
-      - groupId
-    Child:
-      example:
-        birthday: 2009-10-07
-        firstName: Tina
-        lastName: Stark
-        careStart: 2012-08-01
-        address:
-          zipCode: 80935
-          streetNo: 21a
-          city: München
-          street: Thaddäus-Robl-Str.
-        childId: childId
-        careEnd: 2012-08-01
-        parents:
-        - firstName: Astrid
-          lastName: Lustig
-          parentType: sb1
-        - firstName: Astrid
-          lastName: Lustig
-          parentType: sb1
-      properties:
-        childId:
-          description: "Dieses Feld wird bei Bewerbungen vom erfassenden System, also\
-            \ vom Kita-Planer 2 selbst, vergeben und zur eindeutigen Identifizierung\
-            \ der Bewerbung/des Vertrags genutzt. Es handelt sich NICHT um eine ID\
-            \ des physischen Kindes. Die KIND_ID_EXTERN ist eindeutig für das Tripel:\
-            \ Kind, Bewerbungsprozess, Kita. Pro Kita und Bewerbungsprozess (z.B.\
-            \ andere Altersgruppe) gibt es also für das gleiche physische Kind eine\
-            \ unterschiedliche externe ID. [KITA_ID_EXTERN]"
-          maxLength: 25
-          type: string
-        firstName:
-          description: "Vorname des Kindes [KIND_VORNAME]"
-          example: Tina
-          maxLength: 128
-          type: string
-        lastName:
-          description: "Nachname des Kindes [KIND_NACHNAME]"
-          example: Stark
-          maxLength: 128
-          type: string
-        birthday:
-          description: "Geburtstag des Kindes [KIND_GEBURTSDATUM]"
-          example: 2009-10-07
-          format: date
-          type: string
-        careStart:
-          description: "Datum des Vertragsbeginns bzw. der aktuellen Vertragsänderung\
-            \ [VER_VERTRAG_AB]"
-          example: 2012-08-01
-          format: date
-          type: string
-        careEnd:
-          description: "Datum zu dem der Vertrag gekündigt ist (wenn explizit gekü\
-            ndigt wurde) [VER_KUENDIGUNG_ZUM]"
-          example: 2012-08-01
-          format: date
-          type: string
-        address:
-          $ref: '#/components/schemas/Child_address'
-        parents:
-          description: "Array mit Sorgeberechtigten für das Kind. Liste wird aus SB1,\
-            \ SB2 und ABW berechnet."
-          items:
-            $ref: '#/components/schemas/Child_parents_inner'
-          type: array
-      required:
-      - childId
-      - firstName
-      - lastName
-    Child_address:
-      description: "Adresse des Kindes. Wird aus der Adresse der SB1 | SB2 bzw. der\
-        \ abweichenden (ABW) Adresse berechnet. Berechnung abhängig von [WOHNHAFT_BEI]"
-      example:
-        zipCode: 80935
-        streetNo: 21a
-        city: München
-        street: Thaddäus-Robl-Str.
-      properties:
-        street:
-          description: "Strasse des Kindes [SB1_STRASSE | SB2_STRASSE | ABW_STRASSE]"
-          example: Thaddäus-Robl-Str.
-          maxLength: 255
-          type: string
-        streetNo:
-          description: "Hausnummer des Kindes [SB1_HAUSNUMMER | SB2_HAUSNUMMER | ABW_HAUSNUMMER]"
-          example: 21a
-          maxLength: 10
-          type: string
-        city:
-          description: "Wohnort des Kindes [SB1_ORT | SB2_ORT | ABW_ORT]"
-          example: München
-          maxLength: 255
-          type: string
-        zipCode:
-          description: "Postleitzahl des Wohnortes des Kindes [SB1_POSTLEITZAHL |\
-            \ SB2_POSTLEITZAHL | ABW_POSTLEITZAHL]"
-          example: 80935
-          maxLength: 255
-          type: string
-    Child_parents_inner:
-      example:
-        firstName: Astrid
-        lastName: Lustig
-        parentType: sb1
-      properties:
-        parentType:
-          description: "sb1 (Sorgeberechtigter1), sb2 (Sorgeberechtigter2), abw (Abweichender\
-            \ Sorgeberechtigter)"
-          enum:
-          - sb1
-          - sb2
-          - abw
-          example: sb1
-          type: string
-        firstName:
-          description: "Vorname des Sorgeberechtigten [SB1_VORNAME | SB2_VORNAME |\
-            \ ABW_VORNAME]"
-          example: Astrid
-          maxLength: 255
-          type: string
-        lastName:
-          description: "Nachname des Sorgeberechtigten [SB1_NACHNAME | SB2_NACHNAME\
-            \ | ABW_NACHNAME]"
-          example: Lustig
-          maxLength: 255
+        bemerkung:
           type: string
       required:
-      - firstName
-      - lastName
-      - parentType
+      - wiedervorlagedatum
+      type: object
+    Unterlagenstatus:
+      description: Unterlagenstatus
+      enum:
+      - OHNE
+      - ANGEFORDERT
+      - EINGEGANGEN_NICHT_GEPRUEFT
+      - VOLLSTAENDIG
+      type: string
+    BerechnungsartBesuch:
+      description: Arten der Berechnung der Besuchsgebühren. Werden von K@RL definiert
+        und müssen im Antragsmodul konfigurierbar hinterlegt werden können.
+      example: Nur Einkommen des Kalendervorvorjahres
+      type: string
+    BerechnungsartVerpflegung:
+      description: Arten der Berechnung der Verpflegungsgebühren. Werden von K@RL
+        definiert und müssen im Antragsmodul konfigurierbar hinterlegt werden können.
+      example: volle Verpflegungsgebühr
+      type: string
+    _api_kitafinder_antraege_fristablauf_post_request:
+      allOf:
+      - $ref: '#/components/schemas/AntragGemeinsamePflichtfelder'
+      - $ref: '#/components/schemas/AntragKopfdaten'
+      - $ref: '#/components/schemas/Fristablauf'
+      required:
+      - einrichtungsjahr
+      - geburtsdatum
+      - id
+      - kf_kind_id
+      - kf_kita_id
+      - kita_kibig_id
+      - nachname
+      - timestamp
+      - vorname
+      - zeitraum_von
+    _api_kitafinder_antraege_regelsatz_post_request:
+      allOf:
+      - $ref: '#/components/schemas/AntragGemeinsamePflichtfelder'
+      - $ref: '#/components/schemas/AntragKopfdaten'
+      - $ref: '#/components/schemas/AntragRegelsatz'
+      required:
+      - antragsdatum
+      - antragsnummer
+      - einrichtungsjahr
+      - geburtsdatum
+      - id
+      - kf_kind_id
+      - kf_kita_id
+      - kita_kibig_id
+      - nachname
+      - timestamp
+      - vorname
+      - zeitraum_von
+    _api_kitafinder_antraege_ermaessigungselbsteinschaetzung_post_request:
+      allOf:
+      - $ref: '#/components/schemas/AntragGemeinsamePflichtfelder'
+      - $ref: '#/components/schemas/AntragKopfdaten'
+      - $ref: '#/components/schemas/AntragErmSelbsteinschaetzung'
+      required:
+      - antragsdatum
+      - antragsnummer
+      - einrichtungsjahr
+      - geburtsdatum
+      - id
+      - kf_kind_id
+      - kf_kita_id
+      - kita_kibig_id
+      - nachname
+      - timestamp
+      - vorname
+      - zeitraum_von
+    _api_kitafinder_antraege_ermaessigungmitbelegen_post_request:
+      allOf:
+      - $ref: '#/components/schemas/AntragGemeinsamePflichtfelder'
+      - $ref: '#/components/schemas/AntragKopfdaten'
+      - $ref: '#/components/schemas/AntragErmMitBelegen'
+      required:
+      - antragsdatum
+      - antragsnummer
+      - einrichtungsjahr
+      - geburtsdatum
+      - id
+      - kennzeichen_individuelle_festsetzung
+      - kf_kind_id
+      - kf_kita_id
+      - kita_kibig_id
+      - nachname
+      - timestamp
+      - unterlagenstatus
+      - vorname
+      - zeitraum_von
+    _api_kitafinder_antraege_unterlageneingang_post_request:
+      allOf:
+      - $ref: '#/components/schemas/AntragGemeinsamePflichtfelder'
+      - $ref: '#/components/schemas/AntragKopfdaten'
+      - $ref: '#/components/schemas/AntragUnterlagenEingang'
+      required:
+      - antragsdatum
+      - antragsnummer
+      - einrichtungsjahr
+      - geburtsdatum
+      - id
+      - kf_kind_id
+      - kf_kita_id
+      - kita_kibig_id
+      - nachname
+      - timestamp
+      - vorname
+    _api_kitafinder_antraege_unterlagenfristgesetzt_post_request:
+      allOf:
+      - $ref: '#/components/schemas/AntragGemeinsamePflichtfelder'
+      - $ref: '#/components/schemas/AntragKopfdaten'
+      - $ref: '#/components/schemas/AntragUnterlagenfristGesetzt'
+      required:
+      - antragsdatum
+      - antragsnummer
+      - einrichtungsjahr
+      - geburtsdatum
+      - id
+      - kf_kind_id
+      - kf_kita_id
+      - kita_kibig_id
+      - nachname
+      - timestamp
+      - vorname
+      - wiedervorlagedatum
+    AntragErmMitBelegen_geschwisterkinder_inner:
+      properties:
+        nachname:
+          description: Pflicht bei Antrag auf Geschwisterermäßigung
+          example: Müller
+          maxLength: 255
+          minLength: 1
+          type: string
+        vorname:
+          description: Pflicht bei Antrag auf Geschwisterermäßigung
+          example: Maximilian
+          maxLength: 255
+          minLength: 1
+          type: string
+        geburtsdatum:
+          description: Pflicht bei Antrag auf Geschwisterermäßigung
+          example: 15.04.2018
+          format: TT.MM.JJJJ
+          pattern: "^\\d{2}\\.\\d{2}\\.\\d{4}$"
+          type: string
+        wohnt_im_selben_haushalt:
+          description: "Pflicht bei Antrag auf Geschwisterermäßigung true - Kind wohnt\
+            \ im selben HH, false wohnt nicht im selben HH"
+          example: true
+          type: boolean
+        kindergeldberechtigte:
+          description: "Pflicht bei Antrag auf Geschwisterermäßigung ggf. noch zu\
+            \ klären,  Namen der Personen die Kindergeldberechtigt sind"
+          example: "Maria Müller, Peter Müller"
+          type: string
+        kind_anerkannt:
+          description: Pflicht bei Antrag auf Geschwisterermäßigung true - anerkannt
+            false - nicht anerkannt
+          example: true
+          type: boolean
+      type: object
   securitySchemes:
-    oAuthSample:
-      flows:
-        clientCredentials:
-          scopes: {}
-          tokenUrl: https://sso.muenchen.de/auth/realms/muenchen.de/protocol/openid-connect/token
-      type: oauth2
+    ApiKeyAuth:
+      description: API Key um Requests zu authorisieren
+      in: header
+      name: X-API-KEY
+      type: apiKey
 
