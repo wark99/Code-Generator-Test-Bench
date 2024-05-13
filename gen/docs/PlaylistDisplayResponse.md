@@ -1,15 +1,14 @@
 
 
-# Customer
+# PlaylistDisplayResponse
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**uuid** | **String** |  |  [optional] |
+|**id** | **Integer** |  |  [optional] |
 |**name** | **String** |  |  |
-|**reservedByUserID** | **String** |  |  [optional] |
 
 
 

@@ -1,1438 +1,663 @@
 openapi: 3.1.0
 info:
-  description: "Сервис, отвечающий за внешние коммуникации с клиентами компании."
-  title: Customers Communications Service - OpenAPI 3.1.0
-  version: 0.0.1
-externalDocs:
-  description: "Описание вариантов использования, моделей."
-  url: https://docs.google.com/document/d/1113SJE58yEL3KVyDt8qBP7ZH_B8TdFBRk-o3Ta93QoA
+  description: ucic API
+  title: ucic API
+  version: 1.0.0
 servers:
-- description: Test mock server
-  url: https://x5-communications.wiremockapi.cloud/
-security:
-- ApiKeyAuth: []
-tags:
-- description: Каналы коммуникации с клиентами
-  name: channels
-- description: Клиенты компании
-  name: customers
-- description: "Пользователи сервиса: менеджеры, администраторы, поддержка"
-  name: users
-- description: "Внешние коммуникации с клиентами: темы, сообщения, комментарии"
-  name: communications
+- url: http://ucic.extremist.gay:8080
 paths:
-  /channels:
+  /accounts:
     get:
-      description: "email, SMS, Push-уведомления и т.д."
-      operationId: getChannels
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CommunicationChannels'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/CommunicationChannels'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "5XX":
-          description: Unexpected server error
-      summary: "Список каналов коммуникации, поддерживаемый сервисом"
-      tags:
-      - channels
-      x-accepts: "application/json,application/xml"
-    post:
-      operationId: addChannel
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CommunicationChannel'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/CommunicationChannel'
-        description: Данные нового канала
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CommunicationChannel'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/CommunicationChannel'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Добавление нового канала коммуникации
-      tags:
-      - channels
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /channels/{channelId}:
-    delete:
-      operationId: deleteChannel
+      description: This endpoint retrieves all accounts. It requires a "secret" header
+        with the value "meow". <br> It responds with a list of all accounts in the
+        system. (For debugging purposes)
       parameters:
-      - description: Идентификатор канала
-        explode: false
-        in: path
-        name: channelId
+      - explode: false
+        in: header
+        name: secret
         required: true
         schema:
-          format: int64
-          type: integer
+          example: meow
+          type: string
         style: simple
       responses:
-        "204":
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountResponse'
+                type: array
           description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Удаление канала коммуникации
-      tags:
-      - channels
       x-accepts: application/json
-    put:
-      operationId: updateChannel
-      parameters:
-      - description: Идентификатор канала
-        explode: false
-        in: path
-        name: channelId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CommunicationChannel'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/CommunicationChannel'
-        description: Данные канала
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CommunicationChannel'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/CommunicationChannel'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Обновление канала коммуникации
-      tags:
-      - channels
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /customers:
+  /accounts/{id}/creator:
     get:
-      operationId: getCustomers
-      parameters:
-      - description: Номер страницы (начиная с 1)
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
-      - description: Размер страницы
-        explode: true
-        in: query
-        name: size
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customers'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Customers'
-          description: OK
-      summary: Список клиентов компании
-      tags:
-      - customers
-      x-accepts: "application/json,application/xml"
-    post:
-      operationId: addCustomer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Customer'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Customer'
-        description: Данные нового клиента
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customer'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Customer'
-          description: OK
-      summary: Добавление нового клиента
-      tags:
-      - customers
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /customers/{customerUuid}:
-    delete:
-      operationId: deleteCustomer
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      responses:
-        "204":
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Удаление клиента
-      tags:
-      - customers
-      x-accepts: application/json
-    get:
-      description: Информация о клиенте по его идентификатору
-      operationId: getCustomer
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customer'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Customer'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Информация о клиенте
-      tags:
-      - customers
-      x-accepts: "application/json,application/xml"
-    put:
-      operationId: updateCustomer
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Customer'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Customer'
-        description: Данные клиента
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customer'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Customer'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Обновление информации о клиенте
-      tags:
-      - customers
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /users:
-    get:
-      description: Список пользователей сервиса
-      operationId: getUsers
-      parameters:
-      - description: Номер страницы (начиная с 1)
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
-      - description: Размер страницы
-        explode: true
-        in: query
-        name: size
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Users'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Users'
-          description: OK
-      summary: Список пользователей
-      tags:
-      - users
-      x-accepts: "application/json,application/xml"
-    post:
-      operationId: addUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Данные нового пользователя
-      summary: Добавление нового пользователя
-      tags:
-      - users
-      x-content-type: application/json
-      x-accepts: application/json
-  /users/{userUuid}:
-    delete:
-      operationId: deleteUser
-      parameters:
-      - description: Идентификатор пользователя
-        explode: false
-        in: path
-        name: userUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      summary: Удаление пользователя
-      tags:
-      - users
-      x-accepts: application/json
-    get:
-      description: Информация о пользователе по его идентификатору
-      operationId: getUser
-      parameters:
-      - description: Идентификатор пользователя
-        explode: false
-        in: path
-        name: userUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Информация о пользователе
-      tags:
-      - users
-      x-accepts: "application/json,application/xml"
-    put:
-      operationId: updateUser
-      parameters:
-      - description: Идентификатор пользователя
-        explode: false
-        in: path
-        name: userUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Данные пользователя
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Обновление информации о пользователе
-      tags:
-      - users
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /customers/{customerUuid}/channels:
-    delete:
-      operationId: deleteAllCustomerChannels
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      responses:
-        "204":
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Удаление всех каналов коммуникации одного клиента
-      tags:
-      - channels
-      x-accepts: application/json
-    get:
-      operationId: getCustomerChannels
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerChannels'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/CustomerChannels'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Список всех каналов коммуникации одного клиента
-      tags:
-      - channels
-      x-accepts: "application/json,application/xml"
-    post:
-      operationId: addCustomerChannel
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomerChannel'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/CustomerChannel'
-        description: Данные нового канала
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerChannel'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/CustomerChannel'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Добавление нового канала коммуникации для клиента
-      tags:
-      - channels
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /customers/{customerUuid}/channels/{channelId}:
-    delete:
-      operationId: deleteCustomerChannel
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      - description: Идентификатор канала
-        explode: false
-        in: path
-        name: channelId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      responses:
-        "204":
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Удаление канала коммуникации для клиента
-      tags:
-      - channels
-      x-accepts: application/json
-    put:
-      operationId: updateCustomerChannel
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      - description: Идентификатор канала
-        explode: false
-        in: path
-        name: channelId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomerChannel'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/CustomerChannel'
-        description: Данные канала
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerChannel'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/CustomerChannel'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Обновление канала коммуникации для клиента
-      tags:
-      - channels
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /customers/{customerUuid}/topics:
-    get:
-      operationId: getCustomerTopics
+      description: This endpoint retrieves a specific account's display details by
+        ID. <br> It responds with the account's display details.
       parameters:
       - explode: false
         in: path
-        name: customerUuid
+        name: id
         required: true
         schema:
           type: string
         style: simple
-      - description: Фильтр по каналу коммуникации (опциональный)
-        explode: true
-        in: query
-        name: channelId
-        required: false
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDisplayResponse'
+          description: OK
+      x-accepts: application/json
+  /accounts/{id}/follow:
+    post:
+      description: This endpoint allows a specific account to follow another account
+        by ID. It requires "token" and "accountId" headers for authentication. <br>
+        It responds with a success message if the follow action is successful.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
         schema:
-          format: int64
-          type: integer
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            text/plain:
+              examples:
+                Example#1:
+                  value: ""
+              schema:
+                type: string
+          description: OK
+      x-accepts: "application/json,text/plain"
+  /accounts/{id}/following:
+    get:
+      description: This endpoint retrieves a specific account's followed accounts
+        by ID. It requires a "token" header for authentication. <br> It responds with
+        the account's followed accounts.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountDisplayResponse'
+                type: array
+          description: OK
+      x-accepts: '*/*'
+  /accounts/login:
+    post:
+      description: This endpoint allows an account to log in. It accepts a POST request
+        with a body containing the account's email and password. <br> It responds
+        with a token and account ID if the login is successful.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginAccount'
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect username or password
+                    status: "null"
+                    data: "null"
+              schema: {}
+          description: OK
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /accounts/{id}/playlists:
+    get:
+      description: This endpoint retrieves a specific account's playlists by ID. <br>
+        It responds with the account's playlists.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/PlaylistDisplayResponse'
+                type: array
+          description: OK
+      x-accepts: '*/*'
+  /accounts/{id}/recommended-videos:
+    get:
+      description: This endpoint retrieves recommended videos for a specific account
+        by ID. It requires a "token" header for authentication and a "by" query parameter
+        to specify the recommendation method. <br> It responds with a list of recommended
+        videos.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: by
+        required: true
+        schema:
+          enum:
+          - tags
+          - following
+          type: string
         style: form
-      - description: "Фильтр по дате создания темы (включительно, опциональный)"
-        explode: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                items:
+                  $ref: '#/components/schemas/VideoDisplayResponse'
+                type: array
+          description: OK
+      x-accepts: '*/*'
+  /accounts/register:
+    post:
+      description: "This endpoint allows a new account to register. It accepts a POST\
+        \ request with a body containing the account's username, email, and password.\
+        \ <br> It responds with the registered account's token and ID if the registration\
+        \ is successful."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationAccount'
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Username or email already taken
+                    status: "null"
+                    data: "null"
+              schema:
+                $ref: '#/components/schemas/_accounts_register_post_200_response'
+          description: OK
+      x-content-type: application/json
+      x-accepts: application/json
+  /accounts/search:
+    get:
+      description: This endpoint searches for accounts. It accepts a "q" query parameter
+        for the search query and an optional "fuzzy" query parameter to enable fuzzy
+        search. <br> It responds with a list of matching accounts.
+      parameters:
+      - explode: true
         in: query
-        name: fromDate
-        required: false
+        name: q
+        required: true
         schema:
-          format: date
           type: string
         style: form
       - explode: true
         in: query
-        name: toDate
+        name: fuzzy
         required: false
         schema:
-          format: date
-          type: string
-        style: form
-      - description: Поиск по теме и описанию
-        explode: true
-        in: query
-        name: search
-        required: false
-        schema:
-          type: string
-        style: form
-      - description: Номер страницы (начиная с 1)
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
-      - description: Число элементов на странице
-        explode: true
-        in: query
-        name: size
-        required: false
-        schema:
-          format: int32
-          type: integer
+          type: boolean
         style: form
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Topics'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Topics'
+                items:
+                  $ref: '#/components/schemas/AccountDisplayResponse'
+                type: array
           description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Список тем общения с конкретным клиентом
-      tags:
-      - communications
-      x-accepts: "application/json,application/xml"
-    post:
-      operationId: addTopic
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Topic'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Topic'
-        description: Данные новой темы
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Topic'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Topic'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Создание новой темы общения
-      tags:
-      - communications
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /customers/{customerUuid}/topics/{topicId}:
-    delete:
-      operationId: deleteTopic
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      - description: Идентификатор темы
-        explode: false
-        in: path
-        name: topicId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      responses:
-        "204":
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Удаление темы общения и всех сообщений по этой теме
-      tags:
-      - communications
       x-accepts: application/json
-    put:
-      operationId: updateTopic
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      - description: Идентификатор темы
-        explode: false
-        in: path
-        name: topicId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Topic'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Topic'
-        description: Данные темы
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Topic'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Topic'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Обновление темы общения
-      tags:
-      - communications
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /customers/{customerUuid}/topics/{topicId}/messages:
+  /accounts/{id}/tags:
     get:
-      operationId: getTopicMessages
+      description: This endpoint retrieves a specific account's followed tags by ID.
+        It requires a "token" header for authentication. <br> It responds with the
+        account's followed tags.
       parameters:
-      - description: Идентификатор клиента
-        explode: false
+      - explode: false
         in: path
-        name: customerUuid
+        name: id
         required: true
         schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
           type: string
         style: simple
-      - description: Идентификатор темы
-        explode: false
-        in: path
-        name: topicId
+      - explode: false
+        in: header
+        name: token
         required: true
         schema:
-          format: int64
-          type: integer
+          type: string
         style: simple
-      - description: Номер страницы (начиная с 1)
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
-      - description: Размер страницы
-        explode: true
-        in: query
-        name: size
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
       responses:
         "200":
           content:
-            application/json:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
               schema:
-                $ref: '#/components/schemas/Messages'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Messages'
+                items:
+                  $ref: '#/components/schemas/TagResponse'
+                type: array
           description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Список сообщений по теме
-      tags:
-      - communications
-      x-accepts: "application/json,application/xml"
+      x-accepts: '*/*'
+  /accounts/{id}/unfollow:
     post:
-      operationId: addMessage
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Message'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Message'
-        description: Данные нового сообщения
+      description: This endpoint allows a specific account to unfollow another account
+        by ID. It requires "token" and "accountId" headers for authentication. <br>
+        It responds with a success message if the unfollow action is successful.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: accountId
+        required: true
+        schema:
+          type: string
+        style: simple
       responses:
         "200":
           content:
-            application/json:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
               schema:
-                $ref: '#/components/schemas/Message'
-            application/xml:
+                $ref: '#/components/schemas/ErrorResponse'
+            text/plain:
+              examples:
+                Example#1:
+                  value: ""
               schema:
-                $ref: '#/components/schemas/Message'
+                type: string
           description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Добавление нового сообщения
-      tags:
-      - communications
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /customers/{customerUuid}/topics/{topicId}/comments:
+      x-accepts: "*/*,text/plain"
+  /accounts/{id}/videos:
     get:
-      operationId: getTopicComments
+      description: This endpoint retrieves a specific account's videos by ID.<br>
+        It responds with the account's videos.
       parameters:
-      - description: Идентификатор клиента
-        explode: false
+      - explode: false
         in: path
-        name: customerUuid
+        name: id
         required: true
         schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
           type: string
         style: simple
-      - description: Идентификатор темы
-        explode: false
-        in: path
-        name: topicId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      - description: Номер страницы (начиная с 1)
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
-      - description: Размер страницы
-        explode: true
-        in: query
-        name: size
-        required: false
-        schema:
-          format: int32
-          type: integer
-        style: form
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comments'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Comments'
+                items:
+                  $ref: '#/components/schemas/VideoDisplayResponse'
+                type: array
           description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Список комментариев по теме
-      tags:
-      - communications
-      x-accepts: "application/json,application/xml"
-    post:
-      operationId: addComment
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Comment'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Comment'
-        description: Данные нового комментария
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Comment'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Comment'
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Добавление нового комментария
-      tags:
-      - communications
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /customers/{customerUuid}/topics/{topicId}/comments/{commentId}:
-    delete:
-      operationId: deleteComment
-      parameters:
-      - description: Идентификатор клиента
-        explode: false
-        in: path
-        name: customerUuid
-        required: true
-        schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        style: simple
-      - description: Идентификатор темы
-        explode: false
-        in: path
-        name: topicId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      - description: Идентификатор комментария
-        explode: false
-        in: path
-        name: commentId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      responses:
-        "204":
-          description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Удаление комментария
-      tags:
-      - communications
       x-accepts: application/json
-    put:
-      operationId: updateComment
+  /accounts/{id}:
+    delete:
+      description: This endpoint deletes a specific account by ID. It requires a "token"
+        header for authentication. <br> It responds with a NoContent response if the
+        deletion is successful.
       parameters:
-      - description: Идентификатор клиента
-        explode: false
+      - explode: false
         in: path
-        name: customerUuid
+        name: id
         required: true
         schema:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
           type: string
         style: simple
-      - description: Идентификатор темы
-        explode: false
-        in: path
-        name: topicId
+      - explode: false
+        in: header
+        name: token
         required: true
         schema:
-          format: int64
-          type: integer
+          type: string
         style: simple
-      - description: Идентификатор комментария
-        explode: false
+      responses:
+        "200":
+          content:
+            '*/*':
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: OK
+        "204":
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: No Content
+      x-accepts: '*/*'
+    get:
+      description: This endpoint retrieves a specific account by ID. It requires a
+        "token" header for authentication. <br> It responds with the account's details
+        if the retrieval is successful.
+      parameters:
+      - explode: false
         in: path
-        name: commentId
+        name: id
         required: true
         schema:
-          format: int64
-          type: integer
+          type: string
         style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Comment'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Comment'
-        description: Данные комментария
+      - explode: false
+        in: header
+        name: token
+        required: true
+        schema:
+          type: string
+        style: simple
       responses:
         "200":
           content:
             application/json:
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    error: account
+                    message: Incorrect token
+                    status: "null"
+                    data: "null"
               schema:
-                $ref: '#/components/schemas/Comment'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Comment'
+                $ref: '#/components/schemas/_accounts__id__get_200_response'
           description: OK
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-        "5XX":
-          description: Unexpected server error
-      summary: Обновление комментария
-      tags:
-      - communications
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
+      x-accepts: application/json
+    post:
+      description: This endpoint updates a specific account's details by ID. It requires
+        a "token" header for authentication. <br> It responds with the updated account's
+        details if the update is successful.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema: {}
+          description: OK
+      x-accepts: '*/*'
 components:
   schemas:
-    Customer:
+    Object:
+      properties: {}
+      type: object
+    ErrorResponse:
       example:
-        reservedByUserID: 5387cef3-bb2e-4508-92a5-6d41d987c963
-        name: Иванов Иван Иванович
-        uuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
+        data: "{}"
+        error: error
+        message: message
+        status: 0
       properties:
-        uuid:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+        error:
           type: string
-        name:
-          example: Иванов Иван Иванович
-          type: string
-        reservedByUserID:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-      required:
-      - name
-    Customers:
-      items:
-        $ref: '#/components/schemas/Customer'
-      type: array
-    User:
-      example:
-        role: Admin
-        name: Иванов Иван Иванович
-        uuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
-      properties:
-        uuid:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        name:
-          example: Иванов Иван Иванович
-          type: string
-        role:
-          enum:
-          - Admin
-          - Manager
-          - Support
-          type: string
-      required:
-      - name
-      - role
-    Users:
-      items:
-        $ref: '#/components/schemas/User'
-      type: array
-    CommunicationChannel:
-      example:
-        description: Текстовые СМС-сообщения (макс. 160 символов)
-        id: 42
-        type: SMS
-      properties:
-        id:
-          example: 42
-          format: int64
-          type: integer
-        type:
-          enum:
-          - SMS
-          - Phone
-          - Email
-          - Push
-          - Messenger
-          type: string
-        description:
-          example: Текстовые СМС-сообщения (макс. 160 символов)
-          type: string
-      required:
-      - type
-    CommunicationChannels:
-      items:
-        $ref: '#/components/schemas/CommunicationChannel'
-      type: array
-    CustomerChannel:
-      example:
-        customerUuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
-        channelContactInfo: +7 999 123-45-67
-        optIn: true
-        channelId: 10
-      properties:
-        customerUuid:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        channelId:
-          example: 10
-          format: int64
-          type: integer
-        optIn:
-          example: true
-          type: boolean
-        channelContactInfo:
-          example: +7 999 123-45-67
-          type: string
-      required:
-      - channelContactInfo
-      - channelId
-      - customerUuid
-      - optIn
-    CustomerChannels:
-      items:
-        $ref: '#/components/schemas/CustomerChannel'
-      type: array
-    Topic:
-      example:
-        createdAt: 2020-01-01T00:00:00Z
-        customerUuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
-        description: Скидка на все товары весенней коллекции
-        id: 42
-        title: Весенняя акция - скидка 10% на все товары
-        channelId: 10
-      properties:
-        id:
-          example: 42
-          format: int64
-          type: integer
-        title:
-          example: Весенняя акция - скидка 10% на все товары
-          type: string
-        description:
-          example: Скидка на все товары весенней коллекции
-          type: string
-        customerUuid:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        channelId:
-          example: 10
-          format: int64
-          type: integer
-        createdAt:
-          example: 2020-01-01T00:00:00Z
-          format: date-time
-          type: string
-      required:
-      - channelId
-      - createdAt
-      - customerUuid
-      - description
-      - id
-      - title
-    Topics:
-      items:
-        $ref: '#/components/schemas/Topic'
-      type: array
-    TopicManager:
-      properties:
-        id:
-          example: 42
-          format: int64
-          type: integer
-        userUuid:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        topicId:
-          example: 10
-          format: int64
-          type: integer
-        unassignedSince:
-          example: 2020-01-01T00:00:00Z
-          format: date-time
-          type: string
-        assignedSince:
-          example: 2020-01-01T00:00:00Z
-          format: date-time
-          type: string
-      required:
-      - assignedSince
-      - id
-      - topicId
-      - unassignedSince
-      - userUuid
-    TopicManagers:
-      items:
-        $ref: '#/components/schemas/TopicManager'
-      type: array
-    Message:
-      example:
-        topicId: 10
-        senderUuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
-        id: 42
-        text: Здравствуйте! Как я могу помочь?
-        status: Sent
-        timestamp: 2020-01-01T00:00:00Z
-      properties:
-        id:
-          example: 42
-          format: int64
-          type: integer
-        text:
-          example: Здравствуйте! Как я могу помочь?
-          type: string
-        topicId:
-          example: 10
-          format: int64
-          type: integer
-        senderUuid:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+        message:
           type: string
         status:
-          enum:
-          - Sent
-          - Delivered
-          - Read
+          format: int32
+          type: integer
+        data:
+          properties: {}
+          type: object
+      required:
+      - error
+      - message
+    AccountResponse:
+      example:
+        accountID: 0
+        password: password
+        email: email
+        username: username
+        token: token
+      properties:
+        accountID:
+          format: int32
+          type: integer
+        username:
           type: string
-        timestamp:
-          example: 2020-01-01T00:00:00Z
-          format: date-time
+        email:
+          type: string
+        password:
+          type: string
+        token:
           type: string
       required:
-      - id
-      - senderUuid
-      - status
-      - text
-      - timestamp
-      - topicId
-    Messages:
-      items:
-        $ref: '#/components/schemas/Message'
-      type: array
-    Comment:
+      - email
+      - password
+      - token
+      - username
+    AccountDisplayResponse:
       example:
-        topicId: 10
-        userUuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
-        id: 42
-        text: Спасибо за помощь!
-        timestamp: 2020-01-01T00:00:00Z
+        id: 0
+        username: username
       properties:
         id:
-          example: 42
-          format: int64
+          format: int32
           type: integer
-        topicId:
-          example: 10
-          format: int64
-          type: integer
-        text:
-          example: Спасибо за помощь!
-          type: string
-        userUuid:
-          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
-          type: string
-        timestamp:
-          example: 2020-01-01T00:00:00Z
-          format: date-time
+        username:
           type: string
       required:
-      - id
-      - text
-      - timestamp
-      - topicId
-      - userUuid
-    Comments:
-      items:
-        $ref: '#/components/schemas/Comment'
-      type: array
-  securitySchemes:
-    ApiKeyAuth:
-      in: header
-      name: X-API-Key
-      type: apiKey
+      - username
+    RegisteredAccount:
+      properties:
+        token:
+          type: string
+        accountId:
+          format: int32
+          type: integer
+      required:
+      - token
+    PlaylistDisplayResponse:
+      example:
+        name: name
+        id: 0
+      properties:
+        id:
+          format: int32
+          type: integer
+        name:
+          type: string
+      required:
+      - name
+    VideoDisplayResponse:
+      example:
+        videoPath: videoPath
+        creator:
+          id: 0
+          username: username
+        uploadDate: uploadDate
+        id: 0
+        viewCount: 6
+        title: title
+      properties:
+        id:
+          format: int32
+          type: integer
+        title:
+          type: string
+        videoPath:
+          type: string
+        creator:
+          $ref: '#/components/schemas/AccountDisplayResponse'
+        viewCount:
+          format: int32
+          type: integer
+        uploadDate:
+          type: string
+      required:
+      - creator
+      - title
+      - uploadDate
+      - videoPath
+    TagResponse:
+      example:
+        id: 0
+        tag: tag
+        category: category
+      properties:
+        id:
+          format: int32
+          type: integer
+        tag:
+          type: string
+        category:
+          type: string
+      required:
+      - tag
+    LoginAccount:
+      example:
+        password: password
+        email: email
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+    RegistrationAccount:
+      example:
+        password: password
+        email: email
+        username: username
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+      - username
+    _accounts_register_post_200_response:
+      oneOf:
+      - $ref: '#/components/schemas/ErrorResponse'
+      - $ref: '#/components/schemas/RegisteredAccount'
+    _accounts__id__get_200_response:
+      oneOf:
+      - $ref: '#/components/schemas/ErrorResponse'
+      - $ref: '#/components/schemas/AccountResponse'
 
