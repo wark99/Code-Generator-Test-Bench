@@ -57,8 +57,10 @@ import java.util.function.Supplier;
 import java.time.OffsetDateTime;
 
 import org.openapitools.client.auth.Authentication;
+import org.openapitools.client.auth.ApiKeyAuth;
+import org.openapitools.client.auth.OAuth;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:17:30.190460833Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:17:37.514106366Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
@@ -83,7 +85,7 @@ public class ApiClient extends JavaTimeFormatter {
 
     private long waitTimeMillis = 10;
 
-    private String basePath = "http://localhost";
+    private String basePath = "https://petstore3.swagger.io/api/v3";
 
     private RestTemplate restTemplate;
 
@@ -114,6 +116,8 @@ public class ApiClient extends JavaTimeFormatter {
 
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<String, Authentication>();
+        authentications.put("petstore_auth", new OAuth());
+        authentications.put("api_key", new ApiKeyAuth("header", "api_key"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -199,6 +203,51 @@ public class ApiClient extends JavaTimeFormatter {
 
 
 
+    /**
+     * Helper method to set API key value for the first API key authentication.
+     *
+     * @param apiKey the API key
+     */
+    public void setApiKey(String apiKey) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof ApiKeyAuth) {
+                ((ApiKeyAuth) auth).setApiKey(apiKey);
+                return;
+            }
+        }
+        throw new RuntimeException("No API key authentication configured!");
+    }
+
+    /**
+     * Helper method to set API key prefix for the first API key authentication.
+     *
+     * @param apiKeyPrefix API key prefix
+     */
+    public void setApiKeyPrefix(String apiKeyPrefix) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof ApiKeyAuth) {
+                ((ApiKeyAuth) auth).setApiKeyPrefix(apiKeyPrefix);
+                return;
+            }
+        }
+        throw new RuntimeException("No API key authentication configured!");
+    }
+
+
+    /**
+     * Helper method to set access token for the first OAuth2 authentication.
+     *
+     * @param accessToken Access token
+     */
+    public void setAccessToken(String accessToken) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof OAuth) {
+                ((OAuth) auth).setAccessToken(accessToken);
+                return;
+            }
+        }
+        throw new RuntimeException("No OAuth2 authentication configured!");
+    }
 
 
     /**

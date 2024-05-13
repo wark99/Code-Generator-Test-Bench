@@ -1,67 +1,140 @@
 openapi: 3.1.0
 info:
-  contact:
-    name: '@Cheese'
-    url: https://cheese.chatango.com/
-  description: deez
+  description: |-
+    This is a sample Inventory Management System based on the OpenAPI 3.1 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the Inventory Management System, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    Some useful links:
+    - [The Inventory Management System repository](https://github.com/afefa-karakra/inventory-management-system.git)
   license:
-    name: MIT
-  termsOfService: https://chatango.vissle.repl.co/policy
-  title: Unofficial Chatango API
-  version: 0.1.0
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Swagger Inventory Management System(ConvoConvert) - OpenAPI 3.1
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
 servers:
-- url: /
+- url: https://petstore3.swagger.io/api/v3
+tags:
+- description: Everything about your Customers
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+  name: Customer
+- description: Everything about your Employees
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+  name: Employee
+- description: Everything about your Supervisors
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+  name: Supervisors
+- description: Everything about your Calls
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+  name: Calls
 paths:
-  /v1/profile/{user}:
-    get:
-      operationId: profile_v1_profile__user__get
-      parameters:
-      - description: bruh moment
-        explode: false
-        in: path
-        name: name
+  /Customer:
+    post:
+      description: Add a new Customer to the Inventory Management System
+      operationId: addCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/addCustomer_request_inner'
+              type: array
+        description: Create a new Customer in the store
         required: true
-        schema:
-          description: bruh moment
-          maxLength: 20
-          minLength: 1
-          title: Name
-          type: string
-        style: simple
-      - description: Optionally set multiple queries separated by a comma.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/addCustomer_request_inner'
+                type: array
+          description: Successful operation
+        "405":
+          description: Invalid input
+        "404":
+          description: the server cannot find the requested resource
+        "201":
+          description: the resources have been successfully created on the server
+        "304":
+          description: Not modified
+        "510":
+          description: extensions to the request are required for the server to fulfill
+            it.
+      security:
+      - petstore_auth:
+        - write:Customers
+        - read:Customers
+      summary: Add a new Customer to the Inventory Management System
+      tags:
+      - Customer
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      description: Update an existing Customer by Id
+      operationId: updateCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/updateCustomer_request_inner'
+              type: array
+        description: Update an existent Customer in Inventory Management System
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/updateCustomer_request_inner'
+                type: array
+          description: Successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: customer not found
+        "405":
+          description: Validation exception
+        "201":
+          description: new resource has been created
+        "202":
+          description: the request has been accepted for processing
+        "304":
+          description: the response has not been modified
+      security:
+      - petstore_auth:
+        - write:Customers
+        - read:Customers
+      summary: Update an existing Customer
+      tags:
+      - Customer
+      x-content-type: application/json
+      x-accepts: application/json
+  /Customer/findByUserName:
+    get:
+      description: Multiple UserName values can be provided with comma separated strings
+      operationId: findCustomersByName
+      parameters:
+      - description: UserName values that need to be considered for filter
         explode: true
         in: query
-        name: get
+        name: UserName
         required: false
         schema:
-          description: Optionally set multiple queries separated by a comma.
-          enum:
-          - mini
-          - full
-          - background
-          - style
-          - css
-          - purchase
-          - group
-          title: Get
-          type: string
-        style: form
-      - description: Optionally set multiple queries separated by a comma.
-        explode: true
-        in: query
-        name: image
-        required: false
-        schema:
-          description: Optionally set multiple queries separated by a comma.
-          enum:
-          - avatar
-          - thumb
-          - thumb_m
-          - message
-          - flag
-          - flag_t
-          - vr_t
-          title: Image
           type: string
         style: form
       responses:
@@ -69,64 +142,833 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-          description: Successful Response
-        "422":
+                items:
+                  $ref: '#/components/schemas/updateCustomer_request_inner'
+                type: array
+          description: successful operation
+        "400":
+          description: Invalid UserName
+        "202":
+          description: the request has been accepted for processing
+      security:
+      - petstore_auth:
+        - write:Customers
+        - read:Customers
+      summary: Finds Customers by UserName
+      tags:
+      - Customer
+      x-accepts: application/json
+  /Customer/{CustomerId}:
+    delete:
+      description: delete a Customer
+      operationId: deleteCustomer
+      parameters:
+      - description: ""
+        explode: false
+        in: header
+        name: api_key
+        required: false
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Successfully updated Customer
+        "202":
+          description: the request has been received but not completed yet
+        "405":
+          description: Invalid operation
+        "400":
+          description: Invalid ID supplied
+        "300":
+          description: The request has more than one possible response
+        "510":
+          description: extensions to the request are required for the server to fulfill
+            it
+      summary: Deletes a Customer
+      tags:
+      - Customer
+      x-accepts: application/json
+    get:
+      description: Returns a single Customer
+      operationId: getCustomerById
+      parameters:
+      - description: ID of Customer to return
+        explode: false
+        in: path
+        name: CustomerId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Profile
+                items:
+                  $ref: '#/components/schemas/updateCustomer_request_inner'
+                type: array
+          description: successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Customer not found
+        "202":
+          description: the request has been accepted for processing
+        "302":
+          description: the request has been accepted for processing
+        "503":
+          description: The server is not ready to handle the request
+      security:
+      - api_key: []
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      summary: Find Customer by ID
       tags:
-      - api
+      - Customer
+      x-accepts: application/json
+    patch:
+      description: Updates specific fields of a Customer identified by ID
+      operationId: updateCustomerById
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateCustomerById_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updateCustomerById_200_response'
+          description: Successfully updated Customer
+        "404":
+          description: Customer not found
+        "202":
+          description: the request has been received but not completed yet
+        "204":
+          description: No Content
+        "302":
+          description: The URL of the requested resource has been changed temporarily
+        "503":
+          description: The server is not ready to handle the request
+      summary: Update Customer by ID
+      tags:
+      - Customer
+      x-content-type: application/json
+      x-accepts: application/json
+  /Employee:
+    post:
+      description: Add a new Employee to the Inventory Management System
+      operationId: addEmployee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/addEmployee_request_inner'
+              type: array
+          application/xml:
+            schema:
+              items:
+                $ref: '#/components/schemas/addEmployee_request_inner_1'
+              type: array
+        description: Create a new Employee
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/addEmployee_request_inner'
+                type: array
+          description: Successful operation
+        "405":
+          description: Invalid input
+      summary: Add a new Employee to the Inventory Management System
+      tags:
+      - Employee
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      description: Update an existing Employee by Id
+      operationId: updateEmployees
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/updateEmployees_request_inner'
+              type: array
+        description: Update an existent Employee in Inventory Management System
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/updateEmployees_request_inner'
+                type: array
+            application/xml:
+              schema:
+                items:
+                  $ref: '#/components/schemas/updateCustomer_request_inner'
+                type: array
+          description: Successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: customer not found
+        "405":
+          description: Validation exception
+      security:
+      - petstore_auth:
+        - write:Customers
+        - read:Customers
+      summary: Update an existing Employee
+      tags:
+      - Employee
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /Employee/findByName:
+    get:
+      description: Multiple Name values can be provided with comma separated strings
+      operationId: findEmployeeByName
+      parameters:
+      - description: Names values that need to be considered for filter
+        explode: true
+        in: query
+        name: Name
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/findEmployeeByName_200_response_inner'
+                type: array
+          description: successful operation
+        "400":
+          description: Invalid Name value
+      summary: Finds Employee  by Name
+      tags:
+      - Employee
+      x-accepts: application/json
+  /Employee/{EmployeeId}:
+    delete:
+      description: delete a Employee
+      operationId: deleteEmployee
+      parameters:
+      - description: ""
+        explode: false
+        in: header
+        name: api_key
+        required: false
+        schema:
+          type: string
+        style: simple
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Employee not found
+      summary: Deletes a Employee
+      tags:
+      - Employee
+      x-accepts: application/json
+    get:
+      description: Returns a single Employee
+      operationId: getEmployeeById
+      parameters:
+      - description: ID of Employee to return
+        explode: false
+        in: path
+        name: EmployeeId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/addEmployee_request_inner'
+                type: array
+          description: successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Employee not found
+      summary: Find Employee by ID
+      tags:
+      - Employee
+      x-accepts: application/json
+    patch:
+      description: Updates specific fields of a Employee identified by ID
+      operationId: updateEmployeeById
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateEmployeeById_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updateEmployeeById_200_response'
+          description: Successfully updated Employee
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Employee not found
+      summary: Update Employee by ID
+      tags:
+      - Employee
+      x-content-type: application/json
+      x-accepts: application/json
+  /Supervisors/SupervisorbyID:
+    get:
+      description: Returns a single supervisor
+      operationId: getsupervisorById
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/getsupervisorById_200_response_inner'
+                type: array
+          description: successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Supervisore not found
+      summary: Find supervisor by ID
+      tags:
+      - Supervisors
+      x-accepts: application/json
+    post:
+      description: Creates list of Supervisors with given input array
+      operationId: createSupervisorsWithListInput
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/createSupervisorsWithListInput_request_inner'
+              type: array
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/createSupervisorsWithListInput_request_inner'
+                type: array
+            application/xml:
+              schema:
+                items:
+                  $ref: '#/components/schemas/createSupervisorsWithListInput_request_inner'
+                type: array
+          description: Successful operation
+        default:
+          description: successful operation
+      summary: Creates list of Supervisors with given input array
+      tags:
+      - Supervisors
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /Supervisors/{username}:
+    delete:
+      description: delete a Supervisors
+      operationId: deleteSupervisors
+      parameters:
+      - description: ""
+        explode: false
+        in: header
+        name: api_key
+        required: false
+        schema:
+          type: string
+        style: simple
+      responses:
+        "400":
+          description: Invalid pet value
+      summary: Deletes a Supervisors
+      tags:
+      - Supervisors
+      x-accepts: application/json
+    get:
+      description: ""
+      operationId: getSupervisorsByUserName
+      parameters:
+      - description: 'The username that needs to be fetched. Use Supervisors1 for
+          testing. '
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/createSupervisorsWithListInput_request_inner'
+                type: array
+            application/xml:
+              schema:
+                items:
+                  $ref: '#/components/schemas/createSupervisorsWithListInput_request_inner'
+                type: array
+          description: successful operation
+        "400":
+          description: Invalid username supplied
+        "404":
+          description: UserName not found
+      summary: Get Supervisors by user name
+      tags:
+      - Supervisors
+      x-accepts: "application/json,application/xml"
+    put:
+      operationId: updateSupervisors
+      parameters:
+      - description: username that need to be deleted
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/createSupervisorsWithListInput_request_inner'
+              type: array
+          application/xml:
+            schema:
+              items:
+                $ref: '#/components/schemas/createSupervisorsWithListInput_request_inner'
+              type: array
+          application/x-www-form-urlencoded:
+            schema:
+              items:
+                $ref: '#/components/schemas/createSupervisorsWithListInput_request_inner'
+              type: array
+        description: Update an existent Supervisors
+      responses:
+        default:
+          description: successful operation
+      summary: Update Supervisors
+      tags:
+      - Supervisors
+      x-content-type: application/json
+      x-accepts: application/json
+  /Calls:
+    post:
+      description: Add a new Calls to the Inventory Management System
+      operationId: addCalls
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/addCalls_request_inner'
+              type: array
+        description: Create a new Calls
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/addCalls_request_inner'
+                type: array
+          description: Successful operation
+        "405":
+          description: Invalid input
+      summary: Add a new Calls to the Inventory Management System
+      tags:
+      - Calls
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      description: Update an existing Calls by Id
+      operationId: updateCalls
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/updateCalls_request_inner'
+              type: array
+        description: Update an existent Calls in Inventory Management System
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/updateCalls_request_inner'
+                type: array
+          description: Successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Calls not found
+        "405":
+          description: Validation exception
+      summary: Update an existing Calls
+      tags:
+      - Calls
+      x-content-type: application/json
+      x-accepts: application/json
+  /Calls/findById:
+    delete:
+      description: delete a Call
+      operationId: deleteCalls
+      parameters:
+      - description: ""
+        explode: false
+        in: header
+        name: api_key
+        required: false
+        schema:
+          type: string
+        style: simple
+      responses:
+        "400":
+          description: Invalid call value
+      summary: Deletes a Call
+      tags:
+      - Calls
+      x-accepts: application/json
+    get:
+      description: Multiple Calls values can be provided with comma separated strings
+      operationId: findCallsById
+      parameters:
+      - description: IDs values that need to be considered for filter
+        explode: true
+        in: query
+        name: Id
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/addCalls_request_inner'
+                type: array
+          description: successful operation
+        "400":
+          description: Invalid ID value
+        "404":
+          description: Call not found
+      summary: Finds Calls by Id
+      tags:
+      - Calls
+      x-accepts: application/json
+    patch:
+      description: Updates specific fields of a Calls identified by ID
+      operationId: updateCallsById
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateEmployeeById_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updateEmployeeById_200_response'
+          description: Successfully updated Calls
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Calls not found
+      summary: Update Calls by ID
+      tags:
+      - Calls
+      x-content-type: application/json
       x-accepts: application/json
 components:
   schemas:
-    HTTPValidationError:
-      example:
-        detail:
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          type: type
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          type: type
+    Customer:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-      title: HTTPValidationError
-    ValidationError:
-      example:
-        msg: msg
-        loc:
-        - ValidationError_loc_inner
-        - ValidationError_loc_inner
-        type: type
+        id:
+          format: int640000
+          type: integer
+        username:
+          type: string
+        phoneNumber:
+          example: "05926287"
+          type: integer
+    Employee:
       properties:
-        loc:
-          items:
-            $ref: '#/components/schemas/ValidationError_loc_inner'
-          type: array
-        msg:
-          title: Message
+        id:
+          format: int640000
+          type: integer
+        username:
           type: string
-        type:
-          title: Error Type
+        phoneNumber:
+          example: "0592687"
+          type: integer
+    Supervisors:
+      properties:
+        id:
+          format: int640000
+          type: integer
+        username:
           type: string
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ValidationError_loc_inner:
-      anyOf:
-      - type: string
-      - type: integer
+        phoneNumber:
+          example: "0592687"
+          type: integer
+    Calls:
+      properties:
+        id:
+          format: int640000
+          type: integer
+        audioText:
+          type: string
+        Time:
+          format: time
+          type: string
+    updateCustomer_request_inner:
+      example:
+        PhoneNumber: "0593348940"
+        ID: 3
+        username: AfefaKarakra
+      properties:
+        ID:
+          example: 3
+          type: integer
+        username:
+          example: AfefaKarakra
+          type: string
+        PhoneNumber:
+          example: "0593348940"
+          type: integer
+    addCustomer_request_inner:
+      example:
+        PhoneNumber: "059838383"
+        ID: 6
+        username: zena
+      properties:
+        ID:
+          example: 6
+          type: integer
+        username:
+          example: zena
+          type: string
+        PhoneNumber:
+          example: "059838383"
+          type: integer
+    updateCustomerById_request:
+      properties:
+        username:
+          example: Afefa
+          type: string
+        PhoneNumber:
+          example: "05922222"
+          type: integer
+    updateCustomerById_200_response:
+      example:
+        PhoneNumber: "05922222"
+        ID: 3
+        username: Afefa
+      properties:
+        ID:
+          example: 3
+          type: integer
+        username:
+          example: Afefa
+          type: string
+        PhoneNumber:
+          example: "05922222"
+          type: integer
+    updateEmployees_request_inner:
+      example:
+        PhoneNumber: "059876543"
+        ID: 3
+        username: Mostafaa
+      properties:
+        ID:
+          example: 3
+          type: integer
+        username:
+          example: Mostafaa
+          type: string
+        PhoneNumber:
+          example: "059876543"
+          type: integer
+    addEmployee_request_inner:
+      example:
+        PhoneNumber: "0545218999"
+        ID: 8
+        username: mohammad
+      properties:
+        ID:
+          example: 8
+          type: integer
+        username:
+          example: mohammad
+          type: string
+        PhoneNumber:
+          example: "0545218999"
+          type: integer
+    addEmployee_request_inner_1:
+      properties:
+        ID:
+          example: 3
+          type: integer
+        username:
+          example: momad
+          type: string
+        PhoneNumber:
+          example: "0593348940"
+          type: integer
+    findEmployeeByName_200_response_inner:
+      example:
+        PhoneNumber: "059323232"
+        ID: 100
+        username: hassan
+      properties:
+        ID:
+          example: 100
+          type: integer
+        username:
+          example: hassan
+          type: string
+        PhoneNumber:
+          example: "059323232"
+          type: integer
+    updateEmployeeById_request:
+      properties:
+        username:
+          example: mohammad
+          type: string
+        PhoneNumber:
+          example: "05999999"
+          type: integer
+    updateEmployeeById_200_response:
+      example:
+        PhoneNumber: "05999999"
+        ID: 3
+        username: mohammad
+      properties:
+        ID:
+          example: 3
+          type: integer
+        username:
+          example: mohammad
+          type: string
+        PhoneNumber:
+          example: "05999999"
+          type: integer
+    getsupervisorById_200_response_inner:
+      example:
+        PhoneNumber: "0556782329"
+        ID: 23
+        username: khaled
+      properties:
+        ID:
+          example: 23
+          type: integer
+        username:
+          example: khaled
+          type: string
+        PhoneNumber:
+          example: "0556782329"
+          type: integer
+    createSupervisorsWithListInput_request_inner:
+      example:
+        PhoneNumber: "0556782329"
+        ID: 23
+        username: ruaa
+      properties:
+        ID:
+          example: 23
+          type: integer
+        username:
+          example: ruaa
+          type: string
+        PhoneNumber:
+          example: "0556782329"
+          type: integer
+    updateCalls_request_inner:
+      example:
+        audioText: SalamAlekom
+        Time: Time
+        ID: 200
+      properties:
+        ID:
+          example: 200
+          type: integer
+        audioText:
+          example: SalamAlekom
+          type: string
+        Time:
+          format: time
+          type: string
+    addCalls_request_inner:
+      example:
+        audioText: RamdanKarem
+        Time: Time
+        ID: 300
+      properties:
+        ID:
+          example: 300
+          type: integer
+        audioText:
+          example: RamdanKarem
+          type: string
+        Time:
+          format: time
+          type: string
+  securitySchemes:
+    petstore_auth:
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+      type: oauth2
+    api_key:
+      in: header
+      name: api_key
+      type: apiKey
 
