@@ -1,6 +1,6 @@
 
 
-# Incident
+# Event
 
 
 ## Properties

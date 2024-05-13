@@ -2,26 +2,26 @@ openapi: 3.1.0
 info:
   contact:
     email: apiteam@beakon.com
-  description: Access the Beakon incident feed.
+  description: Access Beakon events
   termsOfService: https://beakon.com/acceptable-use-policy
-  title: Beakon API
-  version: 1.0.6
+  title: Beakon Event API
+  version: 1.0.1
 externalDocs:
   description: Find out more about Beakon
   url: https://beakon.com
 servers:
 - url: https://api.beakon.com
 tags:
-- description: Incident management
+- description: Event management
   externalDocs:
-    description: Find out more
+    description: Find out more about Beakon
     url: https://beakon.com
-  name: incident
+  name: event
 paths:
-  /incidents:
+  /event/find:
     get:
-      description: Finds all incidents after applying filters. Returns results in
-        reverse chronological order.
+      description: Finds all events after applying filters. Returns results in reverse
+        chronological order.
       parameters:
       - description: Tag values that need to be considered for filter
         explode: true
@@ -33,8 +33,8 @@ paths:
             $ref: '#/components/schemas/Tag'
           type: array
         style: form
-      - description: "Restrict incidents to those containing an alert after startTimestamp,\
-          \ which is a UNIX timestamp (seconds since the January 1, 1970)."
+      - description: "Restrict events to those containing an alert after startTimestamp,\
+          \ which is a UNIX timestamp (seconds since January 1, 1970)."
         examples:
           October 1, 2023 00:00:00 PT:
             value: 1696143600
@@ -45,8 +45,8 @@ paths:
         schema:
           type: integer
         style: form
-      - description: "Restrict incidents to those containing an alert before endTimestamp,\
-          \ which is a UNIX timestamp (seconds since the January 1, 1970)."
+      - description: "Restrict events to those containing an alert before endTimestamp,\
+          \ which is a UNIX timestamp (seconds since January 1, 1970)."
         examples:
           October 1, 2023 00:02:00 PT:
             value: 1696143720
@@ -63,7 +63,7 @@ paths:
             application/json:
               schema:
                 items:
-                  $ref: '#/components/schemas/Incident'
+                  $ref: '#/components/schemas/Event'
                 type: array
           description: successful operation
         "400":
@@ -80,10 +80,10 @@ paths:
           description: Missing or invalid authentication token
       security:
       - api_key:
-        - read:incidents
-      summary: Finds Incidents
+        - read:events
+      summary: Find Events
       tags:
-      - incident
+      - event
       x-accepts: application/json
 components:
   schemas:
@@ -99,39 +99,83 @@ components:
       - code
       - message
     Tag:
+      description: |-
+        Modifiers
+        - commercial (commercial property)
+        - fatality
+        - gun
+        - infrastructure (key public infrastructure)
+        - injury (personal injury)
+        - weapon (non-gun, deadly weapon)
+
+        Crime
+        - assault
+        - hostage
+        - suspicious (suspicious individual)
+        - trespass
+        - bomb
+        - robbery
+        - theft
+        - vandalism
+        - disturbance (public disturbance)
+        - shooting
+        - threat (criminal threat of harm)
+
+        Fire & Medical
+        - fire
+        - explosion
+        - smoke
+        - medical
+        - gas (gas leak)
+        - rescue
+        - hazmat (hazaradous materials)
+
+        Traffic
+        - collision
+        - hazard
+        - pursuit (vehicle pursuit)
+        - transit (public transit)
+        - closure (road closure)
+
+        Civil
+        - assembly (illegal assembly)
+        - rioting
+        - looting
+        - protest
       enum:
-      - deadlyassault
-      - bomb
+      - commercial
+      - fatality
+      - gun
+      - infrastructure
+      - injury
+      - weapon
+      - assault
       - hostage
-      - robbery
-      - shots
-      - shooting
-      - stabbing
       - suspicious
-      - threat
       - trespass
+      - bomb
+      - robbery
+      - theft
       - vandalism
+      - disturbance
+      - shooting
+      - threat
+      - fire
       - explosion
-      - hazmat
-      - outdoorfire
+      - smoke
+      - medical
+      - gas
       - rescue
-      - structurefire
+      - hazmat
       - collision
       - hazard
-      - closure
+      - pursuit
       - transit
+      - closure
+      - assembly
+      - rioting
       - looting
-      - peacefulassembly
-      - dangerousassembly
-      - gas
-      - power
-      - utilitydamage
-      - deadly
-      - hate
-      - injury
-      - massinjury
-      - officerinvolved
-      - correction
+      - protest
       type: string
     Alert:
       example:
@@ -144,6 +188,7 @@ components:
         location: "748 Junipero Serra Boulevard, San Francisco, CA, USA"
         geometry: ""
         _id: 654586faf440a71db02490bc
+        source: beakon
         title: Vehicle Collision With Injuries
         tags:
         - null
@@ -153,6 +198,20 @@ components:
           description: UUID
           example: 654586faf440a71db02490bc
           format: uuid
+          type: string
+        source:
+          description: |-
+            Event source:
+              - beakon: Public Safety Radio
+              - news: Internet News
+              - 511: 511.org API
+              - NWS: National Weather Service API
+          enum:
+          - beakon
+          - news
+          - "511"
+          - nws
+          example: beakon
           type: string
         tags:
           items:
@@ -191,7 +250,7 @@ components:
           - high
           example: medium
           type: string
-    Incident:
+    Event:
       example:
         alerts:
         - severity: medium
@@ -203,6 +262,7 @@ components:
           location: "748 Junipero Serra Boulevard, San Francisco, CA, USA"
           geometry: ""
           _id: 654586faf440a71db02490bc
+          source: beakon
           title: Vehicle Collision With Injuries
           tags:
           - null
@@ -216,6 +276,7 @@ components:
           location: "748 Junipero Serra Boulevard, San Francisco, CA, USA"
           geometry: ""
           _id: 654586faf440a71db02490bc
+          source: beakon
           title: Vehicle Collision With Injuries
           tags:
           - null

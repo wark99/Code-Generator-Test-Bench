@@ -2,7 +2,7 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import org.openapitools.client.model.Incident;
+import org.openapitools.client.model.Event;
 import org.openapitools.client.model.Tag;
 
 import java.util.Collections;
@@ -26,15 +26,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:14:49.334490151Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class IncidentApi {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:14:56.955116806Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+public class EventApi {
     private ApiClient apiClient;
 
-    public IncidentApi() {
+    public EventApi() {
         this(new ApiClient());
     }
 
-    public IncidentApi(ApiClient apiClient) {
+    public EventApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -47,34 +47,34 @@ public class IncidentApi {
     }
 
     /**
-     * Finds Incidents
-     * Finds all incidents after applying filters. Returns results in reverse chronological order.
+     * Find Events
+     * Finds all events after applying filters. Returns results in reverse chronological order.
      * <p><b>200</b> - successful operation
      * <p><b>400</b> - Invalid parameter value
      * <p><b>403</b> - Missing or invalid authentication token
      * @param tags Tag values that need to be considered for filter (optional)
-     * @param startTimestamp Restrict incidents to those containing an alert after startTimestamp, which is a UNIX timestamp (seconds since the January 1, 1970). (optional)
-     * @param endTimestamp Restrict incidents to those containing an alert before endTimestamp, which is a UNIX timestamp (seconds since the January 1, 1970). (optional)
-     * @return List&lt;Incident&gt;
+     * @param startTimestamp Restrict events to those containing an alert after startTimestamp, which is a UNIX timestamp (seconds since January 1, 1970). (optional)
+     * @param endTimestamp Restrict events to those containing an alert before endTimestamp, which is a UNIX timestamp (seconds since January 1, 1970). (optional)
+     * @return List&lt;Event&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public List<Incident> incidentsGet(List<Tag> tags, Integer startTimestamp, Integer endTimestamp) throws RestClientException {
-        return incidentsGetWithHttpInfo(tags, startTimestamp, endTimestamp).getBody();
+    public List<Event> eventFindGet(List<Tag> tags, Integer startTimestamp, Integer endTimestamp) throws RestClientException {
+        return eventFindGetWithHttpInfo(tags, startTimestamp, endTimestamp).getBody();
     }
 
     /**
-     * Finds Incidents
-     * Finds all incidents after applying filters. Returns results in reverse chronological order.
+     * Find Events
+     * Finds all events after applying filters. Returns results in reverse chronological order.
      * <p><b>200</b> - successful operation
      * <p><b>400</b> - Invalid parameter value
      * <p><b>403</b> - Missing or invalid authentication token
      * @param tags Tag values that need to be considered for filter (optional)
-     * @param startTimestamp Restrict incidents to those containing an alert after startTimestamp, which is a UNIX timestamp (seconds since the January 1, 1970). (optional)
-     * @param endTimestamp Restrict incidents to those containing an alert before endTimestamp, which is a UNIX timestamp (seconds since the January 1, 1970). (optional)
-     * @return ResponseEntity&lt;List&lt;Incident&gt;&gt;
+     * @param startTimestamp Restrict events to those containing an alert after startTimestamp, which is a UNIX timestamp (seconds since January 1, 1970). (optional)
+     * @param endTimestamp Restrict events to those containing an alert before endTimestamp, which is a UNIX timestamp (seconds since January 1, 1970). (optional)
+     * @return ResponseEntity&lt;List&lt;Event&gt;&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<List<Incident>> incidentsGetWithHttpInfo(List<Tag> tags, Integer startTimestamp, Integer endTimestamp) throws RestClientException {
+    public ResponseEntity<List<Event>> eventFindGetWithHttpInfo(List<Tag> tags, Integer startTimestamp, Integer endTimestamp) throws RestClientException {
         Object localVarPostBody = null;
         
 
@@ -97,7 +97,7 @@ public class IncidentApi {
 
         String[] localVarAuthNames = new String[] { "api_key" };
 
-        ParameterizedTypeReference<List<Incident>> localReturnType = new ParameterizedTypeReference<List<Incident>>() {};
-        return apiClient.invokeAPI("/incidents", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<List<Event>> localReturnType = new ParameterizedTypeReference<List<Event>>() {};
+        return apiClient.invokeAPI("/event/find", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }

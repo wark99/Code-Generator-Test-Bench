@@ -1,20 +1,20 @@
-# IncidentApi
+# EventApi
 
 All URIs are relative to *https://api.beakon.com*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**incidentsGet**](IncidentApi.md#incidentsGet) | **GET** /incidents | Finds Incidents |
+| [**eventFindGet**](EventApi.md#eventFindGet) | **GET** /event/find | Find Events |
 
 
 
-## incidentsGet
+## eventFindGet
 
-> List&lt;Incident&gt; incidentsGet(tags, startTimestamp, endTimestamp)
+> List&lt;Event&gt; eventFindGet(tags, startTimestamp, endTimestamp)
 
-Finds Incidents
+Find Events
 
-Finds all incidents after applying filters. Returns results in reverse chronological order.
+Finds all events after applying filters. Returns results in reverse chronological order.
 
 ### Example
 
@@ -25,7 +25,7 @@ import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
 import org.openapitools.client.auth.*;
 import org.openapitools.client.models.*;
-import org.openapitools.client.api.IncidentApi;
+import org.openapitools.client.api.EventApi;
 
 public class Example {
     public static void main(String[] args) {
@@ -38,15 +38,15 @@ public class Example {
         // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
         //api_key.setApiKeyPrefix("Token");
 
-        IncidentApi apiInstance = new IncidentApi(defaultClient);
+        EventApi apiInstance = new EventApi(defaultClient);
         List<Tag> tags = Arrays.asList(); // List<Tag> | Tag values that need to be considered for filter
-        Integer startTimestamp = 1696143600; // Integer | Restrict incidents to those containing an alert after startTimestamp, which is a UNIX timestamp (seconds since the January 1, 1970).
-        Integer endTimestamp = 1696143720; // Integer | Restrict incidents to those containing an alert before endTimestamp, which is a UNIX timestamp (seconds since the January 1, 1970).
+        Integer startTimestamp = 1696143600; // Integer | Restrict events to those containing an alert after startTimestamp, which is a UNIX timestamp (seconds since January 1, 1970).
+        Integer endTimestamp = 1696143720; // Integer | Restrict events to those containing an alert before endTimestamp, which is a UNIX timestamp (seconds since January 1, 1970).
         try {
-            List<Incident> result = apiInstance.incidentsGet(tags, startTimestamp, endTimestamp);
+            List<Event> result = apiInstance.eventFindGet(tags, startTimestamp, endTimestamp);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling IncidentApi#incidentsGet");
+            System.err.println("Exception when calling EventApi#eventFindGet");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -62,12 +62,12 @@ public class Example {
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **tags** | [**List&lt;Tag&gt;**](Tag.md)| Tag values that need to be considered for filter | [optional] |
-| **startTimestamp** | **Integer**| Restrict incidents to those containing an alert after startTimestamp, which is a UNIX timestamp (seconds since the January 1, 1970). | [optional] |
-| **endTimestamp** | **Integer**| Restrict incidents to those containing an alert before endTimestamp, which is a UNIX timestamp (seconds since the January 1, 1970). | [optional] |
+| **startTimestamp** | **Integer**| Restrict events to those containing an alert after startTimestamp, which is a UNIX timestamp (seconds since January 1, 1970). | [optional] |
+| **endTimestamp** | **Integer**| Restrict events to those containing an alert before endTimestamp, which is a UNIX timestamp (seconds since January 1, 1970). | [optional] |
 
 ### Return type
 
-[**List&lt;Incident&gt;**](Incident.md)
+[**List&lt;Event&gt;**](Event.md)
 
 ### Authorization
 

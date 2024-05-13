@@ -8,6 +8,7 @@
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
 |**id** | **UUID** | UUID |  [optional] |
+|**source** | [**SourceEnum**](#SourceEnum) | Event source:   - beakon: Public Safety Radio   - news: Internet News   - 511: 511.org API   - NWS: National Weather Service API |  [optional] |
 |**tags** | **List&lt;Tag&gt;** |  |  [optional] |
 |**dateCreated** | **LocalDate** |  |  [optional] |
 |**location** | **String** |  |  [optional] |
@@ -17,6 +18,17 @@
 |**certainty** | [**CertaintyEnum**](#CertaintyEnum) |  |  [optional] |
 |**urgency** | [**UrgencyEnum**](#UrgencyEnum) |  |  [optional] |
 |**severity** | [**SeverityEnum**](#SeverityEnum) |  |  [optional] |
+
+
+
+## Enum: SourceEnum
+
+| Name | Value |
+|---- | -----|
+| BEAKON | &quot;beakon&quot; |
+| NEWS | &quot;news&quot; |
+| _511 | &quot;511&quot; |
+| NWS | &quot;nws&quot; |
 
 
 

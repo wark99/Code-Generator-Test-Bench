@@ -5,69 +5,71 @@
 ## Enum
 
 
-* `DEADLYASSAULT` (value: `"deadlyassault"`)
+* `COMMERCIAL` (value: `"commercial"`)
 
-* `BOMB` (value: `"bomb"`)
+* `FATALITY` (value: `"fatality"`)
+
+* `GUN` (value: `"gun"`)
+
+* `INFRASTRUCTURE` (value: `"infrastructure"`)
+
+* `INJURY` (value: `"injury"`)
+
+* `WEAPON` (value: `"weapon"`)
+
+* `ASSAULT` (value: `"assault"`)
 
 * `HOSTAGE` (value: `"hostage"`)
 
-* `ROBBERY` (value: `"robbery"`)
-
-* `SHOTS` (value: `"shots"`)
-
-* `SHOOTING` (value: `"shooting"`)
-
-* `STABBING` (value: `"stabbing"`)
-
 * `SUSPICIOUS` (value: `"suspicious"`)
-
-* `THREAT` (value: `"threat"`)
 
 * `TRESPASS` (value: `"trespass"`)
 
+* `BOMB` (value: `"bomb"`)
+
+* `ROBBERY` (value: `"robbery"`)
+
+* `THEFT` (value: `"theft"`)
+
 * `VANDALISM` (value: `"vandalism"`)
+
+* `DISTURBANCE` (value: `"disturbance"`)
+
+* `SHOOTING` (value: `"shooting"`)
+
+* `THREAT` (value: `"threat"`)
+
+* `FIRE` (value: `"fire"`)
 
 * `EXPLOSION` (value: `"explosion"`)
 
-* `HAZMAT` (value: `"hazmat"`)
+* `SMOKE` (value: `"smoke"`)
 
-* `OUTDOORFIRE` (value: `"outdoorfire"`)
+* `MEDICAL` (value: `"medical"`)
+
+* `GAS` (value: `"gas"`)
 
 * `RESCUE` (value: `"rescue"`)
 
-* `STRUCTUREFIRE` (value: `"structurefire"`)
+* `HAZMAT` (value: `"hazmat"`)
 
 * `COLLISION` (value: `"collision"`)
 
 * `HAZARD` (value: `"hazard"`)
 
-* `CLOSURE` (value: `"closure"`)
+* `PURSUIT` (value: `"pursuit"`)
 
 * `TRANSIT` (value: `"transit"`)
 
+* `CLOSURE` (value: `"closure"`)
+
+* `ASSEMBLY` (value: `"assembly"`)
+
+* `RIOTING` (value: `"rioting"`)
+
 * `LOOTING` (value: `"looting"`)
 
-* `PEACEFULASSEMBLY` (value: `"peacefulassembly"`)
-
-* `DANGEROUSASSEMBLY` (value: `"dangerousassembly"`)
-
-* `GAS` (value: `"gas"`)
-
-* `POWER` (value: `"power"`)
-
-* `UTILITYDAMAGE` (value: `"utilitydamage"`)
-
-* `DEADLY` (value: `"deadly"`)
-
-* `HATE` (value: `"hate"`)
-
-* `INJURY` (value: `"injury"`)
-
-* `MASSINJURY` (value: `"massinjury"`)
-
-* `OFFICERINVOLVED` (value: `"officerinvolved"`)
-
-* `CORRECTION` (value: `"correction"`)
+* `PROTEST` (value: `"protest"`)
 
 
 
