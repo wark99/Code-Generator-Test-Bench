@@ -1,13 +1,13 @@
 
 
-# PatchApiVisitsVisitId500Response
+# Error
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**errors** | **List&lt;Object&gt;** |  |  [optional] |
+|**message** | **String** |  |  [optional] |
 
 
 
