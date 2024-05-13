@@ -1,0 +1,848 @@
+openapi: 3.1.0
+info:
+  description: <strong>Documentation de l'api du portail auditeur de Qualibat.</strong>
+    <br> <br> L'identification est effectuée via un Bearer token fourni par Qualibat.<br>
+    Vous pouvez obtenir plus d'information en contactant le support sur l'adresse
+    email <support.portail-auditeur@qualibat.com> <br><br> Des webhooks sont disponibles
+    pour être notifiés des actions effectuées à partir du portail auditeur.
+  title: Portail auditeur
+  version: 1.0.12
+servers:
+- description: Environnement de Test
+  url: https://test.auditeurs.qualibat.eu/PAGC/v1
+- description: Environement de pré-production
+  url: https://preprod.auditeurs.qualibat.eu/PAGC/v1
+- description: Environement de production
+  url: https://auditeurs.qualibat.com/PAGC/v1
+security:
+- BearerAuth:
+  - BearerAuth
+paths:
+  /ordreMission/accepter:
+    post:
+      description: <strong>Accepter un ordre de mission</strong><br> Cette action
+        peut être réalisée si l'état de l'ordre de mission est "vEtatOrdreMissionEnAttenteAcceptation"
+        voir schéma enumEtatOrdreMission
+      operationId: PostOMAcceptation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NumeroOM'
+        required: true
+      responses:
+        "204":
+          $ref: '#/components/responses/204'
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "406":
+          $ref: '#/components/responses/406'
+        "500":
+          $ref: '#/components/responses/500'
+      tags:
+      - Ordre de mission
+      x-content-type: application/json
+      x-accepts: application/json
+  /ordreMission/refuser:
+    post:
+      description: <strong>Refuser un ordre de mission</strong><br> Cette action peut
+        être réalisée si l'état de l'ordre de mission est "vEtatOrdreMissionEnAttenteAcceptation"
+        voir schéma enumEtatOrdreMission
+      operationId: PostOMRefus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NumeroOMMotif'
+        required: true
+      responses:
+        "204":
+          $ref: '#/components/responses/204'
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "406":
+          $ref: '#/components/responses/406'
+        "500":
+          $ref: '#/components/responses/500'
+      tags:
+      - Ordre de mission
+      x-content-type: application/json
+      x-accepts: application/json
+  /ordreMission/{Numéro}:
+    get:
+      description: <strong>Information sur l'ordre de mission</strong><br> Cette action
+        permet de récupérer les informations sur l'ordre de mission <u> <li>Informations
+        générales de l'ordre de mission</li> <li>Informations sur le chantier à auditer</li>
+        <li>Informations sur l'entreprise auditées</li> </u>
+      operationId: GetOM
+      parameters:
+      - description: Numéro de l'ordre de mission
+        explode: false
+        in: path
+        name: Numéro
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrdreMission'
+          description: Information sur l'ordre de mission demandé
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "406":
+          $ref: '#/components/responses/406'
+        "500":
+          $ref: '#/components/responses/500'
+      tags:
+      - Ordre de mission
+      x-accepts: application/json
+  /ordreMission/annuler:
+    post:
+      description: "<strong>Annuler un ordre de mission</strong><br> Cette action\
+        \ peut être réalisée à n'importe quel moment dans la mesure ou la confirmation\
+        \ de réaliastion de l'audit n'a pas été éffectuée. (Etat de l'ordre de mission\
+        \ différent de :[vEtatOrdreMissionAnnulé,vEtatOrdreMissionRefusé,vEtatOrdreMissionRé\
+        cusé,vEtatOrdreMissionRapportARediger,vEtatOrdreMissionRapportAVerifier,vEtatOrdreMissionRapportEnVerification,vEtatOrdreMissionLevé\
+        eAVerifier,vEtatOrdreMissionLevéeEnVerification, vEtatOrdreMissionNCAttenteReponse,\
+        \ vEtatOrdreMissionNCAttenteLevées, vEtatOrdreMissionClôturé])"
+      operationId: PostOMAnnuler
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NumeroOMMotif'
+        required: true
+      responses:
+        "204":
+          $ref: '#/components/responses/204'
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "406":
+          $ref: '#/components/responses/406'
+        "500":
+          $ref: '#/components/responses/500'
+      tags:
+      - Ordre de mission
+      x-content-type: application/json
+      x-accepts: application/json
+  /ordreMission/auditeur:
+    post:
+      description: "<strong>Associer un auditeur à un ordre de mission</strong><br>\
+        \ Cette action peut être réalisée  si l'ordre de mission est dans l'état [vEtatOrdreMissionAuditeurAAffecter,\
+        \ vEtatOrdreMissionAuditAPlanifié, vEtatOrdreMissionAuditPlanifié].<br><br><strong>Attention</strong>,\
+        \ pour les OM combinés, l'auditeur affecté doit être le même."
+      operationId: PostOMAuditeur
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NumeroOMEmail'
+        required: true
+      responses:
+        "204":
+          $ref: '#/components/responses/204'
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "406":
+          $ref: '#/components/responses/406'
+        "500":
+          $ref: '#/components/responses/500'
+      tags:
+      - Ordre de mission
+      x-content-type: application/json
+      x-accepts: application/json
+  /ordreMission/planification:
+    post:
+      description: "<strong>Planifier un ordre de mission</strong><br> Cette action\
+        \ peut être réalisée  si l'ordre de mission est dans l'état [vEtatOrdreMissionAuditAPlanifié\
+        , vEtatOrdreMissionAuditPlanifié]. <br> L'année de l'audit ne peut pas être\
+        \ antérieure de plus de 3 ans."
+      operationId: PostOMPlanifier
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanificationOM'
+        required: true
+      responses:
+        "204":
+          $ref: '#/components/responses/204'
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "406":
+          $ref: '#/components/responses/406'
+        "500":
+          $ref: '#/components/responses/500'
+      tags:
+      - Ordre de mission
+      x-content-type: application/json
+      x-accepts: application/json
+  /ordreMission/planification/annuler:
+    post:
+      description: <strong>Annuler la planification un ordre de mission</strong><br>
+        Cette action peut être réalisée  si l'ordre de mission est dans l'état "vEtatOrdreMissionAuditPlanifié".
+      operationId: PostOMPlanifierAnnuler
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NumeroOMMotif'
+        required: true
+      responses:
+        "204":
+          $ref: '#/components/responses/204'
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "406":
+          $ref: '#/components/responses/406'
+        "500":
+          $ref: '#/components/responses/500'
+      tags:
+      - Ordre de mission
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  responses:
+    "204":
+      description: "<strong>Succès, pas de retour</strong>"
+    "400":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+      description: <strong>Erreur de requête</strong><br> 4001 - Erreur de requete<br>
+        4002 - Formatage json<br> 4003 - Information obligatoire manquante<br>
+    "401":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+      description: <strong>Non autorisé</strong><BR> 4011 - Authentification absente
+        ou refusée.<br>
+    "403":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+      description: <strong>Ressource non autorisé</strong><br> 4031 - Entreprise non
+        autorisée<br> 4032 - Auditeur non autorisé<br> 4033 - Compte auditeur non
+        actif
+    "404":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+      description: <strong>Non trouvé</strong> <br> 4041 - Entreprise inconnu<br>
+        4042 - Ordre de mission inconnu<br> 4043 - Auditeur inconnu
+    "406":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+      description: <strong>Non acceptable</strong><BR> 4061 - L'état de l'ordre de
+        mission ne permet pas la modification<br> 4062 - Les qualifications de l'auditeur
+        déclarée à Qualibat n'inclue pas le code nomenclature de l'ordre de mission<br>
+        4063 - La date de l'audit doit être spérieure à la date du jour<br> 4064 -
+        L'auditeur est absent de l'ordre de mission<br> 4065 - Un autre auditeur est
+        déjà affecté sur un des om combiné (il ne peux y avoir qu'un auditeur sur
+        tous les om combiné ensemble)
+    "500":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erreur'
+      description: <strong>Erreur interne</strong>
+    "500_webhook":
+      description: "En cas d'anomalie, la webhook sera rappelé selon le schéma suivant\
+        \ :<br> <ul> <li>+5 minutes - 1er rappel</li> <li>+10 minutes - 2ème rappel</li>\
+        \ <li>+30 minutes - 3ème rappel</li> <li>+1 heure - 4ème rappel</li> <li>+2\
+        \ heures - 5ème rappel</li> <li>+3 heures - 6ème rappel</li> <li>+6 heures\
+        \ - 7ème rappel</li> <li>+12 heures - 8ème rappel</li> <li>+18 heures - 9è\
+        me rappel</li> <li>+24 heures - 10ème rappel</li> <li>+48 heures - 11ème rappel</li>\
+        \ <li>+96 heures - 12ème rappel</li> </ul>"
+  schemas:
+    Erreur:
+      properties:
+        code:
+          description: "Code de l'erreur, se référer aux réponses des webservices"
+          type: integer
+        titre:
+          description: Définition du code erreur http
+          type: string
+        detail:
+          description: Contenu détaillant l'erreur
+          type: string
+    enumTypeNotification:
+      enum:
+      - PublicationOM
+      - AcceptationOM
+      - RefusOM
+      - RecusationEntreprise
+      - AnnulationOM
+      - Auditeur
+      - PlanificationAudit
+      - AnnulationPlanificationAudit
+      - InformationOM
+      - Superviseur
+      - EtatOM
+      type: string
+    enumEtatOrdreMission:
+      enum:
+      - vEtatOrdreMissionAnnulé
+      - vEtatOrdreMissionRefusé
+      - vEtatOrdreMissionRécusé
+      - vEtatOrdreMissionEnAttenteAcceptation
+      - vEtatOrdreMissionAuditeurAAffecter
+      - vEtatOrdreMissionAuditAPlanifié
+      - vEtatOrdreMissionAuditPlanifié
+      - vEtatOrdreMissionRapportARediger
+      - vEtatOrdreMissionRapportAVerifier
+      - vEtatOrdreMissionRapportEnVerification
+      - vEtatOrdreMissionNCAttenteReponse
+      - vEtatOrdreMissionNCAttenteLevées
+      - vEtatOrdreMissionLevéeAVerifier
+      - vEtatOrdreMissionLevéeEnVerification
+      - vEtatOrdreMissionClôturé
+      type: string
+    NumeroOM:
+      example:
+        data:
+          numeroOm: numeroOm
+        type: null
+      properties:
+        type:
+          $ref: '#/components/schemas/enumTypeNotification'
+        data:
+          $ref: '#/components/schemas/NumeroOM_data'
+    NumerosOM:
+      properties:
+        type:
+          $ref: '#/components/schemas/enumTypeNotification'
+        data:
+          $ref: '#/components/schemas/NumerosOM_data'
+    NumeroOMMotif:
+      example:
+        data:
+          numeroOm: numeroOm
+          motif: motif
+        type: null
+      properties:
+        type:
+          $ref: '#/components/schemas/enumTypeNotification'
+        data:
+          $ref: '#/components/schemas/NumeroOMMotif_data'
+    NumeroOMEmail:
+      example:
+        data:
+          numeroOm: numeroOm
+          email: email
+        type: null
+      properties:
+        type:
+          $ref: '#/components/schemas/enumTypeNotification'
+        data:
+          $ref: '#/components/schemas/NumeroOMEmail_data'
+    PlanificationOM:
+      example:
+        data:
+          numeroOm: numeroOm
+          dateAudit: 0
+        type: null
+      properties:
+        type:
+          $ref: '#/components/schemas/enumTypeNotification'
+        data:
+          $ref: '#/components/schemas/PlanificationOM_data'
+    OrdreMission:
+      example:
+        data:
+          categorieTravaux: categorieTravaux
+          omCombine:
+          - omCombine
+          - omCombine
+          numeroOM: numeroOM
+          objetAudit: objetAudit
+          etat: null
+          dateLimiteAudit: dateLimiteAudit
+          estCategorieTravauxCritique: true
+          qualification: qualification
+          chantier:
+            responsableChantier:
+              telephone: telephone
+              nom: nom
+              email: email
+            nomChantier: nomChantier
+            montantHtTravauxSousTraite: 6.027456183070403
+            adresseChantier:
+              ville: ville
+              adresse3: adresse3
+              adresse4: adresse4
+              codePostal: codePostal
+              adresse1: adresse1
+              adresse2: adresse2
+            surface: 1.4658129805029452
+            dateDebutTravaux: dateDebutTravaux
+            montantHtTravaux: 0.8008281904610115
+            natureTravaux: natureTravaux
+            natureTravauxSousTraite: natureTravauxSousTraite
+            dateReceptionTravaux: dateReceptionTravaux
+            maitreOuvrage:
+              adresse:
+                ville: ville
+                adresse3: adresse3
+                adresse4: adresse4
+                codePostal: codePostal
+                adresse1: adresse1
+                adresse2: adresse2
+              telephone: telephone
+              nom: nom
+              email: email
+          entreprise:
+            formeJuridique: formeJuridique
+            raisonSociale: raisonSociale
+            adresse:
+              ville: ville
+              adresse3: adresse3
+              adresse4: adresse4
+              codePostal: codePostal
+              adresse1: adresse1
+              adresse2: adresse2
+            identifiantQualibat: 5
+            telephone: telephone
+            responsableEntreprise:
+              fonction: fonction
+              telephone: telephone
+              nom: nom
+              email: email
+            libDelegation: libDelegation
+            siret: siret
+            email: email
+            codeDelegation: codeDelegation
+          referentRge:
+            telephone: telephone
+            nom: nom
+            email: email
+          contactQualibat:
+            agence:
+              adresse:
+                ville: ville
+                adresse3: adresse3
+                adresse4: adresse4
+                codePostal: codePostal
+                adresse1: adresse1
+                adresse2: adresse2
+              telephone: telephone
+              nom: nom
+              email: email
+            chargeAffaire: chargeAffaire
+          dateEcheanceQualification: dateEcheanceQualification
+        type: null
+      properties:
+        type:
+          $ref: '#/components/schemas/enumTypeNotification'
+        data:
+          $ref: '#/components/schemas/OrdreMission_data'
+    Chantier:
+      example:
+        responsableChantier:
+          telephone: telephone
+          nom: nom
+          email: email
+        nomChantier: nomChantier
+        montantHtTravauxSousTraite: 6.027456183070403
+        adresseChantier:
+          ville: ville
+          adresse3: adresse3
+          adresse4: adresse4
+          codePostal: codePostal
+          adresse1: adresse1
+          adresse2: adresse2
+        surface: 1.4658129805029452
+        dateDebutTravaux: dateDebutTravaux
+        montantHtTravaux: 0.8008281904610115
+        natureTravaux: natureTravaux
+        natureTravauxSousTraite: natureTravauxSousTraite
+        dateReceptionTravaux: dateReceptionTravaux
+        maitreOuvrage:
+          adresse:
+            ville: ville
+            adresse3: adresse3
+            adresse4: adresse4
+            codePostal: codePostal
+            adresse1: adresse1
+            adresse2: adresse2
+          telephone: telephone
+          nom: nom
+          email: email
+      properties:
+        nomChantier:
+          type: string
+        dateDebutTravaux:
+          type: string
+        dateReceptionTravaux:
+          type: string
+        adresseChantier:
+          $ref: '#/components/schemas/Adresse'
+        responsableChantier:
+          $ref: '#/components/schemas/Identite'
+        montantHtTravaux:
+          type: number
+        montantHtTravauxSousTraite:
+          type: number
+        surface:
+          type: number
+        maitreOuvrage:
+          $ref: '#/components/schemas/IdentiteAdresse'
+        natureTravaux:
+          type: string
+        natureTravauxSousTraite:
+          type: string
+    ContactQualibat:
+      example:
+        agence:
+          adresse:
+            ville: ville
+            adresse3: adresse3
+            adresse4: adresse4
+            codePostal: codePostal
+            adresse1: adresse1
+            adresse2: adresse2
+          telephone: telephone
+          nom: nom
+          email: email
+        chargeAffaire: chargeAffaire
+      properties:
+        chargeAffaire:
+          type: string
+        agence:
+          $ref: '#/components/schemas/IdentiteAdresse'
+    Entreprise:
+      example:
+        formeJuridique: formeJuridique
+        raisonSociale: raisonSociale
+        adresse:
+          ville: ville
+          adresse3: adresse3
+          adresse4: adresse4
+          codePostal: codePostal
+          adresse1: adresse1
+          adresse2: adresse2
+        identifiantQualibat: 5
+        telephone: telephone
+        responsableEntreprise:
+          fonction: fonction
+          telephone: telephone
+          nom: nom
+          email: email
+        libDelegation: libDelegation
+        siret: siret
+        email: email
+        codeDelegation: codeDelegation
+      properties:
+        identifiantQualibat:
+          type: integer
+        raisonSociale:
+          type: string
+        siret:
+          type: string
+        formeJuridique:
+          type: string
+        adresse:
+          $ref: '#/components/schemas/Adresse'
+        responsableEntreprise:
+          $ref: '#/components/schemas/Entreprise_responsableEntreprise'
+        telephone:
+          type: string
+        email:
+          type: string
+        codeDelegation:
+          type: string
+        libDelegation:
+          type: string
+    Identite:
+      example:
+        telephone: telephone
+        nom: nom
+        email: email
+      properties:
+        nom:
+          type: string
+        telephone:
+          type: string
+        email:
+          type: string
+    IdentiteAdresse:
+      example:
+        adresse:
+          ville: ville
+          adresse3: adresse3
+          adresse4: adresse4
+          codePostal: codePostal
+          adresse1: adresse1
+          adresse2: adresse2
+        telephone: telephone
+        nom: nom
+        email: email
+      properties:
+        nom:
+          type: string
+        telephone:
+          type: string
+        email:
+          type: string
+        adresse:
+          $ref: '#/components/schemas/Adresse'
+    Adresse:
+      example:
+        ville: ville
+        adresse3: adresse3
+        adresse4: adresse4
+        codePostal: codePostal
+        adresse1: adresse1
+        adresse2: adresse2
+      properties:
+        adresse1:
+          type: string
+        adresse2:
+          type: string
+        adresse3:
+          type: string
+        adresse4:
+          type: string
+        codePostal:
+          type: string
+        ville:
+          type: string
+    EtatOM:
+      properties:
+        type:
+          $ref: '#/components/schemas/enumTypeNotification'
+        data:
+          $ref: '#/components/schemas/EtatOM_data'
+    NumeroOM_data:
+      example:
+        numeroOm: numeroOm
+      properties:
+        numeroOm:
+          type: string
+    NumerosOM_data:
+      properties:
+        numerosOM:
+          items:
+            description: TODO default missing array inner type to string
+            type: string
+          type: array
+    NumeroOMMotif_data:
+      example:
+        numeroOm: numeroOm
+        motif: motif
+      properties:
+        numeroOm:
+          type: string
+        motif:
+          description: Indiquer le motif de la notification
+          type: string
+    NumeroOMEmail_data:
+      example:
+        numeroOm: numeroOm
+        email: email
+      properties:
+        numeroOm:
+          type: string
+        email:
+          description: Indiquer l'adresse email du compte concerné par la notification
+          type: string
+    PlanificationOM_data:
+      example:
+        numeroOm: numeroOm
+        dateAudit: 0
+      properties:
+        numeroOm:
+          type: string
+        dateAudit:
+          description: Date et heure de l'audit au format Unix timestamp en seconde
+          type: integer
+    OrdreMission_data:
+      example:
+        categorieTravaux: categorieTravaux
+        omCombine:
+        - omCombine
+        - omCombine
+        numeroOM: numeroOM
+        objetAudit: objetAudit
+        etat: null
+        dateLimiteAudit: dateLimiteAudit
+        estCategorieTravauxCritique: true
+        qualification: qualification
+        chantier:
+          responsableChantier:
+            telephone: telephone
+            nom: nom
+            email: email
+          nomChantier: nomChantier
+          montantHtTravauxSousTraite: 6.027456183070403
+          adresseChantier:
+            ville: ville
+            adresse3: adresse3
+            adresse4: adresse4
+            codePostal: codePostal
+            adresse1: adresse1
+            adresse2: adresse2
+          surface: 1.4658129805029452
+          dateDebutTravaux: dateDebutTravaux
+          montantHtTravaux: 0.8008281904610115
+          natureTravaux: natureTravaux
+          natureTravauxSousTraite: natureTravauxSousTraite
+          dateReceptionTravaux: dateReceptionTravaux
+          maitreOuvrage:
+            adresse:
+              ville: ville
+              adresse3: adresse3
+              adresse4: adresse4
+              codePostal: codePostal
+              adresse1: adresse1
+              adresse2: adresse2
+            telephone: telephone
+            nom: nom
+            email: email
+        entreprise:
+          formeJuridique: formeJuridique
+          raisonSociale: raisonSociale
+          adresse:
+            ville: ville
+            adresse3: adresse3
+            adresse4: adresse4
+            codePostal: codePostal
+            adresse1: adresse1
+            adresse2: adresse2
+          identifiantQualibat: 5
+          telephone: telephone
+          responsableEntreprise:
+            fonction: fonction
+            telephone: telephone
+            nom: nom
+            email: email
+          libDelegation: libDelegation
+          siret: siret
+          email: email
+          codeDelegation: codeDelegation
+        referentRge:
+          telephone: telephone
+          nom: nom
+          email: email
+        contactQualibat:
+          agence:
+            adresse:
+              ville: ville
+              adresse3: adresse3
+              adresse4: adresse4
+              codePostal: codePostal
+              adresse1: adresse1
+              adresse2: adresse2
+            telephone: telephone
+            nom: nom
+            email: email
+          chargeAffaire: chargeAffaire
+        dateEcheanceQualification: dateEcheanceQualification
+      properties:
+        numeroOM:
+          type: string
+        categorieTravaux:
+          type: string
+        estCategorieTravauxCritique:
+          type: boolean
+        qualification:
+          type: string
+        etat:
+          $ref: '#/components/schemas/enumEtatOrdreMission'
+        objetAudit:
+          type: string
+        dateLimiteAudit:
+          type: string
+        dateEcheanceQualification:
+          type: string
+        omCombine:
+          items:
+            description: TODO default missing array inner type to string
+            type: string
+          type: array
+        chantier:
+          $ref: '#/components/schemas/Chantier'
+        referentRge:
+          $ref: '#/components/schemas/Identite'
+        contactQualibat:
+          $ref: '#/components/schemas/ContactQualibat'
+        entreprise:
+          $ref: '#/components/schemas/Entreprise'
+    Entreprise_responsableEntreprise:
+      example:
+        fonction: fonction
+        telephone: telephone
+        nom: nom
+        email: email
+      properties:
+        nom:
+          type: string
+        telephone:
+          type: string
+        email:
+          type: string
+        fonction:
+          type: string
+    EtatOM_data:
+      properties:
+        numeroOM:
+          type: string
+        etat:
+          type: string
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+
