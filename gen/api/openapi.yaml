@@ -1,0 +1,1483 @@
+openapi: 3.1.0
+info:
+  description: Require authentication for all route except /auth and /auth/new.
+  title: Youtube Music
+  version: 1.0.0
+servers:
+- url: /
+tags:
+- description: User and sign in
+  name: User
+- description: Read playlist from user
+  name: Playlist
+- description: "Comment on a playlist, by user"
+  name: Comment
+- description: "Read, Like ,unlike a playlist"
+  name: Like
+paths:
+  /api/stream/{songId}:
+    get:
+      parameters:
+      - description: Valid youtube Id
+        example: A_HekkBbd1M
+        explode: false
+        in: path
+        name: songId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamMusic'
+          description: audio return
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: No playlist
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Stream Music
+      tags:
+      - Music
+      x-accepts: application/json
+  /api/music/{songId}:
+    get:
+      parameters:
+      - description: Valid youtube Id
+        example: oKOtzIo-uYw
+        explode: false
+        in: path
+        name: songId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SongInfor'
+          description: "After this api send response, /api/stream/{songId} is available\
+            \ to stream"
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: No playlist
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Download Music + Get song infors
+      tags:
+      - Music
+      x-accepts: application/json
+  /api/music?search={search}&page={page}:
+    get:
+      description: "Return data, only song that is less than 5 min"
+      parameters:
+      - explode: true
+        in: query
+        required: false
+        style: form
+      - explode: true
+        in: query
+        required: false
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_music_search__search__page__page__get_200_response'
+          description: "After this api send response, /api/stream/{songId} is available\
+            \ to stream"
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: No playlist
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Search music
+      tags:
+      - Music
+      x-accepts: application/json
+  /api/auth:
+    post:
+      description: return a token string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: "Must have username, password"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: Signed in
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Password not match requirement/Username too short(6-) or too
+            long(32+)
+      summary: Sign in
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/auth/new:
+    post:
+      description: make new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAll'
+        description: "Must have username, password"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAll'
+          description: new user
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Password not match requirement/Username too short(6-) or too
+            long(32+)/Username Exist
+      summary: Make new user
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/users/{id}:
+    get:
+      description: Read user infor from id
+      parameters:
+      - description: id is 1+
+        example: 1
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAll'
+          description: User with id
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: No user
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Read user infor from id
+      tags:
+      - User
+      x-accepts: application/json
+  /api/users:
+    delete:
+      description: "Delete username, password, comment, playlist"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageGood'
+          description: Delete
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Dont have permission
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Delete your data
+      tags:
+      - User
+      x-accepts: application/json
+    put:
+      description: Edit your infors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_api_users_put_request'
+        description: "Must have username, name ,password"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageGood'
+          description: Updated
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Password not match requirement/Username too short(6-) or too
+            long(32+)
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Dont have permission
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Update your infor
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/playlists/{userId}/view?sort={sort}&page={page}:
+    get:
+      parameters:
+      - description: "0 is from all user, 1+ is from some user"
+        example: 1
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: DESC or ASC to sort by view
+        example: ASC
+        explode: true
+        in: query
+        name: sort
+        required: true
+        schema:
+          pattern: DESC|ASC
+          type: string
+        style: form
+      - description: Pagination
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          example: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaylistInforReturn'
+          description: Read playlist from user
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: No playlist
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Playlists
+      tags:
+      - Playlist
+      x-accepts: application/json
+  /api/playlists/{userId}/time?sort={sort}&page={page}:
+    get:
+      parameters:
+      - description: "0 is from all user, 1+ is from some user"
+        example: 1
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: DESC or ASC to sort by time
+        example: DESC
+        explode: true
+        in: query
+        name: sort
+        required: true
+        schema:
+          pattern: DESC|ASC
+          type: string
+        style: form
+      - description: Pagination
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          example: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaylistInforReturn'
+          description: Read playlist from user
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
+          description: No playlist
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Playlists
+      tags:
+      - Playlist
+      x-accepts: application/json
+  /api/playlists:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Playlist'
+        description: "Must have the playlistId, name, a list of song that is valid\
+          \ youtube id, and a valid link to image"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_playlists_post_201_response'
+          description: New playlist
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Dont have permission
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Make Playlist
+      tags:
+      - Playlist
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaylistInfor'
+        description: Mutate the object + revalidate with middleware(done) is much
+          faster than add/remove one by one(in writing codes)
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageGood'
+          description: Update playlist
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Password not match requirement/Username too short(6-) or too
+            long(32+)
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Dont have permission
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Update Playlist
+      tags:
+      - Playlist
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/playlists/{id}:
+    delete:
+      description: Delete playlist
+      parameters:
+      - description: "0 is from all user, 1+ is from some user"
+        example: 3
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageGood'
+          description: Delete
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Dont have permission
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Delete your playlist
+      tags:
+      - Playlist
+      x-accepts: application/json
+    get:
+      description: Delete playlist
+      parameters:
+      - description: "0 is from all user, 1+ is from some user"
+        example: 1
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaylistInfor'
+          description: Playlist with id
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Dont have permission
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Delete your playlist
+      tags:
+      - Playlist
+      x-accepts: application/json
+  /api/comments/{userId}/{playlistId}/time?sort={sort}&page={page}:
+    get:
+      parameters:
+      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
+        example: 1
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: DESC or ASC to sort the comment
+        example: ASC
+        explode: true
+        in: query
+        name: sort
+        required: true
+        schema:
+          pattern: DESC|ASC
+          type: string
+        style: form
+      - description: Pagination
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          example: 1
+          type: integer
+        style: form
+      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
+        example: 3
+        explode: false
+        in: path
+        name: playlistId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentInforReturn'
+          description: Read comment list from user and playlist
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: No comment
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
+          description: Bad request
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: "Read comment from user and playlist, sort by time"
+      tags:
+      - Comment
+      x-accepts: application/json
+  /api/comments/{userId}/{playlistId}/playlist?sort={sort}&page={page}:
+    get:
+      parameters:
+      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
+        example: 1
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: DESC or ASC to sort the comment
+        example: ASC
+        explode: true
+        in: query
+        name: sort
+        required: true
+        schema:
+          pattern: DESC|ASC
+          type: string
+        style: form
+      - description: Pagination
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          example: 1
+          type: integer
+        style: form
+      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
+        example: 3
+        explode: false
+        in: path
+        name: playlistId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentInforReturn'
+          description: Read comment list from user and playlist
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: No comment
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: "Read comment from user and playlist, sort by playlist"
+      tags:
+      - Comment
+      x-accepts: application/json
+  /api/comments/{userId}/{playlistId}/user?sort={sort}&page={page}:
+    get:
+      parameters:
+      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
+        example: 1
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: DESC or ASC to sort the comment
+        example: ASC
+        explode: true
+        in: query
+        name: sort
+        required: true
+        schema:
+          pattern: DESC|ASC
+          type: string
+        style: form
+      - description: Pagination
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          example: 1
+          type: integer
+        style: form
+      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
+        example: 3
+        explode: false
+        in: path
+        name: playlistId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentInforReturn'
+          description: Read comment list from user and playlist
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: No comment
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: "Read comment from user and playlist, sort by user"
+      tags:
+      - Comment
+      x-accepts: application/json
+  /api/comments:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        description: A new comment
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentInfor'
+          description: Make new comment
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
+          description: Dont have permission
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Make new comment
+      tags:
+      - Comment
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_api_comments_put_request'
+        description: The comment you update must come from your account
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
+          description: Updated comment
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
+          description: Dont have permission
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Update comment
+      tags:
+      - Comment
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/comments/{id}:
+    delete:
+      parameters:
+      - example: 1
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageGood'
+          description: Delete
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Delete
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Delete your comment
+      tags:
+      - Comment
+      x-accepts: application/json
+  /api/likes/{playlistId}/playlist?sort={sort}&page={page}:
+    get:
+      parameters:
+      - description: "0 is from all user, 1+ is from some user"
+        example: 3
+        explode: false
+        in: path
+        name: playlistId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: DESC or ASC to sort the comment
+        example: DESC
+        explode: true
+        in: query
+        name: sort
+        required: true
+        schema:
+          pattern: DESC|ASC
+          type: string
+        style: form
+      - description: Pagination
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          example: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_likes__playlistId__playlist_sort__sort__page__page__get_200_response'
+          description: "Read like of a playlist from users, sort by user"
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
+          description: No like
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: "Like from users to a playlist, sort by user"
+      tags:
+      - Like
+      x-accepts: application/json
+  /api/likes/{userId}/user?sort={sort}&page={page}:
+    get:
+      parameters:
+      - description: "0 is from all user, 1+ is from some user"
+        example: 1
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: DESC or ASC to sort the comment
+        example: ASC
+        explode: true
+        in: query
+        name: sort
+        required: true
+        schema:
+          pattern: DESC|ASC
+          type: string
+        style: form
+      - description: Pagination
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          example: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_api_likes__userId__user_sort__sort__page__page__get_200_response'
+          description: Read playlist from a user like
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: No like
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Like from a user to many playlists
+      tags:
+      - Like
+      x-accepts: application/json
+  /api/likes:
+    post:
+      parameters:
+      - description: "0 is from all user, 1+ is from some user"
+        example: 3
+        explode: false
+        in: path
+        name: playlistId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Like a playlist
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: Like a playlist
+      tags:
+      - Like
+      x-accepts: application/json
+  /api/likes/{id}:
+    delete:
+      parameters:
+      - description: "If comment is not from user, will fail"
+        example: 1
+        explode: true
+        in: query
+        name: likeId
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageGood'
+          description: Delete successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBad'
+          description: Bad request
+      security:
+      - OAuth2:
+        - AuthToken
+      summary: remove your like
+      tags:
+      - Like
+      x-accepts: application/json
+    parameters:
+    - description: "If comment is not from user, will fail"
+      example: 1
+      explode: true
+      in: query
+      name: likeId
+      required: true
+      schema:
+        type: integer
+      style: form
+components:
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+  schemas:
+    StreamMusic:
+      description: Audio binary file
+      format: binary
+      type: string
+    Token:
+      example:
+        userId: 1
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcwMDEyOTE5NjEwMn0.RbS_MqHNK8ZHzr_00e9ASol7X-QCahRIlucYYGTGe8U
+      properties:
+        token:
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcwMDEyOTE5NjEwMn0.RbS_MqHNK8ZHzr_00e9ASol7X-QCahRIlucYYGTGe8U
+          type: string
+        userId:
+          example: 1
+          type: integer
+    SongInfor:
+      example:
+        image: https://i.ytimg.com/vi/oKOtzIo-uYw/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAmWNobaFgWajWevnGzK5p1zY8KdQ
+        artist: TheFugeesVEVO
+        genre: Music
+        description: ' '
+        youtubeId: oKOtzIo-uYw
+        title: Fugees - Killing Me Softly With His Song (Official Video)
+      properties:
+        youtubeId:
+          example: oKOtzIo-uYw
+          type: string
+        genre:
+          example: Music
+          type: string
+        title:
+          example: Fugees - Killing Me Softly With His Song (Official Video)
+          type: string
+        artist:
+          example: TheFugeesVEVO
+          type: string
+        image:
+          example: https://i.ytimg.com/vi/oKOtzIo-uYw/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAmWNobaFgWajWevnGzK5p1zY8KdQ
+          type: string
+        description:
+          description: "Sometime this is blank, due to youtube description"
+          example: ' '
+          type: string
+    User:
+      example:
+        password: 12#@acccCc
+        username: 1scdecc
+      properties:
+        username:
+          description: "From 5 to 32 characters, no white space"
+          example: 1scdecc
+          type: string
+        password:
+          description: "1 number, 1 lowercase, 1 uppercase,8 to 32 character,contain\
+            \ 1 of [# @ $ %]"
+          example: 12#@acccCc
+          pattern: "/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9#@$%]{5,32}$/"
+          type: string
+    UserAll:
+      example:
+        image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+        name: my name
+        id: 1
+        username: 1scdecc
+      properties:
+        id:
+          example: 1
+          type: integer
+        username:
+          description: "From 5 to 32 characters, no white space"
+          example: 1scdecc
+          type: string
+        name:
+          description: From 5 to 32 characters
+          example: my name
+          type: string
+        image:
+          description: Valid url to image
+          example: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+          type: string
+    Playlist:
+      example:
+        playlistName: hello
+        songList:
+        - _k3y2tVWK74
+        - A_HekkBbd1M
+        - dUkGrSPbSOE
+        - E8gmARGvPlI
+        - izGwDsrQ1eQ
+        - mHONNcZbwDY
+        - UxxajLWwzqY
+        - wWH75eSQhdc
+        - Zasx9hjo4WY_
+        image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+      properties:
+        name:
+          type: string
+        songList:
+          description: List of valid youtube id
+          items:
+            description: TODO default missing array inner type to string
+            type: string
+          type: array
+          item:
+            type: string
+        image:
+          description: Must be a link to an image
+          type: string
+    PlaylistInfor:
+      example:
+        playlistName: hello
+        id: 3
+        songList:
+        - _k3y2tVWK74
+        - A_HekkBbd1M
+        - dUkGrSPbSOE
+        - E8gmARGvPlI
+        - izGwDsrQ1eQ
+        - mHONNcZbwDY
+        - UxxajLWwzqY
+        - wWH75eSQhdc
+        - Zasx9hjo4WY_
+        image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+        userId: 1
+      properties:
+        playlistName:
+          type: string
+        songList:
+          description: List of valid youtube id
+          items:
+            description: TODO default missing array inner type to string
+            type: string
+          type: array
+          item:
+            type: string
+        id:
+          type: integer
+        userId:
+          type: integer
+        image:
+          description: Must be a link to an image
+          type: string
+        createdAt:
+          format: date
+          type: string
+        updatedAt:
+          format: date
+          type: string
+    PlaylistInforReturn:
+      example:
+        data:
+        - playlistName: hello
+          id: 3
+          songList:
+          - _k3y2tVWK74
+          - A_HekkBbd1M
+          - dUkGrSPbSOE
+          - E8gmARGvPlI
+          - izGwDsrQ1eQ
+          - mHONNcZbwDY
+          - UxxajLWwzqY
+          - wWH75eSQhdc
+          - Zasx9hjo4WY_
+          image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+          userId: 1
+        - playlistName: hello
+          id: 3
+          songList:
+          - _k3y2tVWK74
+          - A_HekkBbd1M
+          - dUkGrSPbSOE
+          - E8gmARGvPlI
+          - izGwDsrQ1eQ
+          - mHONNcZbwDY
+          - UxxajLWwzqY
+          - wWH75eSQhdc
+          - Zasx9hjo4WY_
+          image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+          userId: 1
+        rowCount: 7
+        page: 1
+      properties:
+        rowCount:
+          example: 7
+          type: integer
+        page:
+          example: 1
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/PlaylistInfor'
+          type: array
+    Comment:
+      example:
+        playlistId: 3
+        content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
+      properties:
+        content:
+          example: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
+          type: string
+        playlistId:
+          example: 3
+          type: integer
+    CommentInfor:
+      example:
+        id: 1
+        content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
+        playlistId: 3
+        userId: 1
+        createdAt: 2023-11-09 16:22:06.733
+        updatedAt: 2023-11-09 16:22:06.733
+      properties:
+        id:
+          type: integer
+        content:
+          example: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
+          type: string
+        playlistId:
+          type: integer
+        userId:
+          type: integer
+        createdAt:
+          format: date
+          type: string
+        updatedAt:
+          format: date
+          type: string
+    CommentInforReturn:
+      example:
+        data:
+        - playlistId: 6
+          createdAt: 2023-11-09 16:22:06.733
+          id: 0
+          userId: 1
+          content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
+          updatedAt: 2023-11-09 16:22:06.733
+        - playlistId: 6
+          createdAt: 2023-11-09 16:22:06.733
+          id: 0
+          userId: 1
+          content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
+          updatedAt: 2023-11-09 16:22:06.733
+        rowCount: 10
+        page: 1
+      properties:
+        rowCount:
+          example: 10
+          type: integer
+        page:
+          example: 1
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/CommentInforReturn_data_inner'
+          type: array
+    Like:
+      properties:
+        userId:
+          example: 1
+          type: integer
+        playlistId:
+          example: 3
+          type: integer
+    LikeList:
+      properties:
+        data:
+          $ref: '#/components/schemas/Like'
+        page:
+          example: 1
+          type: integer
+        rowCount:
+          example: 7
+          type: integer
+    MessageGood:
+      example:
+        message: Custom message for successful request
+      properties:
+        message:
+          example: Custom message for successful request
+          type: string
+    MessageBad:
+      example:
+        message: Custom message for bad/un authorize request
+      properties:
+        message:
+          example: Custom message for bad/un authorize request
+          type: string
+    UnauthorizedError:
+      description: Access token is missing or invalid
+      example:
+        message: You need to sign in and get a valid Token
+      properties:
+        message:
+          example: You need to sign in and get a valid Token
+          type: string
+    _api_music_search__search__page__page__get_200_response:
+      example:
+        data:
+        - image: https://i.ytimg.com/vi/oKOtzIo-uYw/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAmWNobaFgWajWevnGzK5p1zY8KdQ
+          artist: TheFugeesVEVO
+          genre: Music
+          description: ' '
+          youtubeId: oKOtzIo-uYw
+          title: Fugees - Killing Me Softly With His Song (Official Video)
+        - image: https://i.ytimg.com/vi/oKOtzIo-uYw/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAmWNobaFgWajWevnGzK5p1zY8KdQ
+          artist: TheFugeesVEVO
+          genre: Music
+          description: ' '
+          youtubeId: oKOtzIo-uYw
+          title: Fugees - Killing Me Softly With His Song (Official Video)
+        page: 1
+        rowCount: 11
+      properties:
+        page:
+          example: 1
+          type: integer
+        rowCount:
+          example: 11
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/SongInfor'
+          type: array
+    _api_users_put_request:
+      allOf:
+      - $ref: '#/components/schemas/User'
+      - properties:
+          name:
+            example: myname
+            type: string
+          image:
+            example: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+            type: string
+    _api_playlists__userId__time_sort__sort__page__page__get_204_response:
+      example:
+        message: message
+      properties:
+        message:
+          type: string
+    _api_playlists_post_201_response:
+      allOf:
+      - $ref: '#/components/schemas/Playlist'
+      - properties:
+          playlistId:
+            example: 1
+            type: integer
+      example:
+        playlistId: 1
+        image: image
+        name: name
+        songList:
+        - songList
+        - songList
+    _api_comments_put_request:
+      allOf:
+      - $ref: '#/components/schemas/Comment'
+      - properties:
+          createdAt:
+            example: 2023-11-09 16:22:06.733
+            format: date
+            type: string
+          updatedAt:
+            example: 2023-11-09 16:22:06.733
+            type: string
+    _api_likes__playlistId__playlist_sort__sort__page__page__get_200_response_data_inner:
+      example:
+        name: my name
+        id: 1
+        avatar: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+      properties:
+        id:
+          example: 1
+          type: number
+        name:
+          example: my name
+          type: string
+        avatar:
+          example: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+          type: string
+    _api_likes__playlistId__playlist_sort__sort__page__page__get_200_response:
+      example:
+        data:
+        - name: my name
+          id: 1
+          avatar: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+        - name: my name
+          id: 1
+          avatar: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+        rowCount: 20
+        page: 1
+      properties:
+        rowCount:
+          example: 20
+          type: integer
+        page:
+          example: 1
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/_api_likes__playlistId__playlist_sort__sort__page__page__get_200_response_data_inner'
+          type: array
+    _api_likes__userId__user_sort__sort__page__page__get_200_response_data_inner:
+      example:
+        image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+        name: my name
+        id: 1
+      properties:
+        id:
+          example: 1
+          type: number
+        name:
+          example: my name
+          type: string
+        image:
+          example: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+          type: string
+    _api_likes__userId__user_sort__sort__page__page__get_200_response:
+      example:
+        data:
+        - image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+          name: my name
+          id: 1
+        - image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+          name: my name
+          id: 1
+        rowCount: 20
+        page: 1
+      properties:
+        rowCount:
+          example: 20
+          type: integer
+        page:
+          example: 1
+          type: integer
+        data:
+          items:
+            $ref: '#/components/schemas/_api_likes__userId__user_sort__sort__page__page__get_200_response_data_inner'
+          type: array
+    CommentInforReturn_data_inner:
+      allOf:
+      - $ref: '#/components/schemas/CommentInfor'
+      - properties:
+          createdAt:
+            example: 2023-11-09 16:22:06.733
+            type: string
+          updatedAt:
+            example: 2023-11-09 16:22:06.733
+            type: string
+      example:
+        playlistId: 6
+        createdAt: 2023-11-09 16:22:06.733
+        id: 0
+        userId: 1
+        content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
+        updatedAt: 2023-11-09 16:22:06.733
+  securitySchemes:
+    AuthToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+
