@@ -1,13 +1,14 @@
 
 
-# IstatRegionsGet200Response
+# ContactCe
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**result** | **Object** |  |  [optional] |
+|**phone** | **String** |  |  [optional] |
+|**email** | **String** |  |  [optional] |
 
 
 
