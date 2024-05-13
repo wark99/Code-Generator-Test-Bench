@@ -1,427 +1,583 @@
 openapi: 3.1.0
 info:
-  description: It is blog website where you can socially connect to share your views
-    on a common platform.
-  title: Story Sage
-  version: 1.0.1
+  description: |-
+    # API Rules
+    * Null values are not sent / received.
+    * Object IDs are **always** sent in list methods, but are **ignored** in create / update methods.
+    * All request and response objects are at the root of the returned structure, if they contain only one entity.
+    * Response of multiple entities is returned as an object that contains the list of entities and a structure `pager`, if necessary.
+    ### Additional documentation:
+    * [Camera registration](../camera_registration/)
+    * [Camera communication](../camera_communication/)
+    ### HTTP Status
+    * 200 - OK, response contains data (usually the entire entity)
+    * 201 - OK, entry created; response contains data as required
+    * 204 - OK, no response
+    * 304 - Response has not been modified
+    * 400 - Invalid request / invalid input (SDK error)
+    * 401 - Endpoint is being accessed without credentials (SDK error)
+    * 403 - Request can't be served, usually due to insufficient rights (user error)
+    * 404 - Entity not found (user error or outdated data)
+    * 409 - Conflict with the state of target resource (user error)
+    * 50x - Server side error
+  title: connect-api
+  version: 0.22.0
+  x-logo:
+    url: ../logo.png
+    backgroundColor: '#FFFFFF'
+    altText: Prusa logo
 servers:
-- url: /
+- description: Local development server
+  url: "http://{hostname}:{port}"
+  variables:
+    hostname:
+      default: localhost
+      description: Developer's hostname
+    port:
+      default: "8000"
+      description: Developer's port
+- description: Any working server
+  url: "http://{hostname}"
+  variables:
+    hostname:
+      default: localhost
+      description: Developer's hostname
+- description: Any working server
+  url: "https://{hostname}"
+  variables:
+    hostname:
+      default: localhost
+      description: Developer's hostname
+- description: Production environment
+  url: https://connect.prusa3d.com
+tags:
+- name: camera
+- name: cameras
 paths:
-  /blog/create:
+  /app/printers/{printer_uuid}/camera:
     post:
-      operationId: create_blog_blog_create_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateBlogRequest'
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Create Blog
-      x-content-type: application/json
-      x-accepts: application/json
-  /blog/user/{user_id}:
-    get:
-      operationId: get_user_post_blog_user__user_id__get
       parameters:
-      - explode: false
-        in: path
-        name: user_id
-        required: true
+      - $ref: '#/components/parameters/printer_uuid_param'
+      - explode: true
+        in: query
+        name: origin
+        required: false
         schema:
-          title: User Id
+          default: WEB
+          description: Use OTHER for camera registration via api. WEB is used when
+            registering camera via web qr code
+          enum:
+          - WEB
+          - OTHER
           type: string
-        style: simple
+        style: form
       responses:
         "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
+          description: '**OK**'
+          headers:
+            Token:
+              explode: false
+              required: true
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Get User Post
-      x-accepts: application/json
-  /blog/:
-    get:
-      operationId: get_all_blog_blog__get
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-      summary: Get All Blog
-      x-accepts: application/json
-  /blog/delete/{blog_id}:
-    delete:
-      operationId: delete_user_post_blog_delete__blog_id__delete
-      parameters:
-      - explode: false
-        in: path
-        name: blog_id
-        required: true
-        schema:
-          title: Blog Id
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Delete User Post
-      x-accepts: application/json
-  /blog/update/{user_id}:
+                $ref: '#/components/schemas/token'
+              style: simple
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401-app'
+        "403":
+          $ref: '#/components/responses/403-app'
+        "503":
+          $ref: '#/components/responses/503'
+      security:
+      - Cookie: []
+      summary: Register camera to Connect by user.
+      tags:
+      - cameras
+      x-accepts: "application/json,text/plain"
+  /c/snapshot:
     put:
-      operationId: update_blog_blog_update__user_id__put
+      requestBody:
+        content:
+          image/jpg:
+            schema:
+              description: Max snapshot size is 16MB
+              format: binary
+              type: string
+        required: true
+      responses:
+        "204":
+          $ref: '#/components/responses/204'
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401-p'
+        "403":
+          $ref: '#/components/responses/403-p'
+        "404":
+          $ref: '#/components/responses/404'
+        "503":
+          $ref: '#/components/responses/503'
+      security:
+      - Token: []
+        Fingerprint: []
+      summary: Upload snapshot to Connect
+      tags:
+      - camera
+      x-content-type: image/jpg
+      x-accepts: "application/json,text/plain"
+  /c/info:
+    put:
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateBlogRequest'
+              $ref: '#/components/schemas/camera_request'
         required: true
       responses:
         "200":
           content:
             application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Update Blog
+                $ref: '#/components/schemas/camera_response'
+          description: '**OK**'
+        "400":
+          $ref: '#/components/responses/400'
+        "401":
+          $ref: '#/components/responses/401-p'
+        "403":
+          $ref: '#/components/responses/403-p'
+        "503":
+          $ref: '#/components/responses/503'
+      security:
+      - Token: []
+        Fingerprint: []
+      summary: Update camera attributes
+      tags:
+      - camera
       x-content-type: application/json
-      x-accepts: application/json
-  /blog/comments/{blog_id}:
-    get:
-      operationId: get_blog_comments_blog_comments__blog_id__get
-      parameters:
-      - explode: false
-        in: path
-        name: blog_id
-        required: true
-        schema:
-          title: Blog Id
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Get Blog Comments
-      x-accepts: application/json
-  /blog/comment/{blog_id}:
-    patch:
-      operationId: add_comment_blog_comment__blog_id__patch
-      parameters:
-      - explode: false
-        in: path
-        name: blog_id
-        required: true
-        schema:
-          title: Blog Id
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateCommentRequest'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Add Comment
-      x-content-type: application/json
-      x-accepts: application/json
-  /user/signup:
-    post:
-      operationId: user_signup_user_signup_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              allOf:
-              - $ref: '#/components/schemas/UserSchema'
-              title: User
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserSchema'
-          description: Successful Response
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: User Signup
-      x-content-type: application/json
-      x-accepts: application/json
-  /user/login:
-    post:
-      operationId: user_login_user_login_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              allOf:
-              - $ref: '#/components/schemas/UserLoginSchema'
-              title: User
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        "422":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: User Login
-      x-content-type: application/json
-      x-accepts: application/json
-  /user/:
-    get:
-      operationId: get_all_user_user__get
-      responses:
-        "200":
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-      summary: Get All User
-      x-accepts: application/json
+      x-accepts: "application/json,text/plain"
 components:
+  headers:
+    Last-Modified:
+      explode: false
+      schema:
+        description: "Last modified time defined by RFC 7232, [section 2.2](https://tools.ietf.org/html/rfc7232#section-2.2)"
+        example: "Last-Modified: Wed, 14 Oct 2015 16:57:02 GMT"
+      style: simple
+    etag:
+      explode: false
+      schema:
+        description: An identifier for a specific version of a response
+        example: "etag: W/'98f4143a4a'"
+      style: simple
+  parameters:
+    printer_uuid_param:
+      explode: false
+      in: path
+      name: printer_uuid
+      required: true
+      schema:
+        $ref: '#/components/schemas/printer_uuid'
+      style: simple
+  responses:
+    "204":
+      description: |-
+        **No Content**
+        Data was accepted by the server.
+    "302":
+      description: |-
+        **Found**
+        Moved temporarily.
+    "303":
+      description: '**See other**'
+    "304":
+      description: '**Response not modified**'
+      headers:
+        Last-Modified:
+          $ref: '#/components/headers/Last-Modified'
+        etag:
+          $ref: '#/components/headers/etag'
+    "400":
+      description: |-
+        **Bad Request**
+        Some data received is not valid. Typically this happens for POST requests with incorrect structure or a path argument was sent that is not defined in the URL.
+    "401-app":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/status'
+      description: |-
+        **Unauthorized**
+        Missing security token or it is not valid.
+    "401-p":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/status'
+      description: |-
+        **Unauthorized**
+        Missing security token or it is not valid.
+    "403-app":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/status'
+      description: |-
+        **Forbidden**
+        Security token is not valid or is outdated. Or user doesn't has rights for perform action.
+    "403-p":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/status'
+      description: |-
+        **Forbidden**
+        Security token is not valid or is outdated.
+    "404":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/status'
+      description: '**Not Found** Entity not found or invalid auth token.'
+    "409":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/status'
+      description: |-
+        **Conflict**
+        Request could not be processed because the requested change would create a conflict in the database.
+    "413":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/status'
+      description: |-
+        **Payload too large**
+        Chunked request was too large.
+    "429":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/status'
+      description: '**Too many requests**'
+    "503":
+      content:
+        text/plain:
+          schema:
+            type: string
+        application/json:
+          schema:
+            $ref: '#/components/schemas/status'
+      description: |-
+        **Service Unavailable**
+        Service is unavailable at this moment. Try again later.
   schemas:
-    CreateBlogRequest:
+    token:
+      example: T0nSPU2v05v0pJeKYFYV
+      maxLength: 20
+      minLength: 20
+      type: string
+    network_info:
+      description: Network information
       example:
-        image:
-          url: Url
-          fileId: Fileid
-        description: description
-        title: title
-        userId: userId
+        wifi_ipv4: 192.168.1.6
+        lan_ipv6: 2e0a::1234:5678:abcd:efab/64
+        wifi_ssid: PublicWiFi
+        lan_ipv4: 192.168.1.5
+        wifi_mac: 0a:bc:12:34:ab:7f
+        lan_mac: 0a:bc:12:34:56:7f
+        wifi_ipv6: 2e0a::1234:5678:abcd:0123/64
       properties:
-        userId:
-          title: Userid
+        lan_mac:
+          description: Hardware address of ethernet port.
+          example: 0a:bc:12:34:56:7f
           type: string
-        title:
-          title: Title
+        lan_ipv4:
+          description: IPv4 address of ethernet port.
+          example: 192.168.1.5
           type: string
-        image:
-          $ref: '#/components/schemas/ImageSchema'
-        description:
-          title: Description
+        lan_ipv6:
+          description: IPv6 address of ethernet port.
+          example: 2e0a::1234:5678:abcd:efab/64
           type: string
-      required:
-      - description
-      - image
-      - title
-      - userId
-      title: CreateBlogRequest
-    HTTPValidationError:
+        wifi_mac:
+          description: Hardware address of Wi-Fi device.
+          example: 0a:bc:12:34:ab:7f
+          type: string
+        wifi_ipv4:
+          description: IPv4 address of Wi-Fi device.
+          example: 192.168.1.6
+          type: string
+        wifi_ipv6:
+          description: IPv6 address of Wi-Fi device.
+          example: 2e0a::1234:5678:abcd:0123/64
+          type: string
+        wifi_ssid:
+          description: SSID of Wi-Fi network which is used by Wi-Fi device.
+          example: PublicWiFi
+          type: string
+    camera_resolution:
       example:
-        detail:
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          type: type
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          type: type
+        width: 640
+        height: 480
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-      title: HTTPValidationError
-    ImageSchema:
+        width:
+          example: 640
+          type: integer
+        height:
+          example: 480
+          type: integer
+    camera_capabilities:
+      items:
+        enum:
+        - trigger_scheme
+        - imaging
+        - resolution
+        - focus
+        type: string
+      type: array
+    camera_config:
+      description: Configuration of the camera
       example:
-        url: Url
-        fileId: Fileid
+        trigger_scheme: THIRTY_SEC
+        path: /dev/video0
+        driver: V4L2
+        camera_id: camera_id
+        name: Olomouc
+        resolution:
+          width: 640
+          height: 480
+        network_info:
+          wifi_ipv4: 192.168.1.6
+          lan_ipv6: 2e0a::1234:5678:abcd:efab/64
+          wifi_ssid: PublicWiFi
+          lan_ipv4: 192.168.1.5
+          wifi_mac: 0a:bc:12:34:ab:7f
+          lan_mac: 0a:bc:12:34:56:7f
+          wifi_ipv6: 2e0a::1234:5678:abcd:0123/64
       properties:
-        url:
-          $ref: '#/components/schemas/Url'
-        fileId:
-          $ref: '#/components/schemas/Fileid'
-      required:
-      - fileId
-      - url
-      title: ImageSchema
-    UpdateBlogRequest:
-      example:
-        image:
-          url: Url
-          fileId: Fileid
-        description: description
-        title: title
-      properties:
-        image:
-          $ref: '#/components/schemas/ImageSchema'
-        title:
-          title: Title
+        camera_id:
           type: string
-        description:
-          title: Description
+        path:
+          description: Path to the driver
+          example: /dev/video0
           type: string
-      required:
-      - description
-      - image
-      - title
-      title: UpdateBlogRequest
-    UpdateCommentRequest:
-      example:
-        name: name
-        comment: comment
-      properties:
         name:
-          title: Name
+          description: Name defined by user
+          example: Olomouc
+          maxLength: 64
           type: string
-        comment:
-          title: Comment
+          nullable: true
+        driver:
+          example: V4L2
           type: string
+        trigger_scheme:
+          default: THIRTY_SEC
+          description: "Type of snapshot trigger scheme. Manual, layer, gcode only\
+            \ for LINK cameras"
+          enum:
+          - MANUAL
+          - EACH_LAYER
+          - FIFTH_LAYER
+          - GCODE
+          - TEN_SEC
+          - THIRTY_SEC
+          - SIXTY_SEC
+          - TEN_MIN
+          example: THIRTY_SEC
+          type: string
+        resolution:
+          $ref: '#/components/schemas/camera_resolution'
+        network_info:
+          $ref: '#/components/schemas/network_info'
       required:
-      - comment
       - name
-      title: UpdateCommentRequest
-    UserLoginSchema:
+    camera_options:
+      description: Configuration of the camera
       example:
-        password: password
-        email: email
+        available_resolutions:
+        - width: 640
+          height: 480
+        - width: 640
+          height: 480
       properties:
-        email:
-          format: email
-          title: Email
-          type: string
-        password:
-          title: Password
-          type: string
-      title: UserLoginSchema
-    UserSchema:
-      example:
-        image:
-          url: Url
-          fileId: Fileid
-        password: password
-        name: name
-        about: About
-        email: email
-      properties:
-        name:
-          title: Name
-          type: string
-        email:
-          title: Email
-          type: string
-        password:
-          title: Password
-          type: string
-        image:
-          $ref: '#/components/schemas/UserSchema_image'
-        about:
-          $ref: '#/components/schemas/About'
-      required:
-      - about
-      - email
-      - image
-      - name
-      - password
-      title: UserSchema
-    ValidationError:
-      example:
-        msg: msg
-        loc:
-        - ValidationError_loc_inner
-        - ValidationError_loc_inner
-        type: type
-      properties:
-        loc:
+        available_resolutions:
           items:
-            $ref: '#/components/schemas/ValidationError_loc_inner'
+            $ref: '#/components/schemas/camera_resolution'
           type: array
-        msg:
-          title: Message
+    camera_origin:
+      description: Camera origin whether it is registered by web (WEB) or by printer
+        (LINK) or manually via camera api (OTHER)
+      enum:
+      - LINK
+      - WEB
+      - OTHER
+      type: string
+    camera_request:
+      properties:
+        config:
+          $ref: '#/components/schemas/camera_config'
+        options:
+          $ref: '#/components/schemas/camera_options'
+        capabilities:
+          items:
+            enum:
+            - trigger_scheme
+            - imaging
+            - resolution
+            - focus
+            type: string
+          type: array
+      required:
+      - config
+    camera_response:
+      example:
+        capabilities:
+        - trigger_scheme
+        - trigger_scheme
+        deleted: 1
+        origin: null
+        name: Olomouc
+        options:
+          available_resolutions:
+          - width: 640
+            height: 480
+          - width: 640
+            height: 480
+        registered: true
+        id: 0
+        team_id: 0
+        config:
+          trigger_scheme: THIRTY_SEC
+          path: /dev/video0
+          driver: V4L2
+          camera_id: camera_id
+          name: Olomouc
+          resolution:
+            width: 640
+            height: 480
+          network_info:
+            wifi_ipv4: 192.168.1.6
+            lan_ipv6: 2e0a::1234:5678:abcd:efab/64
+            wifi_ssid: PublicWiFi
+            lan_ipv4: 192.168.1.5
+            wifi_mac: 0a:bc:12:34:ab:7f
+            lan_mac: 0a:bc:12:34:56:7f
+            wifi_ipv6: 2e0a::1234:5678:abcd:0123/64
+        sort_order: 5
+        printer_uuid: cfed5dce-86f4-4d7c-a198-9a81b176369f
+        token: T0nSPU2v05v0pJeKYFYV
+      properties:
+        id:
+          type: integer
+        name:
+          description: Name defined by user
+          example: Olomouc
+          maxLength: 64
           type: string
-        type:
-          title: Error Type
+          nullable: true
+        config:
+          $ref: '#/components/schemas/camera_config'
+        options:
+          $ref: '#/components/schemas/camera_options'
+        capabilities:
+          items:
+            enum:
+            - trigger_scheme
+            - imaging
+            - resolution
+            - focus
+            type: string
+          type: array
+        team_id:
+          description: Team id. 0 is reserved for anonymous.
+          minimum: 0
+          type: integer
+        printer_uuid:
+          description: Printer UUID - can be found in the url in printer detail or
+            in the printer settings tab
+          example: cfed5dce-86f4-4d7c-a198-9a81b176369f
+          pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+          type: string
+        token:
+          example: T0nSPU2v05v0pJeKYFYV
+          maxLength: 20
+          minLength: 20
+          type: string
+        origin:
+          $ref: '#/components/schemas/camera_origin'
+        deleted:
+          description: Timestamp of camera deletion. Deleted cameras are listed only
+            in job detail!
+          type: integer
+        registered:
+          description: True if the registration process of camera is finished
+          type: boolean
+        sort_order:
+          description: Sort order of the cameras per printer! For now it is not possible
+            to change the camera's sort order
+          type: integer
+      required:
+      - id
+      - origin
+      - printer_uuid
+      - registered
+      - team_id
+    status:
+      properties:
+        code:
+          description: Error code
+          type: string
+        message:
+          description: Human readable error message
+          minLength: 1
           type: string
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    Url:
-      anyOf:
-      - type: string
-      - nullable: true
-      title: Url
-    Fileid:
-      anyOf:
-      - type: string
-      - nullable: true
-      title: Fileid
-    UserSchema_image:
-      anyOf:
-      - $ref: '#/components/schemas/ImageSchema'
-      - nullable: true
-    About:
-      anyOf:
-      - type: string
-      - nullable: true
-      title: About
-    ValidationError_loc_inner:
-      anyOf:
-      - type: string
-      - type: integer
+      - code
+      - message
+    device_name:
+      description: Name defined by user
+      example: Olomouc
+      maxLength: 64
+      type: string
+      nullable: true
+    team_id:
+      description: Team id. 0 is reserved for anonymous.
+      minimum: 0
+      type: integer
+    printer_uuid:
+      description: Printer UUID - can be found in the url in printer detail or in
+        the printer settings tab
+      example: cfed5dce-86f4-4d7c-a198-9a81b176369f
+      pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+      type: string
+  securitySchemes:
+    Token:
+      description: Camera token generated by Connect server.
+      in: header
+      name: Token
+      type: apiKey
+    Fingerprint:
+      description: Camera fingerprint generated by camera. It has to have at least
+        16 and maximum of 64 characters.
+      in: header
+      name: Fingerprint
+      type: apiKey
+    Cookie:
+      in: cookie
+      name: SESSID
+      type: apiKey
+x-tagGroups:
+- name: General
+  tags:
+  - version
+  - health
+- name: App
+  tags:
+  - cameras
+- name: Camera
+  tags:
+  - camera
 

@@ -1,14 +1,14 @@
 
 
-# UserLoginSchema
+# Status
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**email** | **String** |  |  [optional] |
-|**password** | **String** |  |  [optional] |
+|**code** | **String** | Error code |  |
+|**message** | **String** | Human readable error message |  |
 
 
 
