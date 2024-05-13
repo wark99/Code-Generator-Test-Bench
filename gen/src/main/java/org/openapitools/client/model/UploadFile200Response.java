@@ -24,16 +24,16 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * ModelApiResponse
+ * UploadFile200Response
  */
 @JsonPropertyOrder({
-  ModelApiResponse.JSON_PROPERTY_CODE,
-  ModelApiResponse.JSON_PROPERTY_TYPE,
-  ModelApiResponse.JSON_PROPERTY_MESSAGE
+  UploadFile200Response.JSON_PROPERTY_CODE,
+  UploadFile200Response.JSON_PROPERTY_TYPE,
+  UploadFile200Response.JSON_PROPERTY_MESSAGE
 })
-@JsonTypeName("ApiResponse")
+@JsonTypeName("uploadFile_200_response")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:25:49.904640209Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class ModelApiResponse {
+public class UploadFile200Response {
   public static final String JSON_PROPERTY_CODE = "code";
   private Integer code;
 
@@ -43,10 +43,10 @@ public class ModelApiResponse {
   public static final String JSON_PROPERTY_MESSAGE = "message";
   private String message;
 
-  public ModelApiResponse() {
+  public UploadFile200Response() {
   }
 
-  public ModelApiResponse code(Integer code) {
+  public UploadFile200Response code(Integer code) {
     
     this.code = code;
     return this;
@@ -72,7 +72,7 @@ public class ModelApiResponse {
   }
 
 
-  public ModelApiResponse type(String type) {
+  public UploadFile200Response type(String type) {
     
     this.type = type;
     return this;
@@ -98,7 +98,7 @@ public class ModelApiResponse {
   }
 
 
-  public ModelApiResponse message(String message) {
+  public UploadFile200Response message(String message) {
     
     this.message = message;
     return this;
@@ -131,10 +131,10 @@ public class ModelApiResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ModelApiResponse _apiResponse = (ModelApiResponse) o;
-    return Objects.equals(this.code, _apiResponse.code) &&
-        Objects.equals(this.type, _apiResponse.type) &&
-        Objects.equals(this.message, _apiResponse.message);
+    UploadFile200Response uploadFile200Response = (UploadFile200Response) o;
+    return Objects.equals(this.code, uploadFile200Response.code) &&
+        Objects.equals(this.type, uploadFile200Response.type) &&
+        Objects.equals(this.message, uploadFile200Response.message);
   }
 
   @Override
@@ -145,7 +145,7 @@ public class ModelApiResponse {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModelApiResponse {\n");
+    sb.append("class UploadFile200Response {\n");
     sb.append("    code: ").append(toIndentedString(code)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    message: ").append(toIndentedString(message)).append("\n");

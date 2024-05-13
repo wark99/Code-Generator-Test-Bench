@@ -1,863 +1,705 @@
 openapi: 3.1.0
 info:
-  contact:
-    email: apiteam@rphaven.co.uk
-  description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.1 specification.  You can find out more about
-    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
-    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
-
-    Some useful links:
-    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://api.rphaven.co.uk/terms/
-  title: RPHaven Games Management
-  version: 1.0.2
-externalDocs:
-  description: Find out more about RPHaven
-  url: http://wiki.rphaven.co.uk
+  title: Documents Api Hr - Fastapi
+  version: 1.0.0
 servers:
-- url: https://api.rphaven.co.uk/v1
+- url: https://api.staging-test.fun/api/v1
 tags:
-- description: Everything about RP Haven branches
-  externalDocs:
-    description: Find out more
-    url: http://wiki.rphaven.co.uk/api/rels/branch
-  name: branch
-- description: Access to venues
-  externalDocs:
-    description: Access to venues
-    url: http://wiki.rphaven.co.uk/api/rels/venue
-  name: venue
-- description: Access to branch games
-  externalDocs:
-    description: Operations about to branch games
-    url: http://wiki.rphaven.co.uk/api/rels/games
-  name: game
-- description: Access to branch meets
-  externalDocs:
-    description: Operations about branch meets
-    url: http://wiki.rphaven.co.uk/api/rels/meets
-  name: meet
-- description: Access to game sessions
-  externalDocs:
-    description: Operations about game sessions
-    url: http://wiki.rphaven.co.uk/api/rels/sessions
-  name: session
-- description: Operations about Members
-  name: member
+- description: Api for tag
+  name: pet
 paths:
-  /branch:
-    get:
-      description: Show all branches
-      operationId: showBranches
-      requestBody:
-        content:
-          application/hal+json:
-            schema: {}
-        description: Update an existent branch in the store
-      security:
-      - rphaven_auth:
-        - write:branches
-        - read:branches
-      summary: Show all branches
-      tags:
-      - branch
-      x-content-type: application/hal+json
-      x-accepts: application/json
+  /pet:
     post:
-      description: Update an existing branch by Id
-      operationId: addBranch
+      description: Add a new pet to the store
+      operationId: addPet
       requestBody:
         content:
-          application/hal+json:
+          application/json:
             schema:
-              $ref: '#/components/schemas/BranchResource'
-        description: Update an existent branch in the store
-      summary: Create a new branch
-      tags:
-      - branch
-      x-content-type: application/hal+json
-      x-accepts: application/json
-  /branch/{branchId}:
-    get:
-      description: Show an existing branch by Id
-      operationId: showBranch
-      parameters:
-      - description: ID of the branch
-        explode: false
-        in: path
-        name: branchId
+              $ref: '#/components/schemas/updatePet_request'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/updatePet_request'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/updatePet_request'
+        description: Create a new pet in the store
         required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
       responses:
         "200":
           content:
-            application/hal+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/BranchDetails'
-          description: Show the branch
-      summary: Show branch information
+                $ref: '#/components/schemas/updatePet_request'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/updatePet_request'
+          description: Successful operation
+        "405":
+          description: Invalid input
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      summary: Add a new pet to the store
       tags:
-      - branch
-      x-accepts: application/hal+json
+      - pet
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
     put:
-      description: Update an existing branch by Id
-      operationId: updateBranch
-      parameters:
-      - description: ID of the branch
-        explode: false
-        in: path
-        name: branchId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
+      description: Update an existing pet by Id
+      operationId: updatePet
       requestBody:
         content:
-          application/hal+json:
+          application/json:
             schema:
-              $ref: '#/components/schemas/BranchResource'
-        description: Update an existent branch in the store
+              $ref: '#/components/schemas/updatePet_request'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/updatePet_request'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/updatePet_request'
+        description: Update an existent pet in the store
         required: true
       responses:
         "200":
           content:
-            application/hal+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/BranchResource'
+                $ref: '#/components/schemas/updatePet_request'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/updatePet_request'
           description: Successful operation
         "400":
           description: Invalid ID supplied
         "404":
-          description: Branch not found
+          description: Pet not found
         "405":
           description: Validation exception
       security:
-      - rphaven_auth:
-        - write:branches
-        - read:branches
-      summary: Update an existing branch
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      summary: Update an existing pet
       tags:
-      - branch
-      x-content-type: application/hal+json
-      x-accepts: application/hal+json
-  /branch/{branchId}/meets:
+      - pet
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /pet/findByStatus:
     get:
-      operationId: showBranchMeets
+      description: Multiple status values can be provided with comma separated strings
+      operationId: findPetsByStatus
       parameters:
-      - description: ID of the branch
-        explode: false
-        in: path
-        name: branchId
-        required: true
+      - description: Status values that need to be considered for filter
+        explode: true
+        in: query
+        name: status
+        required: false
         schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
+          default: available
+          enum:
+          - available
+          - pending
+          - sold
+          type: string
+        style: form
       responses:
         "200":
           content:
-            application/hal+json:
+            application/json:
               schema:
                 items:
-                  $ref: '#/components/schemas/BranchMeets'
+                  $ref: '#/components/schemas/updatePet_request'
                 type: array
-          description: show Meets
-      summary: Show all planned game meets for a branch
+            application/xml:
+              schema:
+                items:
+                  $ref: '#/components/schemas/updatePet_request'
+                type: array
+          description: successful operation
+        "400":
+          description: Invalid status value
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      summary: Finds Pets by status
       tags:
-      - branch
-      x-accepts: application/hal+json
-  /branch/{branchId}/tables:
+      - pet
+      x-accepts: "application/json,application/xml"
+  /pet/findByTags:
     get:
-      operationId: showBranchTables
+      description: "Multiple tags can be provided with comma separated strings. Use\
+        \ tag1, tag2, tag3 for testing."
+      operationId: findPetsByTags
       parameters:
-      - description: ID of the branch
+      - description: Tags to filter by
+        explode: true
+        in: query
+        name: tags
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/updatePet_request'
+                type: array
+            application/xml:
+              schema:
+                items:
+                  $ref: '#/components/schemas/updatePet_request'
+                type: array
+          description: successful operation
+        "400":
+          description: Invalid tag value
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      summary: Finds Pets by tags
+      tags:
+      - pet
+      x-accepts: "application/json,application/xml"
+  /pet/{petId}:
+    delete:
+      description: delete a pet
+      operationId: deletePet
+      parameters:
+      - description: ""
+        explode: false
+        in: header
+        name: api_key
+        required: false
+        schema:
+          type: string
+        style: simple
+      - description: Pet id to delete
         explode: false
         in: path
-        name: branchId
+        name: petId
         required: true
         schema:
-          $ref: '#/components/schemas/Uuid'
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "400":
+          description: Invalid pet value
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      summary: Deletes a pet
+      tags:
+      - pet
+      x-accepts: application/json
+    get:
+      description: Returns a single pet
+      operationId: getPetById
+      parameters:
+      - description: ID of pet to return
+        explode: false
+        in: path
+        name: petId
+        required: true
+        schema:
+          format: int64
+          type: integer
         style: simple
       responses:
         "200":
           content:
-            application/hal+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/BranchTables'
-          description: Show branch tables
+                $ref: '#/components/schemas/updatePet_request'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/updatePet_request'
+          description: successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Pet not found
       security:
       - api_key: []
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      summary: Find pet by ID
       tags:
-      - branch
-      - table
-      x-accepts: application/hal+json
-  /branch/{branchId}/games:
-    get:
-      description: Show all the games for a branch
-      operationId: showBranchGames
+      - pet
+      x-accepts: "application/json,application/xml"
+    post:
+      description: ""
+      operationId: updatePetWithForm
       parameters:
-      - description: ID of the branch
+      - description: ID of pet that needs to be updated
         explode: false
         in: path
-        name: branchId
+        name: petId
         required: true
         schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/BranchGames'
-                type: array
-          description: Show all the games for a branch
-      summary: Returns all the games for a branch
-      tags:
-      - branch
-      - game
-      x-accepts: application/hal+json
-  /branch/{branchId}/venues:
-    get:
-      description: Show Venues for a Branch
-      operationId: showBranchVenues
-      parameters:
-      - description: ID of the Branch
-        explode: false
-        in: path
-        name: branchId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/BranchVenues'
-          description: Show Venues for a Branch
-      tags:
-      - branch
-      - venue
-      x-accepts: application/hal+json
-  /venue/{venueId}:
-    get:
-      description: Show a Venue
-      operationId: showVenueDetails
-      parameters:
-      - description: ID of the venue
-        explode: false
-        in: path
-        name: venueId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/VenueDetails'
-          description: show venue details
-      tags:
-      - venue
-      x-accepts: application/hal+json
-  /venue/{venueId}/meets:
-    get:
-      description: Show Meets at a Venue
-      operationId: showVenueMeets
-      parameters:
-      - description: ID of the venue
-        explode: false
-        in: path
-        name: venueId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/VenueMeets'
-          description: show venue meets
-      tags:
-      - venue
-      - meet
-      x-accepts: application/hal+json
-  /venue/{venueId}/tables:
-    get:
-      description: Show Tables at a Venue
-      operationId: showVenueTables
-      parameters:
-      - description: ID of the venue
-        explode: false
-        in: path
-        name: venueId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema: {}
-          description: show venue tables
-      tags:
-      - venue
-      - table
-      x-accepts: application/hal+json
-  /table/{tableId}:
-    get:
-      description: Show a table run by a branch
-      operationId: showTableDetails
-      parameters:
-      - description: ID of the table
-        explode: false
-        in: path
-        name: tableId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/TableDetails'
-          description: show table
-      tags:
-      - table
-      x-accepts: application/hal+json
-  /table/{tableId}/meets:
-    get:
-      description: Show games on a table
-      operationId: showTableMeets
-      parameters:
-      - description: ID of the table
-        explode: false
-        in: path
-        name: tableId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema: {}
-          description: show table games
-      tags:
-      - table
-      x-accepts: application/hal+json
-  /table/{tableId}/runners:
-    get:
-      description: Show table organisers
-      operationId: showTableRunners
-      parameters:
-      - description: ID of the table
-        explode: false
-        in: path
-        name: tableId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/TableRunners'
-          description: show table runners
-      tags:
-      - table
-      x-accepts: application/hal+json
-  /table/{tableId}/party:
-    get:
-      description: Show table organisers
-      operationId: showTableParty
-      parameters:
-      - description: ID of the table
-        explode: false
-        in: path
-        name: tableId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/TableParty'
-          description: show table party
-      tags:
-      - table
-      x-accepts: application/hal+json
-  /table/{tableId}/games:
-    get:
-      description: Show games on a table
-      operationId: showTableGames
-      parameters:
-      - description: ID of the table
-        explode: false
-        in: path
-        name: tableId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/TableGames'
-          description: show table games
-      tags:
-      - table
-      x-accepts: application/hal+json
-  /meet/{meetId}:
-    get:
-      description: Show a Meet
-      operationId: showMeetDetails
-      parameters:
-      - description: ID of the Meet
-        explode: false
-        in: path
-        name: meetId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/MeetDetails'
-          description: show Meet details
-      tags:
-      - meet
-      x-accepts: application/hal+json
-  /meet/{meetId}/sessions:
-    get:
-      description: Show all Session for a Meet
-      operationId: showMeetSessions
-      parameters:
-      - description: ID of the Meet
-        explode: false
-        in: path
-        name: meetId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/MeetSessions'
-          description: show Meet
-      tags:
-      - meet
-      - session
-      x-accepts: application/hal+json
-  /game/{gameId}:
-    get:
-      description: Show a game
-      operationId: showGameDetails
-      parameters:
-      - description: ID of the game
-        explode: false
-        in: path
-        name: gameId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/Game'
-          description: show Game
-      tags:
-      - game
-      x-accepts: application/hal+json
-  /game/{gameId}/sessions:
-    get:
-      description: Show session for a game
-      operationId: showGameSessions
-      parameters:
-      - description: ID of the game
-        explode: false
-        in: path
-        name: gameId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/GameSessions'
-          description: show Game sessions
-      tags:
-      - game
-      - session
-      x-accepts: application/hal+json
-  /session/{sessionId}:
-    get:
-      description: Show session for a game
-      operationId: sessionDetails
-      parameters:
-      - description: ID of the session
-        explode: false
-        in: path
-        name: sessionId
-        required: true
-        schema:
-          $ref: '#/components/schemas/Uuid'
-        style: simple
-      responses:
-        "200":
-          content:
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/SessionDetails'
-          description: show session details
-      tags:
-      - game
-      - session
-      x-accepts: application/hal+json
-components:
-  schemas:
-    Branch:
-      allOf:
-      - $ref: '#/components/schemas/BranchLinks'
-      - $ref: '#/components/schemas/BranchResource'
-      description: The base HAL Branch schema
-    Table:
-      allOf:
-      - $ref: '#/components/schemas/TableLinks'
-      - $ref: '#/components/schemas/TableResource'
-      description: The base HAL Table schema
-    Meet:
-      allOf:
-      - $ref: '#/components/schemas/MeetLinks'
-      - $ref: '#/components/schemas/MeetResource'
-      description: The base HAL Meet schema
-    Session:
-      allOf:
-      - $ref: '#/components/schemas/SessionLinks'
-      - $ref: '#/components/schemas/SessionResource'
-      description: The base HAL Session schema
-    Game:
-      allOf:
-      - $ref: '#/components/schemas/GameLinks'
-      - $ref: '#/components/schemas/GameResource'
-      description: The base HAL Game schema
-    Party:
-      allOf:
-      - $ref: '#/components/schemas/PartyLinks'
-      - $ref: '#/components/schemas/PartyResource'
-      description: The base HAL Party schema
-    Member:
-      allOf:
-      - $ref: '#/components/schemas/MemberLinks'
-      - $ref: '#/components/schemas/MemberResource'
-      description: The base HAL Member schema
-    Venue:
-      allOf:
-      - $ref: '#/components/schemas/VenueLinks'
-      - $ref: '#/components/schemas/VenueResource'
-      description: The base HAL Venue schema
-    VenueDetails:
-      allOf:
-      - properties:
-          _links:
-            $ref: '#/components/schemas/VenueDetails_allOf__links'
-      - $ref: '#/components/schemas/Venue'
-      description: "The main Venue HAL resource, including documentation Curies"
-    VenueMeets:
-      allOf:
-      - $ref: '#/components/schemas/VenueLinks'
-      - properties:
-          _links:
-            $ref: '#/components/schemas/VenueMeets_allOf__links'
-          _embedded:
-            $ref: '#/components/schemas/VenueMeets_allOf__embedded'
-      description: Meets at a Venue
-    VenueTables:
-      allOf:
-      - $ref: '#/components/schemas/VenueLinks'
-      - properties:
-          _links:
-            $ref: '#/components/schemas/VenueMeets_allOf__links'
-          _embedded:
-            $ref: '#/components/schemas/VenueTables_allOf__embedded'
-      description: Tables running at a Venue
-    BranchDetails:
-      allOf:
-      - $ref: '#/components/schemas/BranchLinks'
-      - properties:
-          _links:
-            $ref: '#/components/schemas/VenueDetails_allOf__links'
-      - $ref: '#/components/schemas/BranchResource'
-      - properties:
-          _embedded:
-            $ref: '#/components/schemas/BranchDetails_allOf__embedded'
-      description: The main branch resource
-    BranchTables:
-      allOf:
-      - properties:
-          _links:
-            $ref: '#/components/schemas/BranchTables_allOf__links'
-      - $ref: '#/components/schemas/BranchLinks'
-      - properties:
-          _embedded:
-            $ref: '#/components/schemas/BranchTables_allOf__embedded'
-      description: Tables for a given branch
-    BranchVenues:
-      allOf:
-      - properties:
-          _links:
-            $ref: '#/components/schemas/BranchTables_allOf__links'
-      - $ref: '#/components/schemas/BranchLinks'
-      - properties:
-          _embedded:
-            $ref: '#/components/schemas/BranchDetails_allOf__embedded'
-      description: Tables for a given branch
-    BranchMeets:
-      allOf:
-      - properties:
-          _links:
-            $ref: '#/components/schemas/BranchTables_allOf__links'
-      - $ref: '#/components/schemas/BranchLinks'
-      - properties:
-          _embedded:
-            $ref: '#/components/schemas/BranchMeets_allOf__embedded'
-      description: Planned Meets for a Branch
-    BranchGames:
-      allOf:
-      - properties:
-          _links:
-            $ref: '#/components/schemas/BranchTables_allOf__links'
-    SessionDetails:
-      allOf:
-      - $ref: '#/components/schemas/SessionLinks'
-      - properties:
-          _links:
-            $ref: '#/components/schemas/VenueDetails_allOf__links'
-      - $ref: '#/components/schemas/SessionResource'
-      - properties:
-          _embedded:
-            $ref: '#/components/schemas/SessionDetails_allOf__embedded'
-    TableDetails:
-      allOf:
-      - $ref: '#/components/schemas/TableLinks'
-      - properties:
-          _embedded:
-            $ref: '#/components/schemas/TableDetails_allOf__embedded'
-    TableMeets:
-      allOf:
-      - $ref: '#/components/schemas/TableLinks'
-      - properties:
-          _embedded:
-            $ref: '#/components/schemas/TableMeets_allOf__embedded'
-    TableRunners:
-      type: object
-    TableGames:
-      type: object
-    TableParty:
-      type: object
-    MeetDetails:
-      allOf:
-      - $ref: '#/components/schemas/Meet'
-      - properties:
-          _embedded:
-            $ref: '#/components/schemas/MeetDetails_allOf__embedded'
-    MeetSessions:
-      type: object
-    GameSessions:
-      allOf:
-      - $ref: '#/components/schemas/Game'
-      - properties:
-          _embedded:
-            $ref: '#/components/schemas/GameSessions_allOf__embedded'
-    MeetResource:
-      description: A meet is an available date at a venue for sessions to occur
-      properties:
-        start:
-          format: date-time
-          type: string
-        finish:
-          format: date-time
-          type: string
-    BranchResource:
-      properties:
-        name:
-          type: string
-        uri:
-          description: The URI for the Branch page
-          format: uri
-          type: string
-    MemberResource:
-      properties:
-        _links:
-          $ref: '#/components/schemas/MemberResource__links'
-        gamesMaster:
-          type: boolean
-        firstName:
-          type: string
-        lastName:
-          type: string
-        pronouns:
-          type: string
-    PartyResource:
-      properties:
-        members:
+          format: int64
           type: integer
-    AddressResource:
+        style: simple
+      - description: Name of pet that needs to be updated
+        explode: true
+        in: query
+        name: name
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Status of pet that needs to be updated
+        explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "405":
+          description: Invalid input
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      summary: Updates a pet in the store with form data
+      tags:
+      - pet
+      x-accepts: application/json
+  /pet/{petId}/uploadImage:
+    post:
+      description: ""
+      operationId: uploadFile
+      parameters:
+      - description: ID of pet to update
+        explode: false
+        in: path
+        name: petId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      - description: Additional Metadata
+        explode: true
+        in: query
+        name: additionalMetadata
+        required: false
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/uploadFile_200_response'
+          description: successful operation
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      summary: uploads an image
+      tags:
+      - pet
+      x-content-type: application/octet-stream
+      x-accepts: application/json
+  /user:
+    post:
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser_request'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/createUser_request'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/createUser_request'
+        description: Created user object
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createUser_request'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/createUser_request'
+          description: successful operation
+      summary: Create user
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /user/createWithList:
+    post:
+      description: Creates list of users with given input array
+      operationId: createUsersWithListInput
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/createUser_request'
+              type: array
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createUser_request'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/createUser_request'
+          description: Successful operation
+        default:
+          description: successful operation
+      summary: Creates list of users with given input array
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /user/login:
+    get:
+      description: ""
+      operationId: loginUser
+      parameters:
+      - description: The user name for login
+        explode: true
+        in: query
+        name: username
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The password for login in clear text
+        explode: true
+        in: query
+        name: password
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              explode: false
+              schema:
+                format: int32
+                type: integer
+              style: simple
+            X-Expires-After:
+              description: date in UTC when token expires
+              explode: false
+              schema:
+                format: date-time
+                type: string
+              style: simple
+        "400":
+          description: Invalid username/password supplied
+      summary: Logs user into the system
+      tags:
+      - user
+      x-accepts: "application/json,application/xml"
+  /user/logout:
+    get:
+      description: ""
+      operationId: logoutUser
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+      summary: Logs out current logged in user session
+      tags:
+      - user
+      x-accepts: application/json
+  /user/{username}:
+    delete:
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+      - description: The name that needs to be deleted
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "400":
+          description: Invalid username supplied
+        "404":
+          description: User not found
+      summary: Delete user
+      tags:
+      - user
+      x-accepts: application/json
+    get:
+      description: ""
+      operationId: getUserByName
+      parameters:
+      - description: 'The name that needs to be fetched. Use user1 for testing. '
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createUser_request'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/createUser_request'
+          description: successful operation
+        "400":
+          description: Invalid username supplied
+        "404":
+          description: User not found
+      summary: Get user by user name
+      tags:
+      - user
+      x-accepts: "application/json,application/xml"
+    put:
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+      - description: name that need to be deleted
+        explode: false
+        in: path
+        name: username
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser_request'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/createUser_request'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/createUser_request'
+        description: Update an existent user in the store
+      responses:
+        default:
+          description: successful operation
+      summary: Update user
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  requestBodies:
+    Pet:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/updatePet_request'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/updatePet_request'
+      description: Pet object that needs to be added to the store
+    UserArray:
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: '#/components/schemas/createUser_request'
+            type: array
+      description: List of user object
+  schemas:
+    Order:
       properties:
-        addressLine1:
-          type: string
-        addressLine2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zip:
-          type: string
-    TableResource:
-      properties:
-        name:
-          type: string
-        seats:
-          description: The maximum number of participants (including GMs)
+        id:
+          example: 10
+          format: int64
+          type: integer
+        petId:
+          example: 198772
+          format: int64
+          type: integer
+        quantity:
+          example: 7
           format: int32
           type: integer
-        formed:
+        shipDate:
           format: date-time
           type: string
-        disbands:
-          format: date-time
-          type: string
-        signup:
-          format: date-time
-          type: string
-    GameResource:
-      properties:
-        title:
-          type: string
-        system:
-          $ref: '#/components/schemas/SystemResource'
-    SessionResource:
-      properties:
         status:
-          description: Session Status
+          description: Order Status
           enum:
-          - running
-          - cancelled
-          - pending
+          - placed
+          - approved
+          - delivered
+          example: approved
           type: string
-    SystemResource:
+        complete:
+          type: boolean
+      xml:
+        name: order
+    Customer:
       properties:
-        name:
-          type: string
-        uri:
-          format: uri
-          type: string
-    VenueResource:
-      properties:
-        name:
+        id:
+          example: 100000
+          format: int64
+          type: integer
+        username:
+          example: fehguy
           type: string
         address:
-          $ref: '#/components/schemas/AddressResource'
-    Uuid:
-      format: uuid
-      type: string
-    PartyLinks:
+          items:
+            $ref: '#/components/schemas/Customer_address_inner'
+          type: array
+          xml:
+            name: addresses
+            wrapped: true
+      xml:
+        name: customer
+    Address:
       properties:
-        _links:
-          $ref: '#/components/schemas/PartyLinks__links'
-    GameLinks:
-      properties:
-        _links:
-          $ref: '#/components/schemas/GameLinks__links'
-    MemberLinks:
-      properties:
-        _links:
-          $ref: '#/components/schemas/MemberLinks__links'
-    SessionLinks:
-      properties:
-        _links:
-          $ref: '#/components/schemas/MemberLinks__links'
-    VenueLinks:
-      properties:
-        _links:
-          $ref: '#/components/schemas/VenueLinks__links'
-    BranchLinks:
-      properties:
-        _links:
-          $ref: '#/components/schemas/BranchLinks__links'
-    MeetLinks:
-      properties:
-        _links:
-          $ref: '#/components/schemas/MeetLinks__links'
-    TableLinks:
-      properties:
-        _links:
-          $ref: '#/components/schemas/TableLinks__links'
-    HalLinkRelation:
-      description: A HAL Link Relation. See https://stateless.group/hal_specification.html
-      properties:
-        title:
+        street:
+          example: 437 Lytton
           type: string
-        href:
-          format: url
+        city:
+          example: Palo Alto
           type: string
-        templated:
-          default: true
-          type: boolean
-      required:
-      - href
-    Curies:
+        state:
+          example: CA
+          type: string
+        zip:
+          example: "94301"
+          type: string
+      xml:
+        name: address
+    Category:
       properties:
+        id:
+          example: 1
+          format: int64
+          type: integer
+        name:
+          example: Dogs
+          type: string
+      xml:
+        name: category
+    User:
+      properties:
+        id:
+          example: 10
+          format: int64
+          type: integer
+        username:
+          example: theUser
+          type: string
+        firstName:
+          example: John
+          type: string
+        lastName:
+          example: James
+          type: string
+        email:
+          example: john@email.com
+          type: string
+        password:
+          example: "12345"
+          type: string
+        phone:
+          example: "12345"
+          type: string
+        userStatus:
+          description: User Status
+          example: 1
+          format: int32
+          type: integer
+      xml:
+        name: user
+    Tag:
+      properties:
+        id:
+          format: int64
+          type: integer
         name:
           type: string
-        href:
-          enum:
-          - "https://wiki.rphaven.co.uk/api/rels/{rel}"
-          format: uri
+      xml:
+        name: tag
+    Pet:
+      properties:
+        id:
+          example: 10
+          format: int64
+          type: integer
+        name:
+          example: doggie
           type: string
-        templated:
-          default: true
-          type: boolean
+        category:
+          $ref: '#/components/schemas/updatePet_request_category'
+        photoUrls:
+          items:
+            type: string
+            xml:
+              name: photoUrl
+          type: array
+          xml:
+            wrapped: true
+        tags:
+          items:
+            $ref: '#/components/schemas/updatePet_request_tags_inner'
+          type: array
+          xml:
+            wrapped: true
+        status:
+          description: pet status in the store
+          enum:
+          - available
+          - pending
+          - sold
+          type: string
       required:
-      - href
+      - name
+      - photoUrls
+      xml:
+        name: pet
     ApiResponse:
       properties:
         code:
@@ -869,163 +711,157 @@ components:
           type: string
       xml:
         name: '##default'
-    VenueDetails_allOf__links:
+    updatePet_request_category:
+      example:
+        name: Dogs
+        id: 1
       properties:
-        curies: {}
-    VenueMeets_allOf__links:
-      properties:
-        self:
-          format: uri
+        id:
+          example: 1
+          format: int64
+          type: integer
+        name:
+          example: Dogs
           type: string
-        curies: {}
-    VenueMeets_allOf__embedded:
+      xml:
+        name: category
+    updatePet_request_tags_inner:
+      example:
+        name: name
+        id: 0
       properties:
-        venue:meets:
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+      xml:
+        name: tag
+    updatePet_request:
+      example:
+        photoUrls:
+        - photoUrls
+        - photoUrls
+        name: doggie
+        id: 10
+        category:
+          name: Dogs
+          id: 1
+        tags:
+        - name: name
+          id: 0
+        - name: name
+          id: 0
+        status: available
+      properties:
+        id:
+          example: 10
+          format: int64
+          type: integer
+        name:
+          example: doggie
+          type: string
+        category:
+          $ref: '#/components/schemas/updatePet_request_category'
+        photoUrls:
           items:
-            $ref: '#/components/schemas/Meet'
-          type: array
-    VenueTables_allOf__embedded:
-      properties:
-        venue:tables:
-          items:
-            $ref: '#/components/schemas/Table'
-          type: array
-    BranchDetails_allOf__embedded:
-      properties:
-        branch:venues: {}
-    BranchTables_allOf__links:
-      properties:
-        self: {}
-        curies: {}
-    BranchTables_allOf__embedded:
-      properties:
-        branch:tables: {}
-    BranchMeets_allOf__embedded:
-      properties:
-        branch:meets: {}
-    SessionDetails_allOf__embedded:
-      properties:
-        session:venue:
-          $ref: '#/components/schemas/Venue'
-        session:game:
-          $ref: '#/components/schemas/Game'
-        session:meet:
-          $ref: '#/components/schemas/Meet'
-    TableDetails_allOf__embedded:
-      properties:
-        table:runners: {}
-        table:games: {}
-        table:party:
-          $ref: '#/components/schemas/Party'
-    TableMeets_allOf__embedded:
-      properties:
-        table:meets:
-          items:
-            $ref: '#/components/schemas/Meet'
-          type: array
-    MeetDetails_allOf__embedded:
-      properties:
-        meet:venue: {}
-    GameSessions_allOf__embedded:
-      properties:
-        game:party:
-          $ref: '#/components/schemas/Party'
-        game:session:
-          items:
-            $ref: '#/components/schemas/Session'
-          type: array
-    MemberResource__links_curies:
-      allOf:
-      - $ref: '#/components/schemas/Curies'
-      - properties:
-          name:
-            enum:
-            - member
             type: string
-    MemberResource__links:
-      properties:
-        self:
-          format: uri
+            xml:
+              name: photoUrl
+          type: array
+          xml:
+            wrapped: true
+        tags:
+          items:
+            $ref: '#/components/schemas/updatePet_request_tags_inner'
+          type: array
+          xml:
+            wrapped: true
+        status:
+          description: pet status in the store
+          enum:
+          - available
+          - pending
+          - sold
           type: string
-        curies:
-          $ref: '#/components/schemas/MemberResource__links_curies'
-    PartyLinks__links_party_members:
-      allOf:
-      - $ref: '#/components/schemas/HalLinkRelation'
-      - properties:
-          title: {}
-          href: {}
-    PartyLinks__links:
+      required:
+      - name
+      - photoUrls
+      xml:
+        name: pet
+    uploadFile_200_response:
+      example:
+        code: 0
+        type: type
+        message: message
       properties:
-        self:
-          format: uri
+        code:
+          format: int32
+          type: integer
+        type:
           type: string
-        party:members:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-    GameLinks__links:
+        message:
+          type: string
+      xml:
+        name: '##default'
+    createUser_request:
+      example:
+        firstName: John
+        lastName: James
+        password: "12345"
+        userStatus: 1
+        phone: "12345"
+        id: 10
+        email: john@email.com
+        username: theUser
       properties:
-        self:
-          format: uri
+        id:
+          example: 10
+          format: int64
+          type: integer
+        username:
+          example: theUser
           type: string
-        game:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        game:sessions:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-    MemberLinks__links:
+        firstName:
+          example: John
+          type: string
+        lastName:
+          example: James
+          type: string
+        email:
+          example: john@email.com
+          type: string
+        password:
+          example: "12345"
+          type: string
+        phone:
+          example: "12345"
+          type: string
+        userStatus:
+          description: User Status
+          example: 1
+          format: int32
+          type: integer
+      xml:
+        name: user
+    Customer_address_inner:
       properties:
-        self:
-          format: uri
+        street:
+          example: 437 Lytton
           type: string
-    VenueLinks__links:
-      properties:
-        self:
-          format: uri
+        city:
+          example: Palo Alto
           type: string
-        venue:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        venue:meets:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        venue:tables:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-    BranchLinks__links:
-      properties:
-        self:
-          format: uri
+        state:
+          example: CA
           type: string
-        branch:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        branch:meets:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        branch:tables:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        branch:venues:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-    MeetLinks__links:
-      properties:
-        self:
-          format: uri
+        zip:
+          example: "94301"
           type: string
-        meet:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        meet:tables:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-    TableLinks__links:
-      properties:
-        self:
-          format: uri
-          type: string
-        table:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        table:games:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        table:runners:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        table:meets:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
-        table:party:
-          $ref: '#/components/schemas/PartyLinks__links_party_members'
+      xml:
+        name: address
   securitySchemes:
-    rphaven_auth:
+    petstore_auth:
       flows:
         implicit:
           authorizationUrl: https://petstore3.swagger.io/oauth/authorize

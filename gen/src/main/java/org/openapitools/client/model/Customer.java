@@ -20,107 +20,118 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.openapitools.client.model.CustomerAddressInner;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * ModelApiResponse
+ * Customer
  */
 @JsonPropertyOrder({
-  ModelApiResponse.JSON_PROPERTY_CODE,
-  ModelApiResponse.JSON_PROPERTY_TYPE,
-  ModelApiResponse.JSON_PROPERTY_MESSAGE
+  Customer.JSON_PROPERTY_ID,
+  Customer.JSON_PROPERTY_USERNAME,
+  Customer.JSON_PROPERTY_ADDRESS
 })
-@JsonTypeName("ApiResponse")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:25:49.904640209Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class ModelApiResponse {
-  public static final String JSON_PROPERTY_CODE = "code";
-  private Integer code;
+public class Customer {
+  public static final String JSON_PROPERTY_ID = "id";
+  private Long id;
 
-  public static final String JSON_PROPERTY_TYPE = "type";
-  private String type;
+  public static final String JSON_PROPERTY_USERNAME = "username";
+  private String username;
 
-  public static final String JSON_PROPERTY_MESSAGE = "message";
-  private String message;
+  public static final String JSON_PROPERTY_ADDRESS = "address";
+  private List<CustomerAddressInner> address;
 
-  public ModelApiResponse() {
+  public Customer() {
   }
 
-  public ModelApiResponse code(Integer code) {
+  public Customer id(Long id) {
     
-    this.code = code;
+    this.id = id;
     return this;
   }
 
    /**
-   * Get code
-   * @return code
+   * Get id
+   * @return id
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_CODE)
+  @JsonProperty(JSON_PROPERTY_ID)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public Integer getCode() {
-    return code;
+  public Long getId() {
+    return id;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_CODE)
+  @JsonProperty(JSON_PROPERTY_ID)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setCode(Integer code) {
-    this.code = code;
+  public void setId(Long id) {
+    this.id = id;
   }
 
 
-  public ModelApiResponse type(String type) {
+  public Customer username(String username) {
     
-    this.type = type;
+    this.username = username;
     return this;
   }
 
    /**
-   * Get type
-   * @return type
+   * Get username
+   * @return username
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonProperty(JSON_PROPERTY_USERNAME)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public String getType() {
-    return type;
+  public String getUsername() {
+    return username;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonProperty(JSON_PROPERTY_USERNAME)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setType(String type) {
-    this.type = type;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
 
-  public ModelApiResponse message(String message) {
+  public Customer address(List<CustomerAddressInner> address) {
     
-    this.message = message;
+    this.address = address;
+    return this;
+  }
+
+  public Customer addAddressItem(CustomerAddressInner addressItem) {
+    if (this.address == null) {
+      this.address = new ArrayList<>();
+    }
+    this.address.add(addressItem);
     return this;
   }
 
    /**
-   * Get message
-   * @return message
+   * Get address
+   * @return address
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_MESSAGE)
+  @JsonProperty(JSON_PROPERTY_ADDRESS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public String getMessage() {
-    return message;
+  public List<CustomerAddressInner> getAddress() {
+    return address;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_MESSAGE)
+  @JsonProperty(JSON_PROPERTY_ADDRESS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMessage(String message) {
-    this.message = message;
+  public void setAddress(List<CustomerAddressInner> address) {
+    this.address = address;
   }
 
   @Override
@@ -131,24 +142,24 @@ public class ModelApiResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ModelApiResponse _apiResponse = (ModelApiResponse) o;
-    return Objects.equals(this.code, _apiResponse.code) &&
-        Objects.equals(this.type, _apiResponse.type) &&
-        Objects.equals(this.message, _apiResponse.message);
+    Customer customer = (Customer) o;
+    return Objects.equals(this.id, customer.id) &&
+        Objects.equals(this.username, customer.username) &&
+        Objects.equals(this.address, customer.address);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(code, type, message);
+    return Objects.hash(id, username, address);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModelApiResponse {\n");
-    sb.append("    code: ").append(toIndentedString(code)).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
+    sb.append("class Customer {\n");
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    username: ").append(toIndentedString(username)).append("\n");
+    sb.append("    address: ").append(toIndentedString(address)).append("\n");
     sb.append("}");
     return sb.toString();
   }
