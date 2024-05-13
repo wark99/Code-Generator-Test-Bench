@@ -1,411 +1,4852 @@
 openapi: 3.1.0
 info:
-  description: Remote API to interact between Freshdesk accounts and MasMovil application.
-  title: Optima Solutions - Asteo Ticketing
+  contact:
+    email: engineering@dodays.co.uk
+    name: DoDays Engineering
+  description: The DoDays API reference.
+  title: Reference
   version: 1.0.0
 servers:
-- description: Staging Server
-  url: https://asteo.pre.optimaprivatecloud.es
-- description: Production Server
-  url: https://asteo.optimaprivatecloud.es
+- description: Local
+  url: http://api.dodays.test/v1
+- description: Staging
+  url: https://api.dodays-staging.co.uk/v1
+- description: Production
+  url: https://api.dodays.co.uk/v1
 security:
-- basicAuth: []
+- Authorization: []
+tags:
+- name: Abilities
+- name: Account
+- name: Activities
+- name: Auth
+- name: Bookings
+- name: Classes
+- name: Coupons
+- name: Days
+- name: Links
+- name: Metrics
+- name: Organisers
+- name: Payment Intents
+- name: Payments
+- name: Ping
+- name: Prices
+- name: Referrals
+- name: Setup Intents
+- name: Stages
+- name: Students
+- name: Subscriptions
+- name: Terms
+- name: Users
+- name: Venues
+- name: Vouchers
+- name: Waitees
 paths:
-  /troubleTicket:
+  /ping:
+    get:
+      description: Ping pong.
+      operationId: get-ping
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example 1:
+                  value:
+                  - pong
+              schema:
+                items: {}
+                type: array
+          description: Pong.
+      summary: Ping
+      tags:
+      - Ping
+      x-accepts: application/json
+  /whoami:
+    get:
+      description: Retrieve the authenticated user.
+      operationId: get-whoami
+      responses:
+        "200":
+          $ref: '#/components/responses/User'
+      summary: Whoami
+      tags:
+      - Auth
+      x-accepts: application/json
+  /auth/register:
     post:
-      description: Create a new ticket in the Freshdesk instance that corresponds
-        depending on the requested data.
+      description: Register and retrieve a token.
+      operationId: post-register
+      requestBody:
+        $ref: '#/components/requestBodies/Register'
+      responses:
+        "201":
+          $ref: '#/components/responses/Token'
+      security: []
+      summary: Register a user
+      tags:
+      - Auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /auth/token:
+    post:
+      description: Sign in and retrieve a token.
+      operationId: post-token
+      requestBody:
+        $ref: '#/components/requestBodies/Token'
+      responses:
+        "200":
+          $ref: '#/components/responses/Token'
+      security: []
+      summary: Get a token
+      tags:
+      - Auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /auth/forgot-password:
+    post:
+      description: Request a password reset link.
+      operationId: post-forgot-password
+      requestBody:
+        $ref: '#/components/requestBodies/ForgotPassword'
+      responses:
+        "200":
+          $ref: '#/components/responses/Status'
+      security: []
+      summary: Password reset link
+      tags:
+      - Auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /auth/reset-password:
+    post:
+      description: Reset the users password.
+      operationId: post-reset-password
+      requestBody:
+        $ref: '#/components/requestBodies/ResetPassword'
+      responses:
+        "200":
+          $ref: '#/components/responses/Status'
+      security: []
+      summary: Reset password
+      tags:
+      - Auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /activate:
+    post:
+      description: Activate a user account.
+      operationId: post-activate
       requestBody:
         content:
           application/json:
-            examples:
-              asteo:
-                $ref: '#/components/examples/ticketCreateAsteo'
-              redaberta:
-                $ref: '#/components/examples/ticketCreateRedAberta'
-              fictional:
-                $ref: '#/components/examples/ticketCreateFictional'
             schema:
-              $ref: '#/components/schemas/ticket'
-        description: Ticket attributes needed to create a new ticket.
-        required: true
+              $ref: '#/components/schemas/post_activate_request'
+        description: Activates the users account.
       responses:
-        "201":
-          $ref: '#/components/responses/ticketCreated'
-        "400":
-          $ref: '#/components/responses/badRequest'
-        "401":
-          $ref: '#/components/responses/unauthorized'
-      summary: Create a new ticket in TO.
+        "204":
+          description: No content.
+      security: []
+      summary: Activate a user
       tags:
-      - fromTUtoTO
+      - Users
       x-content-type: application/json
       x-accepts: application/json
-  /troubleTicket/{primaryKey}:
-    patch:
-      description: Update the ticket in TO system.
+  /organisers/{organiserId}/accept:
+    parameters:
+    - explode: false
+      in: path
+      name: organiserId
+      required: true
+      schema:
+        type: string
+      style: simple
+    post:
+      description: Acccept a connect request.
+      operationId: post-connect-accept
       parameters:
       - explode: false
         in: path
-        name: primaryKey
+        name: organiserId
         required: true
         schema:
-          description: Primary key of the ticket.
           type: string
         style: simple
       requestBody:
         content:
           application/json:
-            examples:
-              tuRejectCancellation:
-                $ref: '#/components/examples/tuRejectCancellation'
-              tuRejectResolution:
-                $ref: '#/components/examples/tuRejectResolution'
-              tuSendInformation:
-                $ref: '#/components/examples/tuSendInformation'
-              tuClose:
-                $ref: '#/components/examples/tuClose'
-              tuSendInformationNoChangeStatus:
-                $ref: '#/components/examples/tuSendInformationNoChangeStatus'
-              tuCancel:
-                $ref: '#/components/examples/tuCancel'
             schema:
-              $ref: '#/components/schemas/updateTicket'
-        description: Ticket object to update a ticket.
-        required: true
+              $ref: '#/components/schemas/post_connect_accept_request'
+        description: Accepts the organisers connect request.
       responses:
-        "200":
-          $ref: '#/components/responses/ticketUpdated'
-        "400":
-          $ref: '#/components/responses/badRequest'
-        "401":
-          $ref: '#/components/responses/unauthorized'
-      summary: Update an existing ticket from TU to TO.
+        "204":
+          description: No content.
+      security: []
+      summary: Connect accept
       tags:
-      - fromTUtoTO
+      - Users
       x-content-type: application/json
       x-accepts: application/json
-  /troubleTicket/update:
+  /organisers/{organiserId}/reject:
+    parameters:
+    - explode: false
+      in: path
+      name: organiserId
+      required: true
+      schema:
+        type: string
+      style: simple
     post:
-      description: The ticket status changes in TO and send information to TU.
+      description: Reject a connect request.
+      operationId: post-connect-reject
+      parameters:
+      - explode: false
+        in: path
+        name: organiserId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        description: Rejects the organisers connect request.
+      responses:
+        "204":
+          description: No content.
+      security: []
+      summary: Connect reject
+      tags:
+      - Users
+      x-accepts: application/json
+  /links:
+    get:
+      description: Retrieve a organiser link.
+      operationId: get-link
+      parameters:
+      - description: ID of the organiser
+        explode: true
+        in: query
+        name: "filter[organiser]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_link_200_response'
+          description: Returns the users link for the given organiser.
+      security: []
+      summary: Get a link
+      tags:
+      - Links
+      x-internal: false
+      x-accepts: application/json
+  /account/details:
+    patch:
+      description: Update the account holders details.
+      operationId: patch-details
       requestBody:
         content:
           application/json:
             examples:
-              toRequestInformation:
-                $ref: '#/components/examples/toRequestInformation'
-              toRequestCancelation:
-                $ref: '#/components/examples/toRequestCancelation'
-              toResolve:
-                $ref: '#/components/examples/toResolve'
+              Example 1:
+                value:
+                  first_name: Jim
+                  last_name: Brown
+                  email: jim@thebrowns.com
+                  telephone: "01913334444"
+                  street: 1 Brown Street
+                  town: Brown Town
+                  region: Brown
+                  postcode: BR0WN
+                  medical: Some medical information
             schema:
-              $ref: '#/components/schemas/updateTicket'
-        description: Ticket object to update a ticket.
-        required: true
+              $ref: '#/components/schemas/patch_details_request'
+        description: Updates the users account.
       responses:
         "200":
-          $ref: '#/components/responses/ticketUpdated'
-        "400":
-          $ref: '#/components/responses/badRequest'
-        "401":
-          $ref: '#/components/responses/unauthorized'
-      summary: Update an existing ticket from TO to TU.
+          $ref: '#/components/responses/User'
+      summary: Update details
       tags:
-      - fromTOtoTU
+      - Account
       x-content-type: application/json
       x-accepts: application/json
+  /account/emergency-contact:
+    patch:
+      description: Update the account holders emergency contact.
+      operationId: patch-emergency-contact
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Example 1:
+                value:
+                  name: Sue Brown
+                  telephone: "01913334445"
+                  relationship: sue@thebrowns.com
+            schema:
+              $ref: '#/components/schemas/patch_emergency_contact_request'
+        description: Updates the users emergency contact.
+      responses:
+        "200":
+          $ref: '#/components/responses/User'
+      summary: Update emergency contact
+      tags:
+      - Account
+      x-content-type: application/json
+      x-accepts: application/json
+  /account/password:
+    patch:
+      description: Update the account password.
+      operationId: patch-password
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Example 1:
+                value:
+                  current_password: password
+                  new_password: new-password
+                  new_password_confirmation: new-password
+            schema:
+              $ref: '#/components/schemas/patch_password_request'
+        description: Updates the users password.
+      responses:
+        "200":
+          $ref: '#/components/responses/User'
+      summary: Update password
+      tags:
+      - Account
+      x-internal: false
+      x-content-type: application/json
+      x-accepts: application/json
+  /account/attach-payment-method:
+    post:
+      description: Attach a payment method to the user.
+      operationId: post-attach-payment-method
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Example 1:
+                value:
+                  organiser_id: 1
+                  payment_method: card
+            schema:
+              $ref: '#/components/schemas/post_attach_payment_method_request'
+        description: Attaches a new payment method to the authenticated user for a
+          given organiser.
+      responses:
+        "204":
+          description: No content.
+      summary: Attach Payment Method
+      tags:
+      - Account
+      x-content-type: application/json
+      x-accepts: application/json
+  /account/marketing-consent:
+    patch:
+      description: Update the account holders marketing consent.
+      operationId: patch-marketing-consent
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Example 1:
+                value:
+                  organiser_id: 1
+            schema:
+              $ref: '#/components/schemas/patch_marketing_consent_request'
+        description: Toggles the users marketing consent for a given organiser.
+      responses:
+        "204":
+          description: No content.
+      summary: Update marketing consent
+      tags:
+      - Account
+      x-internal: false
+      x-content-type: application/json
+      x-accepts: application/json
+  /account/photo-consent:
+    patch:
+      description: Update the account holders photo consent.
+      operationId: patch-photo-consent
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Example 1:
+                value:
+                  organiser_id: 1
+            schema:
+              $ref: '#/components/schemas/patch_marketing_consent_request'
+        description: Toggles the users photo consent for a given organiser.
+      responses:
+        "204":
+          description: No content.
+      summary: Update photo consent
+      tags:
+      - Account
+      x-internal: false
+      x-content-type: application/json
+      x-accepts: application/json
+  /account/session-reminders:
+    patch:
+      description: Update the account holders session reminders.
+      operationId: patch-session-reminders
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Example 1:
+                value:
+                  organiser_id: 1
+            schema:
+              $ref: '#/components/schemas/patch_marketing_consent_request'
+        description: Toggles the users session reminders setting for a given organiser.
+      responses:
+        "204":
+          description: No content.
+      summary: Update session reminders
+      tags:
+      - Account
+      x-internal: false
+      x-content-type: application/json
+      x-accepts: application/json
+  /organisers:
+    get:
+      description: Retrieve a list of organisers.
+      operationId: get-organisers
+      parameters:
+      - description: ID of the user
+        explode: true
+        in: query
+        name: "filter[user]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_organisers_200_response'
+          description: |-
+            Returns a list of Organiser objects.
+
+            When the user filter is provided, the list contains only organisers the user is linked too.
+      security: []
+      summary: List organisers
+      tags:
+      - Organisers
+      x-internal: false
+      x-accepts: application/json
+  /organisers/{organiserId}:
+    get:
+      description: Retrieve the organiser.
+      operationId: get-organiser
+      parameters:
+      - explode: false
+        in: path
+        name: organiserId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_organiser_200_response'
+          description: Returns an Organiser object.
+        "404":
+          description: Organiser not found.
+      security: []
+      summary: Get an organiser
+      tags:
+      - Organisers
+      x-internal: false
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: organiserId
+      required: true
+      schema:
+        type: string
+      style: simple
+  /venues:
+    get:
+      description: Retrieve a list of venues.
+      operationId: get-venues
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_venues_200_response'
+          description: Returns a list of Venue objects.
+      security: []
+      summary: List venues
+      tags:
+      - Venues
+      x-internal: false
+      x-accepts: application/json
+  /venues/{venueId}:
+    get:
+      description: Retrieve the venue.
+      operationId: get-venue
+      parameters:
+      - explode: false
+        in: path
+        name: venueId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_venue_200_response'
+          description: Returns a Venue object.
+        "404":
+          description: Venue not found.
+      security: []
+      summary: Get a venue
+      tags:
+      - Venues
+      x-internal: false
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: venueId
+      required: true
+      schema:
+        type: string
+      style: simple
+  /terms:
+    get:
+      description: Retrieve a list of terms.
+      operationId: get-terms
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_terms_200_response'
+          description: Returns a list of Term objects.
+      security: []
+      summary: List terms
+      tags:
+      - Terms
+      x-internal: false
+      x-accepts: application/json
+  /classes:
+    get:
+      description: Retrieve a list of classes.
+      operationId: get-classes
+      parameters:
+      - description: ID of the organiser
+        explode: true
+        in: query
+        name: "filter[organiser]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: ID of the term
+        explode: true
+        in: query
+        name: "filter[term]"
+        required: false
+        schema:
+          format: date
+          type: integer
+        style: form
+      - description: ID of the venue
+        explode: true
+        in: query
+        name: "filter[venue]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: ID of the stage
+        explode: true
+        in: query
+        name: "filter[stage]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: "Interval between the min and max age i.e. month, year"
+        explode: true
+        in: query
+        name: "filter[age][interval]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Minimum age threshold
+        explode: true
+        in: query
+        name: "filter[age][min]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: Maximum age threshold
+        explode: true
+        in: query
+        name: "filter[age][max]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: ID of the ability
+        explode: true
+        in: query
+        name: "filter[ability]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: ID of the activity
+        explode: true
+        in: query
+        name: "filter[activity]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: "Numerical day of the week i.e. 1 = Sunday, 2 = Monday etc."
+        explode: true
+        in: query
+        name: "filter[day]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Phrase to match the class name, venue name and organiser name"
+        explode: true
+        in: query
+        name: "filter[search]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Pagination page number
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: Pagination page limit
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_classes_200_response'
+          description: Returns a list of Class objects.
+      security: []
+      summary: List classes
+      tags:
+      - Classes
+      x-accepts: application/json
+  /classes/{classId}:
+    get:
+      description: Retrieve the class.
+      operationId: get-class
+      parameters:
+      - explode: false
+        in: path
+        name: classId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_class_200_response'
+          description: Returns a Class object.
+        "404":
+          description: Class not found.
+      security: []
+      summary: Get a class
+      tags:
+      - Classes
+      x-internal: false
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: classId
+      required: true
+      schema:
+        type: string
+      style: simple
+  /classes/costs:
+    get:
+      description: Retrieve a list of class costs.
+      operationId: get-class-costs
+      parameters:
+      - description: ID of the term
+        explode: true
+        in: query
+        name: "filter[term]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: integer
+                type: array
+          description: "Returns a list of lesson costs, in pence format, associated\
+            \ to the classes in the given term."
+      security: []
+      summary: List class costs
+      tags:
+      - Classes
+      x-internal: false
+      x-accepts: application/json
+  /stages:
+    get:
+      description: Retrieve a list of stages.
+      operationId: get-stages
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_stages_200_response'
+          description: Returns a list of Stage objects.
+      security: []
+      summary: List stages
+      tags:
+      - Stages
+      x-internal: false
+      x-accepts: application/json
+  /activities:
+    get:
+      description: Retrieve a list of activities.
+      operationId: get-activities
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example 1:
+                  value:
+                    "1": Swimming
+                    "2": Yoga
+                    "3": Cookery
+              schema:
+                $ref: '#/components/schemas/get_activities_200_response'
+          description: Returns a list of activities.
+      security: []
+      summary: List activities
+      tags:
+      - Activities
+      x-internal: false
+      x-accepts: application/json
+  /abilities:
+    get:
+      description: Retrieve a list of abilities.
+      operationId: get-abilities
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example 1:
+                  value:
+                    "1": Beginner
+                    "2": Intermediate
+                    "3": Advanced
+              schema:
+                $ref: '#/components/schemas/get_activities_200_response'
+          description: Returns a list of abilities.
+      security: []
+      summary: List abilities
+      tags:
+      - Abilities
+      x-internal: false
+      x-accepts: application/json
+  /referrals:
+    get:
+      description: Retrieve a list of referrals.
+      operationId: get-referrals
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example 1:
+                  value:
+                    facebook: Facebook
+                    searchEngine: Search Engine
+                    wordOfMouth: Word Of Mouth
+              schema:
+                $ref: '#/components/schemas/get_activities_200_response'
+          description: Returns a list of referrals.
+      security: []
+      summary: List referrals
+      tags:
+      - Referrals
+      x-internal: false
+      x-accepts: application/json
+  /days:
+    get:
+      description: Retrieve a list of days.
+      operationId: get-days
+      parameters:
+      - description: ID of the organiser
+        explode: true
+        in: query
+        name: "filter[organiser]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Example 1:
+                  value:
+                  - Monday
+                  - Wednesday
+              schema:
+                items:
+                  type: string
+                type: array
+          description: Returns a list of days the organiser delivers classes.
+      security: []
+      summary: List days
+      tags:
+      - Days
+      x-internal: false
+      x-accepts: application/json
+  /waitees:
+    post:
+      description: Create a new waitee.
+      operationId: post-waitee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_waitee_request'
+        description: |-
+          Creates a new waitee.
+          If a user is signed in, `students.id` is required and the waitee will be associated to the authenticated user.
+          If no user is signed in, `first_name`, `last_name`, `email`, `telephone`, `students.first_name` and `students.last_name` are required.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_waitee_200_response'
+          description: Waitee created.
+      summary: Create a waitee
+      tags:
+      - Waitees
+      x-content-type: application/json
+      x-accepts: application/json
+  /waitees/{inviteCode}:
+    delete:
+      description: Delete a waitee.
+      operationId: delete-waitee
+      parameters:
+      - explode: false
+        in: path
+        name: inviteCode
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Waitee deleted.
+      summary: Delete a waitee
+      tags:
+      - Waitees
+      x-accepts: application/json
+    get:
+      description: Retrieve the waitee.
+      operationId: get-waitee
+      parameters:
+      - explode: false
+        in: path
+        name: inviteCode
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_waitee_200_response'
+          description: Returns a Waitee object.
+        "404":
+          description: Waitee not found.
+      security: []
+      summary: Get a waitee
+      tags:
+      - Waitees
+      x-internal: false
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: inviteCode
+      required: true
+      schema:
+        type: string
+      style: simple
+  /vouchers:
+    post:
+      description: Create a new voucher.
+      operationId: post-voucher
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_voucher_request'
+        description: Creates a new voucher.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_voucher_200_response'
+          description: Voucher created.
+      summary: Create a voucher
+      tags:
+      - Vouchers
+      x-content-type: application/json
+      x-accepts: application/json
+  /vouchers/check:
+    post:
+      description: Check a voucher code.
+      operationId: post-voucher-check
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_voucher_check_request'
+        description: Checks a voucher code exists.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_voucher_check_200_response'
+          description: Returns a message relating to the status of the voucher.
+      summary: Check a voucher
+      tags:
+      - Vouchers
+      x-content-type: application/json
+      x-accepts: application/json
+  /payment-intents:
+    patch:
+      description: Updates a payment intent.
+      operationId: patch-payment-intent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/patch_payment_intent_request'
+        description: Updates the payment intent on Stripe.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_payment_intent_200_response'
+          description: Payment intent updated.
+      summary: Update a payment intent
+      tags:
+      - Payment Intents
+      x-content-type: application/json
+      x-accepts: application/json
+    post:
+      description: Create a new payment intent.
+      operationId: post-payment-intent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_payment_intent_request'
+        description: Creates a new payment intent on Stripe.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_payment_intent_200_response'
+          description: Payment intent created.
+      summary: Create a payment intent
+      tags:
+      - Payment Intents
+      x-internal: false
+      x-content-type: application/json
+      x-accepts: application/json
+  /students:
+    get:
+      description: Retrieve a list of family members.
+      operationId: get-students
+      parameters:
+      - description: ID of the class
+        explode: true
+        in: query
+        name: "filter[class]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_students_200_response'
+          description: |-
+            Returns a list of Student objects.
+
+            When the class filter is provided, the list contains only students who qualify the class based on age.
+      summary: List students
+      tags:
+      - Students
+      x-internal: false
+      x-accepts: application/json
+    post:
+      description: Create a new family member.
+      operationId: post-student
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_student_request'
+        description: Creates a new family member.
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_student_201_response'
+          description: Student created.
+      summary: Create a student
+      tags:
+      - Students
+      x-internal: false
+      x-content-type: application/json
+      x-accepts: application/json
+  /students/{studentId}:
+    get:
+      description: Retrieve the family member.
+      operationId: get-student
+      parameters:
+      - explode: false
+        in: path
+        name: studentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_student_201_response'
+          description: Returns a Student object.
+        "403":
+          description: Forbidden.
+        "404":
+          description: Student not found.
+      summary: Get a student
+      tags:
+      - Students
+      x-internal: false
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: studentId
+      required: true
+      schema:
+        type: string
+      style: simple
+    patch:
+      description: Update the family member.
+      operationId: patch-student
+      parameters:
+      - explode: false
+        in: path
+        name: studentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/patch_student_request'
+        description: Updates the family member.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_student_201_response'
+          description: Returns a Student object.
+        "403":
+          description: Forbidden.
+        "404":
+          description: Student not found.
+      summary: Update a student
+      tags:
+      - Students
+      x-internal: false
+      x-content-type: application/json
+      x-accepts: application/json
+  /students/{studentId}/stages:
+    get:
+      description: Retrieve a list of the family members stages.
+      operationId: get-student-stages
+      parameters:
+      - explode: false
+        in: path
+        name: studentId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_student_stages_200_response'
+          description: Return a list of StudentStage objects.
+        "403":
+          description: Forbidden.
+        "404":
+          description: Student not found.
+      summary: List student stages
+      tags:
+      - Students
+      x-internal: false
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: studentId
+      required: true
+      schema:
+        type: string
+      style: simple
+  /prices:
+    get:
+      description: Retrieve a list of prices.
+      operationId: get-prices
+      parameters:
+      - description: ID of the class
+        explode: true
+        in: query
+        name: "filter[class]"
+        required: true
+        schema:
+          type: integer
+        style: form
+      - description: IDs of the students
+        explode: true
+        in: query
+        name: "filter[students][]"
+        required: true
+        schema:
+          items:
+            description: TODO default missing array inner type to string
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_prices_200_response'
+          description: |-
+            Returns a list of Price objects.
+
+            When the class filter is provided, the list contains only prices that are available for this class.
+
+            When the students filter is provided, the list contains only prices that are available for all students.
+      summary: List prices
+      tags:
+      - Prices
+      x-accepts: application/json
+  /coupons/apply:
+    get:
+      description: Retrieve a Discount or Voucher.
+      operationId: get-apply-coupon
+      parameters:
+      - description: Coupon code
+        explode: true
+        in: query
+        name: "filter[code]"
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: ID of the class
+        explode: true
+        in: query
+        name: "filter[class]"
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              examples: {}
+              schema:
+                $ref: '#/components/schemas/get_apply_coupon_200_response'
+          description: Returns a Discount or Voucher object.
+      summary: Apply coupon
+      tags:
+      - Coupons
+      x-accepts: application/json
+  /bookings:
+    get:
+      description: Retrieve a list of bookings.
+      operationId: get-bookings
+      parameters:
+      - description: ID of the organiser
+        explode: true
+        in: query
+        name: "filter[organiser]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: ID of the student
+        explode: true
+        in: query
+        name: "filter[student]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: Whether the booking has ended
+        explode: true
+        in: query
+        name: "filter[ended]"
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: Related resources to include
+        explode: true
+        in: query
+        name: include
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_bookings_200_response'
+          description: Booking created.
+      summary: List bookings
+      tags:
+      - Bookings
+      x-accepts: application/json
+    post:
+      description: Create a new booking.
+      operationId: post-booking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_booking_request'
+        description: Creates a new booking.
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_booking_201_response'
+          description: Booking created.
+      summary: Create a booking
+      tags:
+      - Bookings
+      x-internal: false
+      x-content-type: application/json
+      x-accepts: application/json
+  /bookings/calculate:
+    get:
+      description: Retrieve the Booking costs.
+      operationId: get-booking-calculation
+      parameters:
+      - description: ID of the class
+        explode: true
+        in: query
+        name: "filter[class]"
+        required: true
+        schema:
+          type: integer
+        style: form
+      - description: IDs of the sessions
+        explode: true
+        in: query
+        name: "filter[sessions][]"
+        required: true
+        schema:
+          items:
+            description: TODO default missing array inner type to string
+            type: string
+          type: array
+        style: form
+      - description: IDs of the students
+        explode: true
+        in: query
+        name: "filter[students][]"
+        required: true
+        schema:
+          items:
+            description: TODO default missing array inner type to string
+            type: string
+          type: array
+        style: form
+      - description: ID of the price
+        explode: true
+        in: query
+        name: "filter[price]"
+        required: true
+        schema:
+          type: integer
+        style: form
+      - description: ID of the plan
+        explode: true
+        in: query
+        name: "filter[plan]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: ID of the discount
+        explode: true
+        in: query
+        name: "filter[discount]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: ID of the voucher
+        explode: true
+        in: query
+        name: "filter[voucher]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_booking_calculation_200_response'
+          description: Returns the calculated booking costs.
+      summary: Calculate booking costs
+      tags:
+      - Bookings
+      x-accepts: application/json
+  /bookings/{bookingRef}:
+    get:
+      description: Retrieve the booking.
+      operationId: get-booking
+      parameters:
+      - explode: false
+        in: path
+        name: bookingRef
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_booking_201_response'
+          description: Returns the Booking object.
+        "404":
+          description: Booking not found.
+      summary: Get a booking
+      tags:
+      - Bookings
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: bookingRef
+      required: true
+      schema:
+        type: string
+      style: simple
+  /bookings/{bookingRef}/pay:
+    parameters:
+    - explode: false
+      in: path
+      name: bookingRef
+      required: true
+      schema:
+        type: string
+      style: simple
+    post:
+      description: Pay a booking.
+      operationId: post-pay-booking
+      parameters:
+      - explode: false
+        in: path
+        name: bookingRef
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_pay_booking_request'
+        description: Pays for a booking.
+      responses:
+        "204":
+          description: No content.
+      summary: Pay booking
+      tags:
+      - Bookings
+      x-content-type: application/json
+      x-accepts: application/json
+  /payments:
+    get:
+      description: Retrieve a list of payments.
+      operationId: get-payments
+      parameters:
+      - description: ID of the organiser
+        explode: true
+        in: query
+        name: "filter[organiser]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_payments_200_response'
+          description: Returns a list of Payment objects.
+      summary: List payments
+      tags:
+      - Payments
+      x-accepts: application/json
+  /subscriptions:
+    get:
+      description: Retrieve a list of subscriptions.
+      operationId: get-subscriptions
+      parameters:
+      - description: ID of the organiser
+        explode: true
+        in: query
+        name: "filter[organiser]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: ID of the student
+        explode: true
+        in: query
+        name: "filter[student]"
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_subscriptions_200_response'
+          description: Returns a list of Subscription objects.
+      summary: List subscriptions
+      tags:
+      - Subscriptions
+      x-accepts: application/json
+  /subscriptions/{subscriptionId}/activate:
+    parameters:
+    - explode: false
+      in: path
+      name: subscriptionId
+      required: true
+      schema:
+        type: string
+      style: simple
+    post:
+      description: Activate a subscription.
+      operationId: post-activate-subscription
+      parameters:
+      - explode: false
+        in: path
+        name: subscriptionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        description: Activates a subscription.
+      responses:
+        "204":
+          description: No content.
+      summary: Activate subscription
+      tags:
+      - Subscriptions
+      x-accepts: application/json
+  /subscriptions/{subscriptionId}/pay:
+    parameters:
+    - explode: false
+      in: path
+      name: subscriptionId
+      required: true
+      schema:
+        type: string
+      style: simple
+    post:
+      description: Pay a subscription.
+      operationId: post-pay-subscription
+      parameters:
+      - explode: false
+        in: path
+        name: subscriptionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_pay_booking_request'
+        description: Pays for a subscription.
+      responses:
+        "204":
+          description: No content.
+      summary: Pay subscription
+      tags:
+      - Subscriptions
+      x-content-type: application/json
+      x-accepts: application/json
+  /setup-intents:
+    post:
+      description: Create a new setup intent.
+      operationId: post-setup-intent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_setup_intent_request'
+        description: Creates a new setup intent on Stripe.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_setup_intent_200_response'
+          description: Setup intent created.
+      summary: Create a setup intent
+      tags:
+      - Setup Intents
+      x-internal: false
+      x-content-type: application/json
+      x-accepts: application/json
+  /metics/{domain}/{metric}:
+    get:
+      description: Retrieve the metric.
+      operationId: get-metric
+      parameters:
+      - description: ID of the organiser
+        explode: true
+        in: query
+        name: club_id
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: Date range
+        explode: true
+        in: query
+        name: "filter[date_range]"
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: path
+        name: domain
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: metric
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_metric_200_response'
+          description: Returns the trend or value metric.
+        "404":
+          description: Booking not found.
+      summary: Get a metric
+      tags:
+      - Metrics
+      x-accepts: application/json
+    parameters:
+    - explode: false
+      in: path
+      name: domain
+      required: true
+      schema:
+        type: string
+      style: simple
+    - explode: false
+      in: path
+      name: metric
+      required: true
+      schema:
+        type: string
+      style: simple
 components:
-  examples:
-    ticketCreateAsteo:
-      summary: Create a ticket in Asteo FD instance
-      value:
-        baseTroubleTicketState: OPENACTIVE
-        mirrorKey: AS-5000
-        customerTroubleNum: O06999999999
-        dialog: Ticket from API
-        troubleType: Question
-        troubleDescription: This the detailed information.
-        troubleDetectionTime: 2023-07-20T00:00:00
-        preferredPriority: 1
-        troubledObject: Afected
-        clearancePerson: Remote Agent
-        homeID: "01234"
-        gescal37ID: Gescal37
-        wh1Parameter: Red
-        wh2Parameter: Additional information
-        wh3Parameter: Additional information
-        wh4Parameter: Additional information
-        wh5Parameter: Additional information
-        customer: 10
-        attachments:
-        - content: ZmlsZSBudW1iZXIgMQ==
-          mimeType: text/plain
-          name: file1.txt
-        - content: ZmlsZSBudW1iZXIgMQ==
-          mimeType: text/plain
-          name: file2.txt
-    ticketCreateRedAberta:
-      summary: Create a ticket in Red Aberta FD instance
-      value:
-        baseTroubleTicketState: OPENACTIVE
-        mirrorKey: RED-5001
-        customerTroubleNum: O15999999999
-        dialog: Ticket from API
-        troubleType: Question
-        troubleDescription: This the detailed information.
-        troubleDetectionTime: 2023-07-20T00:00:00
-        preferredPriority: 1
-        troubledObject: Afected
-        clearancePerson: Remote Agent
-        homeID: "01234"
-        gescal37ID: Gescal37
-        wh1Parameter: Red
-        wh2Parameter: Additional information
-        wh3Parameter: Additional information
-        wh4Parameter: Additional information
-        wh5Parameter: Additional information
-        customer: 10
-        attachments:
-        - content: ZmlsZSBudW1iZXIgMQ==
-          mimeType: text/plain
-          name: file1.txt
-        - content: ZmlsZSBudW1iZXIgMQ==
-          mimeType: text/plain
-          name: file2.txt
-    ticketCreateFictional:
-      summary: Create a ticket from Fictional IUA
-      value:
-        baseTroubleTicketState: OPENACTIVE
-        mirrorKey: RED-5001
-        customerTroubleNum: X99999999999
-        dialog: Ticket from API
-        troubleType: Question
-        troubleDescription: This the detailed information.
-        troubleDetectionTime: 2023-07-20T00:00:00
-        preferredPriority: 1
-        troubledObject: Afected
-        clearancePerson: Remote Agent
-        homeID: XAS88840049000000000000000000000000772
-        gescal37ID: Gescal37
-        wh1Parameter: Red
-        wh2Parameter: Additional information
-        wh3Parameter: Additional information
-        wh4Parameter: Additional information
-        wh5Parameter: Additional information
-        customer: 10
-    tuRejectCancellation:
-      summary: TU rejects cancellation request
-      value:
-        baseTroubleTicketState: OPENACTIVE
-        primaryKey: AS-13
-        mirrorKey: RED-5001
-        dialog: This will be inserted as a Note in FD.
-        clearancePerson: Remote Agent
-    tuRejectResolution:
-      summary: TU rejects ticket resolution
-      value:
-        baseTroubleTicketState: OPENACTIVE
-        primaryKey: AS-13
-        mirrorKey: RED-5001
-        dialog: Write here the detailed information about the reject ticket resolution.
-    tuSendInformation:
-      summary: TU send additional information
-      value:
-        baseTroubleTicketState: OPENACTIVE
-        primaryKey: AS-13
-        mirrorKey: RED-5001
-        dialog: Write here iformation about the files.
-        attachments:
-        - content: ZmlsZSBudW1iZXIgMQ==
-          mimeType: text/plain
-          name: file1.txt
-        - content: ZmlsZSBudW1iZXIgMQ==
-          mimeType: text/plain
-          name: file2.txt
-    tuClose:
-      summary: TU close the ticket
-      value:
-        baseTroubleTicketState: CLOSED
-        primaryKey: AS-13
-        mirrorKey: RED-5001
-        dialog: The ticket was closed.
-    tuSendInformationNoChangeStatus:
-      summary: TU send additional information without status change
-      value:
-        primaryKey: AS-13
-        mirrorKey: RED-5001
-        dialog: Write here iformation about the files.
-        attachments:
-        - content: ZmlsZSBudW1iZXIgMQ==
-          mimeType: text/plain
-          name: file1.txt
-        - content: ZmlsZSBudW1iZXIgMQ==
-          mimeType: text/plain
-          name: file2.txt
-    tuCancel:
-      summary: TU cancel the ticket
-      value:
-        baseTroubleTicketState: CLOSED.CANCELED
-        primaryKey: AS-13
-        mirrorKey: RED-5001
-        dialog: The ticket was canceled.
-    toRequestInformation:
-      summary: TO request additional information
-      value:
-        baseTroubleTicketState: DEFERRED.AWAITING-INFORMATION
-        primaryKey: AS-13
-        mirrorKey: RED-5001
-        dialog: We need more information.
-    toRequestCancelation:
-      summary: TO request cancelation
-      value:
-        baseTroubleTicketState: DEFERRED.AWAITING-CANCELATION
-        primaryKey: AS-13
-        mirrorKey: RED-5001
-        dialog: We want to cancel the ticket.
-    toResolve:
-      summary: TO resolve the ticket
-      value:
-        baseTroubleTicketState: CLEARED
-        primaryKey: AS-13
-        mirrorKey: RED-5001
-        dialog: We resolved the ticket.
-    illegalArgumentException:
-      summary: Validation error
-      value:
-        illegalArgumentException: "Required fields: mirrorKey, baseTroubleTicketState"
-    remoteException:
-      summary: Save error
-      value:
-        remoteException: "Could not save the entity: any reason"
-  responses:
-    unauthorized:
-      description: Unauthorized
-    badRequest:
+  parameters: {}
+  requestBodies:
+    Register:
       content:
         application/json:
           examples:
-            illegalArgumentException:
-              $ref: '#/components/examples/illegalArgumentException'
-            remoteException:
-              $ref: '#/components/examples/remoteException'
+            Example 1:
+              value:
+                first_name: Jim
+                last_name: Brown
+                email: jim@thebrowns.com
+                password: password
+                password_confirmation: password
+                telephone: "01913334444"
+                terms: true
+                device_name: Device
           schema:
-            oneOf:
-            - $ref: '#/components/schemas/illegalArgumentException'
-            - $ref: '#/components/schemas/remoteException'
-      description: Bad request. An error occurred when send request.
-    ticketCreated:
+            $ref: '#/components/schemas/post_register_request'
+      description: Creates and authenticates a new User and generates a new Token.
+    Token:
+      content:
+        application/json:
+          examples:
+            Example 1:
+              value:
+                email: jim@thebrowns.com
+                password: password
+                device_name: Device
+          schema:
+            $ref: '#/components/schemas/post_token_request'
+      description: Authenticates the User credentials and generates a new Token.
+    ForgotPassword:
+      content:
+        application/json:
+          examples:
+            Example 1:
+              value:
+                email: jim@thebrowns.com
+          schema:
+            $ref: '#/components/schemas/post_forgot_password_request'
+      description: Sends a new password reset email.
+    ResetPassword:
+      content:
+        application/json:
+          examples:
+            Example 1:
+              value:
+                token: abc123
+                email: jim@thebrowns.com
+                password: password
+                password_confirmation: password
+          schema:
+            $ref: '#/components/schemas/post_reset_password_request'
+      description: Resets the User password.
+  responses:
+    Token:
+      content:
+        application/json:
+          examples:
+            Example 1:
+              value:
+                token: 1|t0k3n
+          schema:
+            properties:
+              token:
+                type: string
+      description: Returns a token string.
+    User:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ticketKeys'
-      description: The ticket has been created successfully.
-    ticketUpdated:
+            properties:
+              data:
+                $ref: '#/components/schemas/User'
+      description: Returns a User object.
+    Status:
       content:
         application/json:
+          examples:
+            Example 1:
+              value:
+                status: We have emailed your password reset link.
+            Example 2:
+              value:
+                status: Your password has been reset.
           schema:
-            $ref: '#/components/schemas/updateTicket'
-      description: The ticket has been updated successfully.
+            properties:
+              status:
+                type: string
+      description: Returns a status string.
   schemas:
-    ticketId:
+    Booking:
+      example:
+        venue_name: venue_name
+        teacher_name: teacher_name
+        class_id: 5
+        student_name: student_name
+        ref: ref
+        zoom_password: zoom_password
+        balance: 7
+        last_session: 2000-01-23T04:56:07.000+00:00
+        next_session: 2000-01-23T04:56:07.000+00:00
+        organiser_id: 1
+        processing_payments_count: 3
+        id: 0
+        net: 5
+        credit: 9
+        class_name: class_name
+        class:
+          venue_name: venue_name
+          session_cost: 1
+          trial_allowed: true
+          description: description
+          invited_waitees_count: 9
+          age_range: age_range
+          spaces_count: 7
+          teacher: teacher
+          next_session: 2000-01-23T04:56:07.000+00:00
+          activity_id: 6
+          organiser_id: 2
+          organiser_class_image: organiser_class_image
+          term: term
+          id: 0
+          trial_cost: 5
+          ability: Beginner
+          venue_id: 5
+          image: image
+          sessions:
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          sell: true
+          next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+          stage: stage
+          organiser_name: organiser_name
+          name: name
+          stage_class_image: stage_class_image
+        payment_method: card
+        sessions:
+        - attended: true
+          date_time: 2000-01-23T04:56:07.000+00:00
+          session:
+            spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          absent: true
+          cancelled: true
+          id: 4
+        - attended: true
+          date_time: 2000-01-23T04:56:07.000+00:00
+          session:
+            spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          absent: true
+          cancelled: true
+          id: 4
+        gross: 2
+        student_id: 6
+        next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+        organiser_name: organiser_name
+        zoom_id: zoom_id
+        payment_method_label: payment_method_label
+        price_type: price_type
+        successful_payments_count: 2
       properties:
-        mirrorKey:
-          type: string
-    ticketPrimaryKey:
-      properties:
-        primaryKey:
-          description: Primary key from TO system.
-          type: string
-    ticketKeys:
-      allOf:
-      - $ref: '#/components/schemas/ticketId'
-      - $ref: '#/components/schemas/ticketPrimaryKey'
-    ticketBase:
-      properties:
-        dialog:
-          type: string
-        troubleType:
-          type: string
-        troubleDescription:
-          type: string
-        preferredPriority:
+        id:
           type: integer
-        customerTroubleNum:
+        ref:
           type: string
-        wh1Parameter:
+        student_id:
+          type: integer
+        student_name:
           type: string
-    ticket:
-      allOf:
-      - $ref: '#/components/schemas/ticketId'
-      - $ref: '#/components/schemas/ticketBase'
-      - properties:
-          baseTroubleTicketState:
-            type: string
-          troubleDetectionTime:
-            description: Issue dectention datetime.
-            format: date-time
-            type: string
-          troubledObject:
-            type: string
-          homeID:
-            description: Client home identifier. This field is required when issue
-              type is client and IUA is not ready.
-            maxLength: 255
-            type: string
-          wh2Parameter:
-            description: Additional information.
-            maxLength: 255
-            type: string
-          wh3Parameter:
-            description: Additional information.
-            maxLength: 255
-            type: string
-          wh4Parameter:
-            description: Additional information.
-            maxLength: 255
-            type: string
-          wh5Parameter:
-            description: Additional information.
-            maxLength: 255
-            type: string
-          customer:
-            type: string
-          attachments:
-            items:
-              $ref: '#/components/schemas/ticket_allOf_attachments_inner'
-            type: array
-    updateTicket:
-      allOf:
-      - $ref: '#/components/schemas/ticketKeys'
-      - $ref: '#/components/schemas/ticketBase'
-    illegalArgumentException:
-      description: "Exception for wrong value if any of the fields of the received\
-        \ ticket has an invalid value, a required field is missing, etc."
+        organiser_id:
+          type: integer
+        organiser_name:
+          type: string
+        class_id:
+          type: integer
+        class_name:
+          type: string
+        zoom_id:
+          type: string
+        zoom_password:
+          type: string
+        teacher_name:
+          type: string
+        venue_name:
+          type: string
+        net:
+          type: integer
+        gross:
+          type: integer
+        balance:
+          type: integer
+        credit:
+          type: integer
+        payment_method:
+          enum:
+          - card
+          - subscription
+          type: string
+        payment_method_label:
+          type: string
+        price_type:
+          type: string
+        next_session:
+          format: date-time
+          type: string
+        next_session_ends_at:
+          format: date-time
+          type: string
+        last_session:
+          format: date-time
+          type: string
+        processing_payments_count:
+          type: integer
+        successful_payments_count:
+          type: integer
+        sessions:
+          items:
+            $ref: '#/components/schemas/BookingSession'
+          type: array
+        class:
+          $ref: '#/components/schemas/Class'
+      title: Booking
+    BookingSession:
+      example:
+        attended: true
+        date_time: 2000-01-23T04:56:07.000+00:00
+        session:
+          spaces_count: 2
+          teacher_name: teacher_name
+          date_time: 2000-01-23T04:56:07.000+00:00
+          moved_from: 2000-01-23T04:56:07.000+00:00
+          cancelled: true
+          id: 3
+        absent: true
+        cancelled: true
+        id: 4
       properties:
-        illegalArgumentException:
+        id:
+          type: integer
+        date_time:
+          format: date-time
           type: string
-    remoteException:
-      description: "Exception of the real TT system; communication errors with the\
-        \ same, etc."
+        attended:
+          type: boolean
+        absent:
+          type: boolean
+        cancelled:
+          type: boolean
+        session:
+          $ref: '#/components/schemas/Session'
+      title: BookingSession
+    Class:
+      example:
+        venue_name: venue_name
+        session_cost: 1
+        trial_allowed: true
+        description: description
+        invited_waitees_count: 9
+        age_range: age_range
+        spaces_count: 7
+        teacher: teacher
+        next_session: 2000-01-23T04:56:07.000+00:00
+        activity_id: 6
+        organiser_id: 2
+        organiser_class_image: organiser_class_image
+        term: term
+        id: 0
+        trial_cost: 5
+        ability: Beginner
+        venue_id: 5
+        image: image
+        sessions:
+        - spaces_count: 2
+          teacher_name: teacher_name
+          date_time: 2000-01-23T04:56:07.000+00:00
+          moved_from: 2000-01-23T04:56:07.000+00:00
+          cancelled: true
+          id: 3
+        - spaces_count: 2
+          teacher_name: teacher_name
+          date_time: 2000-01-23T04:56:07.000+00:00
+          moved_from: 2000-01-23T04:56:07.000+00:00
+          cancelled: true
+          id: 3
+        sell: true
+        next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+        stage: stage
+        organiser_name: organiser_name
+        name: name
+        stage_class_image: stage_class_image
       properties:
-        remoteException:
+        id:
+          type: integer
+        activity_id:
+          type: integer
+        name:
           type: string
-    ticket_allOf_attachments_inner:
-      description: An attachment.
+        image:
+          type: string
+        description:
+          type: string
+        session_cost:
+          type: integer
+        trial_allowed:
+          type: boolean
+        trial_cost:
+          type: integer
+        age_range:
+          type: string
+        sell:
+          type: boolean
+        term:
+          type: string
+        teacher:
+          type: string
+        venue_id:
+          type: integer
+        venue_name:
+          type: string
+        organiser_id:
+          type: integer
+        organiser_name:
+          type: string
+        organiser_class_image:
+          type: string
+        stage:
+          type: string
+        stage_class_image:
+          type: string
+        ability:
+          enum:
+          - Beginner
+          - Intermediate
+          - Advanced
+          type: string
+        spaces_count:
+          type: integer
+        invited_waitees_count:
+          type: integer
+        next_session:
+          format: date-time
+          type: string
+        next_session_ends_at:
+          format: date-time
+          type: string
+        sessions:
+          items:
+            $ref: '#/components/schemas/Session'
+          type: array
+      title: Class
+    Discount:
+      example:
+        description: description
+        percent_off: 6
+        id: 0
       properties:
-        content:
-          description: "The actual contents of the attachment object, if embedded,\
-            \ encoded as base64."
+        id:
+          type: integer
+        description:
           type: string
-        mimeType:
-          description: "Attachment mime type such as extension file for video, picture\
-            \ and document."
+        percent_off:
+          type: integer
+      title: Discount
+    Link:
+      example:
+        session_reminders: true
+        balance: 6
+        organiser_name: organiser_name
+        user_id: user_id
+        user_name: user_name
+        card_last_four: card_last_four
+        organiser_id: 0
+        bacs_last_four: bacs_last_four
+        connected_at: 2000-01-23T04:56:07.000+00:00
+        photo_consent: true
+        marketing_consent: true
+        stripe_id: stripe_id
+      properties:
+        organiser_id:
+          type: integer
+        organiser_name:
+          type: string
+        user_id:
+          type: string
+        user_name:
+          type: string
+        stripe_id:
+          type: string
+        balance:
+          type: integer
+        card_last_four:
+          type: string
+        bacs_last_four:
+          type: string
+        marketing_consent:
+          type: boolean
+        photo_consent:
+          type: boolean
+        session_reminders:
+          type: boolean
+        connected_at:
+          format: date-time
+          type: string
+      title: Link
+    Order:
+      example:
+        id: 1
+        product_name: product_name
+      properties:
+        id:
+          type: integer
+        product_name:
+          type: string
+      title: Order
+    Organiser:
+      example:
+        session_reminders: true
+        website: website
+        icon: icon
+        description: description
+        handle: handle
+        telephone: telephone
+        connected_at: 2000-01-23T04:56:07.000+00:00
+        photo_consent: photo_consent
+        vouchers:
+        - cost: 2
+          name: perSession
+          id: 5
+        - cost: 2
+          name: perSession
+          id: 5
+        absorb_fee: true
+        terms_and_conditions: terms_and_conditions
+        class_image: class_image
+        waiting_list_settings:
+          notes: true
+          limit_days: true
+          enabled: true
+        terms:
+        - name: name
+          id: 6
+        - name: name
+          id: 6
+        booking_settings:
+          medical: true
+          notes: true
+          referral: true
+          loco_parentis: true
+          stage: true
+          dob: true
+          due_date: true
+          same_day: true
+          space: true
+        privacy_policy: privacy_policy
+        name: name
+        stages:
+        - name: name
+          id: 5
+        - name: name
+          id: 5
+        venues:
+        - parking: parking
+          changing_facilities: changing_facilities
+          image: image
+          address: address
+          depth: depth
+          name: name
+          information: information
+          id: 1
+          landmarks: landmarks
+          dimensions: dimensions
+        - parking: parking
+          changing_facilities: changing_facilities
+          image: image
+          address: address
+          depth: depth
+          name: name
+          information: information
+          id: 1
+          landmarks: landmarks
+          dimensions: dimensions
+        id: 0
+        strapline: strapline
+        email: email
+        stripe_id: stripe_id
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        icon:
+          type: string
+        class_image:
+          type: string
+        strapline:
+          type: string
+        description:
+          type: string
+        handle:
+          type: string
+        email:
+          type: string
+        telephone:
+          type: string
+        website:
+          type: string
+        absorb_fee:
+          type: boolean
+        session_reminders:
+          type: boolean
+        stripe_id:
+          type: string
+        booking_settings:
+          $ref: '#/components/schemas/Organiser_booking_settings'
+        waiting_list_settings:
+          $ref: '#/components/schemas/Organiser_waiting_list_settings'
+        connected_at:
+          format: date-time
+          type: string
+        terms_and_conditions:
+          type: string
+        privacy_policy:
+          type: string
+        photo_consent:
+          type: string
+        terms:
+          items:
+            $ref: '#/components/schemas/Term'
+          type: array
+        venues:
+          items:
+            $ref: '#/components/schemas/Venue'
+          type: array
+        stages:
+          items:
+            $ref: '#/components/schemas/Stage'
+          type: array
+        vouchers:
+          items:
+            $ref: '#/components/schemas/Product'
+          type: array
+      title: Organiser
+    Payment:
+      example:
+        amount: 6
+        booking:
+          venue_name: venue_name
+          teacher_name: teacher_name
+          class_id: 5
+          student_name: student_name
+          ref: ref
+          zoom_password: zoom_password
+          balance: 7
+          last_session: 2000-01-23T04:56:07.000+00:00
+          next_session: 2000-01-23T04:56:07.000+00:00
+          organiser_id: 1
+          processing_payments_count: 3
+          id: 0
+          net: 5
+          credit: 9
+          class_name: class_name
+          class:
+            venue_name: venue_name
+            session_cost: 1
+            trial_allowed: true
+            description: description
+            invited_waitees_count: 9
+            age_range: age_range
+            spaces_count: 7
+            teacher: teacher
+            next_session: 2000-01-23T04:56:07.000+00:00
+            activity_id: 6
+            organiser_id: 2
+            organiser_class_image: organiser_class_image
+            term: term
+            id: 0
+            trial_cost: 5
+            ability: Beginner
+            venue_id: 5
+            image: image
+            sessions:
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            sell: true
+            next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+            stage: stage
+            organiser_name: organiser_name
+            name: name
+            stage_class_image: stage_class_image
+          payment_method: card
+          sessions:
+          - attended: true
+            date_time: 2000-01-23T04:56:07.000+00:00
+            session:
+              spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            absent: true
+            cancelled: true
+            id: 4
+          - attended: true
+            date_time: 2000-01-23T04:56:07.000+00:00
+            session:
+              spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            absent: true
+            cancelled: true
+            id: 4
+          gross: 2
+          student_id: 6
+          next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+          organiser_name: organiser_name
+          zoom_id: zoom_id
+          payment_method_label: payment_method_label
+          price_type: price_type
+          successful_payments_count: 2
+        organiser_name: organiser_name
+        student:
+          medical: medical
+          dob: 2000-01-23
+          due_date: 2000-01-23
+          last_name: last_name
+          id: 0
+          first_name: first_name
+          relation: relation
+        id: 0
+        subscription:
+          stripe_active: true
+          student_name: student_name
+          amount: 7
+          starts_at: 2000-01-23T04:56:07.000+00:00
+          goal: 2
+          organiser_id: 5
+          trial_ends_at: 2000-01-23T04:56:07.000+00:00
+          id: 5
+          outstanding_payments_count: 9
+          plan_name: plan_name
+          payment_method: payment_method
+        payment_date: 2000-01-23T04:56:07.000+00:00
+        status: Successful
+        order:
+          id: 1
+          product_name: product_name
+      properties:
+        id:
+          type: integer
+        payment_date:
+          format: date-time
+          type: string
+        amount:
+          type: integer
+        status:
+          enum:
+          - Successful
+          - Failed
+          - Refunded
+          type: string
+        organiser_name:
+          type: string
+        booking:
+          $ref: '#/components/schemas/Booking'
+        order:
+          $ref: '#/components/schemas/Order'
+        student:
+          $ref: '#/components/schemas/Student'
+        subscription:
+          $ref: '#/components/schemas/Subscription'
+      title: Payment
+    Plan:
+      example:
+        gross: 2
+        id: 5
+        net: 5
+      properties:
+        id:
+          type: integer
+        net:
+          type: integer
+        gross:
+          type: integer
+      title: Plan
+    Price:
+      example:
+        id: 0
+        session_selection_type: fixedStart
+        type: perSession
+        fixed_cost: 6
+        plan:
+          gross: 2
+          id: 5
+          net: 5
+        payment_method: card
+        session_limit: 1
+      properties:
+        id:
+          type: integer
+        type:
+          enum:
+          - perSession
+          - perTrial
+          - fixedCost
+          type: string
+        payment_method:
+          enum:
+          - card
+          - subscription
+          type: string
+        fixed_cost:
+          type: integer
+        session_limit:
+          type: integer
+        session_selection_type:
+          enum:
+          - fixedStart
+          - flexiStart
+          - cherryPick
+          type: string
+        plan:
+          $ref: '#/components/schemas/Plan'
+      title: Price
+    Product:
+      example:
+        cost: 2
+        name: perSession
+        id: 5
+      properties:
+        id:
+          type: integer
+        name:
+          enum:
+          - perSession
+          - perTrial
+          - fixedCost
+          type: string
+        cost:
+          type: integer
+      title: Product
+    Session:
+      example:
+        spaces_count: 2
+        teacher_name: teacher_name
+        date_time: 2000-01-23T04:56:07.000+00:00
+        moved_from: 2000-01-23T04:56:07.000+00:00
+        cancelled: true
+        id: 3
+      properties:
+        id:
+          type: integer
+        date_time:
+          format: date-time
+          type: string
+        moved_from:
+          format: date-time
+          type: string
+        teacher_name:
+          type: string
+        cancelled:
+          type: boolean
+        spaces_count:
+          type: integer
+      title: Session
+    Stage:
+      example:
+        name: name
+        id: 5
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      title: Stage
+    Student:
+      example:
+        medical: medical
+        dob: 2000-01-23
+        due_date: 2000-01-23
+        last_name: last_name
+        id: 0
+        first_name: first_name
+        relation: relation
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        dob:
+          format: date
+          type: string
+        due_date:
+          format: date
+          type: string
+        medical:
+          type: string
+        relation:
+          type: string
+      title: Student
+      x-internal: false
+    StudentGoal:
+      example:
+        name: name
+        achieved_at: 2000-01-23T04:56:07.000+00:00
+        id: 6
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        achieved_at:
+          format: date-time
+          type: string
+      title: StudentGoal
+    StudentStage:
+      example:
+        organiser_name: organiser_name
+        name: name
+        active: true
+        id: 0
+        awarded_on: 2000-01-23
+        goals:
+        - name: name
+          achieved_at: 2000-01-23T04:56:07.000+00:00
+          id: 6
+        - name: name
+          achieved_at: 2000-01-23T04:56:07.000+00:00
+          id: 6
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        organiser_name:
+          type: string
+        active:
+          type: boolean
+        awarded_on:
+          format: date
+          type: string
+        goals:
+          items:
+            $ref: '#/components/schemas/StudentGoal'
+          type: array
+      title: StudentStage
+    Subscription:
+      example:
+        stripe_active: true
+        student_name: student_name
+        amount: 7
+        starts_at: 2000-01-23T04:56:07.000+00:00
+        goal: 2
+        organiser_id: 5
+        trial_ends_at: 2000-01-23T04:56:07.000+00:00
+        id: 5
+        outstanding_payments_count: 9
+        plan_name: plan_name
+        payment_method: payment_method
+      properties:
+        id:
+          type: integer
+        organiser_id:
+          type: integer
+        plan_name:
+          type: string
+        student_name:
+          type: string
+        payment_method:
+          type: string
+        goal:
+          type: integer
+        amount:
+          type: integer
+        stripe_active:
+          type: boolean
+        starts_at:
+          format: date-time
+          type: string
+        trial_ends_at:
+          format: date-time
+          type: string
+        outstanding_payments_count:
+          type: integer
+      title: Subscription
+    Term:
+      example:
+        name: name
+        id: 6
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      title: Term
+    User:
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        telephone:
+          type: string
+        street:
+          type: string
+        town:
+          type: string
+        region:
+          type: string
+        postcode:
+          type: string
+        emergency_name:
+          type: string
+        emergency_telephone:
+          type: string
+        emergency_relationship:
+          type: string
+        activated_at:
+          format: date-time
+          type: string
+      title: User
+      x-internal: false
+    Venue:
+      example:
+        parking: parking
+        changing_facilities: changing_facilities
+        image: image
+        address: address
+        depth: depth
+        name: name
+        information: information
+        id: 1
+        landmarks: landmarks
+        dimensions: dimensions
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        image:
+          type: string
+        address:
+          type: string
+        information:
+          type: string
+        parking:
+          type: string
+        landmarks:
+          type: string
+        dimensions:
+          type: string
+        depth:
+          type: string
+        changing_facilities:
+          type: string
+      title: Venue
+    Voucher:
+      example:
+        remaining_value: 1
+        id: 0
+        value: 6
+      properties:
+        id:
+          type: integer
+        value:
+          type: integer
+        remaining_value:
+          type: integer
+      title: Voucher
+    Waitee:
+      example:
+        organiser:
+          session_reminders: true
+          website: website
+          icon: icon
+          description: description
+          handle: handle
+          telephone: telephone
+          connected_at: 2000-01-23T04:56:07.000+00:00
+          photo_consent: photo_consent
+          vouchers:
+          - cost: 2
+            name: perSession
+            id: 5
+          - cost: 2
+            name: perSession
+            id: 5
+          absorb_fee: true
+          terms_and_conditions: terms_and_conditions
+          class_image: class_image
+          waiting_list_settings:
+            notes: true
+            limit_days: true
+            enabled: true
+          terms:
+          - name: name
+            id: 6
+          - name: name
+            id: 6
+          booking_settings:
+            medical: true
+            notes: true
+            referral: true
+            loco_parentis: true
+            stage: true
+            dob: true
+            due_date: true
+            same_day: true
+            space: true
+          privacy_policy: privacy_policy
+          name: name
+          stages:
+          - name: name
+            id: 5
+          - name: name
+            id: 5
+          venues:
+          - parking: parking
+            changing_facilities: changing_facilities
+            image: image
+            address: address
+            depth: depth
+            name: name
+            information: information
+            id: 1
+            landmarks: landmarks
+            dimensions: dimensions
+          - parking: parking
+            changing_facilities: changing_facilities
+            image: image
+            address: address
+            depth: depth
+            name: name
+            information: information
+            id: 1
+            landmarks: landmarks
+            dimensions: dimensions
+          id: 0
+          strapline: strapline
+          email: email
+          stripe_id: stripe_id
+        expired: true
+        invited_at: 2000-01-23T04:56:07.000+00:00
+        id: 0
+        invite_code: invite_code
+        class:
+          venue_name: venue_name
+          session_cost: 1
+          trial_allowed: true
+          description: description
+          invited_waitees_count: 9
+          age_range: age_range
+          spaces_count: 7
+          teacher: teacher
+          next_session: 2000-01-23T04:56:07.000+00:00
+          activity_id: 6
+          organiser_id: 2
+          organiser_class_image: organiser_class_image
+          term: term
+          id: 0
+          trial_cost: 5
+          ability: Beginner
+          venue_id: 5
+          image: image
+          sessions:
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          sell: true
+          next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+          stage: stage
+          organiser_name: organiser_name
+          name: name
+          stage_class_image: stage_class_image
+      properties:
+        id:
+          type: integer
+        invite_code:
+          type: string
+        invited_at:
+          format: date-time
+          type: string
+        expired:
+          type: boolean
+        organiser:
+          $ref: '#/components/schemas/Organiser'
+        class:
+          $ref: '#/components/schemas/Class'
+      title: Waitee
+    post_register_request:
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        password_confirmation:
+          type: string
+        telephone:
+          type: string
+        terms:
+          type: boolean
+        device_name:
+          type: string
+      required:
+      - device_name
+      - email
+      - first_name
+      - last_name
+      - password
+      - password_confirmation
+      - telephone
+      - terms
+    post_token_request:
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        device_name:
+          type: string
+      required:
+      - device_name
+      - email
+      - password
+    post_forgot_password_request:
+      properties:
+        email:
+          type: string
+      required:
+      - email
+    post_reset_password_request:
+      properties:
+        token:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        password_confirmation:
+          type: string
+      required:
+      - email
+      - password
+      - password_confirmation
+      - token
+    post_activate_request:
+      properties:
+        terms:
+          items:
+            type: boolean
+          type: array
+        marketing:
+          items:
+            type: boolean
+          type: array
+    post_connect_accept_request:
+      properties:
+        terms:
+          type: boolean
+        marketing:
+          type: boolean
+    get_link_200_response:
+      example:
+        data:
+        - session_reminders: true
+          balance: 6
+          organiser_name: organiser_name
+          user_id: user_id
+          user_name: user_name
+          card_last_four: card_last_four
+          organiser_id: 0
+          bacs_last_four: bacs_last_four
+          connected_at: 2000-01-23T04:56:07.000+00:00
+          photo_consent: true
+          marketing_consent: true
+          stripe_id: stripe_id
+        - session_reminders: true
+          balance: 6
+          organiser_name: organiser_name
+          user_id: user_id
+          user_name: user_name
+          card_last_four: card_last_four
+          organiser_id: 0
+          bacs_last_four: bacs_last_four
+          connected_at: 2000-01-23T04:56:07.000+00:00
+          photo_consent: true
+          marketing_consent: true
+          stripe_id: stripe_id
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Link'
+          type: array
+    patch_details_request:
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        telephone:
+          type: string
+        street:
+          type: string
+        town:
+          type: string
+        region:
+          type: string
+        postcode:
+          type: string
+        medical:
+          type: string
+      required:
+      - email
+      - first_name
+      - last_name
+      - telephone
+    patch_emergency_contact_request:
+      properties:
+        name:
+          type: string
+        telephone:
+          type: string
+        relationship:
+          type: string
+    patch_password_request:
+      properties:
+        current_password:
+          type: string
+        new_password:
+          type: string
+        new_password_confirmation:
+          type: string
+      required:
+      - current_password
+      - new_password
+      - new_password_confirmation
+    post_attach_payment_method_request:
+      properties:
+        organiser_id:
+          type: integer
+        payment_method:
+          type: string
+      required:
+      - organiser_id
+      - payment_method
+    patch_marketing_consent_request:
+      properties:
+        organiser_id:
+          type: integer
+      required:
+      - organiser_id
+    get_organisers_200_response:
+      example:
+        data:
+        - session_reminders: true
+          website: website
+          icon: icon
+          description: description
+          handle: handle
+          telephone: telephone
+          connected_at: 2000-01-23T04:56:07.000+00:00
+          photo_consent: photo_consent
+          vouchers:
+          - cost: 2
+            name: perSession
+            id: 5
+          - cost: 2
+            name: perSession
+            id: 5
+          absorb_fee: true
+          terms_and_conditions: terms_and_conditions
+          class_image: class_image
+          waiting_list_settings:
+            notes: true
+            limit_days: true
+            enabled: true
+          terms:
+          - name: name
+            id: 6
+          - name: name
+            id: 6
+          booking_settings:
+            medical: true
+            notes: true
+            referral: true
+            loco_parentis: true
+            stage: true
+            dob: true
+            due_date: true
+            same_day: true
+            space: true
+          privacy_policy: privacy_policy
+          name: name
+          stages:
+          - name: name
+            id: 5
+          - name: name
+            id: 5
+          venues:
+          - parking: parking
+            changing_facilities: changing_facilities
+            image: image
+            address: address
+            depth: depth
+            name: name
+            information: information
+            id: 1
+            landmarks: landmarks
+            dimensions: dimensions
+          - parking: parking
+            changing_facilities: changing_facilities
+            image: image
+            address: address
+            depth: depth
+            name: name
+            information: information
+            id: 1
+            landmarks: landmarks
+            dimensions: dimensions
+          id: 0
+          strapline: strapline
+          email: email
+          stripe_id: stripe_id
+        - session_reminders: true
+          website: website
+          icon: icon
+          description: description
+          handle: handle
+          telephone: telephone
+          connected_at: 2000-01-23T04:56:07.000+00:00
+          photo_consent: photo_consent
+          vouchers:
+          - cost: 2
+            name: perSession
+            id: 5
+          - cost: 2
+            name: perSession
+            id: 5
+          absorb_fee: true
+          terms_and_conditions: terms_and_conditions
+          class_image: class_image
+          waiting_list_settings:
+            notes: true
+            limit_days: true
+            enabled: true
+          terms:
+          - name: name
+            id: 6
+          - name: name
+            id: 6
+          booking_settings:
+            medical: true
+            notes: true
+            referral: true
+            loco_parentis: true
+            stage: true
+            dob: true
+            due_date: true
+            same_day: true
+            space: true
+          privacy_policy: privacy_policy
+          name: name
+          stages:
+          - name: name
+            id: 5
+          - name: name
+            id: 5
+          venues:
+          - parking: parking
+            changing_facilities: changing_facilities
+            image: image
+            address: address
+            depth: depth
+            name: name
+            information: information
+            id: 1
+            landmarks: landmarks
+            dimensions: dimensions
+          - parking: parking
+            changing_facilities: changing_facilities
+            image: image
+            address: address
+            depth: depth
+            name: name
+            information: information
+            id: 1
+            landmarks: landmarks
+            dimensions: dimensions
+          id: 0
+          strapline: strapline
+          email: email
+          stripe_id: stripe_id
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Organiser'
+          type: array
+    get_organiser_200_response:
+      example:
+        data:
+          session_reminders: true
+          website: website
+          icon: icon
+          description: description
+          handle: handle
+          telephone: telephone
+          connected_at: 2000-01-23T04:56:07.000+00:00
+          photo_consent: photo_consent
+          vouchers:
+          - cost: 2
+            name: perSession
+            id: 5
+          - cost: 2
+            name: perSession
+            id: 5
+          absorb_fee: true
+          terms_and_conditions: terms_and_conditions
+          class_image: class_image
+          waiting_list_settings:
+            notes: true
+            limit_days: true
+            enabled: true
+          terms:
+          - name: name
+            id: 6
+          - name: name
+            id: 6
+          booking_settings:
+            medical: true
+            notes: true
+            referral: true
+            loco_parentis: true
+            stage: true
+            dob: true
+            due_date: true
+            same_day: true
+            space: true
+          privacy_policy: privacy_policy
+          name: name
+          stages:
+          - name: name
+            id: 5
+          - name: name
+            id: 5
+          venues:
+          - parking: parking
+            changing_facilities: changing_facilities
+            image: image
+            address: address
+            depth: depth
+            name: name
+            information: information
+            id: 1
+            landmarks: landmarks
+            dimensions: dimensions
+          - parking: parking
+            changing_facilities: changing_facilities
+            image: image
+            address: address
+            depth: depth
+            name: name
+            information: information
+            id: 1
+            landmarks: landmarks
+            dimensions: dimensions
+          id: 0
+          strapline: strapline
+          email: email
+          stripe_id: stripe_id
+      properties:
+        data:
+          $ref: '#/components/schemas/Organiser'
+    get_venues_200_response:
+      example:
+        data:
+        - parking: parking
+          changing_facilities: changing_facilities
+          image: image
+          address: address
+          depth: depth
+          name: name
+          information: information
+          id: 1
+          landmarks: landmarks
+          dimensions: dimensions
+        - parking: parking
+          changing_facilities: changing_facilities
+          image: image
+          address: address
+          depth: depth
+          name: name
+          information: information
+          id: 1
+          landmarks: landmarks
+          dimensions: dimensions
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Venue'
+          type: array
+    get_venue_200_response:
+      example:
+        data:
+          parking: parking
+          changing_facilities: changing_facilities
+          image: image
+          address: address
+          depth: depth
+          name: name
+          information: information
+          id: 1
+          landmarks: landmarks
+          dimensions: dimensions
+      properties:
+        data:
+          $ref: '#/components/schemas/Venue'
+    get_terms_200_response:
+      example:
+        data:
+        - name: name
+          id: 6
+        - name: name
+          id: 6
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Term'
+          type: array
+    get_classes_200_response:
+      example:
+        data:
+        - venue_name: venue_name
+          session_cost: 1
+          trial_allowed: true
+          description: description
+          invited_waitees_count: 9
+          age_range: age_range
+          spaces_count: 7
+          teacher: teacher
+          next_session: 2000-01-23T04:56:07.000+00:00
+          activity_id: 6
+          organiser_id: 2
+          organiser_class_image: organiser_class_image
+          term: term
+          id: 0
+          trial_cost: 5
+          ability: Beginner
+          venue_id: 5
+          image: image
+          sessions:
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          sell: true
+          next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+          stage: stage
+          organiser_name: organiser_name
+          name: name
+          stage_class_image: stage_class_image
+        - venue_name: venue_name
+          session_cost: 1
+          trial_allowed: true
+          description: description
+          invited_waitees_count: 9
+          age_range: age_range
+          spaces_count: 7
+          teacher: teacher
+          next_session: 2000-01-23T04:56:07.000+00:00
+          activity_id: 6
+          organiser_id: 2
+          organiser_class_image: organiser_class_image
+          term: term
+          id: 0
+          trial_cost: 5
+          ability: Beginner
+          venue_id: 5
+          image: image
+          sessions:
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          sell: true
+          next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+          stage: stage
+          organiser_name: organiser_name
+          name: name
+          stage_class_image: stage_class_image
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Class'
+          type: array
+    get_class_200_response:
+      example:
+        data:
+          venue_name: venue_name
+          session_cost: 1
+          trial_allowed: true
+          description: description
+          invited_waitees_count: 9
+          age_range: age_range
+          spaces_count: 7
+          teacher: teacher
+          next_session: 2000-01-23T04:56:07.000+00:00
+          activity_id: 6
+          organiser_id: 2
+          organiser_class_image: organiser_class_image
+          term: term
+          id: 0
+          trial_cost: 5
+          ability: Beginner
+          venue_id: 5
+          image: image
+          sessions:
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          - spaces_count: 2
+            teacher_name: teacher_name
+            date_time: 2000-01-23T04:56:07.000+00:00
+            moved_from: 2000-01-23T04:56:07.000+00:00
+            cancelled: true
+            id: 3
+          sell: true
+          next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+          stage: stage
+          organiser_name: organiser_name
+          name: name
+          stage_class_image: stage_class_image
+      properties:
+        data:
+          $ref: '#/components/schemas/Class'
+    get_stages_200_response:
+      example:
+        data:
+        - name: name
+          id: 5
+        - name: name
+          id: 5
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Stage'
+          type: array
+    get_activities_200_response:
+      example:
+        "1": "1"
+      properties:
+        "1":
+          type: string
+    post_waitee_request_students_inner:
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        dob:
+          format: date
+          type: string
+        medical:
+          type: string
+        stage_id:
+          type: integer
+    post_waitee_request_days_inner:
+      properties:
+        day:
+          type: string
+        time:
+          type: string
+      required:
+      - day
+    post_waitee_request:
+      properties:
+        organiser_id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        telephone:
+          type: string
+        students:
+          items:
+            $ref: '#/components/schemas/post_waitee_request_students_inner'
+          type: array
+        venues:
+          items:
+            type: integer
+          type: array
+        days:
+          items:
+            $ref: '#/components/schemas/post_waitee_request_days_inner'
+          type: array
+        notes:
+          type: string
+      required:
+      - days
+      - organiser_id
+      - students
+      - venues
+    post_waitee_200_response:
+      example:
+        data:
+        - organiser:
+            session_reminders: true
+            website: website
+            icon: icon
+            description: description
+            handle: handle
+            telephone: telephone
+            connected_at: 2000-01-23T04:56:07.000+00:00
+            photo_consent: photo_consent
+            vouchers:
+            - cost: 2
+              name: perSession
+              id: 5
+            - cost: 2
+              name: perSession
+              id: 5
+            absorb_fee: true
+            terms_and_conditions: terms_and_conditions
+            class_image: class_image
+            waiting_list_settings:
+              notes: true
+              limit_days: true
+              enabled: true
+            terms:
+            - name: name
+              id: 6
+            - name: name
+              id: 6
+            booking_settings:
+              medical: true
+              notes: true
+              referral: true
+              loco_parentis: true
+              stage: true
+              dob: true
+              due_date: true
+              same_day: true
+              space: true
+            privacy_policy: privacy_policy
+            name: name
+            stages:
+            - name: name
+              id: 5
+            - name: name
+              id: 5
+            venues:
+            - parking: parking
+              changing_facilities: changing_facilities
+              image: image
+              address: address
+              depth: depth
+              name: name
+              information: information
+              id: 1
+              landmarks: landmarks
+              dimensions: dimensions
+            - parking: parking
+              changing_facilities: changing_facilities
+              image: image
+              address: address
+              depth: depth
+              name: name
+              information: information
+              id: 1
+              landmarks: landmarks
+              dimensions: dimensions
+            id: 0
+            strapline: strapline
+            email: email
+            stripe_id: stripe_id
+          expired: true
+          invited_at: 2000-01-23T04:56:07.000+00:00
+          id: 0
+          invite_code: invite_code
+          class:
+            venue_name: venue_name
+            session_cost: 1
+            trial_allowed: true
+            description: description
+            invited_waitees_count: 9
+            age_range: age_range
+            spaces_count: 7
+            teacher: teacher
+            next_session: 2000-01-23T04:56:07.000+00:00
+            activity_id: 6
+            organiser_id: 2
+            organiser_class_image: organiser_class_image
+            term: term
+            id: 0
+            trial_cost: 5
+            ability: Beginner
+            venue_id: 5
+            image: image
+            sessions:
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            sell: true
+            next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+            stage: stage
+            organiser_name: organiser_name
+            name: name
+            stage_class_image: stage_class_image
+        - organiser:
+            session_reminders: true
+            website: website
+            icon: icon
+            description: description
+            handle: handle
+            telephone: telephone
+            connected_at: 2000-01-23T04:56:07.000+00:00
+            photo_consent: photo_consent
+            vouchers:
+            - cost: 2
+              name: perSession
+              id: 5
+            - cost: 2
+              name: perSession
+              id: 5
+            absorb_fee: true
+            terms_and_conditions: terms_and_conditions
+            class_image: class_image
+            waiting_list_settings:
+              notes: true
+              limit_days: true
+              enabled: true
+            terms:
+            - name: name
+              id: 6
+            - name: name
+              id: 6
+            booking_settings:
+              medical: true
+              notes: true
+              referral: true
+              loco_parentis: true
+              stage: true
+              dob: true
+              due_date: true
+              same_day: true
+              space: true
+            privacy_policy: privacy_policy
+            name: name
+            stages:
+            - name: name
+              id: 5
+            - name: name
+              id: 5
+            venues:
+            - parking: parking
+              changing_facilities: changing_facilities
+              image: image
+              address: address
+              depth: depth
+              name: name
+              information: information
+              id: 1
+              landmarks: landmarks
+              dimensions: dimensions
+            - parking: parking
+              changing_facilities: changing_facilities
+              image: image
+              address: address
+              depth: depth
+              name: name
+              information: information
+              id: 1
+              landmarks: landmarks
+              dimensions: dimensions
+            id: 0
+            strapline: strapline
+            email: email
+            stripe_id: stripe_id
+          expired: true
+          invited_at: 2000-01-23T04:56:07.000+00:00
+          id: 0
+          invite_code: invite_code
+          class:
+            venue_name: venue_name
+            session_cost: 1
+            trial_allowed: true
+            description: description
+            invited_waitees_count: 9
+            age_range: age_range
+            spaces_count: 7
+            teacher: teacher
+            next_session: 2000-01-23T04:56:07.000+00:00
+            activity_id: 6
+            organiser_id: 2
+            organiser_class_image: organiser_class_image
+            term: term
+            id: 0
+            trial_cost: 5
+            ability: Beginner
+            venue_id: 5
+            image: image
+            sessions:
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            sell: true
+            next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+            stage: stage
+            organiser_name: organiser_name
+            name: name
+            stage_class_image: stage_class_image
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Waitee'
+          type: array
+    get_waitee_200_response:
+      example:
+        data:
+          organiser:
+            session_reminders: true
+            website: website
+            icon: icon
+            description: description
+            handle: handle
+            telephone: telephone
+            connected_at: 2000-01-23T04:56:07.000+00:00
+            photo_consent: photo_consent
+            vouchers:
+            - cost: 2
+              name: perSession
+              id: 5
+            - cost: 2
+              name: perSession
+              id: 5
+            absorb_fee: true
+            terms_and_conditions: terms_and_conditions
+            class_image: class_image
+            waiting_list_settings:
+              notes: true
+              limit_days: true
+              enabled: true
+            terms:
+            - name: name
+              id: 6
+            - name: name
+              id: 6
+            booking_settings:
+              medical: true
+              notes: true
+              referral: true
+              loco_parentis: true
+              stage: true
+              dob: true
+              due_date: true
+              same_day: true
+              space: true
+            privacy_policy: privacy_policy
+            name: name
+            stages:
+            - name: name
+              id: 5
+            - name: name
+              id: 5
+            venues:
+            - parking: parking
+              changing_facilities: changing_facilities
+              image: image
+              address: address
+              depth: depth
+              name: name
+              information: information
+              id: 1
+              landmarks: landmarks
+              dimensions: dimensions
+            - parking: parking
+              changing_facilities: changing_facilities
+              image: image
+              address: address
+              depth: depth
+              name: name
+              information: information
+              id: 1
+              landmarks: landmarks
+              dimensions: dimensions
+            id: 0
+            strapline: strapline
+            email: email
+            stripe_id: stripe_id
+          expired: true
+          invited_at: 2000-01-23T04:56:07.000+00:00
+          id: 0
+          invite_code: invite_code
+          class:
+            venue_name: venue_name
+            session_cost: 1
+            trial_allowed: true
+            description: description
+            invited_waitees_count: 9
+            age_range: age_range
+            spaces_count: 7
+            teacher: teacher
+            next_session: 2000-01-23T04:56:07.000+00:00
+            activity_id: 6
+            organiser_id: 2
+            organiser_class_image: organiser_class_image
+            term: term
+            id: 0
+            trial_cost: 5
+            ability: Beginner
+            venue_id: 5
+            image: image
+            sessions:
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            sell: true
+            next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+            stage: stage
+            organiser_name: organiser_name
+            name: name
+            stage_class_image: stage_class_image
+      properties:
+        data:
+          $ref: '#/components/schemas/Waitee'
+    post_voucher_request:
+      properties:
+        product_id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        payment_intent:
+          type: string
+        terms:
+          type: boolean
+      required:
+      - email
+      - name
+      - product_id
+      - terms
+    post_voucher_200_response:
+      example:
+        data:
+        - remaining_value: 1
+          id: 0
+          value: 6
+        - remaining_value: 1
+          id: 0
+          value: 6
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Voucher'
+          type: array
+    post_voucher_check_request:
+      properties:
+        code:
+          type: string
+    post_voucher_check_200_response:
+      example:
+        message: message
+      properties:
+        message:
+          type: string
+    post_payment_intent_request_overrides:
+      properties:
+        payment_method_types:
+          items:
+            type: string
+          type: array
+        setup_future_usage:
+          type: string
+        capture_method:
+          type: string
+    post_payment_intent_request:
+      properties:
+        organiser_id:
+          type: integer
+        booking_id:
+          type: integer
+        subscription_id:
+          type: integer
+        customer:
+          type: string
+        payment_method:
+          type: string
+        amount:
+          type: integer
+        force_absorb:
+          type: boolean
+        overrides:
+          $ref: '#/components/schemas/post_payment_intent_request_overrides'
+      required:
+      - amount
+      - organiser_id
+      - payment_method
+    post_payment_intent_200_response:
+      example:
+        method: method
+        client_secret: client_secret
+        intent: intent
+      properties:
+        intent:
+          type: string
+        method:
+          type: string
+        client_secret:
+          type: string
+    patch_payment_intent_request:
+      properties:
+        organiser_id:
+          type: integer
+        booking_id:
+          type: integer
+        subscription_id:
+          type: integer
+        payment_intent:
+          type: string
+        payment_method:
+          type: string
+        amount:
+          type: integer
+        force_absorb:
+          type: boolean
+    get_students_200_response:
+      example:
+        data:
+        - medical: medical
+          dob: 2000-01-23
+          due_date: 2000-01-23
+          last_name: last_name
+          id: 0
+          first_name: first_name
+          relation: relation
+        - medical: medical
+          dob: 2000-01-23
+          due_date: 2000-01-23
+          last_name: last_name
+          id: 0
+          first_name: first_name
+          relation: relation
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Student'
+          type: array
+    post_student_request:
+      properties:
+        organiser_id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        dob:
+          format: date
+          type: string
+        due_date:
+          format: date
+          type: string
+        medical:
+          type: string
+        relation:
+          type: string
+        stage_id:
+          type: integer
+        notes:
+          type: string
+      required:
+      - first_name
+      - last_name
+      - organiser_id
+    post_student_201_response:
+      example:
+        data:
+          medical: medical
+          dob: 2000-01-23
+          due_date: 2000-01-23
+          last_name: last_name
+          id: 0
+          first_name: first_name
+          relation: relation
+      properties:
+        data:
+          $ref: '#/components/schemas/Student'
+    patch_student_request:
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        dob:
+          format: date
+          type: string
+        medical:
+          type: string
+      required:
+      - dob
+      - first_name
+      - last_name
+    get_student_stages_200_response:
+      example:
+        data:
+        - organiser_name: organiser_name
+          name: name
+          active: true
+          id: 0
+          awarded_on: 2000-01-23
+          goals:
+          - name: name
+            achieved_at: 2000-01-23T04:56:07.000+00:00
+            id: 6
+          - name: name
+            achieved_at: 2000-01-23T04:56:07.000+00:00
+            id: 6
+        - organiser_name: organiser_name
+          name: name
+          active: true
+          id: 0
+          awarded_on: 2000-01-23
+          goals:
+          - name: name
+            achieved_at: 2000-01-23T04:56:07.000+00:00
+            id: 6
+          - name: name
+            achieved_at: 2000-01-23T04:56:07.000+00:00
+            id: 6
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/StudentStage'
+          type: array
+    get_prices_200_response:
+      example:
+        data:
+        - id: 0
+          session_selection_type: fixedStart
+          type: perSession
+          fixed_cost: 6
+          plan:
+            gross: 2
+            id: 5
+            net: 5
+          payment_method: card
+          session_limit: 1
+        - id: 0
+          session_selection_type: fixedStart
+          type: perSession
+          fixed_cost: 6
+          plan:
+            gross: 2
+            id: 5
+            net: 5
+          payment_method: card
+          session_limit: 1
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Price'
+          type: array
+    get_apply_coupon_200_response_data:
+      oneOf:
+      - $ref: '#/components/schemas/Discount'
+      - $ref: '#/components/schemas/Voucher'
+    get_apply_coupon_200_response_meta:
+      example:
+        type: discount
+      properties:
+        type:
+          enum:
+          - discount
+          - voucher
+          type: string
+    get_apply_coupon_200_response:
+      example:
+        data:
+          description: description
+          percent_off: 6
+          id: 0
+        meta:
+          type: discount
+      properties:
+        data:
+          $ref: '#/components/schemas/get_apply_coupon_200_response_data'
+        meta:
+          $ref: '#/components/schemas/get_apply_coupon_200_response_meta'
+    get_bookings_200_response:
+      example:
+        data:
+        - venue_name: venue_name
+          teacher_name: teacher_name
+          class_id: 5
+          student_name: student_name
+          ref: ref
+          zoom_password: zoom_password
+          balance: 7
+          last_session: 2000-01-23T04:56:07.000+00:00
+          next_session: 2000-01-23T04:56:07.000+00:00
+          organiser_id: 1
+          processing_payments_count: 3
+          id: 0
+          net: 5
+          credit: 9
+          class_name: class_name
+          class:
+            venue_name: venue_name
+            session_cost: 1
+            trial_allowed: true
+            description: description
+            invited_waitees_count: 9
+            age_range: age_range
+            spaces_count: 7
+            teacher: teacher
+            next_session: 2000-01-23T04:56:07.000+00:00
+            activity_id: 6
+            organiser_id: 2
+            organiser_class_image: organiser_class_image
+            term: term
+            id: 0
+            trial_cost: 5
+            ability: Beginner
+            venue_id: 5
+            image: image
+            sessions:
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            sell: true
+            next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+            stage: stage
+            organiser_name: organiser_name
+            name: name
+            stage_class_image: stage_class_image
+          payment_method: card
+          sessions:
+          - attended: true
+            date_time: 2000-01-23T04:56:07.000+00:00
+            session:
+              spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            absent: true
+            cancelled: true
+            id: 4
+          - attended: true
+            date_time: 2000-01-23T04:56:07.000+00:00
+            session:
+              spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            absent: true
+            cancelled: true
+            id: 4
+          gross: 2
+          student_id: 6
+          next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+          organiser_name: organiser_name
+          zoom_id: zoom_id
+          payment_method_label: payment_method_label
+          price_type: price_type
+          successful_payments_count: 2
+        - venue_name: venue_name
+          teacher_name: teacher_name
+          class_id: 5
+          student_name: student_name
+          ref: ref
+          zoom_password: zoom_password
+          balance: 7
+          last_session: 2000-01-23T04:56:07.000+00:00
+          next_session: 2000-01-23T04:56:07.000+00:00
+          organiser_id: 1
+          processing_payments_count: 3
+          id: 0
+          net: 5
+          credit: 9
+          class_name: class_name
+          class:
+            venue_name: venue_name
+            session_cost: 1
+            trial_allowed: true
+            description: description
+            invited_waitees_count: 9
+            age_range: age_range
+            spaces_count: 7
+            teacher: teacher
+            next_session: 2000-01-23T04:56:07.000+00:00
+            activity_id: 6
+            organiser_id: 2
+            organiser_class_image: organiser_class_image
+            term: term
+            id: 0
+            trial_cost: 5
+            ability: Beginner
+            venue_id: 5
+            image: image
+            sessions:
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            sell: true
+            next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+            stage: stage
+            organiser_name: organiser_name
+            name: name
+            stage_class_image: stage_class_image
+          payment_method: card
+          sessions:
+          - attended: true
+            date_time: 2000-01-23T04:56:07.000+00:00
+            session:
+              spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            absent: true
+            cancelled: true
+            id: 4
+          - attended: true
+            date_time: 2000-01-23T04:56:07.000+00:00
+            session:
+              spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            absent: true
+            cancelled: true
+            id: 4
+          gross: 2
+          student_id: 6
+          next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+          organiser_name: organiser_name
+          zoom_id: zoom_id
+          payment_method_label: payment_method_label
+          price_type: price_type
+          successful_payments_count: 2
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Booking'
+          type: array
+    post_booking_request_referral:
+      properties:
+        type:
+          enum:
+          - friend
+          - wordOfMouth
+          - searchEngine
+          - facebook
+          - twitter
+          - instagram
+          - clubHub
+          - whatsOn4Kids
+          - netmums
+          - leaflet
+          - tvRadio
+          - event
+          - other
           type: string
         name:
-          description: The name of the attachment.
           type: string
+    post_booking_request_emergency:
+      properties:
+        type:
+          enum:
+          - friend
+          - wordOfMouth
+          - searchEngine
+          - facebook
+          - twitter
+          - instagram
+          - clubHub
+          - whatsOn4Kids
+          - netmums
+          - leaflet
+          - tvRadio
+          - event
+          - other
+          type: string
+        telephone:
+          type: string
+    post_booking_request:
+      properties:
+        class_id:
+          type: integer
+        sessions:
+          items:
+            type: integer
+          type: array
+        students:
+          items:
+            type: integer
+        price_id:
+          type: integer
+        plan_id:
+          type: integer
+        discount_id:
+          type: integer
+        voucher_id:
+          type: integer
+        payment_amount:
+          type: integer
+        voucher_amount:
+          type: integer
+        credit_amount:
+          type: integer
+        payment_intent:
+          type: string
+        payment_method:
+          type: string
+        save_payment_method:
+          type: boolean
+        invite_code:
+          type: string
+        terms:
+          type: boolean
+        loco_parentis:
+          type: boolean
+        marketing_consent:
+          type: boolean
+        photo_consent:
+          type: boolean
+        referral:
+          $ref: '#/components/schemas/post_booking_request_referral'
+        emergency:
+          $ref: '#/components/schemas/post_booking_request_emergency'
+    post_booking_201_response:
+      example:
+        data:
+          venue_name: venue_name
+          teacher_name: teacher_name
+          class_id: 5
+          student_name: student_name
+          ref: ref
+          zoom_password: zoom_password
+          balance: 7
+          last_session: 2000-01-23T04:56:07.000+00:00
+          next_session: 2000-01-23T04:56:07.000+00:00
+          organiser_id: 1
+          processing_payments_count: 3
+          id: 0
+          net: 5
+          credit: 9
+          class_name: class_name
+          class:
+            venue_name: venue_name
+            session_cost: 1
+            trial_allowed: true
+            description: description
+            invited_waitees_count: 9
+            age_range: age_range
+            spaces_count: 7
+            teacher: teacher
+            next_session: 2000-01-23T04:56:07.000+00:00
+            activity_id: 6
+            organiser_id: 2
+            organiser_class_image: organiser_class_image
+            term: term
+            id: 0
+            trial_cost: 5
+            ability: Beginner
+            venue_id: 5
+            image: image
+            sessions:
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            - spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            sell: true
+            next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+            stage: stage
+            organiser_name: organiser_name
+            name: name
+            stage_class_image: stage_class_image
+          payment_method: card
+          sessions:
+          - attended: true
+            date_time: 2000-01-23T04:56:07.000+00:00
+            session:
+              spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            absent: true
+            cancelled: true
+            id: 4
+          - attended: true
+            date_time: 2000-01-23T04:56:07.000+00:00
+            session:
+              spaces_count: 2
+              teacher_name: teacher_name
+              date_time: 2000-01-23T04:56:07.000+00:00
+              moved_from: 2000-01-23T04:56:07.000+00:00
+              cancelled: true
+              id: 3
+            absent: true
+            cancelled: true
+            id: 4
+          gross: 2
+          student_id: 6
+          next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+          organiser_name: organiser_name
+          zoom_id: zoom_id
+          payment_method_label: payment_method_label
+          price_type: price_type
+          successful_payments_count: 2
+      properties:
+        data:
+          $ref: '#/components/schemas/Booking'
+    get_booking_calculation_200_response:
+      example:
+        booking_gross: 5
+        subscription_fee: 7
+        subscription_gross: 9
+        subscription_upfront_discount: 2
+        booking_discount: 6
+        force_absorb: true
+        credit_amount: 1
+        booking_fee: 1
+        subscription_upfront_gross: 7
+        subscription_upfront_net: 3
+        payment_intent_amount: 6
+        subscription_upfront_fee: 4
+        amount_due: 1
+        voucher_amount: 1
+        subscription_net: 5
+        booking_net: 0
+        subscription_discount: 2
+      properties:
+        booking_net:
+          type: integer
+        booking_discount:
+          type: integer
+        booking_fee:
+          type: integer
+        booking_gross:
+          type: integer
+        subscription_net:
+          type: integer
+        subscription_discount:
+          type: integer
+        subscription_fee:
+          type: integer
+        subscription_gross:
+          type: integer
+        subscription_upfront_net:
+          type: integer
+        subscription_upfront_discount:
+          type: integer
+        subscription_upfront_fee:
+          type: integer
+        subscription_upfront_gross:
+          type: integer
+        voucher_amount:
+          type: integer
+        credit_amount:
+          type: integer
+        amount_due:
+          type: integer
+        payment_intent_amount:
+          type: integer
+        force_absorb:
+          type: boolean
+    post_pay_booking_request:
+      properties:
+        payment_intent:
+          type: string
+    get_payments_200_response:
+      example:
+        data:
+        - amount: 6
+          booking:
+            venue_name: venue_name
+            teacher_name: teacher_name
+            class_id: 5
+            student_name: student_name
+            ref: ref
+            zoom_password: zoom_password
+            balance: 7
+            last_session: 2000-01-23T04:56:07.000+00:00
+            next_session: 2000-01-23T04:56:07.000+00:00
+            organiser_id: 1
+            processing_payments_count: 3
+            id: 0
+            net: 5
+            credit: 9
+            class_name: class_name
+            class:
+              venue_name: venue_name
+              session_cost: 1
+              trial_allowed: true
+              description: description
+              invited_waitees_count: 9
+              age_range: age_range
+              spaces_count: 7
+              teacher: teacher
+              next_session: 2000-01-23T04:56:07.000+00:00
+              activity_id: 6
+              organiser_id: 2
+              organiser_class_image: organiser_class_image
+              term: term
+              id: 0
+              trial_cost: 5
+              ability: Beginner
+              venue_id: 5
+              image: image
+              sessions:
+              - spaces_count: 2
+                teacher_name: teacher_name
+                date_time: 2000-01-23T04:56:07.000+00:00
+                moved_from: 2000-01-23T04:56:07.000+00:00
+                cancelled: true
+                id: 3
+              - spaces_count: 2
+                teacher_name: teacher_name
+                date_time: 2000-01-23T04:56:07.000+00:00
+                moved_from: 2000-01-23T04:56:07.000+00:00
+                cancelled: true
+                id: 3
+              sell: true
+              next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+              stage: stage
+              organiser_name: organiser_name
+              name: name
+              stage_class_image: stage_class_image
+            payment_method: card
+            sessions:
+            - attended: true
+              date_time: 2000-01-23T04:56:07.000+00:00
+              session:
+                spaces_count: 2
+                teacher_name: teacher_name
+                date_time: 2000-01-23T04:56:07.000+00:00
+                moved_from: 2000-01-23T04:56:07.000+00:00
+                cancelled: true
+                id: 3
+              absent: true
+              cancelled: true
+              id: 4
+            - attended: true
+              date_time: 2000-01-23T04:56:07.000+00:00
+              session:
+                spaces_count: 2
+                teacher_name: teacher_name
+                date_time: 2000-01-23T04:56:07.000+00:00
+                moved_from: 2000-01-23T04:56:07.000+00:00
+                cancelled: true
+                id: 3
+              absent: true
+              cancelled: true
+              id: 4
+            gross: 2
+            student_id: 6
+            next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+            organiser_name: organiser_name
+            zoom_id: zoom_id
+            payment_method_label: payment_method_label
+            price_type: price_type
+            successful_payments_count: 2
+          organiser_name: organiser_name
+          student:
+            medical: medical
+            dob: 2000-01-23
+            due_date: 2000-01-23
+            last_name: last_name
+            id: 0
+            first_name: first_name
+            relation: relation
+          id: 0
+          subscription:
+            stripe_active: true
+            student_name: student_name
+            amount: 7
+            starts_at: 2000-01-23T04:56:07.000+00:00
+            goal: 2
+            organiser_id: 5
+            trial_ends_at: 2000-01-23T04:56:07.000+00:00
+            id: 5
+            outstanding_payments_count: 9
+            plan_name: plan_name
+            payment_method: payment_method
+          payment_date: 2000-01-23T04:56:07.000+00:00
+          status: Successful
+          order:
+            id: 1
+            product_name: product_name
+        - amount: 6
+          booking:
+            venue_name: venue_name
+            teacher_name: teacher_name
+            class_id: 5
+            student_name: student_name
+            ref: ref
+            zoom_password: zoom_password
+            balance: 7
+            last_session: 2000-01-23T04:56:07.000+00:00
+            next_session: 2000-01-23T04:56:07.000+00:00
+            organiser_id: 1
+            processing_payments_count: 3
+            id: 0
+            net: 5
+            credit: 9
+            class_name: class_name
+            class:
+              venue_name: venue_name
+              session_cost: 1
+              trial_allowed: true
+              description: description
+              invited_waitees_count: 9
+              age_range: age_range
+              spaces_count: 7
+              teacher: teacher
+              next_session: 2000-01-23T04:56:07.000+00:00
+              activity_id: 6
+              organiser_id: 2
+              organiser_class_image: organiser_class_image
+              term: term
+              id: 0
+              trial_cost: 5
+              ability: Beginner
+              venue_id: 5
+              image: image
+              sessions:
+              - spaces_count: 2
+                teacher_name: teacher_name
+                date_time: 2000-01-23T04:56:07.000+00:00
+                moved_from: 2000-01-23T04:56:07.000+00:00
+                cancelled: true
+                id: 3
+              - spaces_count: 2
+                teacher_name: teacher_name
+                date_time: 2000-01-23T04:56:07.000+00:00
+                moved_from: 2000-01-23T04:56:07.000+00:00
+                cancelled: true
+                id: 3
+              sell: true
+              next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+              stage: stage
+              organiser_name: organiser_name
+              name: name
+              stage_class_image: stage_class_image
+            payment_method: card
+            sessions:
+            - attended: true
+              date_time: 2000-01-23T04:56:07.000+00:00
+              session:
+                spaces_count: 2
+                teacher_name: teacher_name
+                date_time: 2000-01-23T04:56:07.000+00:00
+                moved_from: 2000-01-23T04:56:07.000+00:00
+                cancelled: true
+                id: 3
+              absent: true
+              cancelled: true
+              id: 4
+            - attended: true
+              date_time: 2000-01-23T04:56:07.000+00:00
+              session:
+                spaces_count: 2
+                teacher_name: teacher_name
+                date_time: 2000-01-23T04:56:07.000+00:00
+                moved_from: 2000-01-23T04:56:07.000+00:00
+                cancelled: true
+                id: 3
+              absent: true
+              cancelled: true
+              id: 4
+            gross: 2
+            student_id: 6
+            next_session_ends_at: 2000-01-23T04:56:07.000+00:00
+            organiser_name: organiser_name
+            zoom_id: zoom_id
+            payment_method_label: payment_method_label
+            price_type: price_type
+            successful_payments_count: 2
+          organiser_name: organiser_name
+          student:
+            medical: medical
+            dob: 2000-01-23
+            due_date: 2000-01-23
+            last_name: last_name
+            id: 0
+            first_name: first_name
+            relation: relation
+          id: 0
+          subscription:
+            stripe_active: true
+            student_name: student_name
+            amount: 7
+            starts_at: 2000-01-23T04:56:07.000+00:00
+            goal: 2
+            organiser_id: 5
+            trial_ends_at: 2000-01-23T04:56:07.000+00:00
+            id: 5
+            outstanding_payments_count: 9
+            plan_name: plan_name
+            payment_method: payment_method
+          payment_date: 2000-01-23T04:56:07.000+00:00
+          status: Successful
+          order:
+            id: 1
+            product_name: product_name
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Payment'
+          type: array
+    get_subscriptions_200_response:
+      example:
+        data:
+        - stripe_active: true
+          student_name: student_name
+          amount: 7
+          starts_at: 2000-01-23T04:56:07.000+00:00
+          goal: 2
+          organiser_id: 5
+          trial_ends_at: 2000-01-23T04:56:07.000+00:00
+          id: 5
+          outstanding_payments_count: 9
+          plan_name: plan_name
+          payment_method: payment_method
+        - stripe_active: true
+          student_name: student_name
+          amount: 7
+          starts_at: 2000-01-23T04:56:07.000+00:00
+          goal: 2
+          organiser_id: 5
+          trial_ends_at: 2000-01-23T04:56:07.000+00:00
+          id: 5
+          outstanding_payments_count: 9
+          plan_name: plan_name
+          payment_method: payment_method
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Subscription'
+          type: array
+    post_setup_intent_request_overrides:
+      properties:
+        payment_method_types:
+          items:
+            type: string
+          type: array
+    post_setup_intent_request:
+      properties:
+        organiser_id:
+          type: integer
+        customer:
+          type: string
+        overrides:
+          $ref: '#/components/schemas/post_setup_intent_request_overrides'
+      required:
+      - customer
+      - organiser_id
+    post_setup_intent_200_response:
+      example:
+        client_secret: client_secret
+      properties:
+        client_secret:
+          type: string
+    get_metric_200_response_oneOf_trend_inner:
+      example:
+        label: label
+        value: 0
+      properties:
+        label:
+          type: string
+        value:
+          type: integer
+    get_metric_200_response_oneOf:
+      example:
+        trend:
+        - label: label
+          value: 0
+        - label: label
+          value: 0
+      properties:
+        trend:
+          items:
+            $ref: '#/components/schemas/get_metric_200_response_oneOf_trend_inner'
+          type: array
+    get_metric_200_response_oneOf_1:
+      properties:
+        value:
+          type: integer
+        previous:
+          type: integer
+    get_metric_200_response:
+      oneOf:
+      - $ref: '#/components/schemas/get_metric_200_response_oneOf'
+      - $ref: '#/components/schemas/get_metric_200_response_oneOf_1'
+    Organiser_booking_settings:
+      example:
+        medical: true
+        notes: true
+        referral: true
+        loco_parentis: true
+        stage: true
+        dob: true
+        due_date: true
+        same_day: true
+        space: true
+      properties:
+        dob:
+          type: boolean
+        due_date:
+          type: boolean
+        notes:
+          type: boolean
+        medical:
+          type: boolean
+        space:
+          type: boolean
+        referral:
+          type: boolean
+        stage:
+          type: boolean
+        same_day:
+          type: boolean
+        loco_parentis:
+          type: boolean
+    Organiser_waiting_list_settings:
+      example:
+        notes: true
+        limit_days: true
+        enabled: true
+      properties:
+        enabled:
+          type: boolean
+        limit_days:
+          type: boolean
+        notes:
+          type: boolean
   securitySchemes:
-    basicAuth:
-      scheme: basic
+    Authorization:
+      scheme: bearer
       type: http
 
