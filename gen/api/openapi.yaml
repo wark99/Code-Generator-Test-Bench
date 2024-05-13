@@ -1,0 +1,223 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: mathieu@welkom.eu
+  description: |-
+    API privée permettant de récupérer les fiches contacts scannées par les commerciaux de votre entreprise sur les salons.
+
+    L'authentification au service se fait par token, envoyé sur demande.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: IRCI SCSE
+  version: 1.0.1
+servers:
+- url: https://europe-west1-mndirci.cloudfunctions.net
+tags:
+- description: Informations sur les salons Solutions CSE
+  name: salon
+- description: Fiche contact scannée
+  name: contact
+paths:
+  /listSalonsByYear:
+    post:
+      operationId: listSalonsByYear
+      parameters:
+      - description: Année de référence pour les salons retournés.
+        explode: true
+        in: query
+        name: year
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Salon'
+                type: array
+          description: successful operation
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+      summary: Liste des salons avec identifiant suivant les années
+      tags:
+      - salon
+      x-accepts: application/json
+  /listContactsBySalonId:
+    post:
+      operationId: listContactsBySalonId
+      parameters:
+      - description: Identifiant de salon de référence pour récupérer les fiches contact
+          associées.
+        explode: true
+        in: query
+        name: salonId
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+          description: successful operation
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "404":
+          description: Compte exposant introuvable
+      summary: Liste des fiches contacts pour le salon demandé.
+      tags:
+      - contact
+      x-accepts: application/json
+components:
+  requestBodies:
+    Contact:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Contact'
+      description: Fiche contact scannée par le commercial sur son stand
+  responses:
+    UnauthorizedError:
+      description: JWT Bearer token manquant ou invalide
+  schemas:
+    Salon:
+      example:
+        city: city
+        year: year
+        semester: S1
+        id: id
+      properties:
+        id:
+          type: string
+        city:
+          type: string
+        year:
+          type: string
+        semester:
+          enum:
+          - S1
+          - S2
+          type: string
+    Contact:
+      example:
+        ce:
+          phone: phone
+          email: email
+        company:
+          address:
+            zipcode: zipcode
+            city: city
+            street: street
+            extra: extra
+          phone: phone
+          name: name
+          workforce: workforce
+          type: type
+        comment: comment
+        from: from
+        id: id
+        visitor:
+          firstname: firstname
+          phone: phone
+          jobTitle: jobTitle
+          email: email
+          lastname: lastname
+        tags:
+        - tags
+        - tags
+        timestamp: 0.8008281904610115
+      properties:
+        id:
+          type: string
+        company:
+          $ref: '#/components/schemas/Contact_company'
+        ce:
+          $ref: '#/components/schemas/Contact_ce'
+        visitor:
+          $ref: '#/components/schemas/Contact_visitor'
+        comment:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+        from:
+          type: string
+        timestamp:
+          type: number
+    Contact_company_address:
+      example:
+        zipcode: zipcode
+        city: city
+        street: street
+        extra: extra
+      properties:
+        street:
+          type: string
+        extra:
+          type: string
+        zipcode:
+          type: string
+        city:
+          type: string
+    Contact_company:
+      example:
+        address:
+          zipcode: zipcode
+          city: city
+          street: street
+          extra: extra
+        phone: phone
+        name: name
+        workforce: workforce
+        type: type
+      properties:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Contact_company_address'
+        workforce:
+          type: string
+        type:
+          type: string
+        phone:
+          type: string
+    Contact_ce:
+      example:
+        phone: phone
+        email: email
+      properties:
+        phone:
+          type: string
+        email:
+          type: string
+    Contact_visitor:
+      example:
+        firstname: firstname
+        phone: phone
+        jobTitle: jobTitle
+        email: email
+        lastname: lastname
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        jobTitle:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+
