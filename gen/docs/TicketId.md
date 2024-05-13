@@ -1,14 +1,13 @@
 
 
-# Account
+# TicketId
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**id** | **Long** |  |  |
-|**name** | **String** |  |  |
+|**mirrorKey** | **String** |  |  [optional] |
 
 
 

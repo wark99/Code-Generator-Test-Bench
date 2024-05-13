@@ -1,14 +1,13 @@
 
 
-# Channel
+# TicketPrimaryKey
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**id** | **Long** |  |  |
-|**name** | **String** |  |  |
+|**primaryKey** | **String** | Primary key from TO system. |  [optional] |
 
 
 

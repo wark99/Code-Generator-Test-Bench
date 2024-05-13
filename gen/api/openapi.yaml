@@ -1,511 +1,411 @@
 openapi: 3.1.0
 info:
-  contact:
-    email: kendrick@us.ibm.com
-  description: |2-
-
-
-    Some useful links:
-    - [Distribution API Wiki](https://github.com/wiki)
-    - [Distribution API Source](https://github.com/distribution-api/)
-  license:
-    name: IBM Commercial
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: internal
-  title: IBM Cloud Video - Distributions API
-  version: 1.0.1
-externalDocs:
-  url: http://wiki.com
+  description: Remote API to interact between Freshdesk accounts and MasMovil application.
+  title: Optima Solutions - Asteo Ticketing
+  version: 1.0.0
 servers:
-- url: https://petstore3.swagger.io/api/v3
-tags:
-- description: "Distribution Operations limited to finding by schedule/channel id\
-    \ + asset id, fetching a distribution by ID and deleting a Distribution by ID"
-  name: distributions
-- description: "Distribution Operations limited to finding by schedule/channel id\
-    \ + asset id, fetching a distribution by ID and deleting a Distribution by ID"
-  name: Future
+- description: Staging Server
+  url: https://asteo.pre.optimaprivatecloud.es
+- description: Production Server
+  url: https://asteo.optimaprivatecloud.es
+security:
+- basicAuth: []
 paths:
-  /distributions/{id}:
-    delete:
-      operationId: deleteDistribution
+  /troubleTicket:
+    post:
+      description: Create a new ticket in the Freshdesk instance that corresponds
+        depending on the requested data.
+      requestBody:
+        content:
+          application/json:
+            examples:
+              asteo:
+                $ref: '#/components/examples/ticketCreateAsteo'
+              redaberta:
+                $ref: '#/components/examples/ticketCreateRedAberta'
+              fictional:
+                $ref: '#/components/examples/ticketCreateFictional'
+            schema:
+              $ref: '#/components/schemas/ticket'
+        description: Ticket attributes needed to create a new ticket.
+        required: true
+      responses:
+        "201":
+          $ref: '#/components/responses/ticketCreated'
+        "400":
+          $ref: '#/components/responses/badRequest'
+        "401":
+          $ref: '#/components/responses/unauthorized'
+      summary: Create a new ticket in TO.
+      tags:
+      - fromTUtoTO
+      x-content-type: application/json
+      x-accepts: application/json
+  /troubleTicket/{primaryKey}:
+    patch:
+      description: Update the ticket in TO system.
       parameters:
-      - description: ID of the distribution to be deleted
-        explode: false
+      - explode: false
         in: path
-        name: id
+        name: primaryKey
         required: true
         schema:
+          description: Primary key of the ticket.
           type: string
         style: simple
-      responses:
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Invalid Request
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Distribution not found
-      summary: Delete user
-      tags:
-      - distributions
-      x-accepts: "application/json,application/xml"
-    get:
-      description: ""
-      operationId: getDistributionById
-      parameters:
-      - description: Unique Numerical ID of the distribution
-        explode: false
-        in: path
-        name: id
+      requestBody:
+        content:
+          application/json:
+            examples:
+              tuRejectCancellation:
+                $ref: '#/components/examples/tuRejectCancellation'
+              tuRejectResolution:
+                $ref: '#/components/examples/tuRejectResolution'
+              tuSendInformation:
+                $ref: '#/components/examples/tuSendInformation'
+              tuClose:
+                $ref: '#/components/examples/tuClose'
+              tuSendInformationNoChangeStatus:
+                $ref: '#/components/examples/tuSendInformationNoChangeStatus'
+              tuCancel:
+                $ref: '#/components/examples/tuCancel'
+            schema:
+              $ref: '#/components/schemas/updateTicket'
+        description: Ticket object to update a ticket.
         required: true
-        schema:
-          type: integer
-        style: simple
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Distribution'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Distribution'
-          description: successful operation
+          $ref: '#/components/responses/ticketUpdated'
         "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Invalid Request
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Distribution not found
-      summary: Get Distribution by Id
+          $ref: '#/components/responses/badRequest'
+        "401":
+          $ref: '#/components/responses/unauthorized'
+      summary: Update an existing ticket from TU to TO.
       tags:
-      - distributions
-      x-accepts: "application/json,application/xml"
-  /distributions/channels/{channelId}:
-    get:
-      description: ""
-      operationId: findChannelDistributionByAssetId
-      parameters:
-      - description: Unique Numerical ID of the distribution
-        explode: false
-        in: path
-        name: channelId
+      - fromTUtoTO
+      x-content-type: application/json
+      x-accepts: application/json
+  /troubleTicket/update:
+    post:
+      description: The ticket status changes in TO and send information to TU.
+      requestBody:
+        content:
+          application/json:
+            examples:
+              toRequestInformation:
+                $ref: '#/components/examples/toRequestInformation'
+              toRequestCancelation:
+                $ref: '#/components/examples/toRequestCancelation'
+              toResolve:
+                $ref: '#/components/examples/toResolve'
+            schema:
+              $ref: '#/components/schemas/updateTicket'
+        description: Ticket object to update a ticket.
         required: true
-        schema:
-          type: integer
-        style: simple
-      - description: Unique Numerical ID of the distribution
-        explode: true
-        in: query
-        name: assetId
-        required: true
-        schema:
-          type: integer
-        style: form
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Distribution'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Distribution'
-          description: successful operation
+          $ref: '#/components/responses/ticketUpdated'
         "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Invalid Request
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Distribution not found
-      summary: Get Distribution by Id
+          $ref: '#/components/responses/badRequest'
+        "401":
+          $ref: '#/components/responses/unauthorized'
+      summary: Update an existing ticket from TO to TU.
       tags:
-      - distributions
-      x-accepts: "application/json,application/xml"
-  /distributions/schedules/{scheduleId}:
-    get:
-      description: ""
-      operationId: findScheduleDistributionByAssetId
-      parameters:
-      - description: Unique Numerical ID of the distribution
-        explode: false
-        in: path
-        name: scheduleId
-        required: true
-        schema:
-          type: integer
-        style: simple
-      - description: Unique Numerical ID of the distribution
-        explode: true
-        in: query
-        name: assetId
-        required: true
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Distribution'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Distribution'
-          description: successful operation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Invalid Request
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Distribution not found
-      summary: Get Distribution by Id
-      tags:
-      - distributions
-      x-accepts: "application/json,application/xml"
-  /distributions/:
-    get:
-      description: ""
-      operationId: listDistributions
-      parameters:
-      - description: Start at offset (paging)
-        explode: true
-        in: query
-        name: index
-        required: true
-        schema:
-          type: integer
-        style: form
-      - description: Max returned (paging)
-        explode: true
-        in: query
-        name: max
-        required: true
-        schema:
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Distributions'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Distributions'
-          description: successful operation
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Invalid Request
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: Distribution not found
-      summary: List Distributions
-      tags:
-      - Future
-      x-accepts: "application/json,application/xml"
+      - fromTOtoTU
+      x-content-type: application/json
+      x-accepts: application/json
 components:
-  requestBodies:
-    Distribution:
+  examples:
+    ticketCreateAsteo:
+      summary: Create a ticket in Asteo FD instance
+      value:
+        baseTroubleTicketState: OPENACTIVE
+        mirrorKey: AS-5000
+        customerTroubleNum: O06999999999
+        dialog: Ticket from API
+        troubleType: Question
+        troubleDescription: This the detailed information.
+        troubleDetectionTime: 2023-07-20T00:00:00
+        preferredPriority: 1
+        troubledObject: Afected
+        clearancePerson: Remote Agent
+        homeID: "01234"
+        gescal37ID: Gescal37
+        wh1Parameter: Red
+        wh2Parameter: Additional information
+        wh3Parameter: Additional information
+        wh4Parameter: Additional information
+        wh5Parameter: Additional information
+        customer: 10
+        attachments:
+        - content: ZmlsZSBudW1iZXIgMQ==
+          mimeType: text/plain
+          name: file1.txt
+        - content: ZmlsZSBudW1iZXIgMQ==
+          mimeType: text/plain
+          name: file2.txt
+    ticketCreateRedAberta:
+      summary: Create a ticket in Red Aberta FD instance
+      value:
+        baseTroubleTicketState: OPENACTIVE
+        mirrorKey: RED-5001
+        customerTroubleNum: O15999999999
+        dialog: Ticket from API
+        troubleType: Question
+        troubleDescription: This the detailed information.
+        troubleDetectionTime: 2023-07-20T00:00:00
+        preferredPriority: 1
+        troubledObject: Afected
+        clearancePerson: Remote Agent
+        homeID: "01234"
+        gescal37ID: Gescal37
+        wh1Parameter: Red
+        wh2Parameter: Additional information
+        wh3Parameter: Additional information
+        wh4Parameter: Additional information
+        wh5Parameter: Additional information
+        customer: 10
+        attachments:
+        - content: ZmlsZSBudW1iZXIgMQ==
+          mimeType: text/plain
+          name: file1.txt
+        - content: ZmlsZSBudW1iZXIgMQ==
+          mimeType: text/plain
+          name: file2.txt
+    ticketCreateFictional:
+      summary: Create a ticket from Fictional IUA
+      value:
+        baseTroubleTicketState: OPENACTIVE
+        mirrorKey: RED-5001
+        customerTroubleNum: X99999999999
+        dialog: Ticket from API
+        troubleType: Question
+        troubleDescription: This the detailed information.
+        troubleDetectionTime: 2023-07-20T00:00:00
+        preferredPriority: 1
+        troubledObject: Afected
+        clearancePerson: Remote Agent
+        homeID: XAS88840049000000000000000000000000772
+        gescal37ID: Gescal37
+        wh1Parameter: Red
+        wh2Parameter: Additional information
+        wh3Parameter: Additional information
+        wh4Parameter: Additional information
+        wh5Parameter: Additional information
+        customer: 10
+    tuRejectCancellation:
+      summary: TU rejects cancellation request
+      value:
+        baseTroubleTicketState: OPENACTIVE
+        primaryKey: AS-13
+        mirrorKey: RED-5001
+        dialog: This will be inserted as a Note in FD.
+        clearancePerson: Remote Agent
+    tuRejectResolution:
+      summary: TU rejects ticket resolution
+      value:
+        baseTroubleTicketState: OPENACTIVE
+        primaryKey: AS-13
+        mirrorKey: RED-5001
+        dialog: Write here the detailed information about the reject ticket resolution.
+    tuSendInformation:
+      summary: TU send additional information
+      value:
+        baseTroubleTicketState: OPENACTIVE
+        primaryKey: AS-13
+        mirrorKey: RED-5001
+        dialog: Write here iformation about the files.
+        attachments:
+        - content: ZmlsZSBudW1iZXIgMQ==
+          mimeType: text/plain
+          name: file1.txt
+        - content: ZmlsZSBudW1iZXIgMQ==
+          mimeType: text/plain
+          name: file2.txt
+    tuClose:
+      summary: TU close the ticket
+      value:
+        baseTroubleTicketState: CLOSED
+        primaryKey: AS-13
+        mirrorKey: RED-5001
+        dialog: The ticket was closed.
+    tuSendInformationNoChangeStatus:
+      summary: TU send additional information without status change
+      value:
+        primaryKey: AS-13
+        mirrorKey: RED-5001
+        dialog: Write here iformation about the files.
+        attachments:
+        - content: ZmlsZSBudW1iZXIgMQ==
+          mimeType: text/plain
+          name: file1.txt
+        - content: ZmlsZSBudW1iZXIgMQ==
+          mimeType: text/plain
+          name: file2.txt
+    tuCancel:
+      summary: TU cancel the ticket
+      value:
+        baseTroubleTicketState: CLOSED.CANCELED
+        primaryKey: AS-13
+        mirrorKey: RED-5001
+        dialog: The ticket was canceled.
+    toRequestInformation:
+      summary: TO request additional information
+      value:
+        baseTroubleTicketState: DEFERRED.AWAITING-INFORMATION
+        primaryKey: AS-13
+        mirrorKey: RED-5001
+        dialog: We need more information.
+    toRequestCancelation:
+      summary: TO request cancelation
+      value:
+        baseTroubleTicketState: DEFERRED.AWAITING-CANCELATION
+        primaryKey: AS-13
+        mirrorKey: RED-5001
+        dialog: We want to cancel the ticket.
+    toResolve:
+      summary: TO resolve the ticket
+      value:
+        baseTroubleTicketState: CLEARED
+        primaryKey: AS-13
+        mirrorKey: RED-5001
+        dialog: We resolved the ticket.
+    illegalArgumentException:
+      summary: Validation error
+      value:
+        illegalArgumentException: "Required fields: mirrorKey, baseTroubleTicketState"
+    remoteException:
+      summary: Save error
+      value:
+        remoteException: "Could not save the entity: any reason"
+  responses:
+    unauthorized:
+      description: Unauthorized
+    badRequest:
+      content:
+        application/json:
+          examples:
+            illegalArgumentException:
+              $ref: '#/components/examples/illegalArgumentException'
+            remoteException:
+              $ref: '#/components/examples/remoteException'
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/illegalArgumentException'
+            - $ref: '#/components/schemas/remoteException'
+      description: Bad request. An error occurred when send request.
+    ticketCreated:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Distribution'
-        application/xml:
+            $ref: '#/components/schemas/ticketKeys'
+      description: The ticket has been created successfully.
+    ticketUpdated:
+      content:
+        application/json:
           schema:
-            $ref: '#/components/schemas/Distribution'
+            $ref: '#/components/schemas/updateTicket'
+      description: The ticket has been updated successfully.
   schemas:
-    Distribution:
-      example:
-        requiredBy: 2000-01-23T04:56:07.000+00:00
-        created: 2000-01-23T04:56:07.000+00:00
-        channel:
-          name: IBM - Foo Affiliate
-          id: "0981234"
-        priority: 1900.0
-        message: "Unable to connect to ip: XXX.XXX.XXX.XXX"
-        retries: 0
-        slaDate: 2000-01-23T04:56:07.000+00:00
-        fileTransfers:
-        - id: 108146209
-          state: SENT
-          message: message
-          uri: s3://vlm-cloud-mock-bucket/assets/999999/IBMV0021597300000000-35007745.mpg
-        - id: 108146209
-          state: SENT
-          message: message
-          uri: s3://vlm-cloud-mock-bucket/assets/999999/IBMV0021597300000000-35007745.mpg
-        id: 522411622
-        state: complete
-        asset:
-          name: IBMV0021597300000000
-          id: 1409609
-        updated: updated
-        scheduleId: 777777
-        account:
-          name: IBM Cloud Video
-          id: 969696
+    ticketId:
       properties:
-        id:
-          example: 522411622
-          format: int64
-          type: integer
-        asset:
-          $ref: '#/components/schemas/Asset'
-        scheduleId:
-          example: 777777
-          format: int64
-          type: integer
-        channel:
-          $ref: '#/components/schemas/Channel'
-        account:
-          $ref: '#/components/schemas/Account'
-        priority:
-          example: 1900.0
-          type: number
-        created:
-          format: date-time
+        mirrorKey:
           type: string
-        updated:
-          type: string
-          fotrmat: date-time
-        requiredBy:
-          format: date-time
-          type: string
-        slaDate:
-          format: date-time
-          type: string
-        state:
-          description: Distribution Status
-          enum:
-          - UNKNOWN
-          - INITIATING
-          - WAITING_FOR_FILE_TRANSFER
-          - CONTENT_ERROR
-          - TRANSFER_ERROR
-          - SCHEDULED_FOR_TRANSFER
-          - TRANSFERRING
-          - TRANSFERRED
-          - EXPORT_ERROR
-          - SCHEDULED_FOR_EXPORT
-          - EXPORTING
-          - EXPORTED
-          - SCHEDULED_FOR_DELETE
-          - DELETING
-          - DELETED
-          - DELETE_ERROR
-          - API_ERROR
-          - MDU_HOLD
-          - MDU_HOLD_REJECT
-          - MDU_HOLD_APPROVED
-          example: complete
-          type: string
-        fileTransfers:
-          items:
-            $ref: '#/components/schemas/Transfer'
-          type: array
-          xml:
-            wrapped: true
-        message:
-          example: "Unable to connect to ip: XXX.XXX.XXX.XXX"
-          type: string
-        retries:
-          format: int32
-          type: integer
-      required:
-      - account
-      - asset
-      - channel
-      - created
-      - id
-      - scheduleId
-      - state
-      xml:
-        name: distribution
-    Asset:
-      example:
-        name: IBMV0021597300000000
-        id: 1409609
+    ticketPrimaryKey:
       properties:
-        id:
-          example: 1409609
-          format: int64
+        primaryKey:
+          description: Primary key from TO system.
+          type: string
+    ticketKeys:
+      allOf:
+      - $ref: '#/components/schemas/ticketId'
+      - $ref: '#/components/schemas/ticketPrimaryKey'
+    ticketBase:
+      properties:
+        dialog:
+          type: string
+        troubleType:
+          type: string
+        troubleDescription:
+          type: string
+        preferredPriority:
           type: integer
+        customerTroubleNum:
+          type: string
+        wh1Parameter:
+          type: string
+    ticket:
+      allOf:
+      - $ref: '#/components/schemas/ticketId'
+      - $ref: '#/components/schemas/ticketBase'
+      - properties:
+          baseTroubleTicketState:
+            type: string
+          troubleDetectionTime:
+            description: Issue dectention datetime.
+            format: date-time
+            type: string
+          troubledObject:
+            type: string
+          homeID:
+            description: Client home identifier. This field is required when issue
+              type is client and IUA is not ready.
+            maxLength: 255
+            type: string
+          wh2Parameter:
+            description: Additional information.
+            maxLength: 255
+            type: string
+          wh3Parameter:
+            description: Additional information.
+            maxLength: 255
+            type: string
+          wh4Parameter:
+            description: Additional information.
+            maxLength: 255
+            type: string
+          wh5Parameter:
+            description: Additional information.
+            maxLength: 255
+            type: string
+          customer:
+            type: string
+          attachments:
+            items:
+              $ref: '#/components/schemas/ticket_allOf_attachments_inner'
+            type: array
+    updateTicket:
+      allOf:
+      - $ref: '#/components/schemas/ticketKeys'
+      - $ref: '#/components/schemas/ticketBase'
+    illegalArgumentException:
+      description: "Exception for wrong value if any of the fields of the received\
+        \ ticket has an invalid value, a required field is missing, etc."
+      properties:
+        illegalArgumentException:
+          type: string
+    remoteException:
+      description: "Exception of the real TT system; communication errors with the\
+        \ same, etc."
+      properties:
+        remoteException:
+          type: string
+    ticket_allOf_attachments_inner:
+      description: An attachment.
+      properties:
+        content:
+          description: "The actual contents of the attachment object, if embedded,\
+            \ encoded as base64."
+          type: string
+        mimeType:
+          description: "Attachment mime type such as extension file for video, picture\
+            \ and document."
+          type: string
         name:
-          example: IBMV0021597300000000
+          description: The name of the attachment.
           type: string
-      required:
-      - id
-      - name
-      xml:
-        name: asset
-    Account:
-      example:
-        name: IBM Cloud Video
-        id: 969696
-      properties:
-        id:
-          example: 969696
-          format: int64
-          type: integer
-        name:
-          example: IBM Cloud Video
-          type: string
-      required:
-      - id
-      - name
-      xml:
-        name: account
-    Channel:
-      example:
-        name: IBM - Foo Affiliate
-        id: "0981234"
-      properties:
-        id:
-          example: "0981234"
-          format: int64
-          type: integer
-        name:
-          example: IBM - Foo Affiliate
-          type: string
-      required:
-      - id
-      - name
-      xml:
-        name: channel
-    Transfer:
-      example:
-        id: 108146209
-        state: SENT
-        message: message
-        uri: s3://vlm-cloud-mock-bucket/assets/999999/IBMV0021597300000000-35007745.mpg
-      properties:
-        id:
-          description: File Transfer Id
-          example: 108146209
-          format: int64
-          type: integer
-        uri:
-          description: Uri Resolving to the content in s3 (s3 uri)
-          example: s3://vlm-cloud-mock-bucket/assets/999999/IBMV0021597300000000-35007745.mpg
-          type: string
-        state:
-          description: File Transfer State
-          enum:
-          - UNKNOWN
-          - WAITING_FOR_CONTENT_COMPLETION
-          - SEND_ERROR
-          - SCHEDULED_FOR_SEND
-          - SENDING
-          - SENT
-          - ABORTED
-          - EXPORT_ERROR
-          - SCHEDULED_FOR_EXPORT
-          - EXPORTING
-          - EXPORTED
-          example: SENT
-          type: string
-        message:
-          type: string
-      required:
-      - id
-      - state
-      - uri
-      xml:
-        name: fileTransfer
-    Transfers:
-      items:
-        $ref: '#/components/schemas/Transfer'
-      type: array
-      xml:
-        wrapped: true
-    Distributions:
-      items:
-        $ref: '#/components/schemas/Distribution'
-      type: array
-      xml:
-        wrapped: true
-    ApiResponse:
-      example:
-        code: 6
-        error: error
-        message: message
-      properties:
-        code:
-          format: int32
-          type: integer
-        error:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - error
-      xml:
-        name: error
   securitySchemes:
-    api_key:
-      in: header
-      name: api_key
-      type: apiKey
+    basicAuth:
+      scheme: basic
+      type: http
 
