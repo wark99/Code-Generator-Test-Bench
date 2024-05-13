@@ -1,0 +1,1438 @@
+openapi: 3.1.0
+info:
+  description: "Сервис, отвечающий за внешние коммуникации с клиентами компании."
+  title: Customers Communications Service - OpenAPI 3.1.0
+  version: 0.0.1
+externalDocs:
+  description: "Описание вариантов использования, моделей."
+  url: https://docs.google.com/document/d/1113SJE58yEL3KVyDt8qBP7ZH_B8TdFBRk-o3Ta93QoA
+servers:
+- description: Test mock server
+  url: https://x5-communications.wiremockapi.cloud/
+security:
+- ApiKeyAuth: []
+tags:
+- description: Каналы коммуникации с клиентами
+  name: channels
+- description: Клиенты компании
+  name: customers
+- description: "Пользователи сервиса: менеджеры, администраторы, поддержка"
+  name: users
+- description: "Внешние коммуникации с клиентами: темы, сообщения, комментарии"
+  name: communications
+paths:
+  /channels:
+    get:
+      description: "email, SMS, Push-уведомления и т.д."
+      operationId: getChannels
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunicationChannels'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CommunicationChannels'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "5XX":
+          description: Unexpected server error
+      summary: "Список каналов коммуникации, поддерживаемый сервисом"
+      tags:
+      - channels
+      x-accepts: "application/json,application/xml"
+    post:
+      operationId: addChannel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommunicationChannel'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CommunicationChannel'
+        description: Данные нового канала
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunicationChannel'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CommunicationChannel'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Добавление нового канала коммуникации
+      tags:
+      - channels
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /channels/{channelId}:
+    delete:
+      operationId: deleteChannel
+      parameters:
+      - description: Идентификатор канала
+        explode: false
+        in: path
+        name: channelId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Удаление канала коммуникации
+      tags:
+      - channels
+      x-accepts: application/json
+    put:
+      operationId: updateChannel
+      parameters:
+      - description: Идентификатор канала
+        explode: false
+        in: path
+        name: channelId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommunicationChannel'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CommunicationChannel'
+        description: Данные канала
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunicationChannel'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CommunicationChannel'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Обновление канала коммуникации
+      tags:
+      - channels
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /customers:
+    get:
+      operationId: getCustomers
+      parameters:
+      - description: Номер страницы (начиная с 1)
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: Размер страницы
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customers'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customers'
+          description: OK
+      summary: Список клиентов компании
+      tags:
+      - customers
+      x-accepts: "application/json,application/xml"
+    post:
+      operationId: addCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        description: Данные нового клиента
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: OK
+      summary: Добавление нового клиента
+      tags:
+      - customers
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /customers/{customerUuid}:
+    delete:
+      operationId: deleteCustomer
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Удаление клиента
+      tags:
+      - customers
+      x-accepts: application/json
+    get:
+      description: Информация о клиенте по его идентификатору
+      operationId: getCustomer
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Информация о клиенте
+      tags:
+      - customers
+      x-accepts: "application/json,application/xml"
+    put:
+      operationId: updateCustomer
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        description: Данные клиента
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Обновление информации о клиенте
+      tags:
+      - customers
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /users:
+    get:
+      description: Список пользователей сервиса
+      operationId: getUsers
+      parameters:
+      - description: Номер страницы (начиная с 1)
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: Размер страницы
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Users'
+          description: OK
+      summary: Список пользователей
+      tags:
+      - users
+      x-accepts: "application/json,application/xml"
+    post:
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Данные нового пользователя
+      summary: Добавление нового пользователя
+      tags:
+      - users
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/{userUuid}:
+    delete:
+      operationId: deleteUser
+      parameters:
+      - description: Идентификатор пользователя
+        explode: false
+        in: path
+        name: userUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      summary: Удаление пользователя
+      tags:
+      - users
+      x-accepts: application/json
+    get:
+      description: Информация о пользователе по его идентификатору
+      operationId: getUser
+      parameters:
+      - description: Идентификатор пользователя
+        explode: false
+        in: path
+        name: userUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Информация о пользователе
+      tags:
+      - users
+      x-accepts: "application/json,application/xml"
+    put:
+      operationId: updateUser
+      parameters:
+      - description: Идентификатор пользователя
+        explode: false
+        in: path
+        name: userUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Данные пользователя
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Обновление информации о пользователе
+      tags:
+      - users
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /customers/{customerUuid}/channels:
+    delete:
+      operationId: deleteAllCustomerChannels
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Удаление всех каналов коммуникации одного клиента
+      tags:
+      - channels
+      x-accepts: application/json
+    get:
+      operationId: getCustomerChannels
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerChannels'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CustomerChannels'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Список всех каналов коммуникации одного клиента
+      tags:
+      - channels
+      x-accepts: "application/json,application/xml"
+    post:
+      operationId: addCustomerChannel
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerChannel'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CustomerChannel'
+        description: Данные нового канала
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerChannel'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CustomerChannel'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Добавление нового канала коммуникации для клиента
+      tags:
+      - channels
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /customers/{customerUuid}/channels/{channelId}:
+    delete:
+      operationId: deleteCustomerChannel
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      - description: Идентификатор канала
+        explode: false
+        in: path
+        name: channelId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Удаление канала коммуникации для клиента
+      tags:
+      - channels
+      x-accepts: application/json
+    put:
+      operationId: updateCustomerChannel
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      - description: Идентификатор канала
+        explode: false
+        in: path
+        name: channelId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerChannel'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CustomerChannel'
+        description: Данные канала
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerChannel'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CustomerChannel'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Обновление канала коммуникации для клиента
+      tags:
+      - channels
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /customers/{customerUuid}/topics:
+    get:
+      operationId: getCustomerTopics
+      parameters:
+      - explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Фильтр по каналу коммуникации (опциональный)
+        explode: true
+        in: query
+        name: channelId
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - description: "Фильтр по дате создания темы (включительно, опциональный)"
+        explode: true
+        in: query
+        name: fromDate
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: toDate
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - description: Поиск по теме и описанию
+        explode: true
+        in: query
+        name: search
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Номер страницы (начиная с 1)
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: Число элементов на странице
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topics'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Topics'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Список тем общения с конкретным клиентом
+      tags:
+      - communications
+      x-accepts: "application/json,application/xml"
+    post:
+      operationId: addTopic
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Topic'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Topic'
+        description: Данные новой темы
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Topic'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Создание новой темы общения
+      tags:
+      - communications
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /customers/{customerUuid}/topics/{topicId}:
+    delete:
+      operationId: deleteTopic
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      - description: Идентификатор темы
+        explode: false
+        in: path
+        name: topicId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Удаление темы общения и всех сообщений по этой теме
+      tags:
+      - communications
+      x-accepts: application/json
+    put:
+      operationId: updateTopic
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      - description: Идентификатор темы
+        explode: false
+        in: path
+        name: topicId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Topic'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Topic'
+        description: Данные темы
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Topic'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Обновление темы общения
+      tags:
+      - communications
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /customers/{customerUuid}/topics/{topicId}/messages:
+    get:
+      operationId: getTopicMessages
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      - description: Идентификатор темы
+        explode: false
+        in: path
+        name: topicId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      - description: Номер страницы (начиная с 1)
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: Размер страницы
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Messages'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Messages'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Список сообщений по теме
+      tags:
+      - communications
+      x-accepts: "application/json,application/xml"
+    post:
+      operationId: addMessage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Message'
+        description: Данные нового сообщения
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Добавление нового сообщения
+      tags:
+      - communications
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /customers/{customerUuid}/topics/{topicId}/comments:
+    get:
+      operationId: getTopicComments
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      - description: Идентификатор темы
+        explode: false
+        in: path
+        name: topicId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      - description: Номер страницы (начиная с 1)
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: Размер страницы
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comments'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Comments'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Список комментариев по теме
+      tags:
+      - communications
+      x-accepts: "application/json,application/xml"
+    post:
+      operationId: addComment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        description: Данные нового комментария
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Добавление нового комментария
+      tags:
+      - communications
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+  /customers/{customerUuid}/topics/{topicId}/comments/{commentId}:
+    delete:
+      operationId: deleteComment
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      - description: Идентификатор темы
+        explode: false
+        in: path
+        name: topicId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      - description: Идентификатор комментария
+        explode: false
+        in: path
+        name: commentId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Удаление комментария
+      tags:
+      - communications
+      x-accepts: application/json
+    put:
+      operationId: updateComment
+      parameters:
+      - description: Идентификатор клиента
+        explode: false
+        in: path
+        name: customerUuid
+        required: true
+        schema:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        style: simple
+      - description: Идентификатор темы
+        explode: false
+        in: path
+        name: topicId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      - description: Идентификатор комментария
+        explode: false
+        in: path
+        name: commentId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        description: Данные комментария
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "5XX":
+          description: Unexpected server error
+      summary: Обновление комментария
+      tags:
+      - communications
+      x-content-type: application/json
+      x-accepts: "application/json,application/xml"
+components:
+  schemas:
+    Customer:
+      example:
+        reservedByUserID: 5387cef3-bb2e-4508-92a5-6d41d987c963
+        name: Иванов Иван Иванович
+        uuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
+      properties:
+        uuid:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        name:
+          example: Иванов Иван Иванович
+          type: string
+        reservedByUserID:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+      required:
+      - name
+    Customers:
+      items:
+        $ref: '#/components/schemas/Customer'
+      type: array
+    User:
+      example:
+        role: Admin
+        name: Иванов Иван Иванович
+        uuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
+      properties:
+        uuid:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        name:
+          example: Иванов Иван Иванович
+          type: string
+        role:
+          enum:
+          - Admin
+          - Manager
+          - Support
+          type: string
+      required:
+      - name
+      - role
+    Users:
+      items:
+        $ref: '#/components/schemas/User'
+      type: array
+    CommunicationChannel:
+      example:
+        description: Текстовые СМС-сообщения (макс. 160 символов)
+        id: 42
+        type: SMS
+      properties:
+        id:
+          example: 42
+          format: int64
+          type: integer
+        type:
+          enum:
+          - SMS
+          - Phone
+          - Email
+          - Push
+          - Messenger
+          type: string
+        description:
+          example: Текстовые СМС-сообщения (макс. 160 символов)
+          type: string
+      required:
+      - type
+    CommunicationChannels:
+      items:
+        $ref: '#/components/schemas/CommunicationChannel'
+      type: array
+    CustomerChannel:
+      example:
+        customerUuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
+        channelContactInfo: +7 999 123-45-67
+        optIn: true
+        channelId: 10
+      properties:
+        customerUuid:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        channelId:
+          example: 10
+          format: int64
+          type: integer
+        optIn:
+          example: true
+          type: boolean
+        channelContactInfo:
+          example: +7 999 123-45-67
+          type: string
+      required:
+      - channelContactInfo
+      - channelId
+      - customerUuid
+      - optIn
+    CustomerChannels:
+      items:
+        $ref: '#/components/schemas/CustomerChannel'
+      type: array
+    Topic:
+      example:
+        createdAt: 2020-01-01T00:00:00Z
+        customerUuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
+        description: Скидка на все товары весенней коллекции
+        id: 42
+        title: Весенняя акция - скидка 10% на все товары
+        channelId: 10
+      properties:
+        id:
+          example: 42
+          format: int64
+          type: integer
+        title:
+          example: Весенняя акция - скидка 10% на все товары
+          type: string
+        description:
+          example: Скидка на все товары весенней коллекции
+          type: string
+        customerUuid:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        channelId:
+          example: 10
+          format: int64
+          type: integer
+        createdAt:
+          example: 2020-01-01T00:00:00Z
+          format: date-time
+          type: string
+      required:
+      - channelId
+      - createdAt
+      - customerUuid
+      - description
+      - id
+      - title
+    Topics:
+      items:
+        $ref: '#/components/schemas/Topic'
+      type: array
+    TopicManager:
+      properties:
+        id:
+          example: 42
+          format: int64
+          type: integer
+        userUuid:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        topicId:
+          example: 10
+          format: int64
+          type: integer
+        unassignedSince:
+          example: 2020-01-01T00:00:00Z
+          format: date-time
+          type: string
+        assignedSince:
+          example: 2020-01-01T00:00:00Z
+          format: date-time
+          type: string
+      required:
+      - assignedSince
+      - id
+      - topicId
+      - unassignedSince
+      - userUuid
+    TopicManagers:
+      items:
+        $ref: '#/components/schemas/TopicManager'
+      type: array
+    Message:
+      example:
+        topicId: 10
+        senderUuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
+        id: 42
+        text: Здравствуйте! Как я могу помочь?
+        status: Sent
+        timestamp: 2020-01-01T00:00:00Z
+      properties:
+        id:
+          example: 42
+          format: int64
+          type: integer
+        text:
+          example: Здравствуйте! Как я могу помочь?
+          type: string
+        topicId:
+          example: 10
+          format: int64
+          type: integer
+        senderUuid:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        status:
+          enum:
+          - Sent
+          - Delivered
+          - Read
+          type: string
+        timestamp:
+          example: 2020-01-01T00:00:00Z
+          format: date-time
+          type: string
+      required:
+      - id
+      - senderUuid
+      - status
+      - text
+      - timestamp
+      - topicId
+    Messages:
+      items:
+        $ref: '#/components/schemas/Message'
+      type: array
+    Comment:
+      example:
+        topicId: 10
+        userUuid: 5387cef3-bb2e-4508-92a5-6d41d987c963
+        id: 42
+        text: Спасибо за помощь!
+        timestamp: 2020-01-01T00:00:00Z
+      properties:
+        id:
+          example: 42
+          format: int64
+          type: integer
+        topicId:
+          example: 10
+          format: int64
+          type: integer
+        text:
+          example: Спасибо за помощь!
+          type: string
+        userUuid:
+          example: 5387cef3-bb2e-4508-92a5-6d41d987c963
+          type: string
+        timestamp:
+          example: 2020-01-01T00:00:00Z
+          format: date-time
+          type: string
+      required:
+      - id
+      - text
+      - timestamp
+      - topicId
+      - userUuid
+    Comments:
+      items:
+        $ref: '#/components/schemas/Comment'
+      type: array
+  securitySchemes:
+    ApiKeyAuth:
+      in: header
+      name: X-API-Key
+      type: apiKey
+
