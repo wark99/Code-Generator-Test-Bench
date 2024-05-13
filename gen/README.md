@@ -1,10 +1,10 @@
 # openapi-java-client
 
-Documents Api Hr - Fastapi
+AxisCare API
 
-- API version: 1.0.0
+- API version: 2023-10-01
 
-- Build date: 2024-05-13T19:25:49.904640209Z[Etc/UTC]
+- Build date: 2024-05-13T19:25:58.235743643Z[Etc/UTC]
 
 - Generator version: 7.4.0
 
@@ -44,7 +44,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>org.openapitools</groupId>
   <artifactId>openapi-java-client</artifactId>
-  <version>1.0.0</version>
+  <version>2023-10-01</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -60,7 +60,7 @@ Add this dependency to your project's build file:
   }
 
   dependencies {
-     implementation "org.openapitools:openapi-java-client:1.0.0"
+     implementation "org.openapitools:openapi-java-client:2023-10-01"
   }
 ```
 
@@ -74,7 +74,7 @@ mvn clean package
 
 Then manually install the following JARs:
 
-- `target/openapi-java-client-1.0.0.jar`
+- `target/openapi-java-client-2023-10-01.jar`
 - `target/lib/*.jar`
 
 ## Getting Started
@@ -86,25 +86,27 @@ Please follow the [installation](#installation) instruction and execute the foll
 import org.openapitools.client.*;
 import org.openapitools.client.auth.*;
 import org.openapitools.client.model.*;
-import org.openapitools.client.api.PetApi;
+import org.openapitools.client.api.DefaultApi;
 
-public class PetApiExample {
+public class DefaultApiExample {
 
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.staging-test.fun/api/v1");
+        defaultClient.setBasePath("https://.axiscare.com");
         
-        // Configure OAuth2 access token for authorization: petstore_auth
-        OAuth petstore_auth = (OAuth) defaultClient.getAuthentication("petstore_auth");
-        petstore_auth.setAccessToken("YOUR ACCESS TOKEN");
+        // Configure HTTP bearer authorization: Authorization
+        HttpBearerAuth Authorization = (HttpBearerAuth) defaultClient.getAuthentication("Authorization");
+        Authorization.setBearerToken("BEARER TOKEN");
 
-        PetApi apiInstance = new PetApi(defaultClient);
-        UpdatePetRequest updatePetRequest = new UpdatePetRequest(); // UpdatePetRequest | Create a new pet in the store
+        DefaultApi apiInstance = new DefaultApi(defaultClient);
+        LocalDate xAxisCareApiVersion = LocalDate.parse("2023-10-01"); // LocalDate | API version
+        Integer clientId = 56; // Integer | Client ID
+        String requestedSensitiveFields = "ssn"; // String | Comma-delimited string of names of sensitive fields to include in the payload
         try {
-            UpdatePetRequest result = apiInstance.addPet(updatePetRequest);
+            ClientsGetSingle200Response result = apiInstance.clientsGetSingle(xAxisCareApiVersion, clientId, requestedSensitiveFields);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling PetApi#addPet");
+            System.err.println("Exception when calling DefaultApi#clientsGetSingle");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -117,43 +119,82 @@ public class PetApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://api.staging-test.fun/api/v1*
+All URIs are relative to *https://.axiscare.com*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*PetApi* | [**addPet**](docs/PetApi.md#addPet) | **POST** /pet | Add a new pet to the store
-*PetApi* | [**deletePet**](docs/PetApi.md#deletePet) | **DELETE** /pet/{petId} | Deletes a pet
-*PetApi* | [**findPetsByStatus**](docs/PetApi.md#findPetsByStatus) | **GET** /pet/findByStatus | Finds Pets by status
-*PetApi* | [**findPetsByTags**](docs/PetApi.md#findPetsByTags) | **GET** /pet/findByTags | Finds Pets by tags
-*PetApi* | [**getPetById**](docs/PetApi.md#getPetById) | **GET** /pet/{petId} | Find pet by ID
-*PetApi* | [**updatePet**](docs/PetApi.md#updatePet) | **PUT** /pet | Update an existing pet
-*PetApi* | [**updatePetWithForm**](docs/PetApi.md#updatePetWithForm) | **POST** /pet/{petId} | Updates a pet in the store with form data
-*PetApi* | [**uploadFile**](docs/PetApi.md#uploadFile) | **POST** /pet/{petId}/uploadImage | uploads an image
-*UserApi* | [**createUser**](docs/UserApi.md#createUser) | **POST** /user | Create user
-*UserApi* | [**createUsersWithListInput**](docs/UserApi.md#createUsersWithListInput) | **POST** /user/createWithList | Creates list of users with given input array
-*UserApi* | [**deleteUser**](docs/UserApi.md#deleteUser) | **DELETE** /user/{username} | Delete user
-*UserApi* | [**getUserByName**](docs/UserApi.md#getUserByName) | **GET** /user/{username} | Get user by user name
-*UserApi* | [**loginUser**](docs/UserApi.md#loginUser) | **GET** /user/login | Logs user into the system
-*UserApi* | [**logoutUser**](docs/UserApi.md#logoutUser) | **GET** /user/logout | Logs out current logged in user session
-*UserApi* | [**updateUser**](docs/UserApi.md#updateUser) | **PUT** /user/{username} | Update user
+*DefaultApi* | [**clientsGetSingle**](docs/DefaultApi.md#clientsGetSingle) | **GET** /api/clients/{clientId} | Get Client
+*DefaultApi* | [**clientsList**](docs/DefaultApi.md#clientsList) | **GET** /api/clients | List Clients
+*DefaultApi* | [**getApiApplicantApplicantId**](docs/DefaultApi.md#getApiApplicantApplicantId) | **GET** /api/applicants/{applicantId} | Get Applicant
+*DefaultApi* | [**getApiApplicants**](docs/DefaultApi.md#getApiApplicants) | **GET** /api/applicants | List Applicants
+*DefaultApi* | [**getApiCaregivers**](docs/DefaultApi.md#getApiCaregivers) | **GET** /api/caregivers | List Caregivers
+*DefaultApi* | [**getApiCaregiversCaregiverId**](docs/DefaultApi.md#getApiCaregiversCaregiverId) | **GET** /api/caregivers/{caregiverId} | Get Caregiver
+*DefaultApi* | [**getApiVisits**](docs/DefaultApi.md#getApiVisits) | **GET** /api/visits | List Visits
+*DefaultApi* | [**patchApiCaregiversCaregiverId**](docs/DefaultApi.md#patchApiCaregiversCaregiverId) | **PATCH** /api/caregivers/{caregiverId} | Update Caregiver
+*DefaultApi* | [**patchApiClients**](docs/DefaultApi.md#patchApiClients) | **PATCH** /api/clients/{clientId} | Update Client
+*DefaultApi* | [**patchApiVisitsVisitId**](docs/DefaultApi.md#patchApiVisitsVisitId) | **PATCH** /api/visits/{visitId} | Update Visit
+*DefaultApi* | [**postApiCaregivers**](docs/DefaultApi.md#postApiCaregivers) | **POST** /api/caregivers | Add Caregiver
+*DefaultApi* | [**postApiClients**](docs/DefaultApi.md#postApiClients) | **POST** /api/clients | Add Client
+*DefaultApi* | [**postApiVisits**](docs/DefaultApi.md#postApiVisits) | **POST** /api/visits | Add Visit
 
 
 ## Documentation for Models
 
- - [Address](docs/Address.md)
- - [Category](docs/Category.md)
- - [CreateUserRequest](docs/CreateUserRequest.md)
- - [Customer](docs/Customer.md)
- - [CustomerAddressInner](docs/CustomerAddressInner.md)
- - [ModelApiResponse](docs/ModelApiResponse.md)
- - [Order](docs/Order.md)
- - [Pet](docs/Pet.md)
- - [Tag](docs/Tag.md)
- - [UpdatePetRequest](docs/UpdatePetRequest.md)
- - [UpdatePetRequestCategory](docs/UpdatePetRequestCategory.md)
- - [UpdatePetRequestTagsInner](docs/UpdatePetRequestTagsInner.md)
- - [UploadFile200Response](docs/UploadFile200Response.md)
- - [User](docs/User.md)
+ - [ClientsGetSingle200Response](docs/ClientsGetSingle200Response.md)
+ - [ClientsGetSingle400Response](docs/ClientsGetSingle400Response.md)
+ - [ClientsList200Response](docs/ClientsList200Response.md)
+ - [ClientsList200ResponseResults](docs/ClientsList200ResponseResults.md)
+ - [ClientsList400Response](docs/ClientsList400Response.md)
+ - [GetApiApplicantApplicantId200Response](docs/GetApiApplicantApplicantId200Response.md)
+ - [GetApiApplicantApplicantId200ResponseResults](docs/GetApiApplicantApplicantId200ResponseResults.md)
+ - [GetApiApplicants200Response](docs/GetApiApplicants200Response.md)
+ - [GetApiApplicants207Response](docs/GetApiApplicants207Response.md)
+ - [GetApiApplicants404Response](docs/GetApiApplicants404Response.md)
+ - [GetApiCaregivers200Response](docs/GetApiCaregivers200Response.md)
+ - [GetApiCaregivers207Response](docs/GetApiCaregivers207Response.md)
+ - [GetApiCaregivers404Response](docs/GetApiCaregivers404Response.md)
+ - [GetApiCaregiversCaregiverId200Response](docs/GetApiCaregiversCaregiverId200Response.md)
+ - [GetApiCaregiversCaregiverId200ResponseResults](docs/GetApiCaregiversCaregiverId200ResponseResults.md)
+ - [GetApiVisits200Response](docs/GetApiVisits200Response.md)
+ - [GetApiVisits200ResponseResults](docs/GetApiVisits200ResponseResults.md)
+ - [GetApiVisits403Response](docs/GetApiVisits403Response.md)
+ - [GetApiVisits404Response](docs/GetApiVisits404Response.md)
+ - [GetApiVisits404ResponseResults](docs/GetApiVisits404ResponseResults.md)
+ - [GetApiVisits422Response](docs/GetApiVisits422Response.md)
+ - [GetApiVisits500Response](docs/GetApiVisits500Response.md)
+ - [PatchApiCaregiversCaregiverId200Response](docs/PatchApiCaregiversCaregiverId200Response.md)
+ - [PatchApiCaregiversCaregiverId403Response](docs/PatchApiCaregiversCaregiverId403Response.md)
+ - [PatchApiCaregiversCaregiverId404Response](docs/PatchApiCaregiversCaregiverId404Response.md)
+ - [PatchApiCaregiversCaregiverId422Response](docs/PatchApiCaregiversCaregiverId422Response.md)
+ - [PatchApiCaregiversCaregiverIdRequest](docs/PatchApiCaregiversCaregiverIdRequest.md)
+ - [PatchApiCaregiversCaregiverIdRequestClassesInner](docs/PatchApiCaregiversCaregiverIdRequestClassesInner.md)
+ - [PatchApiCaregiversCaregiverIdRequestMailingAddress](docs/PatchApiCaregiversCaregiverIdRequestMailingAddress.md)
+ - [PatchApiClients200Response](docs/PatchApiClients200Response.md)
+ - [PatchApiClients400Response](docs/PatchApiClients400Response.md)
+ - [PatchApiClientsRequest](docs/PatchApiClientsRequest.md)
+ - [PatchApiClientsRequestResidentialAddress](docs/PatchApiClientsRequestResidentialAddress.md)
+ - [PatchApiVisitsVisitId400Response](docs/PatchApiVisitsVisitId400Response.md)
+ - [PatchApiVisitsVisitId401Response](docs/PatchApiVisitsVisitId401Response.md)
+ - [PatchApiVisitsVisitId500Response](docs/PatchApiVisitsVisitId500Response.md)
+ - [PatchApiVisitsVisitIdRequest](docs/PatchApiVisitsVisitIdRequest.md)
+ - [PostApiCaregivers201Response](docs/PostApiCaregivers201Response.md)
+ - [PostApiCaregivers403Response](docs/PostApiCaregivers403Response.md)
+ - [PostApiCaregivers422Response](docs/PostApiCaregivers422Response.md)
+ - [PostApiCaregiversRequest](docs/PostApiCaregiversRequest.md)
+ - [PostApiCaregiversRequestClassesInner](docs/PostApiCaregiversRequestClassesInner.md)
+ - [PostApiCaregiversRequestMailingAddress](docs/PostApiCaregiversRequestMailingAddress.md)
+ - [PostApiClients200Response](docs/PostApiClients200Response.md)
+ - [PostApiClients400Response](docs/PostApiClients400Response.md)
+ - [PostApiClientsRequest](docs/PostApiClientsRequest.md)
+ - [PostApiClientsRequestBillingAddress](docs/PostApiClientsRequestBillingAddress.md)
+ - [PostApiClientsRequestClassesInner](docs/PostApiClientsRequestClassesInner.md)
+ - [PostApiClientsRequestReferredBy](docs/PostApiClientsRequestReferredBy.md)
+ - [PostApiClientsRequestResidentialAddress](docs/PostApiClientsRequestResidentialAddress.md)
+ - [PostApiVisits201Response](docs/PostApiVisits201Response.md)
+ - [PostApiVisits400Response](docs/PostApiVisits400Response.md)
+ - [PostApiVisits401Response](docs/PostApiVisits401Response.md)
+ - [PostApiVisits500Response](docs/PostApiVisits500Response.md)
+ - [PostApiVisitsRequest](docs/PostApiVisitsRequest.md)
 
 
 <a id="documentation-for-authorization"></a>
@@ -161,24 +202,11 @@ Class | Method | HTTP request | Description
 
 
 Authentication schemes defined for the API:
-<a id="petstore_auth"></a>
-### petstore_auth
+<a id="Authorization"></a>
+### Authorization
 
 
-- **Type**: OAuth
-- **Flow**: implicit
-- **Authorization URL**: https://petstore3.swagger.io/oauth/authorize
-- **Scopes**: 
-  - write:pets: modify pets in your account
-  - read:pets: read your pets
-
-<a id="api_key"></a>
-### api_key
-
-
-- **Type**: API key
-- **API key parameter name**: api_key
-- **Location**: HTTP header
+- **Type**: HTTP Bearer Token authentication
 
 
 ## Recommendation
