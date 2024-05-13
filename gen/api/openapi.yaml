@@ -1,0 +1,310 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: thoda166@school.lu
+  description: This is SpaceTrader API Clone
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Simple Inventory API
+  version: 1.0.0-oas3.1
+servers:
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/THODA166_1/SpaceTrader/1.0.0
+- description: SpaceTrader API
+  url: https://api.spacetraders.io/v2/
+tags:
+- description: SpaceTrader paths
+  name: SpaceTrader
+- description: Action the a System
+  name: Symbol System
+- description: Action in Shipyard
+  name: Shipyard
+paths:
+  /register:
+    post:
+      description: "Here you can register a new agent. After that, you get a token"
+      operationId: registerNewAgent
+      parameters:
+      - description: Enter a symbol and faction
+        explode: false
+        in: header
+        name: symbol
+        required: true
+        schema:
+          type: string
+        style: simple
+      summary: Register a new Agent
+      tags:
+      - SpaceTrader
+      x-accepts: application/json
+  /systems:
+    get:
+      description: |
+        Getting all Systems in SpaceInvader
+      operationId: searchInventory
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/System'
+                type: array
+          description: All Systems Resulat
+        "500":
+          description: Server Error
+      summary: Get all available Systems
+      tags:
+      - Symbol System
+      x-accepts: application/json
+  /systems/systemSymbol:
+    get:
+      parameters:
+      - description: Enter a symbol of a system
+        explode: true
+        in: query
+        name: systemSymbol
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/System'
+          description: Successful operation
+        "404":
+          description: The system you enter does not exist. Please another system
+      summary: Get all information about a specific system
+      tags:
+      - Symbol System
+      x-accepts: application/json
+  /systems/{systemSymbol}/waypoints:
+    get:
+      parameters:
+      - description: Enter a symbol of a systems
+        explode: false
+        in: path
+        name: systemSymbol
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/System'
+          description: Successful operation
+        "404":
+          description: The system you enter does not exist. Please another system
+      summary: Get all information about a specific system
+      tags:
+      - Symbol System
+      x-accepts: application/json
+  /systems/{systemSymbol}/waypoints/{symbol}/shipyard:
+    get:
+      parameters:
+      - description: Enter a systemSymbol of a systems
+        explode: false
+        in: path
+        name: systemSymbol
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Enter a systemSymbol of a systems
+        explode: false
+        in: path
+        name: symbol
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/System'
+          description: Successful operation
+        "404":
+          description: The system you enter does not exist. Please another system
+      summary: Get all information about a specific system
+      tags:
+      - Symbol System
+      x-accepts: application/json
+  /my/ships:
+    post:
+      parameters:
+      - description: Enter a ship type
+        explode: false
+        in: header
+        name: shipType
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Enter a waypoint symbol
+        explode: false
+        in: header
+        name: waypointSymbol
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/System'
+          description: Successful operation
+        "404":
+          description: The header you enter does not exist. Please another system
+      summary: Purchase a ship
+      tags:
+      - Shipyard
+      x-accepts: application/json
+components:
+  schemas:
+    System:
+      example:
+        symbol: symbol
+        sectorSymbol: sectorSymbol
+        type: type
+        waypoints:
+          symbol: symbol
+          traits:
+          - symbol: symbol
+            name: name
+            description: description
+          - symbol: symbol
+            name: name
+            description: description
+          systemSymbol: systemSymbol
+          orbits: orbits
+          faction:
+            symbol: COSMIC
+          x: 800
+          "y": 6027
+          type: type
+          chart: "{}"
+          orbitals:
+          - orbitals
+          - orbitals
+        factions:
+          symbol: COSMIC
+      properties:
+        symbol:
+          type: string
+        sectorSymbol:
+          type: string
+        type:
+          type: string
+        waypoints:
+          $ref: '#/components/schemas/Waypoint'
+        factions:
+          $ref: '#/components/schemas/System_factions'
+      required:
+      - factions
+      - sectorSymbol
+      - symbol
+      - type
+      - waypoints
+    Waypoint:
+      example:
+        symbol: symbol
+        traits:
+        - symbol: symbol
+          name: name
+          description: description
+        - symbol: symbol
+          name: name
+          description: description
+        systemSymbol: systemSymbol
+        orbits: orbits
+        faction:
+          symbol: COSMIC
+        x: 800
+        "y": 6027
+        type: type
+        chart: "{}"
+        orbitals:
+        - orbitals
+        - orbitals
+      properties:
+        symbol:
+          type: string
+        type:
+          type: string
+        systemSymbol:
+          minLength: 1
+          type: string
+        x:
+          maximum: 10000
+          minimum: 0
+          type: integer
+        "y":
+          maximum: 10000
+          minimum: 0
+          type: integer
+        orbitals:
+          items:
+            type: string
+          type: array
+        orbits:
+          type: string
+        faction:
+          $ref: '#/components/schemas/System_factions'
+        traits:
+          items:
+            $ref: '#/components/schemas/Waypoint_traits_inner'
+          type: array
+        chart:
+          type: object
+      required:
+      - orbitals
+      - symbol
+      - systemSymbol
+      - traits
+      - type
+      - x
+      - "y"
+    System_factions:
+      example:
+        symbol: COSMIC
+      properties:
+        symbol:
+          enum:
+          - COSMIC
+          - VOID
+          - GALATIC
+          - QUANTUM
+          - DOMINION
+          - ASTRO
+          minimum: 1
+          type: string
+      required:
+      - symbol
+    Waypoint_traits_inner:
+      example:
+        symbol: symbol
+        name: name
+        description: description
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+      required:
+      - description
+      - name
+      - symbol
+
