@@ -1,1119 +1,259 @@
 openapi: 3.1.0
 info:
-  description: |
-    Welcome to the API documentation for the Inventory Management System API. This API provides a set of endpoints to efficiently track and manage inventory. The system focuses on four core resources: User, Address, Item, and Transaction.
-  title: Inventory Management System Rest API
+  contact:
+    email: nwagner@anduril.com
+  description: "[WIP] API for third-party developers to interact with Anduril's SDANet\
+    \ system."
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: SDANet - OpenAPI 3.1
   version: 1.0.0
 servers:
-- description: Local Development Server
-  url: http://localhost:8000
+- url: /
+tags:
+- description: Interact with the Flux network to transit data around the network.
+  name: message
+- description: Contains methods related to the status of the SSN or SDANet.
+  name: health
+- description: Contains methods that pass through SDANet directly to the UDL.
+  name: udl
 paths:
-  /users:
+  /message:
     get:
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-              - id: 1
-                name: Nada
-                email: Nadaaboissa@gmail.com
-                password: password123
-                phone: "0000000000"
-                Role: Administrator
-              - id: 2
-                name: Jana
-                email: jana@example.com
-                password: password789
-                phone: "4567891230"
-                Role: Employee
-          description: The request was successful and the users are returned.
-        "400":
-          description: The request parameters are invalid.
-        "403":
-          description: The user is not authorized to perform the operation.
-        "404":
-          description: The requested resource could not be found.
-        "500":
-          description: An unexpected error occurred on the server.
-      summary: Retrieve a list of all users
+      parameters:
+      - description: Whether to receive messages in an 'IWSD' or 'UDL' format.
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - udl
+          - iwsd
+          type: string
+        style: form
+      summary: Subscribe to an SSE stream of messages coming from the Flux network
       tags:
-      - User
+      - message
       x-accepts: application/json
     post:
       requestBody:
         content:
           application/json:
-            example:
-              name: Nada
-              email: Nadaaboissa@gmail.com
-              password: password123
-              phone: "0000000000"
-              Role: Administrator
             schema:
-              $ref: '#/components/schemas/_users_post_request'
-        required: true
-      responses:
-        "100":
-          description: The server has received the initial part of the request and
-            requires the client to continue with the remainder of the request.
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                name: Nada
-                email: Nadaaboissa@gmail.com
-                password: password123
-                phone: "0000000000"
-                Role: Administrator
-          description: The request was successful and the user was created.
-        "400":
-          description: The request body is missing or contains invalid parameters.
-        "403":
-          description: The user is not authorized to perform the operation.
-        "404":
-          description: The requested resource could not be found.
-        "500":
-          description: An unexpected error occurred on the server.
-      summary: Create a new user
+              $ref: '#/components/schemas/Message'
+        description: The message content to send
+      summary: Send a message over the Flux network
       tags:
-      - User
+      - message
       x-content-type: application/json
       x-accepts: application/json
-  /users/{id}:
-    delete:
-      parameters:
-      - description: ID of the user to delete
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          description: The request was successful and the user is deleted.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request contains invalid parameters. Please check the request
-                  and try again.
-          description: The request parameters are invalid.
-        "403":
-          content:
-            application/json:
-              example:
-                error: You are not authorized to delete this user. Please contact
-                  the administrator for assistance.
-          description: The user is not authorized to perform the operation.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The user with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested resource could not be found.
-        "500":
-          content:
-            application/json:
-              example:
-                error: An internal server error occurred. Please try again later or
-                  contact the support team for assistance.
-          description: An unexpected error occurred on the server.
-      summary: Delete a specific user by ID
-      tags:
-      - User
-      x-accepts: application/json
+  /site-state:
     get:
       parameters:
-      - description: ID of the user to delete
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
+      - description: The ID of the site to retrieve health status
+        explode: true
+        in: query
+        name: siteID
+        required: false
         schema:
-          type: integer
-        style: simple
+          type: string
+        style: form
       responses:
         "200":
           content:
             application/json:
-              example:
-                id: 2
-                name: Jana
-                email: jana@example.com
-                password: password789
-                phone: "9876543210"
-                Role: Employee
-          description: The request was successful and the user details are returned.
+              schema:
+                $ref: '#/components/schemas/SensorState'
+          description: A successful state lookup.
         "400":
-          content:
-            application/json:
-              example:
-                error: The request contains invalid parameters. Please check the request
-                  and try again.
-          description: The request parameters are invalid.
-        "403":
-          content:
-            application/json:
-              example:
-                error: You are not authorized to access user details. Please contact
-                  the administrator for assistance.
-          description: The user is not authorized to perform the operation.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The user with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested resource could not be found.
-        "500":
-          content:
-            application/json:
-              example:
-                error: An internal server error occurred. Please try again later or
-                  contact the support team for assistance.
-          description: An unexpected error occurred on the server.
-      summary: Retrieve the details of a specific user by ID
+          description: "A failed lookup, the site ID wasn't found."
+      summary: Receive the state of a C2 or sensor site.
       tags:
-      - User
-      x-accepts: application/json
-    patch:
-      parameters:
-      - description: ID of the user to update
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            example:
-              phone: "9876543210"
-            schema:
-              $ref: '#/components/schemas/_users__id__patch_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 2
-                name: Jana
-                email: jana@example.com
-                password: password789
-                phone: "9876543210"
-                Role: Employee
-          description: The request was successful and the user details are updated.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request contains invalid parameters. Please check the request
-                  and try again.
-          description: The request parameters are invalid.
-        "403":
-          content:
-            application/json:
-              example:
-                error: You are not authorized to update user details. Please contact
-                  the administrator for assistance.
-          description: The user is not authorized to perform the operation.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The user with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested resource could not be found.
-        "500":
-          content:
-            application/json:
-              example:
-                error: An internal server error occurred. Please try again later or
-                  contact the support team for assistance.
-          description: An unexpected error occurred on the server.
-      summary: Apply partial updates to a specific user by ID
-      tags:
-      - User
-      x-content-type: application/json
-      x-accepts: application/json
-    put:
-      parameters:
-      - description: ID of the user to update
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            example:
-              id: 1
-              name: Nada
-              email: Nadaaboissa@gmail.com
-              password: password111
-              phone: "0590000000"
-              Role: Administrator
-            schema:
-              $ref: '#/components/schemas/_users__id__put_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                name: Nada
-                email: Nadaaboissa@gmail.com
-                password: password111
-                phone: "0590000000"
-                Role: Administrator
-          description: The request was successful and the user details are updated.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request contains invalid parameters. Please check the request
-                  and try again.
-          description: The request parameters are invalid.
-        "403":
-          content:
-            application/json:
-              example:
-                error: You are not authorized to update user details. Please contact
-                  the administrator for assistance.
-          description: The user is not authorized to perform the operation.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The user with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested resource could not be found.
-        "500":
-          content:
-            application/json:
-              example:
-                error: An internal server error occurred. Please try again later or
-                  contact the support team for assistance.
-          description: An unexpected error occurred on the server.
-      summary: Update the details of a specific user by ID
-      tags:
-      - User
-      x-content-type: application/json
-      x-accepts: application/json
-  /items:
-    get:
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-              - id: 1
-                name: Table
-                description: Wooden dining table
-                quantity: 1
-                price: 299.99
-                barcode: 123456789
-          description: The request was successful.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request contains invalid parameters. Please check the request
-                  and try again.
-          description: The request parameters are invalid.
-        "403":
-          content:
-            application/json:
-              example:
-                error: You are not authorized to retrieve items. Please contact the
-                  administrator for assistance.
-          description: The user is not authorized to perform the operation.
-        "500":
-          content:
-            application/json:
-              example:
-                error: An internal server error occurred. Please try again later or
-                  contact the support team for assistance.
-          description: An unexpected error occurred on the server.
-      summary: Retrieve all items
-      tags:
-      - Item
+      - health
       x-accepts: application/json
     post:
       requestBody:
         content:
           application/json:
-            example:
-              name: Table
-              description: Wooden table
-              quantity: 1
-              price: 299.99
-              barcode: 123456789
             schema:
-              $ref: '#/components/schemas/_items_post_request'
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              example:
-                id: 1
-                name: Table
-                description: Wooden table
-                quantity: 1
-                price: 299.99
-                barcode: 123456789
-          description: The item was successfully created.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request body is missing or contains invalid parameters.
-                  Please check the request and try again.
-          description: The request body is missing or contains invalid parameters.
-        "403":
-          content:
-            application/json:
-              example:
-                error: You are not authorized to create an item. Please contact the
-                  administrator for assistance.
-          description: The user is not authorized to perform the operation.
-        "500":
-          content:
-            application/json:
-              example:
-                error: An internal server error occurred. Please try again later or
-                  contact the support team for assistance.
-          description: An unexpected error occurred on the server.
-      summary: Create an item
+              $ref: '#/components/schemas/SensorState'
+        description: The message content to send
+      summary: Update the state of a C2 or sensor site.
       tags:
-      - Item
+      - health
       x-content-type: application/json
       x-accepts: application/json
-  /items/{id}:
+  /flux-state:
+    get:
+      parameters:
+      - description: The ID of the site to retrieve Flux link status.
+        explode: true
+        in: query
+        name: siteID
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FluxState'
+          description: A successful state lookup.
+        "400":
+          description: "A failed lookup, the site ID wasn't found."
+      summary: Receive the state of the SDANet Flux mesh network.
+      tags:
+      - health
+      x-accepts: application/json
+  /udl:
     delete:
-      parameters:
-      - description: ID of the item to delete
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          description: The request was successful.
-        "403":
-          content:
-            application/json:
-              example:
-                error: You are not authorized to delete items. Please contact the
-                  administrator for assistance.
-          description: The user is not authorized.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The item with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested item could not be found.
-        "500":
-          content:
-            application/json:
-              example:
-                error: An internal server error occurred. Please try again later or
-                  contact the support team for assistance.
-          description: An unexpected error occurred on the server.
-      summary: Delete an item by ID
       tags:
-      - Item
+      - udl
       x-accepts: application/json
     get:
-      parameters:
-      - description: ID of the item to retrieve
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                name: Table
-                description: Wooden dining table
-                quantity: 1
-                price: 299.99
-                barcode: 123456789
-          description: The request was successful.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The item with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested item could not be found.
-      summary: Retrieve a specific item by ID
       tags:
-      - Item
-      x-accepts: application/json
-    patch:
-      parameters:
-      - description: ID of the item to update
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            example:
-              price: 349.99
-            schema:
-              $ref: '#/components/schemas/_items__id__patch_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                name: Table
-                description: Wooden dining table
-                quantity: 1
-                price: 349.99
-                barcode: 123456789
-          description: The request was successful.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request body is missing or contains invalid parameters.
-                  Please check the request and try again.
-          description: The request body is missing or contains invalid parameters.
-        "403":
-          content:
-            application/json:
-              example:
-                error: You are not authorized to update items. Please contact the
-                  administrator for assistance.
-          description: The user is not authorized.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The item with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested item could not be found.
-        "500":
-          content:
-            application/json:
-              example:
-                error: An internal server error occurred. Please try again later or
-                  contact the support team for assistance.
-          description: An unexpected error occurred on the server.
-      summary: Partially update an item by ID
-      tags:
-      - Item
-      x-content-type: application/json
-      x-accepts: application/json
-    put:
-      parameters:
-      - description: ID of the item to update
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            example:
-              name: Table
-              description: Updated dining table
-              quantity: 2
-              price: 399.99
-              barcode: 123456789
-            schema:
-              $ref: '#/components/schemas/_items_post_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                name: Table
-                description: Updated dining table
-                quantity: 2
-                price: 399.99
-                barcode: 123456789
-          description: The request was successful.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request body is missing or contains invalid parameters.
-                  Please check the request and try again.
-          description: The request body is missing or contains invalid parameters.
-        "403":
-          content:
-            application/json:
-              example:
-                error: You are not authorized to update items. Please contact the
-                  administrator for assistance.
-          description: The user is not authorized.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The item with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested item could not be found.
-        "500":
-          content:
-            application/json:
-              example:
-                error: An internal server error occurred. Please try again later or
-                  contact the support team for assistance.
-          description: An unexpected error occurred on the server.
-      summary: Update an item by ID
-      tags:
-      - Item
-      x-content-type: application/json
-      x-accepts: application/json
-  /addresses:
-    get:
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-              - id: 1
-                street: 123 Main St
-                city: Ramallah
-                state: West Bank
-                country: Palestine
-              - id: 2
-                street: 456 ABC
-                city: Nablus
-                state: West Bank
-                country: Palestine
-          description: The request was successful.
-      summary: Retrieve all addresses
-      tags:
-      - Address
+      - udl
       x-accepts: application/json
     post:
-      requestBody:
-        content:
-          application/json:
-            example:
-              street: 123 Main St
-              city: Ramallah
-              state: West Bank
-              country: Palestine
-            schema:
-              $ref: '#/components/schemas/_addresses_post_request'
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              example:
-                id: 1
-                street: 123 Main St
-                city: Ramallah
-                state: West Bank
-                country: Palestine
-          description: The address was successfully created.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request body is missing or contains invalid parameters.
-                  Please check the request and try again.
-          description: The request body is missing or contains invalid parameters.
-      summary: Create a new address
       tags:
-      - Address
-      x-content-type: application/json
-      x-accepts: application/json
-  /addresses/{id}:
-    delete:
-      parameters:
-      - description: ID of the address to delete
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          description: The request was successful.
-        "404":
-          description: The requested address could not be found.
-      summary: Delete a specific address
-      tags:
-      - Address
-      x-accepts: application/json
-    get:
-      parameters:
-      - description: ID of the address to retrieve
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                street: 123 Main St
-                city: Ramallah
-                state: West Bank
-                country: Palestine
-          description: The request was successful.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The address with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested address could not be found.
-      summary: Retrieve a specific address
-      tags:
-      - Address
-      x-accepts: application/json
-    patch:
-      parameters:
-      - description: ID of the address to update
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            example:
-              city: Bethlehem
-            schema:
-              $ref: '#/components/schemas/_addresses__id__patch_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                street: 123 Main St
-                city: Bethlehem
-                state: West Bank
-                country: Palestine
-          description: The request was successful.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request body is missing or contains invalid parameters.
-                  Please check the request and try again.
-          description: The request body is missing or contains invalid parameters.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The address with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested address could not be found.
-      summary: Partially update a specific address
-      tags:
-      - Address
-      x-content-type: application/json
+      - udl
       x-accepts: application/json
     put:
-      parameters:
-      - description: ID of the address to update
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            example:
-              street: 456 ABC
-              city: Nablus
-              state: West Bank
-              country: Palestine
-            schema:
-              $ref: '#/components/schemas/_addresses_post_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                street: 456 ABC D
-                city: Nablus
-                state: West Bank
-                country: Palestine
-          description: The request was successful.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request body is missing or contains invalid parameters.
-                  Please check the request and try again.
-          description: The request body is missing or contains invalid parameters.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The address with the specified ID was not found. Please verify
-                  the ID and try again.
-          description: The requested address could not be found.
-      summary: Update a specific address by ID
       tags:
-      - Address
-      x-content-type: application/json
-      x-accepts: application/json
-  /transactions:
-    get:
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-              - id: 1
-                user_involved_id: 1
-                item_affected_id: 2
-                quantity: 5
-                date: 2024-04-05T10:30:00Z
-                address_id: 3
-          description: The request was successful.
-      summary: Retrieve all transactions
-      tags:
-      - Transaction
-      x-accepts: application/json
-    post:
-      requestBody:
-        content:
-          application/json:
-            example:
-              user_involved_id: 1
-              item_affected_id: 2
-              quantity: 5
-              date: 2024-04-05T10:30:00Z
-              address_id: 3
-            schema:
-              $ref: '#/components/schemas/_transactions_post_request'
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              example:
-                id: 1
-                user_involved_id: 1
-                item_affected_id: 2
-                quantity: 5
-                date: 2024-04-05T10:30:00Z
-                address_id: 3
-          description: The transaction was successfully created.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request body is missing or contains invalid parameters.
-                  Please check the request and try again.
-          description: The request body is missing or contains invalid parameters.
-      summary: Create a new transaction
-      tags:
-      - Transaction
-      x-content-type: application/json
-      x-accepts: application/json
-  /transactions/{id}:
-    delete:
-      parameters:
-      - description: ID of the transaction to delete
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          description: The transaction was successfully deleted.
-        "404":
-          description: The requested transaction could not be found.
-      summary: Delete a specific transaction
-      tags:
-      - Transaction
-      x-accepts: application/json
-    get:
-      parameters:
-      - description: ID of the transaction to retrieve
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                user_involved_id: 1
-                item_affected_id: 2
-                quantity: 5
-                date: 2024-04-05T10:30:00Z
-                address_id: 3
-          description: The request was successful.
-        "404":
-          description: The requested transaction could not be found.
-      summary: Retrieve a specific transaction
-      tags:
-      - Transaction
-      x-accepts: application/json
-    patch:
-      parameters:
-      - description: ID of the transaction to update
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            example:
-              quantity: 10
-            schema:
-              $ref: '#/components/schemas/_transactions__id__patch_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                user_involved_id: 1
-                item_affected_id: 2
-                quantity: 10
-                date: 2024-04-07T10:30:00Z
-                address_id: 3
-          description: The request was successful.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request body is missing or contains invalid parameters.
-                  Please check the request and try again.
-          description: The request body is missing or contains invalid parameters.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The transaction with the specified ID was not found. Please
-                  verify the ID and try again.
-          description: The requested transaction could not be found.
-      summary: Partially update a specific transaction by ID
-      tags:
-      - Transaction
-      x-content-type: application/json
-      x-accepts: application/json
-    put:
-      parameters:
-      - description: ID of the transaction to update
-        example: 2
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            example:
-              user_involved_id: 1
-              item_affected_id: 2
-              quantity: 8
-              date: 2024-04-05T14:15:00Z
-              address_id: 3
-            schema:
-              $ref: '#/components/schemas/_transactions_post_request'
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              example:
-                id: 1
-                user_involved_id: 1
-                item_affected_id: 2
-                quantity: 8
-                date: 2024-04-05T14:15:00Z
-                address_id: 3
-          description: The request was successful.
-        "400":
-          content:
-            application/json:
-              example:
-                error: The request body is missing or contains invalid parameters.
-                  Please check the request and try again.
-          description: The request body is missing or contains invalid parameters.
-        "404":
-          content:
-            application/json:
-              example:
-                error: The transaction with the specified ID was not found. Please
-                  verify the ID and try again.
-          description: The requested transaction could not be found.
-      summary: Update a specific transaction by ID
-      tags:
-      - Transaction
-      x-content-type: application/json
+      - udl
       x-accepts: application/json
 components:
   schemas:
-    _users__id__patch_request:
+    Message:
+      example:
+        udl: "{}"
+        iwsd: iwsd
       properties:
-        phone:
+        iwsd:
+          description: The raw IWSD fixed-width message type
           type: string
-    _items__id__patch_request:
+        udl:
+          description: The UDL JSON object to send.
+          type: object
+    FluxState:
+      example:
+        linkState:
+        - linkState: UNKNOWN
+          remoteID: remoteID
+        - linkState: UNKNOWN
+          remoteID: remoteID
+        idSite: idSite
       properties:
-        price:
-          minimum: 0
-          type: number
-    _addresses__id__patch_request:
+        idSite:
+          description: "The ID of the site, if this status is associated with a fixed\
+            \ site or platform."
+          maxLength: 36
+          minLength: 1
+          type: string
+        linkState:
+          items:
+            $ref: '#/components/schemas/FluxState_linkState_inner'
+          type: array
+    SensorState:
+      example:
+        cpcon: 4
+        idSite: idSite
+        hpcon: CHARLIE
+        fpcon: BRAVO
+        weatherMessage: Heavy rain
+        instStatus: PMC
+        siteType: siteType
+        reportTime: 2021-01-01T01:01:01.123Z
       properties:
-        city:
+        idSite:
+          description: "The ID of the site, if this status is associated with a fixed\
+            \ site or platform."
+          maxLength: 36
+          minLength: 1
           type: string
-    _items_post_request:
-      properties:
-        name:
+        siteType:
+          description: "Optional site type or further detail of type.  Intended for,\
+            \ but not limited to, Link-16 site type specifications (e.g. ADOC, GACC,\
+            \ SOC, TACC, etc.)."
+          maxLength: 36
+          minLength: 0
           type: string
-        description:
+        instStatus:
+          description: The status of the installation.  FMC - Fully Mission Capable   PMC
+            - Partially Mission Capable  NMC - Non Mission Capable  UNK - Unknown.
+          enum:
+          - FMC PMC NMC UNK
+          example: PMC
+          maxLength: 3
+          minLength: 0
           type: string
-        quantity:
-          minimum: 0
-          type: integer
-        price:
-          minimum: 0
-          type: number
-        barcode:
-          minimum: 0
-          type: integer
-    _addresses_post_request:
-      properties:
-        street:
+        fpcon:
+          description: Force Protection Condition (FPCON).    NORMAL - Applies when
+            a general global threat of possible terrorist activity exists and warrants
+            a routine security posture.  ALPHA - Applies when an increased general
+            threat of possible terrorist activity against personnel or facilities.
+            Nature and extent of threat are unpredictable.  BRAVO - Applies when an
+            increased or predictable threat of terrorist activity exists.  CHARLIE
+            - Applies when an incident occurs or intelligence is received indicating
+            some form of terrorist action against personnel and facilities is imminent.  DELTA
+            - Applies in the immediate area where an attack has occurred or when intelligence
+            is received indicating terrorist action against a location is imminent.
+          enum:
+          - NORMAL ALPHA BRAVO CHARLIE DELTA
+          example: BRAVO
+          maxLength: 7
+          minLength: 0
           type: string
-        city:
+        hpcon:
+          description: Health Protection Condition (HPCON).    0 - Routine no community
+            transmission.  ALPHA - Limited community transmission beginning.  BRAVO
+            - Moderate increased community transmission.  CHARLIE - Substantial sustained
+            community transmission.  DELTA - Severe widespread community transmission.
+          enum:
+          - 0 ALPHA BRAVO CHARLIE DELTA
+          example: CHARLIE
+          maxLength: 7
+          minLength: 0
           type: string
-        state:
+        cpcon:
+          description: Cyberspace Protection Condition (CPCON).    1 - VERY HIGH -
+            Critical functions.  2 - HIGH - Critical and essential functions.  3 -
+            MEDIUM - Critical essential and support functions.  4 - LOW - All functions.  5
+            - VERY LOW - All functions.
+          enum:
+          - 1 2 3 4 5
+          example: 4
+          maxLength: 1
+          minLength: 0
           type: string
-        country:
-          type: string
-    _transactions_post_request:
-      properties:
-        user_involved_id:
-          type: integer
-        item_affected_id:
-          type: integer
-        quantity:
-          type: integer
-        date:
+        reportTime:
+          description: Time of report in ISO8601 UTC format.
+          example: 2021-01-01T01:01:01.123Z
           format: date-time
           type: string
-        address_id:
-          type: integer
-    _users_post_request:
+        weatherMessage:
+          description: Description of the current weather conditions over a site.
+          example: Heavy rain
+          maxLength: 512
+          minLength: 0
+          type: string
+    FluxState_linkState_inner:
+      example:
+        linkState: UNKNOWN
+        remoteID: remoteID
       properties:
-        name:
+        remoteID:
+          description: The siteID of the remote site that this link status describes.
           type: string
-        email:
+        linkState:
+          enum:
+          - UNKNOWN
+          - DISCONNECTED
+          - DEGRADED
+          - CONNECTED
           type: string
-        password:
-          type: string
-        phone:
-          type: string
-        Role:
-          type: string
-    _users__id__put_request:
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-        phone:
-          type: string
-        Role:
-          type: string
-    _transactions__id__patch_request:
-      properties:
-        quantity:
-          type: integer
 
