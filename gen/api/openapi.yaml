@@ -1,0 +1,362 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: di-man@yandex.ru
+    name: Dmitriy Bondar
+    url: https://dmitriy-bondar.dev
+  description: "The Resume API allows developers to access resume content, providing\
+    \ detailed information about an individual's professional and educational background.\
+    \ This API offers endpoints for retrieving general information, such as name and\
+    \ contact details, as well as detailed sections for experience and education."
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Resume API
+  version: 1.0.1
+servers:
+- description: Next.js implementetion of the Resume API
+  url: https://api.dmitriy-bondar.dev/resume
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/Chiocciola/Resume/1.0.0
+paths:
+  /:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sections'
+          description: Section list
+      summary: Index of resume section endpoints
+      x-accepts: application/json
+  /general:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_general_get_200_response'
+          description: Section content
+      summary: General information
+      x-accepts: application/json
+  /skills:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_skills_get_200_response'
+          description: Section content
+      summary: "Hard and soft skills, technologies and programming languages"
+      x-accepts: application/json
+  /experience:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_experience_get_200_response'
+          description: Section content
+      summary: Information about professional background
+      x-accepts: application/json
+  /education:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_education_get_200_response'
+          description: Section content
+      summary: Information about educational background
+      x-accepts: application/json
+components:
+  schemas:
+    Url:
+      example:
+        url: http://example.com/aeiou
+      properties:
+        url:
+          format: url
+          type: string
+      required:
+      - url
+    Sections:
+      items:
+        $ref: '#/components/schemas/Url'
+      type: array
+    General:
+      example:
+        summary: summary
+        phone: 123-456-7890
+        name: Wile E. Coyote
+        location: "Nevada, USA"
+        linkedin:
+          url: http://example.com/aeiou
+        title: Coyote
+        email: coyote@acme-corp.com
+      properties:
+        name:
+          example: Wile E. Coyote
+          type: string
+        title:
+          example: Coyote
+          type: string
+        location:
+          example: "Nevada, USA"
+          type: string
+        phone:
+          example: 123-456-7890
+          type: string
+        email:
+          example: coyote@acme-corp.com
+          type: string
+        linkedin:
+          $ref: '#/components/schemas/Url'
+        summary:
+          type: string
+      required:
+      - location
+      - name
+      - title
+    SkillSet:
+      example:
+        skills:
+        - skills
+        - skills
+        kind: kind
+      properties:
+        kind:
+          type: string
+        skills:
+          items:
+            type: string
+          type: array
+      required:
+      - kind
+      - skills
+    Employer:
+      example:
+        logo:
+          url: http://example.com/aeiou
+        company: company
+        positions:
+        - summary: summary
+          highlights:
+          - highlights
+          - highlights
+          endDate: endDate
+          location: location
+          title: title
+          startDate: startDate
+        - summary: summary
+          highlights:
+          - highlights
+          - highlights
+          endDate: endDate
+          location: location
+          title: title
+          startDate: startDate
+      properties:
+        company:
+          type: string
+        logo:
+          $ref: '#/components/schemas/Url'
+        positions:
+          items:
+            $ref: '#/components/schemas/Position'
+          type: array
+      required:
+      - company
+      - logo
+      - positions
+    Position:
+      example:
+        summary: summary
+        highlights:
+        - highlights
+        - highlights
+        endDate: endDate
+        location: location
+        title: title
+        startDate: startDate
+      properties:
+        title:
+          type: string
+        location:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        summary:
+          type: string
+        highlights:
+          items:
+            type: string
+          type: array
+      required:
+      - location
+      - startDate
+      - title
+    Degree:
+      example:
+        institution: institution
+        endDate: endDate
+        degree: degree
+        logo:
+          url: http://example.com/aeiou
+        location: location
+        startDate: startDate
+      properties:
+        institution:
+          type: string
+        logo:
+          $ref: '#/components/schemas/Url'
+        degree:
+          type: string
+        location:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+      required:
+      - degree
+      - endDate
+      - institution
+      - location
+      - logo
+      - startDate
+    Language:
+      description: Spoken language
+      type: string
+    _general_get_200_response:
+      example:
+        title: title
+        content:
+          summary: summary
+          phone: 123-456-7890
+          name: Wile E. Coyote
+          location: "Nevada, USA"
+          linkedin:
+            url: http://example.com/aeiou
+          title: Coyote
+          email: coyote@acme-corp.com
+      properties:
+        title:
+          type: string
+        content:
+          $ref: '#/components/schemas/General'
+      required:
+      - content
+      - title
+    _skills_get_200_response:
+      example:
+        title: title
+        content:
+        - skills:
+          - skills
+          - skills
+          kind: kind
+        - skills:
+          - skills
+          - skills
+          kind: kind
+      properties:
+        title:
+          type: string
+        content:
+          items:
+            $ref: '#/components/schemas/SkillSet'
+          type: array
+      required:
+      - content
+      - title
+    _experience_get_200_response:
+      example:
+        title: title
+        content:
+        - logo:
+            url: http://example.com/aeiou
+          company: company
+          positions:
+          - summary: summary
+            highlights:
+            - highlights
+            - highlights
+            endDate: endDate
+            location: location
+            title: title
+            startDate: startDate
+          - summary: summary
+            highlights:
+            - highlights
+            - highlights
+            endDate: endDate
+            location: location
+            title: title
+            startDate: startDate
+        - logo:
+            url: http://example.com/aeiou
+          company: company
+          positions:
+          - summary: summary
+            highlights:
+            - highlights
+            - highlights
+            endDate: endDate
+            location: location
+            title: title
+            startDate: startDate
+          - summary: summary
+            highlights:
+            - highlights
+            - highlights
+            endDate: endDate
+            location: location
+            title: title
+            startDate: startDate
+      properties:
+        title:
+          type: string
+        content:
+          items:
+            $ref: '#/components/schemas/Employer'
+          type: array
+      required:
+      - content
+      - title
+    _education_get_200_response:
+      example:
+        title: title
+        content:
+        - institution: institution
+          endDate: endDate
+          degree: degree
+          logo:
+            url: http://example.com/aeiou
+          location: location
+          startDate: startDate
+        - institution: institution
+          endDate: endDate
+          degree: degree
+          logo:
+            url: http://example.com/aeiou
+          location: location
+          startDate: startDate
+      properties:
+        title:
+          type: string
+        content:
+          items:
+            $ref: '#/components/schemas/Degree'
+          type: array
+      required:
+      - content
+      - title
+
