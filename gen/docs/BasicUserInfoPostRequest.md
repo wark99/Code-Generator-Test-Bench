@@ -1,14 +1,13 @@
 
 
-# Installments
+# BasicUserInfoPostRequest
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**number** | **Integer** |  |  [optional] |
-|**amount** | **BigDecimal** |  |  [optional] |
+|**sessionId** | **String** | Session identifier. |  [optional] |
 
 
 

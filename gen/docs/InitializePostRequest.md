@@ -1,13 +1,13 @@
 
 
-# UpdatePasswordRecovery
+# InitializePostRequest
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**newPassword** | **String** |  |  [optional] |
+|**sessionId** | **String** | Unique identifier for the user&#39;s session. |  [optional] |
 
 
 
