@@ -1,0 +1,15 @@
+
+
+# UpdateOntologyMetadataRequest
+
+
+## Properties
+
+| Name | Type | Description | Notes |
+|------------ | ------------- | ------------- | -------------|
+|**name** | **String** | The updated name of the ontology node (mandatory, unique for a tenant, min: 1, max: 50, allowed: alphabets, numbers, &#39;space&#39;, &#39;underscore&#39;, &#39;hyphen&#39;, case insensitive).  |  [optional] |
+|**description** | **String** | The updated description of the ontology node (optional, min: 0, max: 250, allowed: everything).  |  [optional] |
+|**tags** | **List&lt;String&gt;** | Optional tags associated with the ontology node.  |  [optional] |
+
+
+
