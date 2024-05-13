@@ -1,277 +1,1040 @@
 openapi: 3.1.0
 info:
   contact:
-    email: ml@stageinhome.com
-    name: StageInHome Support
-  description: "[StageInHome](https://stageinhome.com/) is a service that offers automatic\
-    \ virtual decoration for indoor spaces. The API allows users to upload images\
-    \ of their indoor spaces and receive digitally staged versions with different\
-    \ furniture and decor styles."
+    email: apiteam@rphaven.co.uk
+  description: |-
+    This is a sample Pet Store Server based on the OpenAPI 3.1 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    Some useful links:
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: https://stageinhome.com/privacy-policy/
-  title: StageInHome API
-  version: 1.0.1
+  termsOfService: http://api.rphaven.co.uk/terms/
+  title: RPHaven Games Management
+  version: 1.0.2
+externalDocs:
+  description: Find out more about RPHaven
+  url: http://wiki.rphaven.co.uk
 servers:
-- url: https://api.stageinhome.com
+- url: https://api.rphaven.co.uk/v1
 tags:
-- description: StgeInHome server
+- description: Everything about RP Haven branches
   externalDocs:
     description: Find out more
-    url: https://app.stageinhome.com/login/
-  name: server
-- description: Everything about automatic decoration
+    url: http://wiki.rphaven.co.uk/api/rels/branch
+  name: branch
+- description: Access to venues
   externalDocs:
-    description: Find out more
-    url: https://app.stageinhome.com/login/
-  name: decoration
+    description: Access to venues
+    url: http://wiki.rphaven.co.uk/api/rels/venue
+  name: venue
+- description: Access to branch games
+  externalDocs:
+    description: Operations about to branch games
+    url: http://wiki.rphaven.co.uk/api/rels/games
+  name: game
+- description: Access to branch meets
+  externalDocs:
+    description: Operations about branch meets
+    url: http://wiki.rphaven.co.uk/api/rels/meets
+  name: meet
+- description: Access to game sessions
+  externalDocs:
+    description: Operations about game sessions
+    url: http://wiki.rphaven.co.uk/api/rels/sessions
+  name: session
+- description: Operations about Members
+  name: member
 paths:
-  /ping:
+  /branch:
     get:
-      description: ping endpoint
-      operationId: ping
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Ping'
-          description: Successfull
-      security:
-      - ApiKeyAuth: []
-      summary: ping
-      tags:
-      - server
-      x-accepts: application/json
-  /auto_decoration:
-    post:
-      description: Generates an automatic decoration for a input image of an indoor
-        space in less than 20 seconds.
-      operationId: autoDecoration
-      parameters:
-      - description: TODO
-        explode: true
-        in: query
-        name: room_type
-        required: true
-        schema:
-          default: bedroom
-          enum:
-          - bedroom
-          - living_room
-          - dining_room
-          - bathroom
-          - kitchen
-          - office
-          - study_room
-          type: string
-        style: form
-      - description: TODO
-        explode: true
-        in: query
-        name: style
-        required: true
-        schema:
-          default: modern
-          enum:
-          - modern
-          - minimalist
-          - classic
-          - rustic
-          - industrial
-          - coastal
-          - scandinavian
-          - mediterranean
-          type: string
-        style: form
+      description: Show all branches
+      operationId: showBranches
       requestBody:
         content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/autoDecoration_request'
-        description: Send an image
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Decoration'
-          description: Image for decoration uploaded successfully
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/room_type_error'
-          description: Bad Request
+          application/hal+json:
+            schema: {}
+        description: Update an existent branch in the store
       security:
-      - ApiKeyAuth: []
-      summary: Obtain a new automatic 'decoration' image from your input image.
+      - rphaven_auth:
+        - write:branches
+        - read:branches
+      summary: Show all branches
       tags:
-      - decoration
-      x-content-type: multipart/form-data
+      - branch
+      x-content-type: application/hal+json
       x-accepts: application/json
-  /retry_decoration:
     post:
-      description: Generates a new decoration for an specific image identified previously
-        decorated. The room_type and style can't be modified and it will use the same
-        as the ones provided in the auto_decoration call.
-      operationId: retryDecoration
-      parameters:
-      - description: UIID provided in auto_decoration endpoint
-        explode: true
-        in: query
-        name: img_id
-        required: true
-        schema:
-          default: xyz1230x-xyz1-123x-567a-abc123xyz123
-          type: string
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RetryDecoration'
-          description: Processing a new decoration for specific img_id
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/room_type_error'
-          description: Bad Request
-      security:
-      - ApiKeyAuth: []
-      summary: Retry a 'decoration' image using same img_id.
+      description: Update an existing branch by Id
+      operationId: addBranch
+      requestBody:
+        content:
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/BranchResource'
+        description: Update an existent branch in the store
+      summary: Create a new branch
       tags:
-      - decoration
+      - branch
+      x-content-type: application/hal+json
       x-accepts: application/json
-  /get_decoration:
+  /branch/{branchId}:
     get:
-      description: Get the full resolution decoration computed automatically using
-        the img_id provided in auto_decoration endpoint.
-      operationId: getDecoration
+      description: Show an existing branch by Id
+      operationId: showBranch
       parameters:
-      - description: UUID from the decoration provided for auto_decoration endpoint.
-        explode: true
-        in: query
-        name: img_id
+      - description: ID of the branch
+        explode: false
+        in: path
+        name: branchId
         required: true
         schema:
-          type: string
-        style: form
-      - description: Retry id provided for retry_decoration endpoint.
-        explode: true
-        in: query
-        name: retry_id
-        required: false
-        schema:
-          type: integer
-        style: form
+          $ref: '#/components/schemas/Uuid'
+        style: simple
       responses:
         "200":
           content:
-            application/json:
+            application/hal+json:
               schema:
-                $ref: '#/components/schemas/DecResult'
-          description: successful operation (Decoration DONE)
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DecNotDone'
-          description: successful operation (Decoration INPROGRESS)
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/get_error'
-          description: Invalid status value
-      security:
-      - ApiKeyAuth: []
-      summary: Get a full resolution decoration from img_id.
+                $ref: '#/components/schemas/BranchDetails'
+          description: Show the branch
+      summary: Show branch information
       tags:
-      - decoration
-      x-accepts: application/json
+      - branch
+      x-accepts: application/hal+json
+    put:
+      description: Update an existing branch by Id
+      operationId: updateBranch
+      parameters:
+      - description: ID of the branch
+        explode: false
+        in: path
+        name: branchId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      requestBody:
+        content:
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/BranchResource'
+        description: Update an existent branch in the store
+        required: true
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BranchResource'
+          description: Successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Branch not found
+        "405":
+          description: Validation exception
+      security:
+      - rphaven_auth:
+        - write:branches
+        - read:branches
+      summary: Update an existing branch
+      tags:
+      - branch
+      x-content-type: application/hal+json
+      x-accepts: application/hal+json
+  /branch/{branchId}/meets:
+    get:
+      operationId: showBranchMeets
+      parameters:
+      - description: ID of the branch
+        explode: false
+        in: path
+        name: branchId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/BranchMeets'
+                type: array
+          description: show Meets
+      summary: Show all planned game meets for a branch
+      tags:
+      - branch
+      x-accepts: application/hal+json
+  /branch/{branchId}/tables:
+    get:
+      operationId: showBranchTables
+      parameters:
+      - description: ID of the branch
+        explode: false
+        in: path
+        name: branchId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BranchTables'
+          description: Show branch tables
+      security:
+      - api_key: []
+      tags:
+      - branch
+      - table
+      x-accepts: application/hal+json
+  /branch/{branchId}/games:
+    get:
+      description: Show all the games for a branch
+      operationId: showBranchGames
+      parameters:
+      - description: ID of the branch
+        explode: false
+        in: path
+        name: branchId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/BranchGames'
+                type: array
+          description: Show all the games for a branch
+      summary: Returns all the games for a branch
+      tags:
+      - branch
+      - game
+      x-accepts: application/hal+json
+  /branch/{branchId}/venues:
+    get:
+      description: Show Venues for a Branch
+      operationId: showBranchVenues
+      parameters:
+      - description: ID of the Branch
+        explode: false
+        in: path
+        name: branchId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/BranchVenues'
+          description: Show Venues for a Branch
+      tags:
+      - branch
+      - venue
+      x-accepts: application/hal+json
+  /venue/{venueId}:
+    get:
+      description: Show a Venue
+      operationId: showVenueDetails
+      parameters:
+      - description: ID of the venue
+        explode: false
+        in: path
+        name: venueId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/VenueDetails'
+          description: show venue details
+      tags:
+      - venue
+      x-accepts: application/hal+json
+  /venue/{venueId}/meets:
+    get:
+      description: Show Meets at a Venue
+      operationId: showVenueMeets
+      parameters:
+      - description: ID of the venue
+        explode: false
+        in: path
+        name: venueId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/VenueMeets'
+          description: show venue meets
+      tags:
+      - venue
+      - meet
+      x-accepts: application/hal+json
+  /venue/{venueId}/tables:
+    get:
+      description: Show Tables at a Venue
+      operationId: showVenueTables
+      parameters:
+      - description: ID of the venue
+        explode: false
+        in: path
+        name: venueId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema: {}
+          description: show venue tables
+      tags:
+      - venue
+      - table
+      x-accepts: application/hal+json
+  /table/{tableId}:
+    get:
+      description: Show a table run by a branch
+      operationId: showTableDetails
+      parameters:
+      - description: ID of the table
+        explode: false
+        in: path
+        name: tableId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/TableDetails'
+          description: show table
+      tags:
+      - table
+      x-accepts: application/hal+json
+  /table/{tableId}/meets:
+    get:
+      description: Show games on a table
+      operationId: showTableMeets
+      parameters:
+      - description: ID of the table
+        explode: false
+        in: path
+        name: tableId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema: {}
+          description: show table games
+      tags:
+      - table
+      x-accepts: application/hal+json
+  /table/{tableId}/runners:
+    get:
+      description: Show table organisers
+      operationId: showTableRunners
+      parameters:
+      - description: ID of the table
+        explode: false
+        in: path
+        name: tableId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/TableRunners'
+          description: show table runners
+      tags:
+      - table
+      x-accepts: application/hal+json
+  /table/{tableId}/party:
+    get:
+      description: Show table organisers
+      operationId: showTableParty
+      parameters:
+      - description: ID of the table
+        explode: false
+        in: path
+        name: tableId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/TableParty'
+          description: show table party
+      tags:
+      - table
+      x-accepts: application/hal+json
+  /table/{tableId}/games:
+    get:
+      description: Show games on a table
+      operationId: showTableGames
+      parameters:
+      - description: ID of the table
+        explode: false
+        in: path
+        name: tableId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/TableGames'
+          description: show table games
+      tags:
+      - table
+      x-accepts: application/hal+json
+  /meet/{meetId}:
+    get:
+      description: Show a Meet
+      operationId: showMeetDetails
+      parameters:
+      - description: ID of the Meet
+        explode: false
+        in: path
+        name: meetId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/MeetDetails'
+          description: show Meet details
+      tags:
+      - meet
+      x-accepts: application/hal+json
+  /meet/{meetId}/sessions:
+    get:
+      description: Show all Session for a Meet
+      operationId: showMeetSessions
+      parameters:
+      - description: ID of the Meet
+        explode: false
+        in: path
+        name: meetId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/MeetSessions'
+          description: show Meet
+      tags:
+      - meet
+      - session
+      x-accepts: application/hal+json
+  /game/{gameId}:
+    get:
+      description: Show a game
+      operationId: showGameDetails
+      parameters:
+      - description: ID of the game
+        explode: false
+        in: path
+        name: gameId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Game'
+          description: show Game
+      tags:
+      - game
+      x-accepts: application/hal+json
+  /game/{gameId}/sessions:
+    get:
+      description: Show session for a game
+      operationId: showGameSessions
+      parameters:
+      - description: ID of the game
+        explode: false
+        in: path
+        name: gameId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/GameSessions'
+          description: show Game sessions
+      tags:
+      - game
+      - session
+      x-accepts: application/hal+json
+  /session/{sessionId}:
+    get:
+      description: Show session for a game
+      operationId: sessionDetails
+      parameters:
+      - description: ID of the session
+        explode: false
+        in: path
+        name: sessionId
+        required: true
+        schema:
+          $ref: '#/components/schemas/Uuid'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/SessionDetails'
+          description: show session details
+      tags:
+      - game
+      - session
+      x-accepts: application/hal+json
 components:
   schemas:
-    Ping:
-      example:
-        ping: pong!
+    Branch:
+      allOf:
+      - $ref: '#/components/schemas/BranchLinks'
+      - $ref: '#/components/schemas/BranchResource'
+      description: The base HAL Branch schema
+    Table:
+      allOf:
+      - $ref: '#/components/schemas/TableLinks'
+      - $ref: '#/components/schemas/TableResource'
+      description: The base HAL Table schema
+    Meet:
+      allOf:
+      - $ref: '#/components/schemas/MeetLinks'
+      - $ref: '#/components/schemas/MeetResource'
+      description: The base HAL Meet schema
+    Session:
+      allOf:
+      - $ref: '#/components/schemas/SessionLinks'
+      - $ref: '#/components/schemas/SessionResource'
+      description: The base HAL Session schema
+    Game:
+      allOf:
+      - $ref: '#/components/schemas/GameLinks'
+      - $ref: '#/components/schemas/GameResource'
+      description: The base HAL Game schema
+    Party:
+      allOf:
+      - $ref: '#/components/schemas/PartyLinks'
+      - $ref: '#/components/schemas/PartyResource'
+      description: The base HAL Party schema
+    Member:
+      allOf:
+      - $ref: '#/components/schemas/MemberLinks'
+      - $ref: '#/components/schemas/MemberResource'
+      description: The base HAL Member schema
+    Venue:
+      allOf:
+      - $ref: '#/components/schemas/VenueLinks'
+      - $ref: '#/components/schemas/VenueResource'
+      description: The base HAL Venue schema
+    VenueDetails:
+      allOf:
+      - properties:
+          _links:
+            $ref: '#/components/schemas/VenueDetails_allOf__links'
+      - $ref: '#/components/schemas/Venue'
+      description: "The main Venue HAL resource, including documentation Curies"
+    VenueMeets:
+      allOf:
+      - $ref: '#/components/schemas/VenueLinks'
+      - properties:
+          _links:
+            $ref: '#/components/schemas/VenueMeets_allOf__links'
+          _embedded:
+            $ref: '#/components/schemas/VenueMeets_allOf__embedded'
+      description: Meets at a Venue
+    VenueTables:
+      allOf:
+      - $ref: '#/components/schemas/VenueLinks'
+      - properties:
+          _links:
+            $ref: '#/components/schemas/VenueMeets_allOf__links'
+          _embedded:
+            $ref: '#/components/schemas/VenueTables_allOf__embedded'
+      description: Tables running at a Venue
+    BranchDetails:
+      allOf:
+      - $ref: '#/components/schemas/BranchLinks'
+      - properties:
+          _links:
+            $ref: '#/components/schemas/VenueDetails_allOf__links'
+      - $ref: '#/components/schemas/BranchResource'
+      - properties:
+          _embedded:
+            $ref: '#/components/schemas/BranchDetails_allOf__embedded'
+      description: The main branch resource
+    BranchTables:
+      allOf:
+      - properties:
+          _links:
+            $ref: '#/components/schemas/BranchTables_allOf__links'
+      - $ref: '#/components/schemas/BranchLinks'
+      - properties:
+          _embedded:
+            $ref: '#/components/schemas/BranchTables_allOf__embedded'
+      description: Tables for a given branch
+    BranchVenues:
+      allOf:
+      - properties:
+          _links:
+            $ref: '#/components/schemas/BranchTables_allOf__links'
+      - $ref: '#/components/schemas/BranchLinks'
+      - properties:
+          _embedded:
+            $ref: '#/components/schemas/BranchDetails_allOf__embedded'
+      description: Tables for a given branch
+    BranchMeets:
+      allOf:
+      - properties:
+          _links:
+            $ref: '#/components/schemas/BranchTables_allOf__links'
+      - $ref: '#/components/schemas/BranchLinks'
+      - properties:
+          _embedded:
+            $ref: '#/components/schemas/BranchMeets_allOf__embedded'
+      description: Planned Meets for a Branch
+    BranchGames:
+      allOf:
+      - properties:
+          _links:
+            $ref: '#/components/schemas/BranchTables_allOf__links'
+    SessionDetails:
+      allOf:
+      - $ref: '#/components/schemas/SessionLinks'
+      - properties:
+          _links:
+            $ref: '#/components/schemas/VenueDetails_allOf__links'
+      - $ref: '#/components/schemas/SessionResource'
+      - properties:
+          _embedded:
+            $ref: '#/components/schemas/SessionDetails_allOf__embedded'
+    TableDetails:
+      allOf:
+      - $ref: '#/components/schemas/TableLinks'
+      - properties:
+          _embedded:
+            $ref: '#/components/schemas/TableDetails_allOf__embedded'
+    TableMeets:
+      allOf:
+      - $ref: '#/components/schemas/TableLinks'
+      - properties:
+          _embedded:
+            $ref: '#/components/schemas/TableMeets_allOf__embedded'
+    TableRunners:
+      type: object
+    TableGames:
+      type: object
+    TableParty:
+      type: object
+    MeetDetails:
+      allOf:
+      - $ref: '#/components/schemas/Meet'
+      - properties:
+          _embedded:
+            $ref: '#/components/schemas/MeetDetails_allOf__embedded'
+    MeetSessions:
+      type: object
+    GameSessions:
+      allOf:
+      - $ref: '#/components/schemas/Game'
+      - properties:
+          _embedded:
+            $ref: '#/components/schemas/GameSessions_allOf__embedded'
+    MeetResource:
+      description: A meet is an available date at a venue for sessions to occur
       properties:
-        ping:
-          example: pong!
+        start:
+          format: date-time
           type: string
-    Decoration:
-      example:
-        img_id: xyz1230x-xyz1-123x-567a-abc123xyz123
+        finish:
+          format: date-time
+          type: string
+    BranchResource:
       properties:
-        img_id:
-          example: xyz1230x-xyz1-123x-567a-abc123xyz123
+        name:
           type: string
-    RetryDecoration:
-      example:
-        img_id: xyz1230x-xyz1-123x-567a-abc123xyz123
-        retry_id: 1
+        uri:
+          description: The URI for the Branch page
+          format: uri
+          type: string
+    MemberResource:
       properties:
-        img_id:
-          example: xyz1230x-xyz1-123x-567a-abc123xyz123
+        _links:
+          $ref: '#/components/schemas/MemberResource__links'
+        gamesMaster:
+          type: boolean
+        firstName:
           type: string
-        retry_id:
-          example: 1
+        lastName:
+          type: string
+        pronouns:
+          type: string
+    PartyResource:
+      properties:
+        members:
+          type: integer
+    AddressResource:
+      properties:
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+    TableResource:
+      properties:
+        name:
+          type: string
+        seats:
+          description: The maximum number of participants (including GMs)
           format: int32
           type: integer
-    room_type_error:
-      example:
-        detail: room_type not acceptable.
-      properties:
-        detail:
-          example: room_type not acceptable.
+        formed:
+          format: date-time
           type: string
-    get_error:
-      example:
-        detail: image with the specified id does not exist or is empty.
-      properties:
-        detail:
-          example: image with the specified id does not exist or is empty.
+        disbands:
+          format: date-time
           type: string
-    DecNotDone:
-      description: Decoration not ready
-      example:
-        STATUS: 0
-        decorations: decorations
-      properties:
-        decorations:
-          format: base64
+        signup:
+          format: date-time
           type: string
-          example: null
-        STATUS:
-          example: 0
+    GameResource:
+      properties:
+        title:
+          type: string
+        system:
+          $ref: '#/components/schemas/SystemResource'
+    SessionResource:
+      properties:
+        status:
+          description: Session Status
+          enum:
+          - running
+          - cancelled
+          - pending
+          type: string
+    SystemResource:
+      properties:
+        name:
+          type: string
+        uri:
+          format: uri
+          type: string
+    VenueResource:
+      properties:
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/AddressResource'
+    Uuid:
+      format: uuid
+      type: string
+    PartyLinks:
+      properties:
+        _links:
+          $ref: '#/components/schemas/PartyLinks__links'
+    GameLinks:
+      properties:
+        _links:
+          $ref: '#/components/schemas/GameLinks__links'
+    MemberLinks:
+      properties:
+        _links:
+          $ref: '#/components/schemas/MemberLinks__links'
+    SessionLinks:
+      properties:
+        _links:
+          $ref: '#/components/schemas/MemberLinks__links'
+    VenueLinks:
+      properties:
+        _links:
+          $ref: '#/components/schemas/VenueLinks__links'
+    BranchLinks:
+      properties:
+        _links:
+          $ref: '#/components/schemas/BranchLinks__links'
+    MeetLinks:
+      properties:
+        _links:
+          $ref: '#/components/schemas/MeetLinks__links'
+    TableLinks:
+      properties:
+        _links:
+          $ref: '#/components/schemas/TableLinks__links'
+    HalLinkRelation:
+      description: A HAL Link Relation. See https://stateless.group/hal_specification.html
+      properties:
+        title:
+          type: string
+        href:
+          format: url
+          type: string
+        templated:
+          default: true
+          type: boolean
+      required:
+      - href
+    Curies:
+      properties:
+        name:
+          type: string
+        href:
+          enum:
+          - "https://wiki.rphaven.co.uk/api/rels/{rel}"
+          format: uri
+          type: string
+        templated:
+          default: true
+          type: boolean
+      required:
+      - href
+    ApiResponse:
+      properties:
+        code:
+          format: int32
           type: integer
-    DecResult:
-      description: Base64-encoded contents of the decoration
-      example:
-        STATUS: 1
-        decorations:
-        - BASE_64 encdoded image
-      properties:
-        decorations:
-          example:
-          - BASE_64 encdoded image
-          format: base64
+        type:
           type: string
-        STATUS:
-          example: 1
-          type: integer
-    autoDecoration_request:
-      properties:
-        init_image:
-          format: binary
+        message:
           type: string
+      xml:
+        name: '##default'
+    VenueDetails_allOf__links:
+      properties:
+        curies: {}
+    VenueMeets_allOf__links:
+      properties:
+        self:
+          format: uri
+          type: string
+        curies: {}
+    VenueMeets_allOf__embedded:
+      properties:
+        venue:meets:
+          items:
+            $ref: '#/components/schemas/Meet'
+          type: array
+    VenueTables_allOf__embedded:
+      properties:
+        venue:tables:
+          items:
+            $ref: '#/components/schemas/Table'
+          type: array
+    BranchDetails_allOf__embedded:
+      properties:
+        branch:venues: {}
+    BranchTables_allOf__links:
+      properties:
+        self: {}
+        curies: {}
+    BranchTables_allOf__embedded:
+      properties:
+        branch:tables: {}
+    BranchMeets_allOf__embedded:
+      properties:
+        branch:meets: {}
+    SessionDetails_allOf__embedded:
+      properties:
+        session:venue:
+          $ref: '#/components/schemas/Venue'
+        session:game:
+          $ref: '#/components/schemas/Game'
+        session:meet:
+          $ref: '#/components/schemas/Meet'
+    TableDetails_allOf__embedded:
+      properties:
+        table:runners: {}
+        table:games: {}
+        table:party:
+          $ref: '#/components/schemas/Party'
+    TableMeets_allOf__embedded:
+      properties:
+        table:meets:
+          items:
+            $ref: '#/components/schemas/Meet'
+          type: array
+    MeetDetails_allOf__embedded:
+      properties:
+        meet:venue: {}
+    GameSessions_allOf__embedded:
+      properties:
+        game:party:
+          $ref: '#/components/schemas/Party'
+        game:session:
+          items:
+            $ref: '#/components/schemas/Session'
+          type: array
+    MemberResource__links_curies:
+      allOf:
+      - $ref: '#/components/schemas/Curies'
+      - properties:
+          name:
+            enum:
+            - member
+            type: string
+    MemberResource__links:
+      properties:
+        self:
+          format: uri
+          type: string
+        curies:
+          $ref: '#/components/schemas/MemberResource__links_curies'
+    PartyLinks__links_party_members:
+      allOf:
+      - $ref: '#/components/schemas/HalLinkRelation'
+      - properties:
+          title: {}
+          href: {}
+    PartyLinks__links:
+      properties:
+        self:
+          format: uri
+          type: string
+        party:members:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+    GameLinks__links:
+      properties:
+        self:
+          format: uri
+          type: string
+        game:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        game:sessions:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+    MemberLinks__links:
+      properties:
+        self:
+          format: uri
+          type: string
+    VenueLinks__links:
+      properties:
+        self:
+          format: uri
+          type: string
+        venue:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        venue:meets:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        venue:tables:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+    BranchLinks__links:
+      properties:
+        self:
+          format: uri
+          type: string
+        branch:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        branch:meets:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        branch:tables:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        branch:venues:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+    MeetLinks__links:
+      properties:
+        self:
+          format: uri
+          type: string
+        meet:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        meet:tables:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+    TableLinks__links:
+      properties:
+        self:
+          format: uri
+          type: string
+        table:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        table:games:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        table:runners:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        table:meets:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
+        table:party:
+          $ref: '#/components/schemas/PartyLinks__links_party_members'
   securitySchemes:
-    ApiKeyAuth:
+    rphaven_auth:
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+      type: oauth2
+    api_key:
       in: header
-      name: x-api-key
+      name: api_key
       type: apiKey
 
