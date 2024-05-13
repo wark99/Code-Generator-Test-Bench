@@ -1,23 +1,21 @@
-# StoreApi
+# DistributionsApi
 
 All URIs are relative to *https://petstore3.swagger.io/api/v3*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**deleteOrder**](StoreApi.md#deleteOrder) | **DELETE** /store/order/{orderId} | Delete purchase order by ID |
-| [**getInventory**](StoreApi.md#getInventory) | **GET** /store/inventory | Returns pet inventories by status |
-| [**getOrderById**](StoreApi.md#getOrderById) | **GET** /store/order/{orderId} | Find purchase order by ID |
-| [**placeOrder**](StoreApi.md#placeOrder) | **POST** /store/order | Place an order for a pet |
+| [**deleteDistribution**](DistributionsApi.md#deleteDistribution) | **DELETE** /distributions/{id} | Delete user |
+| [**findChannelDistributionByAssetId**](DistributionsApi.md#findChannelDistributionByAssetId) | **GET** /distributions/channels/{channelId} | Get Distribution by Id |
+| [**findScheduleDistributionByAssetId**](DistributionsApi.md#findScheduleDistributionByAssetId) | **GET** /distributions/schedules/{scheduleId} | Get Distribution by Id |
+| [**getDistributionById**](DistributionsApi.md#getDistributionById) | **GET** /distributions/{id} | Get Distribution by Id |
 
 
 
-## deleteOrder
+## deleteDistribution
 
-> deleteOrder(orderId)
+> deleteDistribution(id)
 
-Delete purchase order by ID
-
-For valid response try integer IDs with value &lt; 1000. Anything above 1000 or nonintegers will generate API errors
+Delete user
 
 ### Example
 
@@ -27,19 +25,19 @@ import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
 import org.openapitools.client.models.*;
-import org.openapitools.client.api.StoreApi;
+import org.openapitools.client.api.DistributionsApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
         defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
 
-        StoreApi apiInstance = new StoreApi(defaultClient);
-        Long orderId = 56L; // Long | ID of the order that needs to be deleted
+        DistributionsApi apiInstance = new DistributionsApi(defaultClient);
+        String id = "id_example"; // String | ID of the distribution to be deleted
         try {
-            apiInstance.deleteOrder(orderId);
+            apiInstance.deleteDistribution(id);
         } catch (ApiException e) {
-            System.err.println("Exception when calling StoreApi#deleteOrder");
+            System.err.println("Exception when calling DistributionsApi#deleteDistribution");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -54,7 +52,7 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **orderId** | **Long**| ID of the order that needs to be deleted | |
+| **id** | **String**| ID of the distribution to be deleted | |
 
 ### Return type
 
@@ -67,92 +65,23 @@ No authorization required
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: Not defined
+- **Accept**: application/json, application/xml
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **400** | Invalid ID supplied |  -  |
-| **404** | Order not found |  -  |
+| **400** | Invalid Request |  -  |
+| **404** | Distribution not found |  -  |
 
 
-## getInventory
+## findChannelDistributionByAssetId
 
-> Map&lt;String, Integer&gt; getInventory()
+> Distribution findChannelDistributionByAssetId(channelId, assetId)
 
-Returns pet inventories by status
-
-Returns a map of status codes to quantities
-
-### Example
-
-```java
-// Import classes:
-import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
-import org.openapitools.client.Configuration;
-import org.openapitools.client.auth.*;
-import org.openapitools.client.models.*;
-import org.openapitools.client.api.StoreApi;
-
-public class Example {
-    public static void main(String[] args) {
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
-        
-        // Configure API key authorization: api_key
-        ApiKeyAuth api_key = (ApiKeyAuth) defaultClient.getAuthentication("api_key");
-        api_key.setApiKey("YOUR API KEY");
-        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-        //api_key.setApiKeyPrefix("Token");
-
-        StoreApi apiInstance = new StoreApi(defaultClient);
-        try {
-            Map<String, Integer> result = apiInstance.getInventory();
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling StoreApi#getInventory");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-**Map&lt;String, Integer&gt;**
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
+Get Distribution by Id
 
 
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | successful operation |  -  |
-
-
-## getOrderById
-
-> Order getOrderById(orderId)
-
-Find purchase order by ID
-
-For valid response try integer IDs with value &lt;&#x3D; 5 or &gt; 10. Other values will generate exceptions.
 
 ### Example
 
@@ -162,20 +91,21 @@ import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
 import org.openapitools.client.models.*;
-import org.openapitools.client.api.StoreApi;
+import org.openapitools.client.api.DistributionsApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
         defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
 
-        StoreApi apiInstance = new StoreApi(defaultClient);
-        Long orderId = 56L; // Long | ID of order that needs to be fetched
+        DistributionsApi apiInstance = new DistributionsApi(defaultClient);
+        Integer channelId = 56; // Integer | Unique Numerical ID of the distribution
+        Integer assetId = 56; // Integer | Unique Numerical ID of the distribution
         try {
-            Order result = apiInstance.getOrderById(orderId);
+            Distribution result = apiInstance.findChannelDistributionByAssetId(channelId, assetId);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling StoreApi#getOrderById");
+            System.err.println("Exception when calling DistributionsApi#findChannelDistributionByAssetId");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -190,11 +120,12 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **orderId** | **Long**| ID of order that needs to be fetched | |
+| **channelId** | **Integer**| Unique Numerical ID of the distribution | |
+| **assetId** | **Integer**| Unique Numerical ID of the distribution | |
 
 ### Return type
 
-[**Order**](Order.md)
+[**Distribution**](Distribution.md)
 
 ### Authorization
 
@@ -210,17 +141,17 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | successful operation |  -  |
-| **400** | Invalid ID supplied |  -  |
-| **404** | Order not found |  -  |
+| **400** | Invalid Request |  -  |
+| **404** | Distribution not found |  -  |
 
 
-## placeOrder
+## findScheduleDistributionByAssetId
 
-> Order placeOrder(order)
+> Distribution findScheduleDistributionByAssetId(scheduleId, assetId)
 
-Place an order for a pet
+Get Distribution by Id
 
-Place a new order in the store
+
 
 ### Example
 
@@ -230,20 +161,21 @@ import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
 import org.openapitools.client.models.*;
-import org.openapitools.client.api.StoreApi;
+import org.openapitools.client.api.DistributionsApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
         defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
 
-        StoreApi apiInstance = new StoreApi(defaultClient);
-        Order order = new Order(); // Order | 
+        DistributionsApi apiInstance = new DistributionsApi(defaultClient);
+        Integer scheduleId = 56; // Integer | Unique Numerical ID of the distribution
+        Integer assetId = 56; // Integer | Unique Numerical ID of the distribution
         try {
-            Order result = apiInstance.placeOrder(order);
+            Distribution result = apiInstance.findScheduleDistributionByAssetId(scheduleId, assetId);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling StoreApi#placeOrder");
+            System.err.println("Exception when calling DistributionsApi#findScheduleDistributionByAssetId");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -258,11 +190,12 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **order** | [**Order**](Order.md)|  | [optional] |
+| **scheduleId** | **Integer**| Unique Numerical ID of the distribution | |
+| **assetId** | **Integer**| Unique Numerical ID of the distribution | |
 
 ### Return type
 
-[**Order**](Order.md)
+[**Distribution**](Distribution.md)
 
 ### Authorization
 
@@ -270,13 +203,82 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: application/json, application/xml, application/x-www-form-urlencoded
-- **Accept**: application/json
+- **Content-Type**: Not defined
+- **Accept**: application/json, application/xml
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | successful operation |  -  |
-| **405** | Invalid input |  -  |
+| **400** | Invalid Request |  -  |
+| **404** | Distribution not found |  -  |
+
+
+## getDistributionById
+
+> Distribution getDistributionById(id)
+
+Get Distribution by Id
+
+
+
+### Example
+
+```java
+// Import classes:
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.Configuration;
+import org.openapitools.client.models.*;
+import org.openapitools.client.api.DistributionsApi;
+
+public class Example {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath("https://petstore3.swagger.io/api/v3");
+
+        DistributionsApi apiInstance = new DistributionsApi(defaultClient);
+        Integer id = 56; // Integer | Unique Numerical ID of the distribution
+        try {
+            Distribution result = apiInstance.getDistributionById(id);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DistributionsApi#getDistributionById");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | **Integer**| Unique Numerical ID of the distribution | |
+
+### Return type
+
+[**Distribution**](Distribution.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json, application/xml
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | successful operation |  -  |
+| **400** | Invalid Request |  -  |
+| **404** | Distribution not found |  -  |
 
