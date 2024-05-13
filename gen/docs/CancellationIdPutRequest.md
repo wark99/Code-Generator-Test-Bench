@@ -1,13 +1,13 @@
 
 
-# Error
+# CancellationIdPutRequest
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**message** | **String** |  |  [optional] |
+|**amount** | **BigDecimal** | Valor a ser cancelado, com 2 digitos depois do ponto |  |
 
 
 
