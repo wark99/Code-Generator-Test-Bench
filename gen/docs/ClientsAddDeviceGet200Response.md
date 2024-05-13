@@ -1,13 +1,13 @@
 
 
-# HTTPValidationError
+# ClientsAddDeviceGet200Response
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**detail** | [**List&lt;ValidationError&gt;**](ValidationError.md) |  |  [optional] |
+|**connectCode** | **BigDecimal** |  |  [optional] |
 
 
 

@@ -1,146 +1,117 @@
 openapi: 3.1.0
 info:
-  title: FastAPI
-  version: 0.1.0
+  title: VR-Training backend with pockebase (admin panel)
+  version: 1.0.0
 servers:
-- url: /
+- url: http://localhost:3000
 paths:
-  /predict:
+  /clients/login:
     post:
-      operationId: predict_price_predict_post
+      description: login using pocketbase auth with password and username
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RealEstateInput'
+              $ref: '#/components/schemas/_clients_login_post_request'
         required: true
       responses:
         "200":
           content:
             application/json:
-              schema: {}
-          description: Successful Response
-        "422":
+              schema:
+                $ref: '#/components/schemas/_clients_login_post_200_response'
+          description: To test
+      summary: client login
+      x-content-type: application/json
+      x-accepts: application/json
+  /clients/add_device:
+    get:
+      description: add new device to client license using the generated code
+      responses:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Predict Price
+                $ref: '#/components/schemas/_clients_add_device_get_200_response'
+          description: the generated code
+      summary: 'add new device '
+      x-accepts: application/json
+  /clients/list_devices:
+    get:
+      description: list all devices connected to client
+      responses:
+        "200":
+          content:
+            array:
+              schema:
+                $ref: '#/components/schemas/_clients_list_devices_get_200_response'
+          description: devices list
+      summary: list devices
+      x-accepts: array
+  /clients/start_session:
+    post:
+      description: start game session so the player can start the game from device
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_clients_start_session_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_clients_login_post_200_response'
+          description: To test
+      summary: start game session
       x-content-type: application/json
       x-accepts: application/json
 components:
   schemas:
-    HTTPValidationError:
-      example:
-        detail:
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          type: type
-        - msg: msg
-          loc:
-          - ValidationError_loc_inner
-          - ValidationError_loc_inner
-          type: type
+    _clients_list_devices_get_200_response:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-      title: HTTPValidationError
-    RealEstateInput:
+        device_id:
+          type: string
+        device_serial_number:
+          type: string
+        client_id:
+          type: string
+        connect_code:
+          type: string
+        ready:
+          type: boolean
+        running_scenario:
+          type: string
+        running_record:
+          type: string
+    _clients_login_post_200_response:
       example:
-        Proximity_to_Important_Locations: 5.637376656633329
-        Property_Status: Property_Status
-        Bedrooms: 6
-        Floor_Level: 2
-        Property_Size: 0
-        Age_of_Property: 5
-        Bathrooms: 1
-        Property_Type: Property_Type
-        Furnishing: Furnishing
-        Location: Location
-        Amenities: Amenities
+        name: name
+        seats: seats
       properties:
-        Property_Type:
-          title: Property Type
+        name:
           type: string
-        Property_Size:
-          title: Property Size
-          type: integer
-        Bedrooms:
-          title: Bedrooms
-          type: integer
-        Bathrooms:
-          title: Bathrooms
-          type: integer
-        Location:
-          title: Location
+        seats:
           type: string
-        Furnishing:
-          title: Furnishing
+    _clients_login_post_request:
+      properties:
+        username:
           type: string
-        Age_of_Property:
-          $ref: '#/components/schemas/Age_Of_Property'
-        Amenities:
-          title: Amenities
+        password:
           type: string
-        Proximity_to_Important_Locations:
-          $ref: '#/components/schemas/Proximity_To_Important_Locations'
-        Floor_Level:
-          title: Floor Level
-          type: integer
-        Property_Status:
-          title: Property Status
-          type: string
-      required:
-      - Amenities
-      - Bathrooms
-      - Bedrooms
-      - Floor_Level
-      - Furnishing
-      - Location
-      - Property_Size
-      - Property_Status
-      - Property_Type
-      title: RealEstateInput
-    ValidationError:
+    _clients_add_device_get_200_response:
       example:
-        msg: msg
-        loc:
-        - ValidationError_loc_inner
-        - ValidationError_loc_inner
-        type: type
+        connect_code: 0.8008281904610115
       properties:
-        loc:
-          items:
-            $ref: '#/components/schemas/ValidationError_loc_inner'
-          type: array
-        msg:
-          title: Message
+        connect_code:
+          type: number
+    _clients_start_session_post_request:
+      properties:
+        device_id:
           type: string
-        type:
-          title: Error Type
+        scenario_id:
           type: string
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    Age_Of_Property:
-      anyOf:
-      - type: integer
-      - nullable: true
-      title: Age Of Property
-    Proximity_To_Important_Locations:
-      anyOf:
-      - type: number
-      - nullable: true
-      title: Proximity To Important Locations
-    ValidationError_loc_inner:
-      anyOf:
-      - type: string
-      - type: integer
+        user_id:
+          type: string
 

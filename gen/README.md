@@ -1,10 +1,10 @@
 # openapi-java-client
 
-FastAPI
+VR-Training backend with pockebase (admin panel)
 
-- API version: 0.1.0
+- API version: 1.0.0
 
-- Build date: 2024-05-13T19:18:57.940656521Z[Etc/UTC]
+- Build date: 2024-05-13T19:19:04.981860060Z[Etc/UTC]
 
 - Generator version: 7.4.0
 
@@ -44,7 +44,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>org.openapitools</groupId>
   <artifactId>openapi-java-client</artifactId>
-  <version>0.1.0</version>
+  <version>1.0.0</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -60,7 +60,7 @@ Add this dependency to your project's build file:
   }
 
   dependencies {
-     implementation "org.openapitools:openapi-java-client:0.1.0"
+     implementation "org.openapitools:openapi-java-client:1.0.0"
   }
 ```
 
@@ -74,7 +74,7 @@ mvn clean package
 
 Then manually install the following JARs:
 
-- `target/openapi-java-client-0.1.0.jar`
+- `target/openapi-java-client-1.0.0.jar`
 - `target/lib/*.jar`
 
 ## Getting Started
@@ -92,15 +92,14 @@ public class DefaultApiExample {
 
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost");
+        defaultClient.setBasePath("http://localhost:3000");
         
         DefaultApi apiInstance = new DefaultApi(defaultClient);
-        RealEstateInput realEstateInput = new RealEstateInput(); // RealEstateInput | 
         try {
-            Object result = apiInstance.predictPricePredictPost(realEstateInput);
+            ClientsAddDeviceGet200Response result = apiInstance.clientsAddDeviceGet();
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling DefaultApi#predictPricePredictPost");
+            System.err.println("Exception when calling DefaultApi#clientsAddDeviceGet");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -113,21 +112,23 @@ public class DefaultApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *http://localhost:3000*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*DefaultApi* | [**predictPricePredictPost**](docs/DefaultApi.md#predictPricePredictPost) | **POST** /predict | Predict Price
+*DefaultApi* | [**clientsAddDeviceGet**](docs/DefaultApi.md#clientsAddDeviceGet) | **GET** /clients/add_device | add new device 
+*DefaultApi* | [**clientsListDevicesGet**](docs/DefaultApi.md#clientsListDevicesGet) | **GET** /clients/list_devices | list devices
+*DefaultApi* | [**clientsLoginPost**](docs/DefaultApi.md#clientsLoginPost) | **POST** /clients/login | client login
+*DefaultApi* | [**clientsStartSessionPost**](docs/DefaultApi.md#clientsStartSessionPost) | **POST** /clients/start_session | start game session
 
 
 ## Documentation for Models
 
- - [AgeOfProperty](docs/AgeOfProperty.md)
- - [HTTPValidationError](docs/HTTPValidationError.md)
- - [ProximityToImportantLocations](docs/ProximityToImportantLocations.md)
- - [RealEstateInput](docs/RealEstateInput.md)
- - [ValidationError](docs/ValidationError.md)
- - [ValidationErrorLocInner](docs/ValidationErrorLocInner.md)
+ - [ClientsAddDeviceGet200Response](docs/ClientsAddDeviceGet200Response.md)
+ - [ClientsListDevicesGet200Response](docs/ClientsListDevicesGet200Response.md)
+ - [ClientsLoginPost200Response](docs/ClientsLoginPost200Response.md)
+ - [ClientsLoginPostRequest](docs/ClientsLoginPostRequest.md)
+ - [ClientsStartSessionPostRequest](docs/ClientsStartSessionPostRequest.md)
 
 
 <a id="documentation-for-authorization"></a>
