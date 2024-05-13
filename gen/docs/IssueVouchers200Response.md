@@ -1,0 +1,14 @@
+
+
+# IssueVouchers200Response
+
+
+## Properties
+
+| Name | Type | Description | Notes |
+|------------ | ------------- | ------------- | -------------|
+|**requestId** | **UUID** | The request ID in UUID v4 format, assigned by the API to the request. |  [optional] |
+|**vouchers** | [**List&lt;Voucher&gt;**](Voucher.md) |  |  [optional] |
+
+
+
