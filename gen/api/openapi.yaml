@@ -1,0 +1,75 @@
+openapi: 3.1.0
+info:
+  description: Reference Gateway API for invoking a communication gateway
+  title: Reference Gateway API
+  version: 1.1.3
+servers:
+- description: Local development server
+  url: https://localhost:8080/api/v1
+tags:
+- description: Gateway API
+  name: gateway
+paths:
+  /email/newsletter:
+    post:
+      operationId: sendMonthlyNewsletterByEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GatewayBody'
+        description: The customer ID and message ID
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendMonthlyNewsletterByEmail_200_response'
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: Send monthly newsletter to customer via email
+      tags:
+      - gateway
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  schemas:
+    GatewayBody:
+      example:
+        userId: userId
+        workflowRunId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        userId:
+          description: The user ID of the customer
+          type: string
+        workflowRunId:
+          description: The workflowRunId of the message being sent
+          format: uuid
+          type: string
+    sendMonthlyNewsletterByEmail_200_response:
+      example:
+        errorMessage: errorMessage
+        messageHash: messageHash
+        userId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        userId:
+          format: uuid
+          type: string
+        messageHash:
+          type: string
+        errorMessage:
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      in: header
+      name: x-worker-api-key
+      type: apiKey
+
