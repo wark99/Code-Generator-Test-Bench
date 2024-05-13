@@ -1,15 +1,14 @@
 
 
-# FetchAds200ResponseProduct
+# Tag
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
+|**id** | **Long** |  |  [optional] |
 |**name** | **String** |  |  [optional] |
-|**description** | **String** |  |  [optional] |
-|**url** | **String** |  |  [optional] |
 
 
 

@@ -1,15 +1,15 @@
 
 
-# FetchAds200Response
+# ModelApiResponse
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**product** | [**FetchAds200ResponseProduct**](FetchAds200ResponseProduct.md) |  |  [optional] |
+|**code** | **Integer** |  |  [optional] |
+|**type** | **String** |  |  [optional] |
 |**message** | **String** |  |  [optional] |
-|**error** | **String** |  |  [optional] |
 
 
 
