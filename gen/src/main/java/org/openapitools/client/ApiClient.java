@@ -57,9 +57,9 @@ import java.util.function.Supplier;
 import java.time.OffsetDateTime;
 
 import org.openapitools.client.auth.Authentication;
-import org.openapitools.client.auth.HttpBearerAuth;
+import org.openapitools.client.auth.ApiKeyAuth;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:18:03.133651353Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:18:09.376695343Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
@@ -84,7 +84,7 @@ public class ApiClient extends JavaTimeFormatter {
 
     private long waitTimeMillis = 10;
 
-    private String basePath = "http://localhost";
+    private String basePath = "https://hostname-dev.sennatech.com.br/api/sddo/insurance/v1";
 
     private RestTemplate restTemplate;
 
@@ -115,7 +115,7 @@ public class ApiClient extends JavaTimeFormatter {
 
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<String, Authentication>();
-        authentications.put("AuthToken", new HttpBearerAuth("bearer"));
+        authentications.put("api_key", new ApiKeyAuth("header", "Ocp-Apim-Subscription-Key"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -199,31 +199,37 @@ public class ApiClient extends JavaTimeFormatter {
         return authentications.get(authName);
     }
 
-    /**
-     * Helper method to set access token for the first Bearer authentication.
-     *
-     * @param bearerToken Bearer token
-     */
-    public void setBearerToken(String bearerToken) {
-        setBearerToken(() -> bearerToken);
-    }
+
 
     /**
-     * Helper method to set the supplier of access tokens for Bearer authentication.
+     * Helper method to set API key value for the first API key authentication.
      *
-     * @param tokenSupplier The supplier of bearer tokens
+     * @param apiKey the API key
      */
-    public void setBearerToken(Supplier<String> tokenSupplier) {
+    public void setApiKey(String apiKey) {
         for (Authentication auth : authentications.values()) {
-            if (auth instanceof HttpBearerAuth) {
-                ((HttpBearerAuth) auth).setBearerToken(tokenSupplier);
+            if (auth instanceof ApiKeyAuth) {
+                ((ApiKeyAuth) auth).setApiKey(apiKey);
                 return;
             }
         }
-        throw new RuntimeException("No Bearer authentication configured!");
+        throw new RuntimeException("No API key authentication configured!");
     }
 
-
+    /**
+     * Helper method to set API key prefix for the first API key authentication.
+     *
+     * @param apiKeyPrefix API key prefix
+     */
+    public void setApiKeyPrefix(String apiKeyPrefix) {
+        for (Authentication auth : authentications.values()) {
+            if (auth instanceof ApiKeyAuth) {
+                ((ApiKeyAuth) auth).setApiKeyPrefix(apiKeyPrefix);
+                return;
+            }
+        }
+        throw new RuntimeException("No API key authentication configured!");
+    }
 
 
 

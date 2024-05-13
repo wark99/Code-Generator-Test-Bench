@@ -1,28 +1,46 @@
 openapi: 3.1.0
 info:
-  description: Require authentication for all route except /auth and /auth/new.
-  title: Youtube Music
-  version: 1.0.0
+  contact:
+    email: filipe.xavier@sennatech.com.br
+  description: Contrato de API referente aos recursos de gestão de sinistros e seguros
+    que atendem como fonte de dados para o SDDO.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: API SDDO - Seguros
+  version: 0.0.8
 servers:
-- url: /
+- description: DEV
+  url: https://hostname-dev.sennatech.com.br/api/sddo/insurance/v1
+- description: HML
+  url: https://hostname-uat.sennatech.com.br/api/sddo/insurance/v1
+- description: PRD
+  url: https://hostname.sennatech.com.br/api/sddo/insurance/v1
 tags:
-- description: User and sign in
-  name: User
-- description: Read playlist from user
-  name: Playlist
-- description: "Comment on a playlist, by user"
-  name: Comment
-- description: "Read, Like ,unlike a playlist"
-  name: Like
+- description: Recursos gestão de usuários
+  name: Usuários
+- description: Recursos gestão de clientes
+  name: Clientes
+- description: Recursos gestão de coberturas
+  name: Coberturas
+- description: Recursos gestão de cotações
+  name: Cotação
+- description: Recursos gestão de pagamentos
+  name: Pagamento
+- description: Recursos gestão de emissões
+  name: Emissão
+- description: Recursos gestão de apólices
+  name: Apólices
 paths:
-  /api/stream/{songId}:
+  /users:
     get:
+      description: Lista todos os usuários cadastrados
+      operationId: get-users
       parameters:
-      - description: Valid youtube Id
-        example: A_HekkBbd1M
+      - description: Api-Key
         explode: false
-        in: path
-        name: songId
+        in: header
+        name: Ocp-Apim-Subscription-Key
         required: true
         schema:
           type: string
@@ -32,1452 +50,1602 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StreamMusic'
-          description: audio return
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: No playlist
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/responses/UnauthorizedError'
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Stream Music
+                $ref: '#/components/schemas/GetUsersResponse'
+          description: Ok
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Lista todos os usuários cadastrados
       tags:
-      - Music
+      - Usuários
       x-accepts: application/json
-  /api/music/{songId}:
-    get:
-      parameters:
-      - description: Valid youtube Id
-        example: oKOtzIo-uYw
-        explode: false
-        in: path
-        name: songId
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SongInfor'
-          description: "After this api send response, /api/stream/{songId} is available\
-            \ to stream"
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: No playlist
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/responses/UnauthorizedError'
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Download Music + Get song infors
-      tags:
-      - Music
-      x-accepts: application/json
-  /api/music?search={search}&page={page}:
-    get:
-      description: "Return data, only song that is less than 5 min"
-      parameters:
-      - explode: true
-        in: query
-        required: false
-        style: form
-      - explode: true
-        in: query
-        required: false
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_api_music_search__search__page__page__get_200_response'
-          description: "After this api send response, /api/stream/{songId} is available\
-            \ to stream"
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: No playlist
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Search music
-      tags:
-      - Music
-      x-accepts: application/json
-  /api/auth:
     post:
-      description: return a token string
+      description: Cadastra novo usuário
+      operationId: post-users
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
-        description: "Must have username, password"
+        description: Recebe um evento
         required: true
       responses:
         "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
-          description: Signed in
+          description: Created
         "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Password not match requirement/Username too short(6-) or too
-            long(32+)
-      summary: Sign in
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Cadastra novo usuário
       tags:
-      - User
+      - Usuários
       x-content-type: application/json
       x-accepts: application/json
-  /api/auth/new:
-    post:
-      description: make new user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserAll'
-        description: "Must have username, password"
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAll'
-          description: new user
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Password not match requirement/Username too short(6-) or too
-            long(32+)/Username Exist
-      summary: Make new user
-      tags:
-      - User
-      x-content-type: application/json
-      x-accepts: application/json
-  /api/users/{id}:
+  /users-validation/{hash}:
     get:
-      description: Read user infor from id
+      description: Valida acesso do cliente com base no usuário e senha criptografados
+      operationId: get-users-validation
       parameters:
-      - description: id is 1+
-        example: 1
+      - description: Api-Key
         explode: false
-        in: path
-        name: id
+        in: header
+        name: Ocp-Apim-Subscription-Key
         required: true
         schema:
-          type: integer
+          type: string
+        style: simple
+      - description: base64(user:pass)
+        explode: false
+        in: path
+        name: hash
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Ok
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Valida acesso do cliente com base no usuário e senha criptografados
+      tags:
+      - Usuários
+      x-accepts: application/json
+  /users/{documentNumber}:
+    delete:
+      description: remove usuário
+      operationId: delete-users
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Número de documento do usuário
+        explode: false
+        in: path
+        name: documentNumber
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Remove usuários
+      tags:
+      - Usuários
+      x-accepts: application/json
+    get:
+      description: Consulta detalhes de usuário por e-mail
+      operationId: get-users-by-email
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Número de documento do usuário
+        explode: false
+        in: path
+        name: documentNumber
+        required: true
+        schema:
+          type: string
         style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserAll'
-          description: User with id
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: No user
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Read user infor from id
-      tags:
-      - User
-      x-accepts: application/json
-  /api/users:
-    delete:
-      description: "Delete username, password, comment, playlist"
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageGood'
-          description: Delete
+                $ref: '#/components/schemas/User'
+          description: Ok
+        "400":
+          description: Bad Request
         "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Dont have permission
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Delete your data
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Consulta detalhes de usuário por e-mail
       tags:
-      - User
+      - Usuários
       x-accepts: application/json
     put:
-      description: Edit your infors
+      description: Atualiza usuário
+      operationId: put-users
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Número de documento do usuário
+        explode: false
+        in: path
+        name: documentNumber
+        required: true
+        schema:
+          type: string
+        style: simple
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/_api_users_put_request'
-        description: "Must have username, name ,password"
+              $ref: '#/components/schemas/User'
+        description: Recebe um evento
         required: true
       responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageGood'
-          description: Updated
+        "202":
+          description: Accepted
         "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Password not match requirement/Username too short(6-) or too
-            long(32+)
+          description: Bad Request
         "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Dont have permission
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Update your infor
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Atualiza usuário
       tags:
-      - User
+      - Usuários
       x-content-type: application/json
       x-accepts: application/json
-  /api/playlists/{userId}/view?sort={sort}&page={page}:
-    get:
+  /users/password/{documentNumber}:
+    put:
+      description: Atualiza senha de usuário
+      operationId: put-user-password
       parameters:
-      - description: "0 is from all user, 1+ is from some user"
-        example: 1
+      - description: Api-Key
         explode: false
-        in: path
-        name: userId
+        in: header
+        name: Ocp-Apim-Subscription-Key
         required: true
         schema:
-          type: integer
-        style: simple
-      - description: DESC or ASC to sort by view
-        example: ASC
-        explode: true
-        in: query
-        name: sort
-        required: true
-        schema:
-          pattern: DESC|ASC
           type: string
-        style: form
-      - description: Pagination
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          example: 1
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PlaylistInforReturn'
-          description: Read playlist from user
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: No playlist
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Playlists
-      tags:
-      - Playlist
-      x-accepts: application/json
-  /api/playlists/{userId}/time?sort={sort}&page={page}:
-    get:
-      parameters:
-      - description: "0 is from all user, 1+ is from some user"
-        example: 1
+        style: simple
+      - description: Número de documento do usuário
         explode: false
-        in: path
-        name: userId
+        in: header
+        name: documentNumber
         required: true
         schema:
-          type: integer
-        style: simple
-      - description: DESC or ASC to sort by time
-        example: DESC
-        explode: true
-        in: query
-        name: sort
-        required: true
-        schema:
-          pattern: DESC|ASC
           type: string
-        style: form
-      - description: Pagination
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          example: 1
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PlaylistInforReturn'
-          description: Read playlist from user
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
-          description: No playlist
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Playlists
-      tags:
-      - Playlist
-      x-accepts: application/json
-  /api/playlists:
-    post:
+        style: simple
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Playlist'
-        description: "Must have the playlistId, name, a list of song that is valid\
-          \ youtube id, and a valid link to image"
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Atualiza senha de usuário
+      tags:
+      - Usuários
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/password/recovery:
+    post:
+      description: Solicita recuperação de senha de usuário
+      operationId: post-user-password-recovery
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordRecovery'
         required: true
       responses:
         "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_api_playlists_post_201_response'
-          description: New playlist
+          description: Created
         "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
+          description: Bad Request
         "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Solicita recuperação de senha de usuário
+      tags:
+      - Usuários
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/password/recovery/{hash}:
+    put:
+      description: Efetua a atualização de senha por fluxo de recuperação
+      operationId: put-user-password-recovery
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: hash
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePasswordRecovery'
+        required: true
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Efetua a atualização de senha por fluxo de recuperação
+      tags:
+      - Usuários
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/password/hash-validation/{hash}:
+    get:
+      description: Efetua a validação do hash de recuperação de senha
+      operationId: put-user-password-hash-validation
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: hash
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Ok
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Efetua a validação do hash de recuperação de senha
+      tags:
+      - Usuários
+      x-accepts: application/json
+  /customers:
+    get:
+      description: Lista todos os usuários cadastrados
+      operationId: get-customers
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Dont have permission
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Make Playlist
+                $ref: '#/components/schemas/GetCustomersResponse'
+          description: Ok
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Lista todos os clientes cadastrados
       tags:
-      - Playlist
+      - Clientes
+      x-accepts: application/json
+    post:
+      description: Cadastra novo cliente
+      operationId: post-customers
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        description: Recebe um evento
+        required: true
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Cadastra novo cliente
+      tags:
+      - Clientes
       x-content-type: application/json
+      x-accepts: application/json
+  /customers/{documentNumber}:
+    get:
+      description: Consulta detalhes de usuário por número de documento
+      operationId: get-customers-by-documentNumber
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Documento de identificação do cliente
+        explode: false
+        in: path
+        name: documentNumber
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: Ok
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Consulta detalhes de usuário por número de documento
+      tags:
+      - Clientes
       x-accepts: application/json
     put:
+      description: Atualiza cliente
+      operationId: put-customers
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlaylistInfor'
-        description: Mutate the object + revalidate with middleware(done) is much
-          faster than add/remove one by one(in writing codes)
+              $ref: '#/components/schemas/PutCustomerRequest'
+        description: Recebe um evento
         required: true
       responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageGood'
-          description: Update playlist
+        "202":
+          description: Accepted
         "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Password not match requirement/Username too short(6-) or too
-            long(32+)
+          description: Bad Request
         "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Dont have permission
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Update Playlist
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Atualiza cliente
       tags:
-      - Playlist
+      - Clientes
       x-content-type: application/json
       x-accepts: application/json
-  /api/playlists/{id}:
-    delete:
-      description: Delete playlist
+  /customers-validation/{hash}:
+    get:
+      description: Valida acesso do cliente com base no usuário e senha criptografados
+      operationId: get-customers-validation
       parameters:
-      - description: "0 is from all user, 1+ is from some user"
-        example: 3
+      - description: Api-Key
         explode: false
-        in: path
-        name: id
+        in: header
+        name: Ocp-Apim-Subscription-Key
         required: true
         schema:
-          type: integer
+          type: string
+        style: simple
+      - description: base64(user:pass)
+        explode: false
+        in: path
+        name: hash
+        required: true
+        schema:
+          type: string
         style: simple
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageGood'
-          description: Delete
+          description: Ok
+        "400":
+          description: Bad Request
         "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Dont have permission
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Delete your playlist
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Valida acesso do cliente com base no usuário e senha criptografados
       tags:
-      - Playlist
+      - Clientes
       x-accepts: application/json
-    get:
-      description: Delete playlist
+  /customers/password/{documentNumber}:
+    put:
+      description: Atualiza senha de cliente
+      operationId: put-customer-password
       parameters:
-      - description: "0 is from all user, 1+ is from some user"
-        example: 1
+      - description: Api-Key
         explode: false
-        in: path
-        name: id
+        in: header
+        name: Ocp-Apim-Subscription-Key
         required: true
         schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PlaylistInfor'
-          description: Playlist with id
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Dont have permission
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Delete your playlist
-      tags:
-      - Playlist
-      x-accepts: application/json
-  /api/comments/{userId}/{playlistId}/time?sort={sort}&page={page}:
-    get:
-      parameters:
-      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
-        example: 1
-        explode: false
-        in: path
-        name: userId
-        required: true
-        schema:
-          type: integer
-        style: simple
-      - description: DESC or ASC to sort the comment
-        example: ASC
-        explode: true
-        in: query
-        name: sort
-        required: true
-        schema:
-          pattern: DESC|ASC
           type: string
-        style: form
-      - description: Pagination
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          example: 1
-          type: integer
-        style: form
-      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
-        example: 3
-        explode: false
-        in: path
-        name: playlistId
-        required: true
-        schema:
-          type: integer
         style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CommentInforReturn'
-          description: Read comment list from user and playlist
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: No comment
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
-          description: Bad request
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: "Read comment from user and playlist, sort by time"
-      tags:
-      - Comment
-      x-accepts: application/json
-  /api/comments/{userId}/{playlistId}/playlist?sort={sort}&page={page}:
-    get:
-      parameters:
-      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
-        example: 1
+      - description: Número de documento do cliente
         explode: false
-        in: path
-        name: userId
+        in: header
+        name: documentNumber
         required: true
         schema:
-          type: integer
-        style: simple
-      - description: DESC or ASC to sort the comment
-        example: ASC
-        explode: true
-        in: query
-        name: sort
-        required: true
-        schema:
-          pattern: DESC|ASC
           type: string
-        style: form
-      - description: Pagination
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          example: 1
-          type: integer
-        style: form
-      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
-        example: 3
-        explode: false
-        in: path
-        name: playlistId
-        required: true
-        schema:
-          type: integer
         style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CommentInforReturn'
-          description: Read comment list from user and playlist
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: No comment
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: "Read comment from user and playlist, sort by playlist"
-      tags:
-      - Comment
-      x-accepts: application/json
-  /api/comments/{userId}/{playlistId}/user?sort={sort}&page={page}:
-    get:
-      parameters:
-      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
-        example: 1
-        explode: false
-        in: path
-        name: userId
-        required: true
-        schema:
-          type: integer
-        style: simple
-      - description: DESC or ASC to sort the comment
-        example: ASC
-        explode: true
-        in: query
-        name: sort
-        required: true
-        schema:
-          pattern: DESC|ASC
-          type: string
-        style: form
-      - description: Pagination
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          example: 1
-          type: integer
-        style: form
-      - description: "0 is from all user/playlist, 1+ is from some user/playlist"
-        example: 3
-        explode: false
-        in: path
-        name: playlistId
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CommentInforReturn'
-          description: Read comment list from user and playlist
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: No comment
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: "Read comment from user and playlist, sort by user"
-      tags:
-      - Comment
-      x-accepts: application/json
-  /api/comments:
-    post:
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Comment'
-        description: A new comment
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Atualiza senha de cliente
+      tags:
+      - Clientes
+      x-content-type: application/json
+      x-accepts: application/json
+  /customers/password/recovery:
+    post:
+      description: Solicita recuperação de senha de usuário
+      operationId: post-customers-password-recovery
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordRecovery'
         required: true
       responses:
         "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CommentInfor'
-          description: Make new comment
+          description: Created
         "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
+          description: Bad Request
         "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Solicita recuperação de senha de usuário
+      tags:
+      - Clientes
+      x-content-type: application/json
+      x-accepts: application/json
+  /customers/password/recovery/{hash}:
+    put:
+      description: Efetua a atualização de senha por fluxo de recuperação
+      operationId: put-customers-password-recovery
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: hash
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePasswordRecovery'
+        required: true
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Efetua a atualização de senha por fluxo de recuperação
+      tags:
+      - Clientes
+      x-content-type: application/json
+      x-accepts: application/json
+  /customers/password/hash-validation/{hash}:
+    get:
+      description: Efetua a validação do hash de recuperação de senha
+      operationId: put-customers-password-hash-validation
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: hash
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Ok
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Efetua a validação do hash de recuperação de senha
+      tags:
+      - Clientes
+      x-accepts: application/json
+  /coverages:
+    get:
+      description: Consulta coberturas existentes
+      operationId: get-coverages
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
-          description: Dont have permission
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Make new comment
+                $ref: '#/components/schemas/Coverages'
+          description: Ok
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Consulta coberturas existentes
       tags:
-      - Comment
+      - Coberturas
+      x-accepts: application/json
+    post:
+      description: Cadastra coberturas novas
+      operationId: post-coverages
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoverageRequest'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Cadastra coberturas novas
+      tags:
+      - Coberturas
       x-content-type: application/json
+      x-accepts: application/json
+  /coverages/{code}:
+    delete:
+      description: Remove coberturas existentes
+      operationId: delete-coverages
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Código de cobertura
+        explode: false
+        in: path
+        name: code
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Remove coberturas existentes
+      tags:
+      - Coberturas
       x-accepts: application/json
     put:
+      description: Atualiza coberturas existentes
+      operationId: put-coverages
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Código de cobertura
+        explode: false
+        in: path
+        name: code
+        required: true
+        schema:
+          type: string
+        style: simple
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/_api_comments_put_request'
-        description: The comment you update must come from your account
-        required: true
+              $ref: '#/components/schemas/CoverageRequest'
       responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
-          description: Updated comment
+        "202":
+          description: Accepted
         "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
+          description: Bad Request
         "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
-          description: Dont have permission
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Update comment
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Atualiza coberturas existentes
       tags:
-      - Comment
+      - Coberturas
       x-content-type: application/json
       x-accepts: application/json
-  /api/comments/{id}:
-    delete:
-      parameters:
-      - example: 1
-        explode: false
-        in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageGood'
-          description: Delete
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Delete
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Delete your comment
-      tags:
-      - Comment
-      x-accepts: application/json
-  /api/likes/{playlistId}/playlist?sort={sort}&page={page}:
+  /coverages/{policy}:
     get:
+      description: Consulta coberturas de uma apólice
+      operationId: get-coverages-by-policy
       parameters:
-      - description: "0 is from all user, 1+ is from some user"
-        example: 3
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Número e apólice
         explode: false
         in: path
-        name: playlistId
+        name: policy
         required: true
         schema:
-          type: integer
-        style: simple
-      - description: DESC or ASC to sort the comment
-        example: DESC
-        explode: true
-        in: query
-        name: sort
-        required: true
-        schema:
-          pattern: DESC|ASC
           type: string
-        style: form
-      - description: Pagination
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          example: 1
-          type: integer
-        style: form
+        style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_api_likes__playlistId__playlist_sort__sort__page__page__get_200_response'
-          description: "Read like of a playlist from users, sort by user"
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_api_playlists__userId__time_sort__sort__page__page__get_204_response'
-          description: No like
+                $ref: '#/components/schemas/Coverages'
+          description: Ok
         "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: "Like from users to a playlist, sort by user"
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Consulta coberturas de uma apólice
       tags:
-      - Like
+      - Coberturas
       x-accepts: application/json
-  /api/likes/{userId}/user?sort={sort}&page={page}:
-    get:
-      parameters:
-      - description: "0 is from all user, 1+ is from some user"
-        example: 1
-        explode: false
-        in: path
-        name: userId
-        required: true
-        schema:
-          type: integer
-        style: simple
-      - description: DESC or ASC to sort the comment
-        example: ASC
-        explode: true
-        in: query
-        name: sort
-        required: true
-        schema:
-          pattern: DESC|ASC
-          type: string
-        style: form
-      - description: Pagination
-        explode: true
-        in: query
-        name: page
-        required: false
-        schema:
-          example: 1
-          type: integer
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/_api_likes__userId__user_sort__sort__page__page__get_200_response'
-          description: Read playlist from a user like
-        "204":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: No like
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Like from a user to many playlists
-      tags:
-      - Like
-      x-accepts: application/json
-  /api/likes:
+  /quotation:
     post:
+      description: Efetua cotação de seguro
+      operationId: post-quotation
       parameters:
-      - description: "0 is from all user, 1+ is from some user"
-        example: 3
+      - description: Api-Key
         explode: false
-        in: path
-        name: playlistId
+        in: header
+        name: Ocp-Apim-Subscription-Key
         required: true
         schema:
-          type: integer
+          type: string
         style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuotationRequest'
       responses:
         "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Like a playlist
+                $ref: '#/components/schemas/QuotationResponse'
+          description: Created
         "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Efetua cotação de seguro
+      tags:
+      - Cotação
+      x-content-type: application/json
+      x-accepts: application/json
+  /issuances:
+    post:
+      description: Efetua emissão de seguro
+      operationId: post-issuance
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssuanceRequest'
+      responses:
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: Like a playlist
+                $ref: '#/components/schemas/IssuanceResponse'
+          description: Created
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Efetua emissão de seguro
       tags:
-      - Like
+      - Emissão
+      x-content-type: application/json
       x-accepts: application/json
-  /api/likes/{id}:
-    delete:
+  /payments:
+    post:
+      description: Efetua emissão de seguro
+      operationId: post-payment
       parameters:
-      - description: "If comment is not from user, will fail"
-        example: 1
-        explode: true
-        in: query
-        name: likeId
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
         required: true
         schema:
-          type: integer
-        style: form
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+          description: Created
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Efetua emissão de seguro
+      tags:
+      - Pagamento
+      x-content-type: application/json
+      x-accepts: application/json
+  /policies/{documentNumber}:
+    get:
+      description: Consulta de apólices por cliente
+      operationId: get-policies-by-documentNumber
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Número de documento do usuário
+        explode: false
+        in: path
+        name: documentNumber
+        required: true
+        schema:
+          type: string
+        style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageGood'
-          description: Delete successfully
+                $ref: '#/components/schemas/PoliciesResponse'
+          description: Ok
         "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Consulta de apólices por cliente
+      tags:
+      - Apólices
+      x-accepts: application/json
+  /policies/{policyNumber}:
+    get:
+      description: Consulta de detalhes e apólice
+      operationId: get-policies-details
+      parameters:
+      - description: Api-Key
+        explode: false
+        in: header
+        name: Ocp-Apim-Subscription-Key
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Número da apólice
+        explode: false
+        in: path
+        name: documentNumber
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageBad'
-          description: Bad request
-      security:
-      - OAuth2:
-        - AuthToken
-      summary: remove your like
+                $ref: '#/components/schemas/PolicyDetailsResponse'
+          description: Ok
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server error
+      summary: Consulta de detalhes e apólice
       tags:
-      - Like
+      - Apólices
       x-accepts: application/json
-    parameters:
-    - description: "If comment is not from user, will fail"
-      example: 1
-      explode: true
-      in: query
-      name: likeId
-      required: true
-      schema:
-        type: integer
-      style: form
 components:
-  responses:
-    UnauthorizedError:
-      description: Access token is missing or invalid
-  schemas:
-    StreamMusic:
-      description: Audio binary file
-      format: binary
-      type: string
-    Token:
-      example:
-        userId: 1
-        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcwMDEyOTE5NjEwMn0.RbS_MqHNK8ZHzr_00e9ASol7X-QCahRIlucYYGTGe8U
-      properties:
-        token:
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcwMDEyOTE5NjEwMn0.RbS_MqHNK8ZHzr_00e9ASol7X-QCahRIlucYYGTGe8U
-          type: string
-        userId:
-          example: 1
-          type: integer
-    SongInfor:
-      example:
-        image: https://i.ytimg.com/vi/oKOtzIo-uYw/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAmWNobaFgWajWevnGzK5p1zY8KdQ
-        artist: TheFugeesVEVO
-        genre: Music
-        description: ' '
-        youtubeId: oKOtzIo-uYw
-        title: Fugees - Killing Me Softly With His Song (Official Video)
-      properties:
-        youtubeId:
-          example: oKOtzIo-uYw
-          type: string
-        genre:
-          example: Music
-          type: string
-        title:
-          example: Fugees - Killing Me Softly With His Song (Official Video)
-          type: string
-        artist:
-          example: TheFugeesVEVO
-          type: string
-        image:
-          example: https://i.ytimg.com/vi/oKOtzIo-uYw/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAmWNobaFgWajWevnGzK5p1zY8KdQ
-          type: string
-        description:
-          description: "Sometime this is blank, due to youtube description"
-          example: ' '
-          type: string
+  requestBodies:
     User:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+      description: Objeto de evento
+  schemas:
+    User:
+      description: Objeto de usuário
       example:
-        password: 12#@acccCc
-        username: 1scdecc
+        password: password
+        birthdate: 2000-01-23
+        documentNumber: documentNumber
+        profile: profile
+        name: name
+        email: email
       properties:
-        username:
-          description: "From 5 to 32 characters, no white space"
-          example: 1scdecc
+        documentNumber:
+          type: string
+        name:
+          type: string
+        birthdate:
+          format: date
+          type: string
+        email:
+          type: string
+        profile:
           type: string
         password:
-          description: "1 number, 1 lowercase, 1 uppercase,8 to 32 character,contain\
-            \ 1 of [# @ $ %]"
-          example: 12#@acccCc
-          pattern: "/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9#@$%]{5,32}$/"
           type: string
-    UserAll:
+    GetUsersResponse:
+      items:
+        $ref: '#/components/schemas/GetUserResponse'
+      type: array
+    GetUserResponse:
       example:
-        image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-        name: my name
-        id: 1
-        username: 1scdecc
-      properties:
-        id:
-          example: 1
-          type: integer
-        username:
-          description: "From 5 to 32 characters, no white space"
-          example: 1scdecc
-          type: string
-        name:
-          description: From 5 to 32 characters
-          example: my name
-          type: string
-        image:
-          description: Valid url to image
-          example: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-          type: string
-    Playlist:
-      example:
-        playlistName: hello
-        songList:
-        - _k3y2tVWK74
-        - A_HekkBbd1M
-        - dUkGrSPbSOE
-        - E8gmARGvPlI
-        - izGwDsrQ1eQ
-        - mHONNcZbwDY
-        - UxxajLWwzqY
-        - wWH75eSQhdc
-        - Zasx9hjo4WY_
-        image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-      properties:
-        name:
-          type: string
-        songList:
-          description: List of valid youtube id
-          items:
-            description: TODO default missing array inner type to string
-            type: string
-          type: array
-          item:
-            type: string
-        image:
-          description: Must be a link to an image
-          type: string
-    PlaylistInfor:
-      example:
-        playlistName: hello
-        id: 3
-        songList:
-        - _k3y2tVWK74
-        - A_HekkBbd1M
-        - dUkGrSPbSOE
-        - E8gmARGvPlI
-        - izGwDsrQ1eQ
-        - mHONNcZbwDY
-        - UxxajLWwzqY
-        - wWH75eSQhdc
-        - Zasx9hjo4WY_
-        image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-        userId: 1
-      properties:
-        playlistName:
-          type: string
-        songList:
-          description: List of valid youtube id
-          items:
-            description: TODO default missing array inner type to string
-            type: string
-          type: array
-          item:
-            type: string
-        id:
-          type: integer
-        userId:
-          type: integer
-        image:
-          description: Must be a link to an image
-          type: string
-        createdAt:
-          format: date
-          type: string
-        updatedAt:
-          format: date
-          type: string
-    PlaylistInforReturn:
-      example:
-        data:
-        - playlistName: hello
-          id: 3
-          songList:
-          - _k3y2tVWK74
-          - A_HekkBbd1M
-          - dUkGrSPbSOE
-          - E8gmARGvPlI
-          - izGwDsrQ1eQ
-          - mHONNcZbwDY
-          - UxxajLWwzqY
-          - wWH75eSQhdc
-          - Zasx9hjo4WY_
-          image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-          userId: 1
-        - playlistName: hello
-          id: 3
-          songList:
-          - _k3y2tVWK74
-          - A_HekkBbd1M
-          - dUkGrSPbSOE
-          - E8gmARGvPlI
-          - izGwDsrQ1eQ
-          - mHONNcZbwDY
-          - UxxajLWwzqY
-          - wWH75eSQhdc
-          - Zasx9hjo4WY_
-          image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-          userId: 1
-        rowCount: 7
-        page: 1
-      properties:
-        rowCount:
-          example: 7
-          type: integer
-        page:
-          example: 1
-          type: integer
-        data:
-          items:
-            $ref: '#/components/schemas/PlaylistInfor'
-          type: array
-    Comment:
-      example:
-        playlistId: 3
-        content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
-      properties:
-        content:
-          example: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
-          type: string
-        playlistId:
-          example: 3
-          type: integer
-    CommentInfor:
-      example:
-        id: 1
-        content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
-        playlistId: 3
-        userId: 1
-        createdAt: 2023-11-09 16:22:06.733
-        updatedAt: 2023-11-09 16:22:06.733
-      properties:
-        id:
-          type: integer
-        content:
-          example: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
-          type: string
-        playlistId:
-          type: integer
-        userId:
-          type: integer
-        createdAt:
-          format: date
-          type: string
-        updatedAt:
-          format: date
-          type: string
-    CommentInforReturn:
-      example:
-        data:
-        - playlistId: 6
-          createdAt: 2023-11-09 16:22:06.733
-          id: 0
-          userId: 1
-          content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
-          updatedAt: 2023-11-09 16:22:06.733
-        - playlistId: 6
-          createdAt: 2023-11-09 16:22:06.733
-          id: 0
-          userId: 1
-          content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
-          updatedAt: 2023-11-09 16:22:06.733
-        rowCount: 10
-        page: 1
-      properties:
-        rowCount:
-          example: 10
-          type: integer
-        page:
-          example: 1
-          type: integer
-        data:
-          items:
-            $ref: '#/components/schemas/CommentInforReturn_data_inner'
-          type: array
-    Like:
-      properties:
-        userId:
-          example: 1
-          type: integer
-        playlistId:
-          example: 3
-          type: integer
-    LikeList:
-      properties:
-        data:
-          $ref: '#/components/schemas/Like'
-        page:
-          example: 1
-          type: integer
-        rowCount:
-          example: 7
-          type: integer
-    MessageGood:
-      example:
-        message: Custom message for successful request
-      properties:
-        message:
-          example: Custom message for successful request
-          type: string
-    MessageBad:
-      example:
-        message: Custom message for bad/un authorize request
-      properties:
-        message:
-          example: Custom message for bad/un authorize request
-          type: string
-    UnauthorizedError:
-      description: Access token is missing or invalid
-      example:
-        message: You need to sign in and get a valid Token
-      properties:
-        message:
-          example: You need to sign in and get a valid Token
-          type: string
-    _api_music_search__search__page__page__get_200_response:
-      example:
-        data:
-        - image: https://i.ytimg.com/vi/oKOtzIo-uYw/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAmWNobaFgWajWevnGzK5p1zY8KdQ
-          artist: TheFugeesVEVO
-          genre: Music
-          description: ' '
-          youtubeId: oKOtzIo-uYw
-          title: Fugees - Killing Me Softly With His Song (Official Video)
-        - image: https://i.ytimg.com/vi/oKOtzIo-uYw/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAmWNobaFgWajWevnGzK5p1zY8KdQ
-          artist: TheFugeesVEVO
-          genre: Music
-          description: ' '
-          youtubeId: oKOtzIo-uYw
-          title: Fugees - Killing Me Softly With His Song (Official Video)
-        page: 1
-        rowCount: 11
-      properties:
-        page:
-          example: 1
-          type: integer
-        rowCount:
-          example: 11
-          type: integer
-        data:
-          items:
-            $ref: '#/components/schemas/SongInfor'
-          type: array
-    _api_users_put_request:
-      allOf:
-      - $ref: '#/components/schemas/User'
-      - properties:
-          name:
-            example: myname
-            type: string
-          image:
-            example: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-            type: string
-    _api_playlists__userId__time_sort__sort__page__page__get_204_response:
-      example:
-        message: message
-      properties:
-        message:
-          type: string
-    _api_playlists_post_201_response:
-      allOf:
-      - $ref: '#/components/schemas/Playlist'
-      - properties:
-          playlistId:
-            example: 1
-            type: integer
-      example:
-        playlistId: 1
-        image: image
+        documentNumber: documentNumber
         name: name
-        songList:
-        - songList
-        - songList
-    _api_comments_put_request:
-      allOf:
-      - $ref: '#/components/schemas/Comment'
-      - properties:
-          createdAt:
-            example: 2023-11-09 16:22:06.733
-            format: date
-            type: string
-          updatedAt:
-            example: 2023-11-09 16:22:06.733
-            type: string
-    _api_likes__playlistId__playlist_sort__sort__page__page__get_200_response_data_inner:
-      example:
-        name: my name
-        id: 1
-        avatar: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+        email: email
       properties:
-        id:
-          example: 1
-          type: number
         name:
-          example: my name
           type: string
-        avatar:
-          example: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+        email:
           type: string
-    _api_likes__playlistId__playlist_sort__sort__page__page__get_200_response:
+        documentNumber:
+          type: string
+    Customer:
       example:
-        data:
-        - name: my name
-          id: 1
-          avatar: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-        - name: my name
-          id: 1
-          avatar: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-        rowCount: 20
-        page: 1
+        password: password
+        areaCode: areaCode
+        birthdate: 2000-01-23
+        address:
+          zipcode: zipcode
+          number: number
+          country: country
+          city: city
+          street: street
+          neighbourhood: neighbourhood
+          state: state
+        gender: gender
+        phone: phone
+        documentNumber: documentNumber
+        name: name
+        login: login
+        email: email
       properties:
-        rowCount:
-          example: 20
-          type: integer
-        page:
-          example: 1
-          type: integer
-        data:
-          items:
-            $ref: '#/components/schemas/_api_likes__playlistId__playlist_sort__sort__page__page__get_200_response_data_inner'
-          type: array
-    _api_likes__userId__user_sort__sort__page__page__get_200_response_data_inner:
-      example:
-        image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-        name: my name
-        id: 1
-      properties:
-        id:
-          example: 1
-          type: number
+        documentNumber:
+          type: string
         name:
-          example: my name
           type: string
-        image:
-          example: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
+        birthdate:
+          format: date
           type: string
-    _api_likes__userId__user_sort__sort__page__page__get_200_response:
+        gender:
+          type: string
+        login:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        areaCode:
+          type: string
+        phone:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+    Address:
       example:
-        data:
-        - image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-          name: my name
-          id: 1
-        - image: https://upload.wikimedia.org/wikipedia/commons/4/44/Male_and_Female_mallard_ducks.jpg
-          name: my name
-          id: 1
-        rowCount: 20
-        page: 1
+        zipcode: zipcode
+        number: number
+        country: country
+        city: city
+        street: street
+        neighbourhood: neighbourhood
+        state: state
       properties:
-        rowCount:
-          example: 20
-          type: integer
-        page:
-          example: 1
-          type: integer
-        data:
-          items:
-            $ref: '#/components/schemas/_api_likes__userId__user_sort__sort__page__page__get_200_response_data_inner'
-          type: array
-    CommentInforReturn_data_inner:
-      allOf:
-      - $ref: '#/components/schemas/CommentInfor'
-      - properties:
-          createdAt:
-            example: 2023-11-09 16:22:06.733
-            type: string
-          updatedAt:
-            example: 2023-11-09 16:22:06.733
-            type: string
+        street:
+          type: string
+        number:
+          type: string
+        neighbourhood:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        zipcode:
+          type: string
+    GetCustomersResponse:
+      items:
+        $ref: '#/components/schemas/GetCustomerResponse'
+      type: array
+    GetCustomerResponse:
       example:
-        playlistId: 6
-        createdAt: 2023-11-09 16:22:06.733
+        documentNumber: documentNumber
+        name: name
+      properties:
+        documentNumber:
+          type: string
+        name:
+          type: string
+    PutCustomerRequest:
+      example:
+        password: password
+        areaCode: areaCode
+        birthdate: 2000-01-23
+        address:
+          zipcode: zipcode
+          number: number
+          country: country
+          city: city
+          street: street
+          neighbourhood: neighbourhood
+          state: state
+        gender: gender
+        phone: phone
+        name: name
+        user: user
+        email: email
+      properties:
+        name:
+          type: string
+        birthdate:
+          format: date
+          type: string
+        gender:
+          type: string
+        user:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        areaCode:
+          type: string
+        phone:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+    Coverages:
+      items:
+        $ref: '#/components/schemas/Coverage'
+      type: array
+    Coverage:
+      description: Objeto de cobertura
+      example:
+        amount: 6.027456183070403
+        code: 0
+        sumInsured: 1.4658129805029452
+        name: name
+        description: description
+        type: type
+        required: true
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+        sumInsured:
+          type: number
+        required:
+          type: boolean
+    CoverageRequest:
+      description: Objeto de cobertura
+      example:
+        amount: 0.8008281904610115
+        sumInsured: 6.027456183070403
+        name: name
+        description: description
+        type: type
+        required: true
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+        sumInsured:
+          type: number
+        required:
+          type: boolean
+    QuotationRequest:
+      example:
+        insuredAddress:
+          zipcode: zipcode
+          number: number
+          country: country
+          city: city
+          street: street
+          neighbourhood: neighbourhood
+          state: state
+        coverages:
+        - amount: amount
+          code: 0
+          name: name
+        - amount: amount
+          code: 0
+          name: name
+      properties:
+        coverages:
+          items:
+            $ref: '#/components/schemas/CoverageId'
+          type: array
+        insuredAddress:
+          $ref: '#/components/schemas/Address'
+    CoverageId:
+      example:
+        amount: amount
+        code: 0
+        name: name
+      properties:
+        code:
+          format: int32
+          type: integer
+        name:
+          type: string
+        amount:
+          type: string
+    QuotationResponse:
+      example:
+        number: number
+        amount: 0.8008281904610115
+      properties:
+        number:
+          type: string
+        amount:
+          type: number
+    IssuanceRequest:
+      example:
+        documentNumber: documentNumber
+        paymentId: paymentId
+        insuredAddress:
+          zipcode: zipcode
+          number: number
+          country: country
+          city: city
+          street: street
+          neighbourhood: neighbourhood
+          state: state
+        coverages:
+        - amount: 6.027456183070403
+          code: 0
+          sumInsured: 1.4658129805029452
+          name: name
+          description: description
+          type: type
+          required: true
+        - amount: 6.027456183070403
+          code: 0
+          sumInsured: 1.4658129805029452
+          name: name
+          description: description
+          type: type
+          required: true
+      properties:
+        coverages:
+          items:
+            $ref: '#/components/schemas/Coverage'
+          type: array
+        documentNumber:
+          type: string
+        paymentId:
+          type: string
+        insuredAddress:
+          $ref: '#/components/schemas/Address'
+    IssuanceResponse:
+      example:
+        holder:
+          areaCode: areaCode
+          birthdate: 2000-01-23
+          address:
+            zipcode: zipcode
+            number: number
+            country: country
+            city: city
+            street: street
+            neighbourhood: neighbourhood
+            state: state
+          gender: gender
+          phone: phone
+          documentNumber: documentNumber
+          name: name
+          email: email
+        policy:
+          number: 0
+          amount: 6.027456183070403
+          validity:
+            start: start
+            end: end
+          insuredAddress:
+            zipcode: zipcode
+            number: number
+            country: country
+            city: city
+            street: street
+            neighbourhood: neighbourhood
+            state: state
+          coverages:
+          - amount: 6.027456183070403
+            code: 0
+            sumInsured: 1.4658129805029452
+            name: name
+            description: description
+            type: type
+            required: true
+          - amount: 6.027456183070403
+            code: 0
+            sumInsured: 1.4658129805029452
+            name: name
+            description: description
+            type: type
+            required: true
+      properties:
+        policy:
+          $ref: '#/components/schemas/IssuanceResponse_policy'
+        holder:
+          $ref: '#/components/schemas/Holder'
+    Holder:
+      example:
+        areaCode: areaCode
+        birthdate: 2000-01-23
+        address:
+          zipcode: zipcode
+          number: number
+          country: country
+          city: city
+          street: street
+          neighbourhood: neighbourhood
+          state: state
+        gender: gender
+        phone: phone
+        documentNumber: documentNumber
+        name: name
+        email: email
+      properties:
+        documentNumber:
+          type: string
+        name:
+          type: string
+        birthdate:
+          format: date
+          type: string
+        gender:
+          type: string
+        email:
+          type: string
+        areaCode:
+          type: string
+        phone:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+    PaymentRequest:
+      example:
+        amount: 0.8008281904610115
+        installments:
+        - number: 6
+          amount: 1.4658129805029452
+        - number: 6
+          amount: 1.4658129805029452
+        document: document
+        cardToken: cardToken
+      properties:
+        amount:
+          type: number
+        cardToken:
+          type: string
+        document:
+          type: string
+        installments:
+          items:
+            $ref: '#/components/schemas/Installments'
+          type: array
+    Installments:
+      example:
+        number: 6
+        amount: 1.4658129805029452
+      properties:
+        number:
+          format: int32
+          type: integer
+        amount:
+          type: number
+    PaymentResponse:
+      example:
+        amount: 6
         id: 0
-        userId: 1
-        content: lorem ipsum sdef e4t dfgsbh egnk3 fg q GR
-        updatedAt: 2023-11-09 16:22:06.733
+        transactionId: transactionId
+      properties:
+        transactionId:
+          type: string
+        id:
+          type: integer
+        amount:
+          type: integer
+    ChangePassword:
+      example:
+        oldPassword: oldPassword
+        newPassword: newPassword
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+    PasswordRecovery:
+      example:
+        email: email
+      properties:
+        email:
+          type: string
+    UpdatePasswordRecovery:
+      example:
+        newPassword: newPassword
+      properties:
+        newPassword:
+          type: string
+    PoliciesResponse:
+      items:
+        $ref: '#/components/schemas/PolicyResponse'
+      type: array
+    PolicyResponse:
+      example:
+        number: 0.8008281904610115
+        amount: 6.027456183070403
+        documentNumber: documentNumber
+        validity:
+          start: start
+          end: end
+      properties:
+        number:
+          type: number
+        documentNumber:
+          type: string
+        amount:
+          type: number
+        validity:
+          $ref: '#/components/schemas/Validity'
+    Validity:
+      example:
+        start: start
+        end: end
+      properties:
+        start:
+          type: string
+        end:
+          type: string
+    PolicyDetailsResponse:
+      example:
+        number: 0.8008281904610115
+        amount: 6.027456183070403
+        documentNumber: documentNumber
+        paymentId: 1
+        validity:
+          start: start
+          end: end
+        insuredAddress:
+          zipcode: zipcode
+          number: number
+          country: country
+          city: city
+          street: street
+          neighbourhood: neighbourhood
+          state: state
+        coverages:
+        - amount: amount
+          code: 0
+          name: name
+        - amount: amount
+          code: 0
+          name: name
+      properties:
+        number:
+          type: number
+        documentNumber:
+          type: string
+        amount:
+          type: number
+        paymentId:
+          type: integer
+        coverages:
+          items:
+            $ref: '#/components/schemas/CoverageId'
+          type: array
+        validity:
+          $ref: '#/components/schemas/Validity'
+        insuredAddress:
+          $ref: '#/components/schemas/Address'
+    Tag:
+      properties:
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+    IssuanceResponse_policy_validity:
+      example:
+        start: start
+        end: end
+      properties:
+        start:
+          type: string
+        end:
+          type: string
+    IssuanceResponse_policy:
+      example:
+        number: 0
+        amount: 6.027456183070403
+        validity:
+          start: start
+          end: end
+        insuredAddress:
+          zipcode: zipcode
+          number: number
+          country: country
+          city: city
+          street: street
+          neighbourhood: neighbourhood
+          state: state
+        coverages:
+        - amount: 6.027456183070403
+          code: 0
+          sumInsured: 1.4658129805029452
+          name: name
+          description: description
+          type: type
+          required: true
+        - amount: 6.027456183070403
+          code: 0
+          sumInsured: 1.4658129805029452
+          name: name
+          description: description
+          type: type
+          required: true
+      properties:
+        number:
+          type: integer
+        validity:
+          $ref: '#/components/schemas/IssuanceResponse_policy_validity'
+        insuredAddress:
+          $ref: '#/components/schemas/Address'
+        amount:
+          type: number
+        coverages:
+          items:
+            $ref: '#/components/schemas/Coverage'
+          type: array
   securitySchemes:
-    AuthToken:
-      bearerFormat: JWT
-      scheme: bearer
-      type: http
+    api_key:
+      in: header
+      name: Ocp-Apim-Subscription-Key
+      type: apiKey
 

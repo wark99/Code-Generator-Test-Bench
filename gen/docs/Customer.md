@@ -1,8 +1,7 @@
 
 
-# User
+# Customer
 
-Objeto de usuário
 
 ## Properties
 
@@ -11,9 +10,13 @@ Objeto de usuário
 |**documentNumber** | **String** |  |  [optional] |
 |**name** | **String** |  |  [optional] |
 |**birthdate** | **LocalDate** |  |  [optional] |
-|**email** | **String** |  |  [optional] |
-|**profile** | **String** |  |  [optional] |
+|**gender** | **String** |  |  [optional] |
+|**login** | **String** |  |  [optional] |
 |**password** | **String** |  |  [optional] |
+|**email** | **String** |  |  [optional] |
+|**areaCode** | **String** |  |  [optional] |
+|**phone** | **String** |  |  [optional] |
+|**address** | [**Address**](Address.md) |  |  [optional] |
 
 
 

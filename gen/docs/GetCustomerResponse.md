@@ -1,8 +1,7 @@
 
 
-# User
+# GetCustomerResponse
 
-Objeto de usuário
 
 ## Properties
 
@@ -10,10 +9,6 @@ Objeto de usuário
 |------------ | ------------- | ------------- | -------------|
 |**documentNumber** | **String** |  |  [optional] |
 |**name** | **String** |  |  [optional] |
-|**birthdate** | **LocalDate** |  |  [optional] |
-|**email** | **String** |  |  [optional] |
-|**profile** | **String** |  |  [optional] |
-|**password** | **String** |  |  [optional] |
 
 
 

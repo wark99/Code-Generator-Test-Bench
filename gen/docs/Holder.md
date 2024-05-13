@@ -1,8 +1,7 @@
 
 
-# User
+# Holder
 
-Objeto de usuário
 
 ## Properties
 
@@ -11,9 +10,11 @@ Objeto de usuário
 |**documentNumber** | **String** |  |  [optional] |
 |**name** | **String** |  |  [optional] |
 |**birthdate** | **LocalDate** |  |  [optional] |
+|**gender** | **String** |  |  [optional] |
 |**email** | **String** |  |  [optional] |
-|**profile** | **String** |  |  [optional] |
-|**password** | **String** |  |  [optional] |
+|**areaCode** | **String** |  |  [optional] |
+|**phone** | **String** |  |  [optional] |
+|**address** | [**Address**](Address.md) |  |  [optional] |
 
 
 

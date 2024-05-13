@@ -21,22 +21,25 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.LocalDate;
+import org.openapitools.client.model.Address;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * Objeto de usuário
+ * Holder
  */
 @JsonPropertyOrder({
-  User.JSON_PROPERTY_DOCUMENT_NUMBER,
-  User.JSON_PROPERTY_NAME,
-  User.JSON_PROPERTY_BIRTHDATE,
-  User.JSON_PROPERTY_EMAIL,
-  User.JSON_PROPERTY_PROFILE,
-  User.JSON_PROPERTY_PASSWORD
+  Holder.JSON_PROPERTY_DOCUMENT_NUMBER,
+  Holder.JSON_PROPERTY_NAME,
+  Holder.JSON_PROPERTY_BIRTHDATE,
+  Holder.JSON_PROPERTY_GENDER,
+  Holder.JSON_PROPERTY_EMAIL,
+  Holder.JSON_PROPERTY_AREA_CODE,
+  Holder.JSON_PROPERTY_PHONE,
+  Holder.JSON_PROPERTY_ADDRESS
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:18:09.376695343Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class User {
+public class Holder {
   public static final String JSON_PROPERTY_DOCUMENT_NUMBER = "documentNumber";
   private String documentNumber;
 
@@ -46,19 +49,25 @@ public class User {
   public static final String JSON_PROPERTY_BIRTHDATE = "birthdate";
   private LocalDate birthdate;
 
+  public static final String JSON_PROPERTY_GENDER = "gender";
+  private String gender;
+
   public static final String JSON_PROPERTY_EMAIL = "email";
   private String email;
 
-  public static final String JSON_PROPERTY_PROFILE = "profile";
-  private String profile;
+  public static final String JSON_PROPERTY_AREA_CODE = "areaCode";
+  private String areaCode;
 
-  public static final String JSON_PROPERTY_PASSWORD = "password";
-  private String password;
+  public static final String JSON_PROPERTY_PHONE = "phone";
+  private String phone;
 
-  public User() {
+  public static final String JSON_PROPERTY_ADDRESS = "address";
+  private Address address;
+
+  public Holder() {
   }
 
-  public User documentNumber(String documentNumber) {
+  public Holder documentNumber(String documentNumber) {
     
     this.documentNumber = documentNumber;
     return this;
@@ -84,7 +93,7 @@ public class User {
   }
 
 
-  public User name(String name) {
+  public Holder name(String name) {
     
     this.name = name;
     return this;
@@ -110,7 +119,7 @@ public class User {
   }
 
 
-  public User birthdate(LocalDate birthdate) {
+  public Holder birthdate(LocalDate birthdate) {
     
     this.birthdate = birthdate;
     return this;
@@ -136,7 +145,33 @@ public class User {
   }
 
 
-  public User email(String email) {
+  public Holder gender(String gender) {
+    
+    this.gender = gender;
+    return this;
+  }
+
+   /**
+   * Get gender
+   * @return gender
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_GENDER)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getGender() {
+    return gender;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_GENDER)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
+
+
+  public Holder email(String email) {
     
     this.email = email;
     return this;
@@ -162,55 +197,81 @@ public class User {
   }
 
 
-  public User profile(String profile) {
+  public Holder areaCode(String areaCode) {
     
-    this.profile = profile;
+    this.areaCode = areaCode;
     return this;
   }
 
    /**
-   * Get profile
-   * @return profile
+   * Get areaCode
+   * @return areaCode
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_PROFILE)
+  @JsonProperty(JSON_PROPERTY_AREA_CODE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public String getProfile() {
-    return profile;
+  public String getAreaCode() {
+    return areaCode;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_PROFILE)
+  @JsonProperty(JSON_PROPERTY_AREA_CODE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setProfile(String profile) {
-    this.profile = profile;
+  public void setAreaCode(String areaCode) {
+    this.areaCode = areaCode;
   }
 
 
-  public User password(String password) {
+  public Holder phone(String phone) {
     
-    this.password = password;
+    this.phone = phone;
     return this;
   }
 
    /**
-   * Get password
-   * @return password
+   * Get phone
+   * @return phone
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_PASSWORD)
+  @JsonProperty(JSON_PROPERTY_PHONE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public String getPassword() {
-    return password;
+  public String getPhone() {
+    return phone;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_PASSWORD)
+  @JsonProperty(JSON_PROPERTY_PHONE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setPassword(String password) {
-    this.password = password;
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
+
+
+  public Holder address(Address address) {
+    
+    this.address = address;
+    return this;
+  }
+
+   /**
+   * Get address
+   * @return address
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_ADDRESS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Address getAddress() {
+    return address;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_ADDRESS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setAddress(Address address) {
+    this.address = address;
   }
 
   @Override
@@ -221,30 +282,34 @@ public class User {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    User user = (User) o;
-    return Objects.equals(this.documentNumber, user.documentNumber) &&
-        Objects.equals(this.name, user.name) &&
-        Objects.equals(this.birthdate, user.birthdate) &&
-        Objects.equals(this.email, user.email) &&
-        Objects.equals(this.profile, user.profile) &&
-        Objects.equals(this.password, user.password);
+    Holder holder = (Holder) o;
+    return Objects.equals(this.documentNumber, holder.documentNumber) &&
+        Objects.equals(this.name, holder.name) &&
+        Objects.equals(this.birthdate, holder.birthdate) &&
+        Objects.equals(this.gender, holder.gender) &&
+        Objects.equals(this.email, holder.email) &&
+        Objects.equals(this.areaCode, holder.areaCode) &&
+        Objects.equals(this.phone, holder.phone) &&
+        Objects.equals(this.address, holder.address);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(documentNumber, name, birthdate, email, profile, password);
+    return Objects.hash(documentNumber, name, birthdate, gender, email, areaCode, phone, address);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class User {\n");
+    sb.append("class Holder {\n");
     sb.append("    documentNumber: ").append(toIndentedString(documentNumber)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    birthdate: ").append(toIndentedString(birthdate)).append("\n");
+    sb.append("    gender: ").append(toIndentedString(gender)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
-    sb.append("    profile: ").append(toIndentedString(profile)).append("\n");
-    sb.append("    password: ").append(toIndentedString(password)).append("\n");
+    sb.append("    areaCode: ").append(toIndentedString(areaCode)).append("\n");
+    sb.append("    phone: ").append(toIndentedString(phone)).append("\n");
+    sb.append("    address: ").append(toIndentedString(address)).append("\n");
     sb.append("}");
     return sb.toString();
   }
