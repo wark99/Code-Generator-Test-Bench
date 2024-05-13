@@ -57,9 +57,8 @@ import java.util.function.Supplier;
 import java.time.OffsetDateTime;
 
 import org.openapitools.client.auth.Authentication;
-import org.openapitools.client.auth.HttpBearerAuth;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:19:38.464243999Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-13T19:19:45.736611184Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
@@ -84,7 +83,7 @@ public class ApiClient extends JavaTimeFormatter {
 
     private long waitTimeMillis = 10;
 
-    private String basePath = "http://localhost:8080";
+    private String basePath = "http://localhost:8000";
 
     private RestTemplate restTemplate;
 
@@ -115,7 +114,6 @@ public class ApiClient extends JavaTimeFormatter {
 
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<String, Authentication>();
-        authentications.put("JWT", new HttpBearerAuth("bearer"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -197,30 +195,6 @@ public class ApiClient extends JavaTimeFormatter {
      */
     public Authentication getAuthentication(String authName) {
         return authentications.get(authName);
-    }
-
-    /**
-     * Helper method to set access token for the first Bearer authentication.
-     *
-     * @param bearerToken Bearer token
-     */
-    public void setBearerToken(String bearerToken) {
-        setBearerToken(() -> bearerToken);
-    }
-
-    /**
-     * Helper method to set the supplier of access tokens for Bearer authentication.
-     *
-     * @param tokenSupplier The supplier of bearer tokens
-     */
-    public void setBearerToken(Supplier<String> tokenSupplier) {
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof HttpBearerAuth) {
-                ((HttpBearerAuth) auth).setBearerToken(tokenSupplier);
-                return;
-            }
-        }
-        throw new RuntimeException("No Bearer authentication configured!");
     }
 
 
