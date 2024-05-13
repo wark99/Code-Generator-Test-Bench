@@ -1,380 +1,723 @@
 openapi: 3.1.0
 info:
-  contact:
-    email: xavier@gamestream.biz
-  description: |-
-    REST API for Gamestream Cloud Gaming game saves backups management
-    Some useful links:
-    - [Gamestream](https://www.gamestream?biz)
-    - [Pleio](https://www.pleio.games)
-  license: {}
-  title: Gamestream Backup Service API
-  version: 0.0.1
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
+  description: "This is a sample Inventory Management System based on the OpenAPI\
+    \ 3.1 specification. content 4 cors Customer(user), vendor, order, and items."
+  title: Inventory Management System Rest APIs
+  version: 1.0.0-oas3.1
 servers:
-- url: https://glusterfs1.sgx.io:8443
-tags:
-- description: Authentication methods
-  name: auth
-- description: Management operations about game saves backups
-  name: backup
+- description: SwaggerHub API Auto Mocking
+  url: https://app.swaggerhub.com/apis/YAQEENISSA3_1/Ass/1.0.0-oas3.1
 paths:
-  /auth:
+  /user:
+    get:
+      description: Returns all registered users
+      operationId: getuser
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/UserInput'
+                type: array
+          description: All the users
+      tags:
+      - user
+      x-accepts: application/json
     post:
-      description: Authenticate to Gamestream Backup Service. This step is mandatory
-        to acess backup management methods. Authentication is purely cookie based.
-        The JWT Token returned is response body if purely informational.
+      operationId: registered
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/UserInput'
+                type: array
+          description: Response
+        "201":
+          description: Successfully created a new user
+      tags:
+      - user
+      x-accepts: application/json
+  /User/{Customer_Id}:
+    delete:
+      description: Delete a user
+      operationId: deleteUser
+      parameters:
+      - description: User ID to delete
+        explode: true
+        in: query
+        name: Customer_id
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: form
+      responses:
+        "200":
+          description: User Deleted
+        "400":
+          description: Invalid user value
+        "403":
+          description: Forbidden
+      summary: Deletes a User
+      tags:
+      - user
+      x-accepts: application/json
+    get:
+      description: Returns a single user based on the provided ID.
+      parameters:
+      - explode: false
+        in: path
+        name: Customer_Id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInput'
+          description: Successful operation
+        "404":
+          description: User not found
+      summary: Get user by ID
+      tags:
+      - user
+      x-accepts: application/json
+    patch:
+      description: Update an existing user by ID using PATCH method
+      operationId: updateUserPatch
+      parameters:
+      - description: ID of the Customer to update
+        explode: true
+        in: query
+        name: Customer_id
+        required: true
+        schema:
+          type: integer
+        style: form
       requestBody:
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
-              $ref: '#/components/schemas/UserPasswordParameters'
+              $ref: '#/components/schemas/UserInput'
+        description: Updated user information
+        required: true
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponse'
-          description: successful operation
-        "401":
-          description: authentication failed
-      security:
-      - cookieAuth: []
-      - sessionCookieAuth: []
-      summary: Authenticate
+          description: User updated successfully
+        "204":
+          description: No Content
+        "404":
+          description: User not found
+        "409":
+          description: There is a conflict with the current state of the user
+      summary: Update an existing user
       tags:
-      - auth
-      x-content-type: application/x-www-form-urlencoded
-      x-accepts: application/json
-  /logout:
-    post:
-      description: "Logout from Gamestream Backup Service. When logout is successfull,\
-        \ the auuthorization cookie is automatically removed, and backup management\
-        \ methods are no longer accessible."
-      responses:
-        "200":
-          content:
-            application/xhtml+xml:
-              schema:
-                type: string
-          description: successful operation
-      security:
-      - cookieAuth: []
-      - sessionCookieAuth: []
-      summary: Logout
-      tags:
-      - auth
-      x-accepts: application/xhtml+xml
-  /backup/user/list:
-    post:
-      description: Get the list of players having at least one game save in the system.
-      requestBody:
-        $ref: '#/components/requestBodies/UsersBody'
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsersResponse'
-          description: successful operation
-        "500":
-          description: Request error
-      security:
-      - cookieAuth: []
-      - sessionCookieAuth: []
-      summary: Get the list of players
-      tags:
-      - backup
+      - user
       x-content-type: application/json
       x-accepts: application/json
-  /backup/profile/list:
-    post:
-      description: Get the list of profiles for a given user
+    put:
+      description: Update an existing user by ID
+      operationId: update
       requestBody:
-        $ref: '#/components/requestBodies/ProfilesBody'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+        description: Update an existing user
       responses:
         "200":
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/UsersResponse'
-          description: successful operation
-        "500":
-          description: Request error
-      security:
-      - cookieAuth: []
-      - sessionCookieAuth: []
-      summary: Get the list of profiles
+              schema: {}
+          description: Successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: User not found
+        "409":
+          description: conflict
+      summary: Update an existing user
       tags:
-      - backup
+      - user
       x-content-type: application/json
       x-accepts: application/json
-  /backup/item/list:
-    post:
-      description: Get the list of saves for a profile for a given user
-      requestBody:
-        $ref: '#/components/requestBodies/ItemsBody'
+  /item:
+    get:
+      description: Returns all registered items
+      operationId: getAllItems
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UsersResponse'
-          description: successful operation
-        "500":
-          description: Request error
-      security:
-      - cookieAuth: []
-      - sessionCookieAuth: []
-      summary: Get the list of saves
+                items:
+                  $ref: '#/components/schemas/Iteminput'
+                type: array
+          description: Successful operation
+        "400":
+          description: invalid request format
+        "404":
+          description: No items found
       tags:
-      - backup
+      - item
+      x-accepts: application/json
+    post:
+      operationId: Add new item
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Add_new_item_200_response_inner'
+                type: array
+          description: Response
+        "201":
+          description: Successfully created a new item
+        "405":
+          description: the requested method is not allowed for this resource
+        "409":
+          description: item with the same id already exists
+      tags:
+      - item
+      x-accepts: application/json
+  /item/{product_id}:
+    delete:
+      description: Delete an item by ID
+      operationId: deleteItem
+      parameters:
+      - description: ID of the item to delete
+        explode: true
+        in: query
+        name: product_id
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          description: Item Deleted
+        "400":
+          description: Invalid ID supplied
+        "403":
+          description: the server understood the delete request but refuses to authorize
+            it
+        "404":
+          description: Item not found
+      summary: Deletes an item
+      tags:
+      - item
+      x-accepts: application/json
+    get:
+      description: Returns a single item based on the provided ID.
+      operationId: getItemById
+      parameters:
+      - description: ID of the item to retrieve
+        explode: false
+        in: path
+        name: product_id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Iteminput'
+          description: Successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Item not found
+        "422":
+          description: Validation exception
+      summary: Get item by ID
+      tags:
+      - item
+      x-accepts: application/json
+    patch:
+      description: Update an existing item by ID using PATCH method
+      operationId: updateItemPatch
+      parameters:
+      - description: ID of the item to update
+        explode: true
+        in: query
+        name: product_id
+        required: true
+        schema:
+          type: integer
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Iteminput'
+        description: Updated item information
+        required: true
+      responses:
+        "200":
+          description: Item updated successfully
+        "204":
+          description: No Content
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Item not found
+      summary: Update an existing item
+      tags:
+      - item
       x-content-type: application/json
       x-accepts: application/json
-  /backup/item/delete:
-    post:
-      description: Delete a save for a profile for a given user
+    put:
+      description: Update an existing item
+      operationId: update item
+      parameters:
+      - description: ID
+        explode: true
+        in: query
+        name: product_id
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: Product name
+        explode: true
+        in: query
+        name: Name
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Price of product
+        explode: true
+        in: query
+        name: Price
+        required: false
+        schema:
+          type: integer
+        style: form
       requestBody:
-        $ref: '#/components/requestBodies/RestoreDeleteBody'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Iteminput'
+        description: Update an existent item
       responses:
         "200":
           content:
             application/json:
-              schema:
-                type: object
-          description: successful operation
-        "500":
-          description: Request error
-      security:
-      - cookieAuth: []
-      - sessionCookieAuth: []
-      summary: Delete a save
+              schema: {}
+          description: Successful operation
+        "400":
+          description: Invalid ID
+        "404":
+          description: Item not found
+        "409":
+          description: conflict
       tags:
-      - backup
+      - item
       x-content-type: application/json
       x-accepts: application/json
-  /backup/item/restore:
-    post:
-      description: Restore a save for a profile for a given user
-      requestBody:
-        $ref: '#/components/requestBodies/RestoreDeleteBody'
+  /vendor:
+    get:
+      description: Returns all registered vendors
+      operationId: getAllVendors
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RestoreResponse'
-          description: successful operation
-        "500":
-          description: Request error
-      security:
-      - cookieAuth: []
-      - sessionCookieAuth: []
-      summary: Restore a save
+                items:
+                  $ref: '#/components/schemas/Vendor'
+                type: array
+          description: Successful operation
+      summary: Get all vendors
       tags:
-      - backup
+      - vendor
+      x-accepts: application/json
+    post:
+      operationId: createVendor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendor'
+        description: Vendor object to be created
+        required: true
+      responses:
+        "200":
+          description: Vendor created successfully
+        "201":
+          description: created
+      summary: Create a new vendor
+      tags:
+      - vendor
+      x-content-type: application/json
+      x-accepts: application/json
+  /Vendor/{vendor_id}:
+    delete:
+      description: Delete a vendor by ID
+      operationId: deleteVendor
+      parameters:
+      - description: ID of the vendor to delete
+        explode: false
+        in: path
+        name: vendor_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Vendor deleted successfully
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Vendor not found
+      summary: Delete a vendor
+      tags:
+      - vendor
+      x-accepts: application/json
+    get:
+      description: Returns a single vendor based on the provided ID
+      operationId: getVendorById
+      parameters:
+      - description: ID of the vendor to retrieve
+        explode: false
+        in: path
+        name: vendor_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendor'
+          description: Successful operation
+        "404":
+          description: Vendor not found
+      summary: Get vendor by ID
+      tags:
+      - vendor
+      x-accepts: application/json
+    patch:
+      description: Update an existing vendor partially by ID
+      operationId: partialUpdateVendor
+      parameters:
+      - description: ID of the vendor to update
+        explode: false
+        in: path
+        name: vendor_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendor'
+        description: Partially updated vendor information
+        required: true
+      responses:
+        "200":
+          description: Vendor updated successfully
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Vendor not found
+        "422":
+          description: Validation exception
+      summary: Update an existing vendor partially
+      tags:
+      - vendor
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      description: Update an existing vendor by ID
+      operationId: updateVendor
+      parameters:
+      - description: ID of the vendor to update
+        explode: false
+        in: path
+        name: vendor_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendor'
+        description: Updated vendor information
+        required: true
+      responses:
+        "200":
+          description: Vendor updated successfully
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Vendor not found
+        "422":
+          description: Validation exception
+      summary: Update an existing vendor
+      tags:
+      - vendor
+      x-content-type: application/json
+      x-accepts: application/json
+  /order:
+    get:
+      description: Returns all registered orders
+      operationId: getAllOrders
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Order'
+                type: array
+          description: Successful operation
+      summary: Get all orders
+      tags:
+      - order
+      x-accepts: application/json
+    post:
+      operationId: createOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        description: Order object to be created
+        required: true
+      responses:
+        "200":
+          description: Order created successfully
+      summary: Create a new order
+      tags:
+      - order
+      x-content-type: application/json
+      x-accepts: application/json
+  /Order/{order_id}:
+    delete:
+      description: Delete an order by ID
+      operationId: deleteOrder
+      parameters:
+      - description: ID of the order to delete
+        explode: false
+        in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Order deleted successfully
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Order not found
+      summary: Delete an order
+      tags:
+      - order
+      x-accepts: application/json
+    get:
+      description: Returns a single order based on the provided ID
+      operationId: getOrderById
+      parameters:
+      - description: ID of the order to retrieve
+        explode: false
+        in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: Successful operation
+        "404":
+          description: Order not found
+      summary: Get order by ID
+      tags:
+      - order
+      x-accepts: application/json
+    patch:
+      description: Update an existing order partially by ID
+      operationId: partialUpdateOrder
+      parameters:
+      - description: ID of the order to update
+        explode: false
+        in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        description: Partially updated order information
+        required: true
+      responses:
+        "200":
+          description: Order updated successfully
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Order not found
+        "409":
+          description: conflict
+      summary: Update an existing order partially
+      tags:
+      - order
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      description: Update an existing order by ID
+      operationId: updateOrder
+      parameters:
+      - description: ID of the order to update
+        explode: false
+        in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        description: Updated order information
+        required: true
+      responses:
+        "200":
+          description: Order updated successfully
+        "204":
+          description: No Content
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Order not found
+      summary: Update an existing order
+      tags:
+      - order
       x-content-type: application/json
       x-accepts: application/json
 components:
-  requestBodies:
-    UsersBody:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RequestUserParameters'
-      description: Request body to retrieve the list of users
-      required: true
-    ProfilesBody:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RequestProfileParameters'
-      description: Request body to retrieve the list of profiles for a given user
-      required: true
-    ItemsBody:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RequestItemParameters'
-      description: Request body to retrieve the list of saves of a profile for a given
-        user
-      required: true
-    RestoreDeleteBody:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RestoreDeleteParameters'
-      description: Request body to restore or delete a save of a profile for a given
-        user
-      required: true
   schemas:
-    RequestUserSharedParameters:
+    UserInput:
       example:
-        limit_length: 0
-        draw: 1
-        needle: ""
-        limit_start: 0
+        password: password
+        UserName: UserName
+        Customer_id: 0
+        Name: Name
       properties:
-        draw:
-          default: 1
-          description: "draw parameter, must be set to 1"
-          maximum: 1
-          minimum: 1
+        Customer_id:
           type: integer
-        needle:
-          default: ""
-          description: case sensitive string to filter output data (empty string means
-            no filtering)
+        Name:
           type: string
-        limit_start:
-          default: 0
-          description: first index of the output data to be returned (first item index
-            is 0)
-          minimum: 0
-          type: integer
-        limit_length:
-          default: 15
-          description: maximum number of items to be returned (0 means all items)
-          minimum: 0
-          type: integer
-      required:
-      - draw
-      - limit_length
-      - limit_start
-      - needle
-      title: Shared user request parameters
-    RequestUserParameters:
-      $ref: '#/components/schemas/RequestUserSharedParameters'
-    RequestProfileParameters:
-      allOf:
-      - $ref: '#/components/schemas/RequestUserSharedParameters'
-      - properties:
-          userid:
-            default: ""
-            description: ID of the user
-            type: string
-        required:
-        - userid
-      example:
-        limit_length: 0
-        draw: 1
-        needle: ""
-        limit_start: 0
-        userid: ""
-      title: Profile list request parameters
-    RequestItemParameters:
-      allOf:
-      - $ref: '#/components/schemas/RequestProfileParameters'
-      - properties:
-          profile:
-            default: ""
-            description: ID of the profile of the user
-            type: string
-        required:
-        - profile
-      example:
-        profile: ""
-      title: Item list request parameters
-    RestoreDeleteParameters:
-      example:
-        item: ""
-        profile: ""
-        userid: ""
-      properties:
-        userid:
-          default: ""
-          description: ID of the user
-          type: string
-        profile:
-          default: ""
-          description: ID of the profile of the user
-          type: string
-        item:
-          default: ""
-          description: item name to delete
-          type: string
-      required:
-      - item
-      - profile
-      - userid
-      title: Restore and delete RequestItemParameters
-    UserPasswordParameters:
-      properties:
-        username:
+        UserName:
           type: string
         password:
           type: string
       required:
+      - Customer_id
+      - Name
+      - UserName
       - password
-      - username
-    AuthResponse:
+    Iteminput:
       example:
-        access_token: JWTToken
-        token_type: Bearer
+        price: 6
+        product_id: 0
+        Name: Name
       properties:
-        access_token:
-          default: JWTToken
+        product_id:
+          type: integer
+        Name:
           type: string
-        token_type:
-          default: Bearer
-          type: string
-    UsersResponse:
+        price:
+          type: integer
+      required:
+      - Name
+      - price
+      - product_id
+    Vendor:
       example:
-        recordsFiltered: 0
-        data:
-        - name: name
-          timestamp: 5
-        - name: name
-          timestamp: 5
-        draw: 1
-        recordsTotal: 0
+        password: password
+        UserName: UserName
+        vendor_id: 0
+        Name: Name
       properties:
-        draw:
-          default: 1
-          description: "draw parameter, always set to 1"
-          maximum: 1
-          minimum: 1
+        vendor_id:
           type: integer
-        recordsTotal:
-          description: total count of records (whatever the parameters)
-          minimum: 0
-          type: integer
-        recordsFiltered:
-          description: count records which have been filtered through needle parameter
-          minimum: 0
-          type: integer
-        data:
-          items:
-            $ref: '#/components/schemas/UsersResponse_data_inner'
-          type: array
-    RestoreResponse:
-      example:
-        new_item_revision: ""
-      properties:
-        new_item_revision:
-          default: ""
-          description: new name of the restored item
+        Name:
           type: string
-    UsersResponse_data_inner:
-      example:
-        name: name
-        timestamp: 5
-      properties:
-        name:
-          description: "name of user, profile or game save"
+        UserName:
           type: string
-        timestamp:
-          description: timestamp of last modification
+        password:
+          type: string
+      required:
+      - Name
+      - UserName
+      - password
+      - vendor_id
+    Order:
+      example:
+        product_id: 1
+        Quantity: 5
+        customer_id: 6
+        order_id: 0
+      properties:
+        order_id:
           type: integer
-  securitySchemes:
-    cookieAuth:
-      in: cookie
-      name: secure:token
-      type: apiKey
-    sessionCookieAuth:
-      in: cookie
-      name: secure:sessionHash
-      type: apiKey
+        customer_id:
+          type: integer
+        product_id:
+          type: integer
+        Quantity:
+          type: integer
+      required:
+      - Quantity
+      - customer_id
+      - order_id
+      - product_id
+    Add_new_item_200_response_inner:
+      example:
+        Price: 6
+        product_id: 0
+        Name: Name
+      properties:
+        product_id:
+          type: integer
+        Name:
+          type: string
+        Price:
+          type: integer
 

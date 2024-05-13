@@ -1,13 +1,15 @@
 
 
-# RestoreResponse
+# Iteminput
 
 
 ## Properties
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**newItemRevision** | **String** | new name of the restored item |  [optional] |
+|**productId** | **Integer** |  |  |
+|**name** | **String** |  |  |
+|**price** | **Integer** |  |  |
 
 
 
