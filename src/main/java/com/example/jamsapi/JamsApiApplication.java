@@ -1,4 +1,4 @@
-package uni.testbench.gen;
+package com.example.jamsapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
