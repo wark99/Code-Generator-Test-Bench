@@ -1,4 +1,4 @@
-package com.example.jamsapi.models;
+package uni.testbench.gen;
 
 import java.util.List;
 

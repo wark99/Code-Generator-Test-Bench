@@ -1,4 +1,4 @@
-package com.example.jamsapi.controllers;
+package uni.testbench.gen;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
