@@ -1,0 +1,2885 @@
+Generate java controllers and models based on the following swagger yaml:
+
+openapi: 3.1.0
+info:
+  title: Ryze Capital Public API
+  version: 1.6.4
+  description: API de registro, monitoramento e gestão de operações de crédito com garantia em recebíveis de cartões
+servers:
+  - url: https://api.homolog.ryze.capital 
+    description: Development server
+  - url: https://api.homolog.ryze.capital 
+    description: Staging server
+paths:
+  /users/login:
+    post:
+      summary: Efetua login de usuário
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Identificador único do usuário
+                password:
+                  type: string
+                  description: Senha do usuário
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Login bem-sucedido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: Token de acesso gerado
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro interno do servidor
+          
+  /contracts:
+    post:
+      summary: Criar um contrato
+      tags:
+        - Contracts
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  $ref: '#/components/schemas/ContractType'
+                  description: Tipo do contrato
+                contractType:
+                  $ref: '#/components/schemas/ProposalType'
+                  description: Tipo de contrato
+                invoiceId:
+                  type: string
+                  description: Indentificador externo
+                externalId:
+                  type: string
+                  description: Indentificador externo
+                sellerTaxId:
+                  type: string
+                  description: Identificador do credor
+                buyerTaxId:
+                  type: string
+                  description: Identificador do cedente
+                amount:
+                  type: string
+                  description: Valor do contrato
+                fee:
+                  type: string
+                  description: Taxa
+                installments:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Installment'
+                  description: Parcelas do contrato
+                securities:
+                  description: >-
+                    Recebíveis negociados na operação. Dado que pode ser negociado / averbado parte do recebível, cada objeto contém informações sobre o montante efetivamente averbado e quanto representa do valor pago ao vendedor.
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SecurityChunkLean'
+                  minItems: 0
+                securityPickFilters:
+                  $ref: '#/components/schemas/FindSecurityParameters'
+                  description: Filtros dos recebíveis
+                bankingAccountId:
+                  type: string
+                  description: Indentificador da conta bancária
+      responses:
+        '200':
+          description: Contrato criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        '400':
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    get:
+      summary: Retorna todos os contratos
+      tags:
+        - Contracts
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date-time
+          description: Data de início do intervalo de busca
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date-time
+          description: Data de término do intervalo de busca
+        - in: query
+          name: taxId
+          schema:
+            type: string
+          description: CNPJ ou CPF do originador
+        - in: query
+          name: externalId
+          schema:
+            type: string
+          description: Identificador externo do contrato
+        - in: query
+          name: invoiceId
+          schema:
+            type: string
+          description: Identificador do contrato
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Total-Count:
+              description: Total de contratos encontrados
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contract'
+
+  /contracts/{id}:
+    get:
+      summary: Retorna uma contrato específico
+      tags:
+        - Contracts
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identificador do contrato
+      responses:
+        '200':
+          description: Contrato encontrado e retornado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Contrato não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /contracts/{id}/cancel:
+    post:
+      summary: Cancela uma contrato
+      tags:
+        - Contracts
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identificador da contrato
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+              required:
+                - reason
+      responses:
+        '200':
+          description: Contrato cancelado com sucesso
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Contrato não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /contracts/{id}/collateral-release:
+    post:
+      summary: Libera as garantias de um contrato
+      tags:
+        - Contracts
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identificador da contrato
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                installments:
+                  type: array
+                  items:
+                    type: number
+                  minItems: 1
+                  uniqueItems: true
+                releasedBy:
+                  type: object
+      responses:
+        '200':
+          description: Garantias liberadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Contrato e/ou parcela não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /proposals/simulation:
+    post:
+      tags:
+        - Proposals
+      summary: Simula proposta de antecipação ou crédito com garantia nos recebíveis em titularidade do solicitante
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProposal'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  proposal:
+                    $ref: '#/components/schemas/Proposal'
+                  installments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Installment'
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Titular da agenda de recebíveis não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /person/lean-info:
+    post:
+      tags:
+        - Person
+      summary: Cria nova conta de cliente utilizando um conjunto minimo de dados
+      description: Cria nova conta de cliente utilizando um conjunto minimo de dados
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                relationshipManagerId:
+                  type: string
+                relationshipType:
+                  type: string
+                  enum: [new, active, inactive]
+                customerType:
+                  type: string
+                  enum: [Company, NaturalPerson]
+                customerTaxId:
+                  type: string
+                customerName:
+                  type: string
+                customerRole:
+                  type: string
+                  enum: [SecuritySourcer, Intervener]
+                customerEmail:
+                  type: string
+                  format: email
+                customerPhone:
+                  type: string
+                accountableName:
+                  type: string
+                accountableEmail:
+                  type: string
+                  format: email
+                accountablePhone:
+                  type: string
+                accountableTaxId:
+                  type: string
+                relatedPersons:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/RelatedPerson'
+      responses:
+        '200':
+          description: Originador criado com sucesso
+        '309':
+          description: Estabelecimento comercial já cadastrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /person/{id}:
+    put:
+      summary: Atualiza dados da conta de cliente existente na plataforma Ryze
+      tags:
+        - Person
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identificador da pessoa a ser atualizada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePerson'
+      responses:
+        '200':
+          description: Pessoa atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensagem de sucesso
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Titular da agenda de recebíveis não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Consulta detalhes da conta do cliente cujo identificador foi fornecido como parâmetro
+      tags:
+        - Person
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: id
+          required: true
+          description: Identificador do originador a ser buscado
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Originador encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Titular da agenda de recebíveis não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /person:
+    get:
+      summary: Lista contas de clientes  
+      tags:
+        - Person
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: query
+          name: role
+          required: false
+          description: Perfil do originador a ser filtrado
+          schema:
+            type: string
+            enum: [SecuritySourcer, Intervener]
+        - in: query
+          name: take
+          required: false
+          description: Número máximo de originadors a serem retornados
+          schema:
+            type: integer
+            minimum: 1
+            default: 50
+        - in: query
+          name: skip
+          required: false
+          description: Número de originadors a serem pulados
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - in: query
+          name: order
+          required: false
+          description: Ordenação (ASC ou DESC)
+          schema:
+            type: string
+            enum: [ASC, DESC]
+        - in: query
+          name: orderBy
+          required: false
+          description: Campo pelo qual os originadores devem ser ordenados
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Originadores encontrados com sucesso
+          headers:
+            X-Total-Count:
+              description: Total de contas encontradas
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person'
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          
+  /person/{id}/optout:
+    post:
+      summary: Faz o opt-out de um originador na registradora
+      tags:
+        - Person
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: id
+          required: true
+          description: Identificador do originador
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+              required:
+                - reason
+      responses:
+        '200':
+          description: Optout realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status da operação
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Titular da agenda de recebíveis não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Serviço Indisponível. O serviço necessário para processar a solicitação não está disponível no momento.
+
+  /statements:
+    get:
+      summary: Consulta extrato dos recebíveis cedidos ao credor
+      tags:
+        - Statements
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Número da página
+        - name: limit
+          in: query
+          schema:
+            type: number
+          required: false
+          description: Quantidade de resultados por página
+        - name: taxId
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Identificador fiscal
+        - name: invoiceId
+          in: query
+          schema:
+            type: string
+          required: false
+          description: ID da fatura
+        - name: externalId
+          in: query
+          schema:
+            type: string
+          required: false
+          description: ID externo
+        - name: from
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Data de início do período no qual está compreendida a data de liquidação do recebível
+        - name: to
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Data de término do período no qual está compreendida a data de liquidação do recebível
+        - name: exportCSV
+          in: query
+          schema:
+            type: boolean
+          required: false
+          description: Exportar como CSV
+        - name: filterSettledAmountZero
+          in: query
+          schema:
+            type: boolean
+          required: false
+          description: Carregar apenas recebíveis parcial ou integralmente liquidados 
+      responses:
+        '200':
+          description: Consulta realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statements:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StatementResponse'
+                    description: 'Lista de recebíveis'
+                  totalCount:
+                    type: number   
+                    description: 'Número total de registros' 
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /securities:
+    get:
+      tags:
+        - Securities
+      summary: Consulta recebíveis por titular
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - name: syncResponse
+          in: query
+          description: >-
+              Se `true` os resultados são retornados na resposta, de forma síncrona
+          schema:
+            type: boolean
+          required: false
+          default: false
+        - name: holder
+          in: query
+          description: >-
+            Identificador do originador.
+            São aceitos como identificadores: 
+            i. tax_id: CPF (se pessoa natural) ou CNPJ (se pessoa jurídica);
+            ii. a chave primária do registro da conta do gestor de ativos
+          schema:
+            type: string
+          required: true
+        - name: onlyAvailable
+          in: query
+          description: >-
+              Se `true` carrega apenas recebíveis com saldo disponível para negociação
+          schema:
+            type: boolean
+          required: false
+          default: true
+        - name: includeInterveners
+          in: query
+          description: Se `true` inclui nos resultados os recebíveis da agenda dos intervenientes do cliente
+          schema:
+            type: boolean
+          required: false
+          default: true
+        - name: includeEndorsed
+          in: query
+          description: Se `true` inclui nos resultados da consulta recebíveis parcialmente cedidos 
+          schema:
+            type: boolean
+          required: false
+          default: true
+        - name: debtors
+          in: query
+          description: >-
+            Lista contendo os CNPJs dos sacados (credenciadoras e/ou subcredenciadoras) que devem ser incluídos na consulta. Caso seja fornecido, o parâmetro `excludeDebtors` é ignorado.
+          schema:
+            type: array
+            items:
+              type: string
+              minLength: 14
+              maxLength: 14
+          required: false
+        - name: excludeDebtors
+          in: query
+          description: >-
+            Lista contendo os CNPJs dos sacados (credenciadoras e/ou subcredenciadoras) que devem ser excluídos da consulta
+          schema:
+            type: array
+            items:
+              type: string
+              minLength: 14
+              maxLength: 14
+          required: false
+        - name: arrangements
+          in: query
+          description: >- 
+            Lista dos arranjos de pagamento que se quer consultar. Caso seja fornecido, o parâmetro `excludeArrangements` é ignorado.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/PaymentScheme'
+          required: false
+        - name: excludeArrangements
+          in: query
+          description: Lista dos arranjos de pagamento que devem ser excluídos da consulta
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/PaymentScheme'
+          required: false
+        - in: query
+          name: startDate
+          schema:
+            type: string
+          description: Data de início do período no qual está compreendida a data de liquidação do recebível
+        - in: query
+          name: endDate
+          schema:
+            type: string
+          description: Data de término do período no qual está compreendida a data de liquidação do recebível
+        - in: query
+          name: type
+          schema:
+            type: string
+          description: Tipo de recebível
+        - in: query
+          name: skip
+          schema:
+            type: integer
+          description: Número de itens a pular
+        - in: query
+          name: take
+          schema:
+            type: integer
+          description: Número de itens a retornar
+      responses:
+        '200':
+          description: >-
+            Retorna, de forma síncrona, a lista de títulos / recebíveis que atendem os parâmetros da requisição 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeanSecurity'
+        '202':
+          description: >-
+            Aceito. A solicitação foi aceita para processamento e a resposta será enviada de forma assíncrona.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse'
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Força atualização da agenda de recebíveis do originador / titular
+      tags:
+        - Securities
+      requestBody:
+        description: Parâmetros para atualização de segurança.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSecuritySourcerScheduleRequest'
+      responses:
+        '202':
+          description: Aceito. A solicitação foi aceita para processamento.
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Titular da agenda de recebíveis não Encontrado. O recurso solicitado não foi encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Serviço Indisponível. O serviço necessário para processar a solicitação não está disponível no momento.
+
+  /securities/balances:
+    get:
+      tags:
+        - Securities
+      summary: Consulta saldo disponível dos recebíveis do originador / titular
+      description: A consulta retorna o saldo de cada um dos dias compreendidos no período consultado, bem como os recebíveis que compõem o saldo do dia
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - name: holder
+          in: query
+          description: >-
+            Identificador do titular do recebível.
+            São aceitos como identificadores: 
+            i. tax_id: CPF (se pessoa natural) ou CNPJ (se pessoa jurídica);
+            ii. a chave primária do registro da conta do gestor de ativos
+          schema:
+            type: string
+          required: false
+        - name: type
+          in: query
+          description: Tipo do recebível. Caso não seja fornecido será assumido `urcc`
+          schema:
+            $ref: '#/components/schemas/SecurityType'
+          required: false
+        - name: onlyAvailable
+          in: query
+          description: Se `true` carrega apenas recebíveis com saldo disponível para negociação
+          schema:
+            type: boolean
+          required: false
+          default: true
+        - name: includeInterveners
+          in: query
+          description: Se `true` inclui nos resultados os recebíveis da agenda dos intervenientes do cliente
+          schema:
+            type: boolean
+          required: false
+          default: true
+        - name: includeEndorsed
+          in: query
+          description: Se `true` inclui nos resultados da consulta recebíveis parcialmente cedidos 
+          schema:
+            type: boolean
+          required: false
+          default: true
+        - name: debtors
+          in: query
+          description: >-
+            Lista contendo os CNPJs dos sacados (credenciadoras e/ou subcredenciadoras) que devem ser incluídos na consulta. Caso seja fornecido, o parâmetro `excludeDebtors` é ignorado.
+          schema:
+            type: array
+            items:
+              type: string
+              minLength: 14
+              maxLength: 14
+          required: false
+        - name: excludeDebtors
+          in: query
+          description: >-
+            Lista contendo os CNPJs dos sacados (credenciadoras e/ou subcredenciadoras) que devem ser excluídos da consulta
+          schema:
+            type: array
+            items:
+              type: string
+              minLength: 14
+              maxLength: 14
+          required: false
+        - name: arrangements
+          in: query
+          description: >- 
+            Lista dos arranjos de pagamento que se quer consultar. Caso seja fornecido, o parâmetro `excludeArrangements` é ignorado.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/PaymentScheme'
+          required: false
+        - name: excludeArrangements
+          in: query
+          description: Lista dos arranjos de pagamento que devem ser excluídos da consulta
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/PaymentScheme'
+          required: false
+        - name: startDate
+          in: query
+          description: >-
+            Data de inicio do período em que se espera que o recebivel seja liquidado
+          schema:
+            type: string
+            pattern: YYYY-MM-dd
+          required: true
+        - name: endDate
+          in: query
+          description: >-
+            Data final do período em que se espera que o recebivel seja liquidado
+          schema:
+            type: string
+            pattern: YYYY-MM-dd
+          required: false
+        - name: skip
+          in: query
+          description: >-
+            Número de elementos do inicio da lista de resultados que devem ser pulados (não exibidos) na resposta  
+          schema:
+            type: integer
+            default: 0
+          required: false
+        - name: take
+          in: query
+          description: >-
+            Número de elementos a serem carregados / exibidos na resposta da requisição  
+          schema:
+            type: integer
+            default: 50
+          required: false
+      responses:
+        '200':
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/SecuritiesBalancesStatement'
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Titular da agenda de recebíveis não Encontrado. O recurso solicitado não foi encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro Interno do Servidor. O servidor encontrou uma situação inesperada que impediu a conclusão da solicitação.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Serviço Indisponível. O serviço necessário para processar a solicitação não está disponível no momento.
+
+  /notifications/{processId}:
+    get:
+      summary: Consulta notificação pelo identificador único da solicitação de processamento
+      tags:
+        - Notification
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: processId
+          required: true
+          schema:
+            type: string
+          description: Identificador único da solicitação de processamento
+      responses:
+        '200':
+          description: Consulta executada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Não existe notificação com o identificador de processo informado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /webhooks:
+    post:
+      summary: Registra uma nova webhook URL
+      tags:
+        - Webhook
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+      callbacks:
+        event:  
+          '{$request.body#/url}': 
+            post:
+              parameters:
+                - name: Digital-Signature
+                  in: header
+                  required: true
+                  schema:
+                    type: string
+                  description: >-
+                    Asinatura da requisição - pode ser verificada usando a chave pública fornecida pela Ryze Capital
+              requestBody:
+                content:
+                  application/json:
+                    schema: 
+                      $ref: '#/components/schemas/Notification'
+                    description: >-
+                        Notificação de transição de estado ou resposta assíncrona de consulta de entidade(s) da plataforma Ryze para a qual o webhook está inscrito
+                    required: true
+              responses:
+                '200':
+                  description: Seu servidor deve retornar esse código caso o callback seja aceito
+
+      responses:
+        '201':
+          description: Webhook criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Parâmetros requeridos não foram fornecidos e/ou estão fora do padrão esperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Lista webhooks registrados
+      tags:
+        - Webhook
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+      responses:
+        '200':
+          description: Consulta realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /webhooks/{id}:
+    post:
+      summary: Registra uma nova webhook URL
+      tags:
+        - Webhook
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identificador do webhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Webhook'
+      responses:
+        '200':
+          description: Webhook atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '404':
+          description: Não existe webhook com o identificador informado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Consulta webhook pelo seu identificador
+      tags:
+        - Webhook
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identificador do webhook
+      responses:
+        '200':
+          description: Consulta executada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '404':
+          description: Não existe webhook com o identificador informado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Remove registro de webhook 
+      tags:
+        - Webhook
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Token de autorização
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Identificador do webhook
+      responses:
+        '200':
+          description: Webhook removido com sucesso
+        '404':
+          description: Não existe webhook com o identificador informado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Usuário não possui autorização para a operação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Webhook:
+      type: object
+      description: Dados do webhook
+      properties:
+        id:
+          description: Identificador único do webhook
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        subscriptions:
+          type: array
+          description: >-
+            Refere-se às entidades do sistema Ryze sobre as quais a URL do webhook será notificada acerca dos eventos de transição de estado ou respostas assíncronas a requisições de consulta 
+          items:
+            $ref: '#/components/schemas/Subscription'
+            minItems: 1
+        url:
+          description: URL do servidor que receberá os eventos
+          type: string
+          format: uri
+      required:
+        - subscriptions
+        - url
+
+    Subscription:
+      type: string
+      enum: [contract, person, security]
+      description: >-
+        Entidade do sistema Ryze sobre a qual a URL do webhook será notificada acerca dos eventos de transição de estado:
+         * `contract` - Contrato de antecipação ou crédito com garantia
+         * `person` - Conta do cedente (Estabelecimento Comercial) na plataforma Ryze
+         * `security` - Representa uma unidade de recebível
+		
+    Notification:
+      type: object
+      description: >-
+        Notificação de transição de estado ou resposta assíncrona a uma requisição de consulta de entidade(s) da plataforma Ryze
+      properties:
+        entityId:
+          description: >-
+            Identificador único da entidade. Enviada caso trate-se de uma notificação de transição de estado.
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        processId:
+          description: >-
+            Identificador único da solicitação de processamento.
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        subscription:
+          $ref: '#/components/schemas/Subscription'
+        eventType:
+          type: string
+          enum: [enabled, disabled, removed, charged, settled, canceled, refunded, query]
+          description: >-
+            Tipo do evento que gerou a notificação. O evento (fato gerador da notificação) pode ser a transição de estado da conta de um Estabelecimento Comercial (enabled, disabled, removed) ou de um contrato (charged, settled, canceled, refunded) ou mesmo uma requisição de consulta à agenda de recebíveis do EC (query)
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        data:
+          oneOf:
+            - $ref: '#/components/schemas/Contract'
+            - $ref: '#/components/schemas/GetSecuritiesAsyncResponse'
+            - $ref: '#/components/schemas/Person'
+      required:
+        - subscription
+        - data
+        - createdAt
+
+    AsyncResponse:
+      type: object
+      description: >-
+        Payload da resposta síncrona à solicitação de serviço exposto pela API cujo processamento e resposta
+        são assíncronos. A resposta contém o identificador do processamento, que pode ser usado para consultar 
+        o resultado por meio da API Notifications 
+      properties:
+        processId:
+          description: >-
+            Identificador único da solicitação de processamento.
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+      required:
+        - data
+        - createdAt
+
+    GetSecuritiesAsyncResponse:
+      type: object
+      description: >-
+        Resposta assíncrona à consulta da agenda de recebíveis do estabelecimento comercial
+      properties:
+        urls:
+          type: array
+          description: >-
+            URL dos arquivos contendo os resultados da consulta, no formato jsonl (JSON Lines). Cada arquivo pode ter no máximo 10 MB. 
+          items:
+            type: string
+            format: uri
+      required:
+        - urls
+    
+    RelatedPerson:
+      type: object
+      properties:
+        accountableName:
+          type: string
+          description: 'Nome do responsável'
+        accountableEmail:
+          type: string
+          format: email
+          description: 'Email do responsável'
+        accountablePhone:
+          type: string
+          description: 'Telefone do responsável'
+        accountableTaxId:
+          type: string
+          description: 'CPF ou CNPJ do responsável'
+        customerTaxId:
+          type: string
+          description: 'CPF ou CNPJ do originador'
+    
+    BankAccount:
+      type: object
+      properties:
+        bank:
+          type: string
+          maxLength: 8
+          description: 'Código do banco'
+        branch:
+          type: string
+          minLength: 1
+          maxLength: 4
+          description: 'Agência'
+        branchDigit:
+          type: string
+          maxLength: 1
+          description: 'Dígito da agência'
+        accountNumber:
+          type: string
+          minLength: 5
+          maxLength: 20
+          description: 'Número da conta'
+        accountDigit:
+          type: string
+          maxLength: 1
+          description: 'Dígito da conta'
+        type:
+          type: string
+          $ref: '#/components/schemas/BankAccountType'
+          description: 'Tipo da conta bancária'
+        holderName:
+          type: string
+          description: 'Nome do proprietário da conta'
+        holderTaxId:
+          type: string
+          description: 'CPF ou CNPJ do proprietário da conta'
+        holderType:
+          type: string
+          enum: [Company, NaturalPerson]
+          description: 'Tipo do proprietário da conta'
+
+    FindSecurityParameters:
+      type: object
+      properties:
+        sourcer:
+          type: string
+          description: CNPJ ou chave primária da conta do gestor de ativos
+        holder:
+          type: string
+          description: CPF ou CNPJ do titular do recebível
+        includeInterveners:
+          type: boolean
+          description: Incluir interventores
+        startDate:
+          type: string
+          format: date-time
+          description: Data de início
+        endDate:
+          type: string
+          format: date-time
+          description: Data de término
+        onlyAvailable:
+          type: boolean
+          description: Somente disponíveis
+        debtors:
+          type: string
+          description: CNPJs dos sacados
+        excludeDebtors:
+          type: string
+          description: CNPJs a serem excluídos
+        arrangements:
+          type: string
+          description: Arranjos de pagamento
+        excludeArrangements:
+          type: string
+          description: Arranjos a serem excluídos
+        includeEndorsed:
+          type: boolean
+          description: Incluir averbados
+        allDebtors:
+          type: boolean
+          description: Todos os sacados
+        allArrangements:
+          type: boolean
+          description: Todos os arranjos
+        dailyLimit:
+          type: string
+          description: Limite diário
+        applyDailyLimitForEntireContractPeriod:
+          type: boolean
+          description: Aplicar limite diário para todo o período
+        installments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Installment'
+          description: Parcelas
+        dailyLimitType:
+          $ref: '#/components/schemas/DailyLimitType'
+          description: Tipo de limite diário
+        order:
+          type: string
+          enum: [ASC, DESC]
+          default: ASC
+          description: Ordem de ordenação
+        skip:
+          type: number
+          description: Quantidade de elementos a serem pulados
+        take:
+          type: number
+          description: Quantidade de elementos a serem carregados
+
+    UpdatePerson:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nome ou razão social
+        nickname:
+          type: string
+          description: Apelido ou nome fantasia
+        email:
+          type: string
+          description: Endereço de email
+      required:
+        - name
+        - nickname
+        - email
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Mensagem de erro
+    
+    ContractType:
+      type: string
+      enum: [payment, guarantee]
+      description: Tipo da operação
+
+    ProposalType:
+      type: string
+      enum: [warranty, loan_with_collateral, charge]
+      description: Tipo de proposta
+
+    InstallmentStatus:
+      type: string
+      enum: [pending, released, settled]
+      description: Status da parcela
+
+    DailyLimitType:
+      type: string
+      enum: [absolute, percentage]
+      description: Tipo de limite diário
+
+    Person:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador da pessoa (física ou jurídica)
+        type:
+          type: string
+          enum: [Company, NaturalPerson]
+          description: Tipo da pessoa (física ou jurídica)
+        name:
+          type: string
+          description: Nome da pessoa (física ou jurídica)
+        nickname:
+          type: string
+          description: Apelido da pessoa (física ou jurídica)
+        taxId:
+          type: string
+          description: CPF ou CNPJ da pessoa (física ou jurídica)
+        email:
+          type: string
+          description: Email da pessoa (física ou jurídica)
+        termAcceptance:
+          type: boolean
+          description: Aceite dos termos de cessão
+        phone:
+          $ref: '#/components/schemas/Phone'
+          description: Telefone da pessoa (física ou jurídica)
+        address:
+          $ref: '#/components/schemas/Address'
+          description: Endereço da pessoa (física ou jurídica)
+        status:
+          type: string
+          enum:
+            - pending
+            - incomplete_registration
+            - notified
+            - approved
+            - accepted
+            - denied
+            - contract_sending
+            - contract_send_failed
+            - contract_signing
+            - contract_signed
+            - enabled
+            - disabled
+            - removed
+          description: Status da pessoa (física ou jurídica)
+        defaultBankingAccount:
+          $ref: '#/components/schemas/BankAccount'
+          description: Conta default da pessoa (física ou jurídica)
+        bankingAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccount'
+          description: Contas bancárias da pessoa (física ou jurídica)
+        role:
+          $ref: '#/components/schemas/Role'
+          description: Perfil da pessoa (física ou jurídica)
+        wallet:
+          $ref: '#/components/schemas/Wallet'
+          description: Carteira da pessoa (física ou jurídica)
+        company:
+          $ref: '#/components/schemas/Person'
+          description: Empresa associada a pessoa
+        accountable:
+          $ref: '#/components/schemas/Person'
+          description: Responsáveis pela empresa
+        relatedPeople:
+          type: array
+          items:
+            $ref: '#/components/schemas/Person'
+          description: Pessoas relacionadas
+        createdAt:
+          type: string
+          format: date-time
+          description: Data de criação
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data da última atualização
+        sourcer:
+          type: string
+          format: uuid
+          description: Pessoa que originou
+        extra:
+          type: object
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador do usuário
+        username:
+          type: string
+          description: Username do usuário
+        createdAt:
+          type: string
+          format: date-time
+          description: Data de criação
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data da última atualização
+
+    Phone:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único do telefone
+        type:
+          type: string
+          enum: [home, work, mobile, other]
+          description: Tipo do telefone
+        countryCode:
+          type: string
+          description: Código do país
+        areaCode:
+          type: string
+          description: Código de area
+        number:
+          type: string
+          description: Número do relefone sem o código de area
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+
+    Address:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 'Identificador do endereço'
+        zipcode:
+          type: string
+          description: 'CEP'
+        street:
+          type: string
+          description: 'Nome da rua'
+        complement:
+          type: string
+          description: 'Complemento'
+        neighborhood:
+          type: string
+          description: 'Bairro'
+        city:
+          type: string
+          description: 'Cidade'
+        country:
+          type: string
+          description: 'País'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 'Identificador do perfil'
+        name:
+          type: string
+          description: 'Nome do perfil'
+
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 'Identificador da carteira'
+        externalId:
+          type: string
+          description: 'Identificador externo da carteira'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+
+    Contract:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 'Identificador do contrato'
+        amount:
+          type: string
+          description: 'Valor do contrato'
+        settledAmount:
+          type: string
+          description: 'Valor da liquidado'
+        installments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Installment'
+          description: 'Informações das parcelas'
+        invoiceId:
+          type: string
+          description: 'Identificador externo do contrato'
+        externalId:
+          type: string
+          description: 'Identificador externo do contrato'
+        type:
+          type: string
+          enum: [payment, guarantee]
+          description: 'Tipo do contrato'
+        buyer:
+          $ref: '#/components/schemas/Person'
+          description: Identificador do cedente
+        seller:
+          $ref: '#/components/schemas/Person'
+          description: Identificador do credor
+        states:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContractStatus'
+          description: Estados do contrato
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+        status:
+          type: string
+          enum: [pending, other]
+          description: Estados atual do contrato
+        createdBy:
+          $ref: '#/components/schemas/User'
+          description: Responsável pela criação do contrato
+
+    Installment:
+      type: object
+      properties:
+        amount:
+          type: string
+          description: Valor da parcela
+        startDate:
+          type: string
+          format: date-time
+          description: Data limite até a qual é possível retroagir averbando títulos
+        dueDate:
+          type: string
+          format: date-time
+          description: Data de vencimento da parcela
+        status:
+          type: string
+          enum: [pending, released, settled]
+          description: Estado atual da parcela
+            
+    ContractStatus:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador do estado
+        state:
+          type: string
+          enum: [pending, charged, settled, canceled, refunded]
+          description: Estado do contrato
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+      required:
+        - id
+        - state
+        - extra
+        - retries
+        - createdAt
+
+    StatementResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Identificador do recebível'
+        type:
+          type: string
+          enum: [urcc]
+          description: 'Tipo do recebível'
+        totalAmount:
+          type: string
+          description: 'Valor total do recebível'
+        settledAmount:
+          type: string
+          description: 'Valor liquidado do recebível'
+        createdAt:
+          type: string
+          description: 'Data de criação (ISO 8601)'
+        settlementExpectedFor:
+          type: string
+          description: 'Data de vencimento do recebível'
+        debtor:
+          type: string
+          description: 'CNPJ da Credenciadora'
+        arrangement:
+          type: string
+          description: 'Arranjos de pagamento'
+        invoiceId:
+          type: string
+          description: 'Identificador externo do recebível'
+        externalId:
+          type: string
+          description: 'Identificador externo do recebível'
+        assignorTaxId:
+          type: string
+          description: 'CPF ou CNPJ do cendente (Caso exista um interveniente será diferente do taxId)'
+        assignorName:
+          type: string
+          description: 'Nome do cedente (Caso exista um interveniente será diferente do name)'
+        taxId:
+          type: string
+          description: 'Identificador do devedor'
+        name:
+          type: string
+          description: 'Nome do devedor'
+
+    SecuritiesBalancesStatement:
+      type: object
+      properties:
+        holderName:
+          type: string
+          description: 'Nome do cedente'
+        holderTaxId:
+          type: string
+          description: 'CPF ou CNPJ do cedente'
+        sumOfAvailableAmountOnSettlementDate:
+          type: string
+          description: 'Soma total dos recebíveis disponíveis na data de liquidação'
+        balances:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvailableAmount'
+          description: 'Saldo disponível dos recebíveis do estabeliciemnto comercial'
+
+    AvailableAmount:
+      type: object
+      properties:
+        holderName:
+          type: string
+          description: 'Nome do originador dos recebíveis'
+        holderTaxId:
+          type: string
+          description: 'CPF ou CNPJ do originador dos recebíveis'
+        settlementDate:
+          type: string
+          description: 'Data de liquidação'
+        daysUntilSettlement:
+          type: number
+          description: 'Quantidade de dias até a data de liquidação'
+        availableOnSettlement:
+          type: string
+          description: 'Saldo de recebíveis disponíveis na data de liquição'
+        securities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Security'
+          description: 'Lista de títulos que compõem o saldo disponível'
+
+    LeanSecurity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Identificador interno do título / recebível'
+        type:
+          $ref: '#/components/schemas/Security'
+        externalId:
+          type: string
+          description: 'Identificador do título na registradora'
+        reference:
+          type: string
+          description: 'Identificador do título na credenciadora'
+        totalAmount:
+          type: string
+          description: 'Valor total do título / recebível'
+        availableAmount:
+          type: string
+          description: 'Valor disponível do título / recebível'
+        settledAmount:
+          type: string
+          description: 'Valor liquidado do título / recebível'
+        settlementExpectedFor:
+          type: string
+          format: date-time
+          description: 'Data de vencimento do título / recebível'
+        debtor:
+          type: string
+          description: 'Credenciadora'
+        arrangement:
+          type: string
+          description: 'Arranjo'
+        endorsed:
+          type: boolean
+          description: 'Identifica se a security já foi averbada por algum contrato'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+      required:
+        - id
+        - type
+        - debtor
+        - arrangement
+        - totalAmount
+        - availableAmount
+        - settledAmount
+        - settlementExpectedFor
+        - createdAt
+        - updatedAt
+        - endorsed
+        
+    Security:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Identificador do título'
+        type:
+          $ref: '#/components/schemas/Security'
+        externalId:
+          type: string
+          description: 'Identificador do título / recebível na registradora'
+        reference:
+          type: string
+          description: 'Identificador do título / recebível na credenciadora'
+        totalAmount:
+          type: string
+          description: 'Valor total do título / recebível'
+        availableAmount:
+          type: string
+          description: 'Valor disponível do título / recebível'
+        settledAmount:
+          type: string
+          description: 'Valor liquidado do título / recebível'
+        settlementExpectedFor:
+          type: string
+          format: date-time
+          description: 'Data de vencimento do título / recebível'
+        debtor:
+          type: string
+          description: 'Credenciadora'
+        arrangement:
+          type: string
+          description: 'Arranjo'
+        proposalId:
+          type: string
+          description: 'Identificador da proposta a qual o título pertence'
+        endorsed:
+          type: boolean
+          description: 'Identifica se a security já foi averbada por algum contrato'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+        sourcerTaxId:
+          type: string
+          description: 'CPF ou CNPJ do originador do título'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Security'
+            description: 'Títulos originados a partir deste título'
+        parent:
+          $ref: '#/components/schemas/Security'
+          description: 'Título / recebível a partir do qual esse recebível foi originado'
+        holder:
+          $ref: '#/components/schemas/Wallet'
+          description: 'Carteira do originador do título'
+        proposal:
+          $ref: '#/components/schemas/Proposal'
+          description: 'Proposta a qual o título pertence'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+          description: 'Transações associadas ao título'
+        settlements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Settlement'
+          description: 'Liquidações associadas ao título'
+      required:
+        - id
+        - type
+        - totalAmount
+        - availableAmount
+        - settledAmount
+        - settlementExpectedFor
+        - createdAt
+        - updatedAt
+        - endorsed
+        
+    Proposal:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Identificador da proposta'
+        externalId:
+          type: string
+          description: 'Identificador externo da proposta'
+        type:
+          type: string
+          description: 'Tipo da proposta'
+        numOfSecurities:
+          type: integer
+          description: 'Número de títulos associados à proposta'
+        daysUntilSettlementOfLastSecurity:
+          type: integer
+          description: 'Número de dias até a data da última liquidação dos títulos da proposta'
+        amount:
+          type: string
+          description: 'Valor total da proposta'
+        chunksSum:
+          type: string
+        settlementExpectedFor:
+          type: string
+          format: date-time
+          description: 'Data de liquidação da proposta'
+        status:
+          type: string
+          default: pending
+          description: 'Estado da proposta'
+        acceptedAt:
+          type: string
+          format: date-time
+          description: 'Data na qual a proposta foi aceita'
+        rejectedAt:
+          type: string
+          format: date-time
+          description: 'Data na qual a proposta foi rejeitada'
+        reason:
+          type: string
+          description: 'Razão pela qual a proposta foi rejeitada'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+        seller:
+          $ref: '#/components/schemas/Wallet'
+          description: 'Identificador da carteira do cedente'
+        buyer:
+          $ref: '#/components/schemas/Wallet'
+          description: 'Identificador da carteira do credor'
+        securities:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecurityChunk'
+          description: 'Lista de títulos associados à proposta'
+        warranties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Warranty'
+            description: 'Lista de garantias associadas à proposta'
+        bankingAccount:
+          $ref: '#/components/schemas/BankAccount'
+          description: 'Conta bancária na qual os títulos serão liquidados'
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+          description: 'Transação associada à proposta'
+        states:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProposalStatus'
+            description: 'Estados da proposta'
+      required:
+        - id
+        - type
+        - fee
+        - amount
+        - chunksSum
+        - interest
+        - settlementExpectedFor
+        - status
+        - forecastBased
+        - expiresIn
+        - createdAt
+        - updatedAt
+        - createdBy
+
+    SecurityChunk:
+      type: object
+      description: >-
+        Montante negociado de um recebível no contexto de uma operação de antecipação ou crédito com garantia
+      properties:
+        id:
+          description: Identificador único do registro
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        security:
+          description: >-
+            Recebível a ser averbado na operação de antecipação ou empréstimo com garantia.
+          allOf:
+            - $ref: '#/components/schemas/Security'
+        chunkSize:
+          description: Montante averbado do recebível.
+          type: string
+          format: currency
+          minimum: 0.00
+        disbursementAmount:
+          description: Valor presente do recebível na data da operação
+          type: string
+          format: currency
+          minimum: 0.00
+        interestRateApplied:
+          description: >-
+            Taxa aplicada sobre o valor presente da operação para obtenção do montante averbado. O valor é calculado com base na taxa mensal da operação, definida na proposta de antecipação, e depende do número de dias corridos entre a data da operação e a data de vencimento do recebível.
+          type: string
+          format: decimal com cinco casas de precisão
+          minimum: 0.01
+        extra:
+          description: Dados adicionais sobre o objeto
+          type: object
+        createdAt:
+          description: Data de criação
+          type: string
+          pattern: YYYY-MM-ddTHH:mm:ss
+        updatedAt:
+          description: Data da última atualização
+          type: string
+          pattern: YYYY-MM-ddTHH:mm:ss
+      required:
+        - id
+        - security
+        - chunkSize
+        - disbursementAmount
+        - interestRateApplied
+        - createdAt
+        - updatedAt
+
+    SecurityChunkLean:
+      type: object
+      description: >-
+        Montante negociado de um recebível no contexto de uma operação de antecipação ou crédito com garantia
+      properties:
+        securityId:
+          description: Identificador único do recebível a ser averbado na operação de antecipação ou empréstimo com garantia
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        chunkSize:
+          description: Montante averbado do recebível.
+          type: string
+          format: currency
+          minimum: 0.00
+        disbursementAmount:
+          description: Valor presente do recebível na data da operação
+          type: string
+          format: currency
+          minimum: 0.00
+        interestRateApplied:
+          description: >-
+            Taxa aplicada sobre o valor presente da operação para obtenção do montante averbado. O valor é calculado com base na taxa mensal da operação, definida na proposta de antecipação, e depende do número de dias corridos entre a data da operação e a data de vencimento do recebível.
+          type: string
+          format: decimal com cinco casas de precisão
+          minimum: 0.01
+      required:
+        - securityId
+        - chunkSize
+        - disbursementAmount
+        - interestRateApplied
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Identificador da transação'
+        type:
+          type: string
+          enum: [warranty_charge]
+          description: 'Tipo da transação'
+        externalId:
+          type: string
+          description: 'Identificador externo da transação'
+        proposal:
+          $ref: '#/components/schemas/Proposal'
+          description: 'Proposta à qual a transação pertence'
+        warranties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Warranty'
+          description: 'Garantias associadas à transação'
+        securities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Security'
+          description: 'Títulos associados à transação'
+        createdBy:
+          $ref: '#/components/schemas/User'
+          description: 'Usuário que criou a transação'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+      required:
+        - id
+        - type
+        - status
+        - createdAt
+        - updatedAt
+
+    Warranty:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 'Identificador da garantia'
+        externalId:
+          type: string
+          description: 'Identificador externo da garantia'
+        reference:
+          type: string
+          description: 'Identificador da garantia na credenciadora'
+        totalAmount:
+          type: string
+          description: 'Valor total da garantia'
+        committedAmount:
+          type: string
+          description: 'Valor comprometido da garantia'
+        settledAmount:
+          type: string
+          description: 'Valor liquidado da garantia'
+        debtor:
+          type: string
+          description: 'Credenciadora'
+        arrangement:
+          type: string
+          description: 'Arranjo'
+        securityId:
+          type: string
+          format: uuid
+          description: 'Identificador do título associado à garantia'
+        proposalId:
+          type: string
+          format: uuid
+          description: 'Identificador da proposta à qual a garantia pertence'
+        settlementExpectedFor:
+          type: string
+          format: date-time
+          description: 'Data de vencimento da garantia'
+        proposal:
+          $ref: '#/components/schemas/Proposal'
+          description: 'Proposta à qual a garantia pertence'
+        security:
+          $ref: '#/components/schemas/Security'
+          description: 'Título associado à garantia'
+        holder:
+          $ref: '#/components/schemas/Wallet'
+          description: 'Carteira do originador da garantia'
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+          description: 'Transação associada à garantia'
+        settlements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Settlement'
+          description: 'Liquidações associadas à garantia'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+      required:
+        - id
+        - totalAmount
+        - committedAmount
+        - settlementExpectedFor
+        - createdAt
+        - updatedAt
+
+    ProposalStatus:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 'Identificador do estado'
+        state:
+          type: string
+          enum: [pending, sent, accepted, rejected, expired, canceled, contracting, contracted, paid]
+          description: 'Estado da proposta'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        proposal:
+          $ref: '#/components/schemas/Proposal'
+          description: 'Proposta à qual o estado pertence'
+      required:
+        - id
+        - state
+        - createdAt
+
+    Settlement:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 'Identificador da liquidação'
+        externalId:
+          type: string
+          description: 'Identificador externo da liquidação'
+        amount:
+          type: string
+          description: 'Valor da liquidação'
+        settlementDate:
+          type: string
+          format: date-time
+          description: 'Data da liquidação'
+        security:
+          $ref: '#/components/schemas/Security'
+          description: 'Título associado à liquidação'
+        warranty:
+          $ref: '#/components/schemas/Warranty'
+          description: 'Garantia associada à liquidação'
+        bankingAccount:
+          $ref: '#/components/schemas/BankAccount'
+          description: 'Conta bancária na qual a liquidação foi realizada'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Data de criação (ISO 8601)'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 'Data da última atualização (ISO 8601)'
+      required:
+        - id
+        - externalId
+        - amount
+        - settlementDate
+        - security
+        - warranty
+        - bankingAccount
+        - exported
+        - raw
+        - createdAt
+        - updatedAt
+
+    CreateProposal:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [advance, warranty, charge]
+          description: Tipo da proposta
+        buyer:
+          type: string
+          description: Identificador do credor
+        ContractType:
+          type: string
+          enum: [guarantee, payment]
+          description: Tipo da cobrança
+        securityHolder:
+          type: string
+          description: Identificador do originador
+        chunksSum:
+          type: string
+          description: Valor total da proposta
+        securities:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecurityChunk'
+          description: Títulos associados à proposta
+        installments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Installment'
+          description: Parcelas
+        amount:
+          type: string
+          description: Valor total da proposta
+        settlementExpectedFor:
+          type: string
+          description: Data de vencimento da proposta
+        securityPickFilters:
+          $ref: '#/components/schemas/FindSecurityParameters'
+          description: Filtros para seleção de títulos
+        bankingAccountId:
+          type: string
+          description: Identificador da conta bancária
+      required:
+        - buyer
+        - securityHolder
+        - chunksSum
+        - settlementExpectedFor
+    
+    BankAccountType:
+      type: string
+      enum: [checking, payment, savings, salary, investment, deposit, escrow]
+      description: Tipo de limite diário
+
+    PaymentScheme:
+      type: string
+      enum: [JCC, MCC, MXC, RCC, SCD, SIC, TKC, VCD, AGC, AVC, BCD, BRC, CBC, CCD, CUP, DAC, DCC, ECD, GCC, HCD, MAC, MCD, OCD, SCC, SFC, SPC, VCC, VDC]
+      description: >-
+        Arranjos de pagamento dos recebíveis de cartão:
+         * `JCC` - JCB Cartão de Crédito
+         * `MCC` - Mastercard Cartão de Crédito
+         * `MXC` - Maxifrota Cartão de Crédito
+         * `RCC` - Redesplan Cartão de Crédito
+         * `SCD` - Sorocred Cartão de Débito
+         * `SIC` - Sicred (Compra)
+         * `TKC` - Ticketlog Pós Cartão de Crédito
+         * `VCD` - Visa Cartão de Débito
+         * `AGC` - Agiplan Cartão de Crédito
+         * `AVC` - Avista Cartão de Crédito
+         * `BCD` - Banescard Cartão de Débito
+         * `BRC` - Brasil Card Cartão de Crédito
+         * `CBC` - Cabal Crédito
+         * `CCD` - Calcard Cartão de Crédito
+         * `CUP` - CUP Cartão de Crédito
+         * `DAC` - Dacasa Cartão de Crédito
+         * `DCC` - Dinners Cartão de Crédito
+         * `ECD` - Elo Cartão de Débito
+         * `GCC` - Goodcard Crédito
+         * `HCD` - Hipercard Cartão de Débito
+         * `MAC` - Mais Cartão de Crédito
+         * `MCD` - Mastercard Cartão de Débito
+         * `OCD` - Ourocard Cartão de Débito
+         * `SCC` - Sorocred Cartão de Crédito
+         * `SFC` - Senff Cartão de Crédito
+         * `SPC` - Sem Parar Cartão de Crédito
+         * `VCC` - Visa Cartão de Crédito
+         * `VDC` - Verdecard Cartão de Crédito
+
+    SecurityType:
+      type: string
+      enum: [urcc, duplicata, cra, cri, precatorio]
+      description: >-
+        Tipo do título / recebível:
+         * `urcc` - Unidade de Recebível de Cartão de Crédito
+         * `duplicata` - Duplicata
+         * `cra` - Certificado de Recebíveis do Agronegócio
+         * `cri` - Certificado de Recebíveis Imobiliários
+         * `precatorio` - Precatorio
+
+    UpdateSecuritySourcerScheduleRequest:
+      type: object
+      description: >-
+        Parâmetros da requisição de atualização da agenda de recebíveis do originador.
+      properties:
+        holder:
+          description: CNPJ/CPF do originador 
+          type: string
+          minLength: 11
+          maxLength: 14
+        startDate:
+          description: Data de início do período consultado
+          type: string
+          pattern: YYYY-MM-dd
+        endDate:
+          description: Data de encerramento do período consultado
+          type: string
+          pattern: YYYY-MM-dd
+      required:
+        - holder
+        - startDate
+        - endDate

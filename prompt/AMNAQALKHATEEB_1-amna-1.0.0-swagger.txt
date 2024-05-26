@@ -1,0 +1,583 @@
+Generate java controllers and models based on the following swagger yaml:
+
+openapi: 3.1.0
+info:
+  title: Swagger amnaAlkhateeb - OpenAPI 3.1
+  description: |-
+    This is a sample  Inventory Management System Server based on the OpenAPI 3.1 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the  Inventory Management System, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+   
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://petstore3.swagger.io/api/v3
+tags:
+  - name:  category
+    description:  
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: Supplier
+    description: operation about Supplier
+    externalDocs:
+      description: Find out more about our Inventory
+      url: http://swagger.io
+  - name: product
+    description: Operations about broduct
+    externalDocs:
+  - name: order
+    description: Operations about order
+paths:
+  /product:
+    put:
+      tags:
+        -  product
+      summary: Update an existing product
+      description: Update an existing product by Id
+      operationId: updateProduct
+      requestBody:
+        description: Update an existent product in the  Inventory
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/product'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/product'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/product'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Product not found
+        '405':
+          description: Validation exception
+      security:
+        -  Inventory_auth:
+            - write:products
+            - read:products
+    post:
+      tags:
+        - product
+      summary: Add a new product to the  Inventory
+      description: Add a new product to the  Inventory
+      operationId: addProduct
+      requestBody:
+        description: Create a new product in the  Inventory
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/product'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/product'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/product'
+        '405':
+          description: Invalid input
+      security:
+        -  Inventory_auth:
+            - write:products
+            - read:products
+  
+  /product/findByTags:
+    get:
+      tags:
+        - product
+      summary: Finds Products by tags
+      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+      operationId: findProductsByTags
+      parameters:
+        - name: tags
+          in: query
+          description: Tags to filter by
+          required: false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid tag value
+      security:
+        - Inventory_auth:
+            - write:products
+            - read:products
+  /product/{productId}:
+    get:
+      tags:
+        - product
+      summary: Find product by ID
+      description: Returns a single product
+      operationId: getProductById
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Product not found
+      security:
+        - api_key: []
+        - Inventory_auth:
+            - write:products
+            - read:products
+    post:
+      tags:
+        - product
+      summary: Updates a product in the store with form data
+      description: ''
+      operationId: updateProductWithForm
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product that needs to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: name
+          in: query
+          description: Name of product that needs to be updated
+          schema:
+            type: string
+        - name: price
+          in: query
+          description: price of product that needs to be updated
+          schema:
+            type: integer
+            format:
+      responses:
+        '405':
+          description: Invalid input
+      security:
+        - Inventory_auth:
+            - write:products
+            - read:products
+    delete:
+      tags:
+        - product
+      summary: Deletes a product
+      description: delete a product
+      operationId: deleteProduct
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: productId
+          in: path
+          description: Product id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid product value
+      security:
+        - Inventory_auth:
+            - write:products
+            - read:products
+ 
+  
+  /Supplier:
+    post:
+      tags:
+        - Supplier
+      summary: Create Supplier
+      description: This can only be done by the logged in Supplier
+      operationId: createSupplier
+      requestBody:
+        description: Created Supplier object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Suppliers'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Suppliers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Suppliers'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Suppliers'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Suppliers'
+  /Supplier/createWithList:
+    post:
+      tags:
+        - Supplier
+      summary: Creates list of Suppliers with given input array
+      description: Creates list of Suppliers with given input array
+      operationId: createSuppliersWithListInput
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Suppliers'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Suppliers'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Suppliers'
+        default:
+          description: successful operation
+  /Supplier/login:
+    get:
+      tags:
+        - Supplier
+      summary: Logs Supplier into the system
+      description: ''
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The Supplier name for login
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Invalid username/password supplied
+  /Suppliers/logout:
+    get:
+      tags:
+        - Supplier
+      summary: Logs out current logged in Supplier session
+      description: ''
+      operationId: logoutSupplier
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+  /Suppliers/{username}:
+    get:
+      tags:
+        - Supplier
+      summary: Get Supplier by Supplier name
+      description: ''
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Suppliers'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Suppliers'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+    put:
+      tags:
+        - Supplier
+      summary: Update Supplier
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Suppliers'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Suppliers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Suppliers'
+      responses:
+        default:
+          description: successful operation
+    delete:
+      tags:
+        - Supplier
+      summary: Delete Supplier
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        productId:
+          type: integer
+          format: int64
+          example: 198772
+        TotalAmount:
+          type: integer
+          format: int32
+          example: 7
+        Date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          example: approved
+          enum:
+            - placed
+            - approved
+            - delivered
+        complete:
+          type: boolean
+      xml:
+        name: order
+    Suppliers:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 100000
+        supplierName:
+          type: string
+          example: fehguy
+        address:
+          type: array
+          xml:
+            name: addresses
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Address'
+      xml:
+        name: Suppliers
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+          example: 437 Lytton
+        city:
+          type: string
+          example: Palo Alto
+        state:
+          type: string
+          example: CA
+        zip:
+          type: string
+          example: '94301'
+      xml:
+        name: address
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: cover
+      xml:
+        name: category
+    
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      xml:
+        name: tag
+    product:
+      required:
+        - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: book
+        category:
+          $ref: '#/components/schemas/Category'
+      
+        tags:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Tag'
+        
+      xml:
+        name: product
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+  requestBodies:
+    Product:
+      description: Product object that needs to be added to the Inventory
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Product'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Product'
+    
+  securitySchemes:
+    Inventory_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:products: modify products in your account
+            read:products: read your products
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header

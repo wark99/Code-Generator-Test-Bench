@@ -1,0 +1,661 @@
+Generate java controllers and models based on the following swagger yaml:
+
+{
+  "openapi" : "3.0.3",
+  "info" : {
+    "description" : "Tjenesten leverer fastsatte formuesgrunnlag for fast eiendom som grunnlag for eiendomsskatt, og inneholder informasjon om eiendomsopplysninger, adresseopplysninger og eiendomsrelasjoner for fast eiendom, samt beregnede markedsverdier med tilhørende grunnlag for boliger",
+    "version" : "1.2.0",
+    "title" : "Formuesgrunnlag for eiendomsskatt API",
+    "termsOfService" : "https://www.skatteetaten.no/deling/bruksvilkar-for-delingstjenester",
+    "contact" : {
+      "name" : "Brukerstøtte",
+      "url" : "https://www.skatteetaten.no/deling/kontakt/"
+    }
+  },
+  "externalDocs" : {
+    "description" : "Dokumentasjon på Skatteetatens GitHub",
+    "url" : "https://skatteetaten.github.io/api-dokumentasjon/api/formuesgrunnlageiendomsskatt"
+  },
+  "servers" : [ {
+    "url" : "https://formuesgrunnlageiendomsskatt.api.skatteetaten-test.no/v1",
+    "description" : "Ekstern deling (Test)"
+  }, {
+    "url" : "https://formuesgrunnlageiendomsskatt.api.skatteetaten.no/v1",
+    "description" : "Produksjon (Prod)"
+  } ],
+  "components" : {
+    "schemas" : {
+      "Feil" : {
+        "description" : "Feilstruktur for alle feilmeldinger.",
+        "type" : "object",
+        "properties" : {
+          "kode" : {
+            "type" : "string",
+            "description" : "Feilkode, for maskinell håndtering",
+            "example" : "FGS-0xx"
+          },
+          "melding" : {
+            "type" : "string",
+            "description" : "Beskrivelse av feilen som har oppstått",
+            "example" : "Oppgitt rettighetspakke er ugyldig."
+          },
+          "korrelasjonsid" : {
+            "type" : "string",
+            "description" : "Korrelasjonsid",
+            "example" : "123e4567-e89b-12d3-a456-426655440000"
+          }
+        }
+      },
+      "FormuesgrunnlagForEiendomsskatt" : {
+        "type" : "object",
+        "description" : "Formuesgrunnlaget for en fast eiendom som formuesbojekt, som grunnlag for eiendomsskatt",
+        "properties" : {
+          "skattleggingsperiode" : {
+            "description" : "Skattleggingsperiode er et fellesbegrep som brukes om alle former for skatt, og refererer generelt til den perioden som en gitt skattefastsetting gjelder for. I denne sammenheng er dette inntekståret. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/6b41c6d1-50cd-11e7-b7c5-005056821322'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Inntektsaar"
+          },
+          "eiendomsidentifikator" : {
+            "description" : "Identifikator for fast eiendom (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/b5740893-d96a-11e6-8d9b-005056821322'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Eiendomsidentifikator"
+          },
+          "formuesopplysninger" : {
+            "description" : "Opplysninger som har betydning for beregning av formuesverdi på formuesobjekt.",
+            "$ref" : "#/components/schemas/Formuesopplysninger"
+          },
+          "adresseopplysninger" : {
+            "type" : "array",
+            "xml" : {
+              "wrapped" : true
+            },
+            "description" : "Vegadresse og eventuelt andre opplysninger som stedsangir en gitt fast eiendom",
+            "items" : {
+              "allOf" : [ {
+                "$ref" : "#/components/schemas/Adresseopplysninger"
+              } ],
+              "xml" : {
+                "name" : "adresseopplysninger"
+              }
+            }
+          },
+          "eiendomsrelasjoner" : {
+            "type" : "array",
+            "xml" : {
+              "wrapped" : true
+            },
+            "description" : "Relasjon mellom fast eiendom som formuesobjekt hvor en fast eiendom kan være enten forelder i relasjonen eller barn. Eksempel: Relasjonen samlet hvor flere formuesobjekt som fast eiendom skal ses på som et formuesobjekt, og har en hovedeiendom (forelder) og tilleggseiendommer (barn)",
+            "items" : {
+              "allOf" : [ {
+                "$ref" : "#/components/schemas/Eiendomsrelasjon"
+              } ],
+              "xml" : {
+                "name" : "eiendomsrelasjon"
+              }
+            }
+          },
+          "eiendomsopplysninger" : {
+            "type" : "array",
+            "xml" : {
+              "wrapped" : true
+            },
+            "description" : "Angir opplysninger om eiendommer",
+            "items" : {
+              "allOf" : [ {
+                "$ref" : "#/components/schemas/Eiendomsopplysninger"
+              } ],
+              "xml" : {
+                "name" : "eiendomsopplysninger"
+              }
+            }
+          }
+        }
+      },
+      "Adresseopplysninger" : {
+        "type" : "object",
+        "description" : "Vegadresse og ev. andre opplysninger som stedsangir en gitt fast eiendom",
+        "properties" : {
+          "poststed" : {
+            "description" : "Et geografisk område med felles postnummer (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e122-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Poststed"
+          },
+          "grunnkrets" : {
+            "description" : "Et lite og geografisk sammenhengende område som er mest mulig ensartet når det gjelder natur og næringsgrunnlag, kommunikasjonsforhold og bygningsmessig struktur  (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/108097cc-25fc-11e9-85c0-005056821322'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Grunnkrets"
+          },
+          "vegadresse" : {
+            "description" : "Adresse for en bygning, bruksenhet, eiendom eller annet objekt som er registrert med adresse i matrikkelen (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e12d-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Vegadresse"
+          },
+          "opplysningenesOpphav" : {
+            "description" : "Angir hvilket tidspunkt dataene er hentet / har opphav",
+            "$ref" : "#/components/schemas/OpplysningenesOpphav"
+          }
+        }
+      },
+      "Eiendomsopplysninger" : {
+        "type" : "object",
+        "description" : "Angir opplysninger om eiendommer",
+        "properties" : {
+          "identifikatorFraMatrikkelen" : {
+            "description" : "Identifikator for eiendom hentet fra matrikkelen (MUID)",
+            "$ref" : "#/components/schemas/Identifikator"
+          },
+          "matrikkelnummer" : {
+            "description" : "Entydig identifisering av matrikkelenhet innen kommune bestående av kommunenummer, gårdsnummer, bruksnummer og eventuelt festenummer og seksjonsnummer (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e115-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Matrikkelnummer"
+          },
+          "kommunenummer" : {
+            "description" : "Et nummer som identifiserer en kommune eller et kommunelignende område (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e0f3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Kommunenummer"
+          },
+          "boenhetIBoligselskap" : {
+            "description" : "Boenhet i bygning eid av boligselskap som den skattepliktige har en bruksrett til i kraft av å eie en andel eller aksje. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/410ab745-9202-11e6-8b61-82ab1fa1f30b'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/BoenhetIBoligselskap"
+          },
+          "bruksnavn" : {
+            "description" : "Navn på gårdsbruk eller annen fast eiendom med ett eller flere bruksnummer, festenummer eller liknende (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/108097c4-25fc-11e9-85c0-005056821322'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Tekst"
+          },
+          "etablertDato" : {
+            "description" : "Dato for når matrikkelenheten er opprettet i matrikkel",
+            "$ref" : "#/components/schemas/Dato"
+          },
+          "utgaattIMatrikkel" : {
+            "description" : "Dato for når eiendomsopplysninger i entitet er utgått i matrikkelen",
+            "$ref" : "#/components/schemas/Dato"
+          },
+          "boligselskapEiendomUtgaattIMatrikkel" : {
+            "description" : "Flagg som sier om boligselskapets eiendom er utgått i matrikkelen, og hvilken dato eiendommen utgikk",
+            "$ref" : "#/components/schemas/Dato"
+          },
+          "opplysningenesOpphav" : {
+            "description" : "Angir hvilket tidspunkt dataene er hentet fra",
+            "$ref" : "#/components/schemas/OpplysningenesOpphav"
+          }
+        }
+      },
+      "Eiendomsrelasjon" : {
+        "type" : "object",
+        "description" : "Relasjon mellom fast eiendom som formuesobjekt hvor en fast eiendom kan være enten forelder i relasjonen eller barn. Eksempel: Relasjonen samlet hvor flere formuesobjekt som fast eiendom skal ses på som et formuesobjekt, og har en hovedeiendom (forelder) og tilleggseiendommer (barn)",
+        "properties" : {
+          "relasjonstype" : {
+            "description" : "Beskrivelse av eiendommens relasjon til annen eiendom",
+            "$ref" : "#/components/schemas/Eiendomsrelasjonstype"
+          },
+          "relasjonsrolle" : {
+            "description" : "Angir hvilken rolle eiendommen har i relasjon med andre eiendommer, om den er forelder i relasjonen eller barn",
+            "$ref" : "#/components/schemas/Eiendomsrelasjonsrolle"
+          },
+          "relasjonsmedlemmer" : {
+            "type" : "array",
+            "xml" : {
+              "wrapped" : true
+            },
+            "description" : "Angir hvilke eiendommer som har en søsken-relasjon til denne eiendommen",
+            "items" : {
+              "allOf" : [ {
+                "$ref" : "#/components/schemas/Eiendomsidentifikator"
+              } ],
+              "xml" : {
+                "name" : "eiendomsidentifikator"
+              }
+            }
+          },
+          "forelder" : {
+            "description" : "Angir hvilken eiendom som er forelder i eiendomsrelasjonen",
+            "$ref" : "#/components/schemas/Eiendomsidentifikator"
+          }
+        }
+      },
+      "Formuesopplysninger" : {
+        "type" : "object",
+        "description" : "Opplysninger som har betydning for beregning av formuesverdi på formuesobjekt.",
+        "properties" : {
+          "formuestype" : {
+            "description" : "Klassifisering for hvordan en fast eiendom skal behandles i forbindelse med formuesbeskatning.",
+            "$ref" : "#/components/schemas/Formuestype"
+          },
+          "spesifikasjonForBolig" : {
+            "description" : "Opplysninger som har betydning for beregning av formuesverdi spesifikt for bolig og boenhet i boligselskap",
+            "$ref" : "#/components/schemas/FormuespesifikasjonForBolig"
+          },
+          "spesifikasjonForFlerboligbygning" : {
+            "description" : "Informasjon relatert til formuesopplysninger for fast eiendom eller del av fast eiendom spesifikt for flerboligbygning",
+            "$ref" : "#/components/schemas/FormuesspesifikasjonFlerboligbygning"
+          }
+        }
+      },
+      "FormuespesifikasjonForBolig" : {
+        "type" : "object",
+        "description" : "Opplysninger som har betydning for beregning av formuesverdi spesifikt for bolig og boenhet i boligselskap",
+        "properties" : {
+          "boligegenskaper" : {
+            "description" : "Informasjon for et gitt tidspunkt om boligens areal, boligtype og byggeår for en gitt boligeiendom eller ev. boenhet i flerboligbygning (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d3296-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Boligegenskaper"
+          },
+          "beliggenhetskode" : {
+            "description" : "En verdi mellom 1-7 som angir hvor tettbygd området boligen ligger i er, basert på antall innbyggere",
+            "$ref" : "#/components/schemas/Beliggenhetskode"
+          },
+          "beregnetMarkedsverdi" : {
+            "description" : "Estimert markedsverdi på boligeiendom basert på dokumentert markedsverdi for boligeiendom, justert markedsverdi for boligeiendom eller boligverdi for boligeiendom (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d3295-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/BeloepSomHeltall"
+          },
+          "beregningstype" : {
+            "description" : "Angir om en beregnet markedsverdi er basert på maskinell beregning eller dokumentert markedsverdi",
+            "$ref" : "#/components/schemas/BeregningstypeForBeregnetMarkedsverdi"
+          },
+          "grunnlagForBeregnetMarkedsverdi" : {
+            "description" : "Opplysninger som forklarer om en har verdsatt en boligeiendom på grunnlag av sjablong for boligeiendom, dokumentert markedsverdi for boligeiendom eller justert markedsverdi for boligeiendom",
+            "$ref" : "#/components/schemas/GrunnlagForBeregnetMarkedsverdi"
+          }
+        }
+      },
+      "FormuesspesifikasjonFlerboligbygning" : {
+        "type" : "object",
+        "description" : "Opplysninger som har betydning for beregning av formuesverdi spesifikt for flerboligbygning",
+        "properties" : {
+          "beliggenhetskode" : {
+            "description" : "En verdi mellom 1-7 som angir hvor tettbygd området boligen ligger i er, basert på antall innbyggere",
+            "$ref" : "#/components/schemas/Beliggenhetskode"
+          },
+          "beregnetMarkedsverdi" : {
+            "description" : "Estimert markedsverdi flerboligbyggning basert på dokumentert markedsverdi for bolig, justert markedsverdi for boligeiendom eller boligverdi for boligeiendom (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d3295-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/BeloepSomHeltall"
+          },
+          "useksjonertBoenhet" : {
+            "type" : "array",
+            "xml" : {
+              "wrapped" : true
+            },
+            "description" : "Boenhet som ikke har seksjonsnummer. Disse boenhetene er ikke knyttet til andel i boligselskap. I en flerboligbygning vil det alltid være minst 5 useksjonerte boenheter (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fd5f-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)",
+            "items" : {
+              "allOf" : [ {
+                "$ref" : "#/components/schemas/UseksjonertBoenhet"
+              } ],
+              "xml" : {
+                "name" : "useksjonertBoenhet"
+              }
+            }
+          }
+        }
+      },
+      "UseksjonertBoenhet" : {
+        "type" : "object",
+        "description" : "Boenhet som ikke har seksjonsnummer. Disse boenhetene er ikke knyttet til andel i boligselskap. I en flerboligbygning vil det alltid være minst 5 useksjonerte boenheter (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fd5f-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)",
+        "properties" : {
+          "boligegenskaper" : {
+            "description" : "Informasjon for et gitt tidspunkt om boligens areal, boligtype og byggeår for en gitt boligeiendom eller ev. boenhet i flerboligbygning (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d3296-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Boligegenskaper"
+          },
+          "bruksenhetsnummer" : {
+            "description" : "En bokstav og fire siffer som entydig identifiserer den enkelte bruksenheten innenfor en adresserbar bygning eller bygningsdel (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e101-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Tekst"
+          },
+          "beregnetMarkedsverdi" : {
+            "description" : "Estimert markedsverdi på et gitt tidspunkt for boligeiendom basert på dokumentert markedsverdi for bolig, justert markedsverdi for boligeiendom eller boligverdi for boligeiendom (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d3295-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/BeloepSomHeltall"
+          },
+          "beregningstype" : {
+            "description" : "Angir om en beregnet markedsverdi er basert på maskinell beregning eller dokumentert markedsverdi",
+            "$ref" : "#/components/schemas/BeregningstypeForBeregnetMarkedsverdi"
+          },
+          "grunnlagForBeregnetMarkedsverdi" : {
+            "description" : "Opplysninger som forklarer om en har verdsatt en boligeiendom på grunnlag av sjablong for boligeiendom, dokumentert markedsverdi for boligeiendom eller justert markedsverdi for boligeiendom",
+            "$ref" : "#/components/schemas/GrunnlagForBeregnetMarkedsverdi"
+          },
+          "vegadresse" : {
+            "description" : "Adresse for en bygning, bruksenhet, eiendom eller annet objekt som er registrert med adresse i matrikkelen",
+            "$ref" : "#/components/schemas/Vegadresse"
+          }
+        }
+      },
+      "Heltall" : {
+        "type" : "integer",
+        "description" : "hele tall, dvs. hele tall i mengden {..., -2, -1, 0, 1, 2, ...} (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af0-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "format" : "int64"
+      },
+      "Inntektsaar" : {
+        "type" : "integer",
+        "description" : "er årstallet som oppgave eller likning gjelder for (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/fa86c460-d685-11e7-9676-0050568351d2'>Begrepsreferanse</a>)",
+        "minimum" : 1000,
+        "format" : "int64"
+      },
+      "Eiendomsidentifikator" : {
+        "type" : "object",
+        "description" : "Identifikator for en gitt fast eiendom eller del av fast eiendom",
+        "properties" : {
+          "skatteetatensEiendomsidentifikator" : {
+            "description" : "Unik eiendomsidentifikator fastsatt av Skatteetaten for å identifisere hele eller en gitt del av fast eiendom som formuesobjekt (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d329d-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Identifikator"
+          },
+          "eksternIdentifikator" : {
+            "description" : "Identifikator gitt til en fast eiendom/formuesobjekt i forhold til ekstern deling av opplysninger relatert til eiendommen",
+            "$ref" : "#/components/schemas/Identifikator"
+          }
+        }
+      },
+      "Poststed" : {
+        "type" : "object",
+        "description" : "geografisk inndeling av postmottakere (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e122-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "properties" : {
+          "poststedsnavn" : {
+            "description" : "navn på et poststed (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e123-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Tekst"
+          },
+          "postnummer" : {
+            "description" : "nummer på et poststed (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Postnummer"
+          }
+        },
+        "required" : [ "poststedsnavn", "postnummer" ]
+      },
+      "Grunnkrets" : {
+        "type" : "object",
+        "description" : "Et lite og geografisk sammenhengende område som er mest mulig ensartet når det gjelder natur og næringsgrunnlag, kommunikasjonsforhold og bygningsmessig struktur som grunnlag for utarbeidelse av detaljert regionalstatistikk (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/108097cc-25fc-11e9-85c0-005056821322'>Begrepsreferanse</a>)",
+        "properties" : {
+          "grunnkretsnavn" : {
+            "description" : "Myndighetsfastsatt navn på grunnkrets (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/f0649744-497b-11e9-9936-005056821322'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Tekst"
+          },
+          "grunnkretsnummer" : {
+            "description" : "Myndighetsfastsatt identifikasjonsnummer for grunnkrets i en gitt kommune (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/f0649745-497b-11e9-9936-005056821322'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Tekst"
+          }
+        }
+      },
+      "Vegadresse" : {
+        "type" : "object",
+        "description" : "Adresse for en bygning, bruksenhet, eiendom eller annet objekt som er registrert med adresse i matrikkelen (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e12d-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "properties" : {
+          "adressekode" : {
+            "description" : "Nummer som entydig identifiserer adresserbare gater, veger, stier, plasser og områder som er ført i matrikkelen innen en kommune (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e0f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Identifikator"
+          },
+          "adressenavn" : {
+            "description" : "Navn på gate, veg, sti, plass eller område, brukt som del av den offisielle adressen (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e0f9-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Tekst"
+          },
+          "adressenummer" : {
+            "description" : "Et nummer og en eventuell bokstav som entydig identifiserer eiendommer, anlegg, bygninger eller innganger til bygninger innenfor en adresserbar gate, veg, sti, plass eller område (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e0fa-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Adressenummer"
+          },
+          "bruksenhetsnummer" : {
+            "type" : "array",
+            "xml" : {
+              "wrapped" : true
+            },
+            "description" : "En bokstav og fire siffer som entydig identifiserer den enkelte bruksenheten innenfor en adresserbar bygning eller bygningsdel (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e101-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "items" : {
+              "allOf" : [ {
+                "$ref" : "#/components/schemas/Tekst"
+              } ],
+              "xml" : {
+                "name" : "tekst"
+              }
+            }
+          }
+        }
+      },
+      "OpplysningenesOpphav" : {
+        "type" : "string",
+        "description" : "Kodeliste som beskriver hvor opplysningene i entitet stammer fra, for eksempel 31 desember skattelggingsperiode eller oppdatert matrikkelinformasjon som har oppstått etter 31 desember skattleggingsperiode (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/805aef00-3de1-4da5-901e-80b58a9e8a32'>Kodelistereferanse</a>)"
+      },
+      "Tekst" : {
+        "type" : "string",
+        "description" : "vilkårlig lang sekvens av tegn inkludert aksenter og spesielle tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "maxLength" : 4000
+      },
+      "Identifikator" : {
+        "type" : "string",
+        "description" : "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+      },
+      "Matrikkelnummer" : {
+        "type" : "object",
+        "description" : "offisiell benevnelse for hver enkel matrikkelenhet (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e115-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "properties" : {
+          "kommunenummer" : {
+            "description" : "nummer for kommune (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e0f3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Kommunenummer"
+          },
+          "gaardsnummer" : {
+            "description" : "nummer for gård (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e10f-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Heltall"
+          },
+          "bruksnummer" : {
+            "description" : "fortløpende nummerering innenfor gårdsnummeret (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e102-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Heltall"
+          },
+          "festenummer" : {
+            "description" : "tas i bruk når et bruksnummer skal deles opp i flere grunneiendommer (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e10a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Heltall"
+          },
+          "seksjonsnummer" : {
+            "description" : "nummer på en seksjon (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e124-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Heltall"
+          }
+        },
+        "required" : [ "kommunenummer", "gaardsnummer", "bruksnummer" ]
+      },
+      "Kommunenummer" : {
+        "type" : "string",
+        "description" : "nummer for kommune (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e0f3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "minLength" : 4,
+        "pattern" : "([0-9]){4}",
+        "maxLength" : 4
+      },
+      "BoenhetIBoligselskap" : {
+        "type" : "object",
+        "description" : "Boenhet som den skattepliktige eier og har bruksrett til i boligselskap (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/410ab745-9202-11e6-8b61-82ab1fa1f30b'>Begrepsreferanse</a>)",
+        "properties" : {
+          "boligselskap" : {
+            "description" : "Selskap med delt eller begrenset ansvar og med hovedformål å gi andelshaverne rett til bolig eller fritidsbolig i bygning eid av selskapet (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e17b-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Organisasjonsnummer"
+          },
+          "enhetsnummerForBoenhetIBoligselskap" : {
+            "description" : "Aksjeboenhetsnummer eller andelsnummer for en gitt boenhet i boligselskap (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/108097ca-25fc-11e9-85c0-005056821322'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/EnhetsnummerForBoenhetIBoligselskap"
+          }
+        }
+      },
+      "Dato" : {
+        "type" : "string",
+        "description" : "gir verdier for år, måned og dag. Kodes som en tekststreng etter datoformatering spesifisert i  ISO 8601 (ISO 8601:2004 Data elements and interchange formats -- Information interchange -- Representation of dates and times). Eksempel : 1998-12-21 eller 19981221. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52aed-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "format" : "date"
+      },
+      "Eiendomsrelasjonstype" : {
+        "type" : "string",
+        "description" : "Kodeliste som beskriver type relasjon mellom eiendommer, for eksempel en splittet relasjon eller seksjonert (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/af719f1a-2ba5-4f54-92f7-26334a92c200'>Kodelistereferanse</a>)"
+      },
+      "Eiendomsrelasjonsrolle" : {
+        "type" : "string",
+        "description" : "Kodeliste som beskriver roller en fast eiendom som formuesobjekt har i en eiendomsrelasjon til en eller flere andre fast eiendom som formuesobjekt, da i enten rollen forelder (parent) eller barn (child) (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/6ea96ba6-c118-4c40-a077-3723ef719a19'>Kodelistereferanse</a>)"
+      },
+      "Formuestype" : {
+        "type" : "string",
+        "description" : "Klassifisering for hvordan en fast eiendom skal behandles i forbindelse med formuesbeskatning. (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/2a3772ae-593a-4989-a70e-7aa1ee165faa'>Kodelistereferanse</a>)"
+      },
+      "Boligegenskaper" : {
+        "type" : "object",
+        "description" : "Informasjon for et gitt tidspunkt om boligens areal, boligtype og byggeår for en gitt boligeiendom eller ev. boenhet i flerboligbygning (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d3296-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)",
+        "properties" : {
+          "primaerromareal" : {
+            "description" : "summen av arealene av primærrommene i en bolig (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fd43-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Heltall"
+          },
+          "boligtype" : {
+            "description" : "Generell typebetegnelse for å beskrive fysiske kjennetegn ved boligeiendom. Utledes fra bygningstype (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fcfc-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Boligtype"
+          },
+          "byggeaar" : {
+            "description" : "Året en bygning ble ferdigstilt (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fd02-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Aarstall"
+          }
+        }
+      },
+      "Beliggenhetskode" : {
+        "type" : "string",
+        "description" : "En verdi mellom 1-7 som angir hvor tettbygd området boligen ligger i er, basert på antall innbyggere (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/20b4d3dc-2d8d-443e-ac66-6154dd92ad49'>Kodelistereferanse</a>)"
+      },
+      "BeloepSomHeltall" : {
+        "type" : "integer",
+        "description" : "en sum av penger i hele kroner brukt i en kontekst. Dette kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "format" : "int64"
+      },
+      "BeregningstypeForBeregnetMarkedsverdi" : {
+        "type" : "string",
+        "description" : "Kodeliste som angir om en beregnet markedsverdi er basert på maskinell beregning eller dokumentert markedsverdi (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/210836b0-a125-4b2e-b37c-40aa08636eed'>Kodelistereferanse</a>)"
+      },
+      "GrunnlagForBeregnetMarkedsverdi" : {
+        "type" : "object",
+        "description" : "Opplysninger som forklarer om en har verdsatt en boligeiendom på grunnlag av sjablong for boligeiendom, dokumentert markedsverdi for boligeiendom eller justert markedsverdi for boligeiendom",
+        "properties" : {
+          "boligverdi" : {
+            "description" : "Estimert markedsverdi for en boligeiendom som fastsettes med utgangspunkt i boligsjablong fra SSB",
+            "$ref" : "#/components/schemas/BeloepSomHeltall"
+          },
+          "dokumentertMarkedsverdi" : {
+            "description" : "Markedsverdi basert på dokumentasjon fremlagt av skattepliktige. Kan være takst, verdivurderinge eller oppnådd salgssum for eiendommen. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d3297-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/BeloepSomHeltall"
+          },
+          "aarForDokumentertMarkedsverdi" : {
+            "description" : "Det inntektståret dokumentert markedsverdi skal gjelde i fra.",
+            "$ref" : "#/components/schemas/Aarstall"
+          },
+          "justertMarkedsverdi" : {
+            "description" : "Boligverdi justert med reduksjonsfaktor som er beregnet på grunnlag av tidligere dokumentert markedsverdi. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/ce6d329a-98ef-11ea-8a84-005056828ed3'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/BeloepSomHeltall"
+          }
+        }
+      },
+      "Postnummer" : {
+        "type" : "string",
+        "description" : "nummer på et poststed (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e121-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "minLength" : 4,
+        "pattern" : "([0-9]){4}",
+        "maxLength" : 4
+      },
+      "Adressenummer" : {
+        "type" : "object",
+        "description" : "Et nummer og en eventuell bokstav som entydig identifiserer eiendommer, anlegg, bygninger eller innganger til bygninger innenfor en adresserbar gate, veg, sti, plass eller område (<a href='http://begrepskatalog/begrep/20b2e0fa-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "properties" : {
+          "husnummer" : {
+            "description" : "Nummer som entydig identifiserer eiendommer, anlegg, bygninger eller innganger til bygninger innenfor en adresserbar gate, veg, sti, plass eller område (<a href='http://begrepskatalog/begrep/20b2e111-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Heltall"
+          },
+          "husbokstav" : {
+            "description" : "Bokstav som sammen med husnummer entydig identifiserer eiendommer, anlegg, bygninger eller innganger til bygninger innenfor en adresserbar gate, veg, sti, plass eller område (<a href='http://begrepskatalog/begrep/20b2e110-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Tekst"
+          }
+        }
+      },
+      "Organisasjonsnummer" : {
+        "type" : "string",
+        "description" : "9 sifret nummer gitt de som er registrert i Enhetsregisteret. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "minLength" : 9,
+        "pattern" : "[0-9]+",
+        "maxLength" : 9
+      },
+      "EnhetsnummerForBoenhetIBoligselskap" : {
+        "type" : "object",
+        "description" : "Aksjeboenhetsnummer eller andelsnummer for en gitt boenhet i boligselskap (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/108097ca-25fc-11e9-85c0-005056821322'>Begrepsreferanse</a>)",
+        "properties" : {
+          "aksjeboenhetsnummer" : {
+            "description" : "Nummer som identifiserer en boenhet i et boligaksjeselskap og representerer bruksretten som aksjen gir (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e175-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Heltall"
+          },
+          "andelsnummer" : {
+            "description" : "Nummer som identifiserer en boenhet i et borettslag og representerer bruksretten som andelen gir (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e178-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+            "$ref" : "#/components/schemas/Heltall"
+          }
+        }
+      },
+      "Boligtype" : {
+        "type" : "string",
+        "description" : "Generell typebetegnelse for å beskrive fysiske kjennetegn ved boligeiendom. Utledes fra bygningstype (<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/c22fb86f-1284-4dd2-ba93-bef3b58c003c'>Kodelistereferanse</a>) (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/9c33fcfc-2964-11e6-b2bc-96405985e0fa'>Begrepsreferanse</a>)"
+      },
+      "Aarstall" : {
+        "type" : "string",
+        "description" : "årstall er et tall som angir årets nummer i tidsregningen i den gregorianske kalender (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e14a-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+        "format" : "year"
+      }
+    }
+  },
+  "paths" : {
+    "/{rettighetspakke}/{gjelderPeriode}/{kommunenummer}/{eksternidentifikator}" : {
+      "get" : {
+        "summary" : "Hent formuesgrunnlageiendomsskatt for en identifikator",
+        "description" : "Hent formuesgrunnlageiendomsskatt for en identifikator.",
+        "operationId" : "hentFormuesgrunnlagEiendomsskatt",
+        "tags" : [ "Formuesgrunnlag eiendomsskatt" ],
+        "parameters" : [ {
+          "name" : "rettighetspakke",
+          "in" : "path",
+          "description" : "Datakonsumenter plasseres i en rettighetspakke (per datasett) basert på en juridisk vurdering. Rettighetspakken styrer skjermingsregler, filtrering og detaljering som benyttes når det gis innsyn i data i datasett.",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "gjelderPeriode",
+          "in" : "path",
+          "description" : "Perioden",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "2022"
+        }, {
+          "name" : "kommunenummer",
+          "in" : "path",
+          "description" : "Kommunenummer",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "0301"
+        }, {
+          "name" : "eksternidentifikator",
+          "in" : "path",
+          "description" : "Ekstern identifikator",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "000000000000000"
+        }, {
+          "name" : "Korrelasjonsid",
+          "in" : "header",
+          "description" : "Korrelasjonsid, unik identifikator for den tekniske forespørselen. Må være på UUID-format",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "example" : "123e4567-e89b-12d3-a456-426655440000"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Gyldig respons",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FormuesgrunnlagForEiendomsskatt"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "Alle feil fra applikasjonen kommer på følgende format",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Feil"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

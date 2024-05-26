@@ -1,0 +1,2463 @@
+Generate java controllers and models based on the following swagger yaml:
+
+openapi: 3.0.3
+info:
+  title: Euboul - Studio Backend
+  description: >
+     listing of all APIs of studio backend
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: admin@cognitivegarage.ai
+  license:
+    name: Proprietary License
+    url: https://en.wikipedia.org/wiki/Proprietary_software
+  version: 0.1.25
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://ncp-iam.easygov.co.in/api-gateway/be
+tags:
+  - name: Projects
+    description:  Project in Euboul
+    externalDocs:
+      description: Find out more about Projects
+      url: https://ncp-studio.easygov.co.in/projects
+  - name: Ontology
+    description: Ontology in Euboul
+    externalDocs:
+      description: Find out more about Ontologies
+      url: https://ncp-studio.easygov.co.in/ontology
+  - name: Skill Type
+    description: Operations about Skills
+    externalDocs:
+      description: Find out more about Skill Type
+      url: https://ncp-studio.easygov.co.in/studio-management
+  - name: Library Items
+    description: Operations about library functions
+    externalDocs:
+      description: Find out more about library functions
+      url: https://ncp-studio.easygov.co.in/studio-management  
+  - name: Choreograph
+    description: Operations about Choreograph Resource
+    externalDocs:
+      description: Find out more about choreograph 
+      url: https://ncp-studio.easygov.co.in/studio-management  
+  - name: Decision Tree
+    description: Operations about Decision Tree Resource
+    externalDocs:
+      description: Find out more about DT 
+      url: https://ncp-studio.easygov.co.in/studio-management 
+  - name: Inference Graph
+    description: Operations about Inference Graph Resource
+    externalDocs:
+      description: Find out more about Inference Graph 
+      url: https://ncp-studio.easygov.co.in/studio-management  
+  - name: User Management
+    description: Operations about User Management
+    externalDocs:
+      description: Find out more about User Management 
+      url: https://ncp-studio.easygov.co.in/user-management       
+  - name: Miscellaneous
+    description: Miscellaneous api's
+    externalDocs:
+      description: miscellaneous api's in the system.
+      url: https://ncp-studio.easygov.co.in/studio-management        
+    
+paths:
+  /api/v1/projects:
+    get:
+      tags:
+        - Projects
+      summary: list all the projects in the tenant
+      description: Multiple status values can be provided with comma separated strings
+      operationId: findPetsByStatus
+      parameters:
+        - name: page
+          in: query
+          description: Page number (e.g., 0)
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of items per page (e.g., 10)
+          required: false
+          schema:
+            type: integer
+        - name: sortBy
+          in: query
+          description: Field to sort by (e.g., modifiedOn)
+          required: false
+          schema:
+            type: string
+        - name: sortOrder
+          in: query
+          description: Sort order (e.g., desc)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+      security:
+        - studio_oauth2:
+            - studio_scope          
+    post:
+      tags:
+        - Projects
+      summary: Create a new project
+      description: Add a new project
+      operationId: addProject
+      requestBody:
+        description: Project details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the project.
+                description:
+                  type: string
+                  description: An optional description of the project.
+                label:
+                  type: string
+                  description: An optional label for the project.
+        required: true
+      responses:
+        '200':
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projectId:
+                    type: string
+                    description: The ID of the newly created project.
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+      security:
+        - studio_oauth2:
+            - studio_scope  
+  /api/v1/projects/{projectId}:            
+    patch:
+      tags:
+        - Projects
+      summary: Update a project
+      description: Update specific fields of an existing project.
+      operationId: updateProject
+      parameters:
+        - name: projectId
+          in: path
+          description: ID of the project to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Fields to update
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The updated name of the project (optional).
+                description:
+                  type: string
+                  description: The updated project description (optional).
+                label:
+                  type: string
+                  description: The updated label for the project (optional).              
+      responses:
+        '200':
+          description: Project updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A success message indicating the update.
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Project not found
+        '500':
+          description: Internal Server Error
+      security:
+        - studio_oauth2:
+            - studio_scope 
+    delete:
+      tags:
+        - Projects
+      summary: Delete a project
+      description: Delete a project by its unique ID.
+      operationId: deleteProject
+      parameters:
+        - name: projectId
+          in: path
+          description: ID of the project to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Project deleted successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Project not found
+        '500':
+          description: Internal Server Error        
+      security:
+        - studio_oauth2:
+            - studio_scope  
+            
+  /api/v1/ontologies:    
+    post:
+      tags:
+        - Ontology
+      summary: Create Ontology Node
+      description: Create a new ontology node with the specified information.
+      operationId: addOntology
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The name of the ontology node (mandatory, unique for a tenant,
+                    min: 1, max: 50, allowed: alphabets, numbers, 'space', 'underscore',
+                    'hyphen', case insensitive).                  
+                description:
+                  type: string
+                  description: >
+                    The description of the ontology node (optional, min: 0, max: 250,
+                    allowed: everything).                  
+                tags:
+                  type: array
+                  description: >
+                    Optional tags associated with the ontology node.
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Ontology Node created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the newly created ontology node.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Details about the failed validation.
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Ontology Node with the same name already exists.
+      security:
+        - studio_oauth2:
+            - studio_scope 
+
+    get:
+      tags:
+        - Ontology    
+      summary: List All Ontology Nodes
+      description: Retrieve a list of ontology nodes with optional filter and pagination.
+      operationId: listOntologyNodes      
+      parameters:
+        - name: page
+          in: query
+          description: > 
+            Page number (optional, default: 1, can't be negative).
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: >
+            Number of items per page (optional, default: 10, max: 100).
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+        - name: sortBy
+          in: query
+          description: >
+             Field to sort by (optional, default: modifiedOn).
+          required: false
+          schema:
+            type: string
+            default: modifiedOn
+            enum: [modifiedOn]
+        - name: sortOrder
+          in: query
+          description: >
+            Sort order (optional, default: desc).
+          required: false
+          schema:
+            type: string
+            default: desc
+            enum: [asc, desc]
+        - name: filter
+          in: query
+          description: >
+             Filter criteria (optional, default: no).
+          required: false
+          schema:
+            type: string
+            default: no
+      responses:
+        '200':
+          description: Ontology Nodes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OntologyNode'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Details about the failed validation.
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Ontology Node with the same name already exists.
+        '404':
+          description: No results found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: No ontology nodes found based on the filter criteria.  
+      security:
+        - studio_oauth2:
+            - studio_scope                     
+
+  /api/v1/ontologies/{id}:  
+    patch:
+      tags:
+        - Ontology    
+      summary: Update Ontology Node metadata
+      description: Update specific fields of an existing ontology node.
+      operationId: updateOntologyMetadata
+      parameters:
+        - name: id
+          in: path
+          description: ID of the ontology node to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The updated name of the ontology node (mandatory, unique for a tenant,
+                    min: 1, max: 50, allowed: alphabets, numbers, 'space', 'underscore',
+                    'hyphen', case insensitive).
+                description:
+                  type: string
+                  description: >
+                    The updated description of the ontology node (optional, min: 0, max: 250,
+                    allowed: everything).
+                tags:
+                  type: array
+                  description: >
+                    Optional tags associated with the ontology node.
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Ontology Node updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Details about the failed validation.
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Ontology Node with the same name already exists.            
+      security:
+        - studio_oauth2:
+            - studio_scope 
+    get:
+      summary: Get Ontology Node by ID
+      operationId: getOntologyNode      
+      tags:
+        - Ontology      
+      description: Retrieve an ontology node by its unique ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the ontology node to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Ontology Node retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OntologyUpdate'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Ontology Node with the specified ID not found.
+      security:
+        - studio_oauth2:
+            - studio_scope                     
+    delete:
+      summary: Delete Ontology Node by ID
+      tags:
+        - Ontology   
+      operationId: deleteOntologyNode             
+      description: Delete an ontology node by its unique ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the ontology node to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Ontology Node deleted successfully
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Ontology Node with the specified ID not found.
+      security:
+        - studio_oauth2:
+            - studio_scope            
+            
+  /ontologies/{id}/{action}:
+    put:
+      summary: Update Ontology Node
+      tags:
+        - Ontology      
+      description: Update an ontology node with specific actions ('draft' or 'publish').
+      operationId: updateOntologyNode
+      parameters:
+        - name: id
+          in: path
+          description: ID of the ontology node to update
+          required: true
+          schema:
+            type: string
+        - name: action
+          in: path
+          description: Action to perform ('draft' or 'publish')
+          required: true
+          schema:
+            type: string
+            enum: [draft, publish]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OntologyUpdate' 
+      responses:
+        '200':
+          description: Ontology Node updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Details about the failed validation.
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Ontology Node lock is unavailable.   
+      security:
+        - studio_oauth2:
+            - studio_scope 
+
+  /api/v1/skill-types:
+    get:
+      summary: Get Skill Types
+      tags:
+        - Skill Type        
+      description: Retrieve a list of skill types with optional filtering and pagination.
+      operationId: getAllSkillTypes
+      parameters:
+        - name: page
+          in: query
+          description: >
+            Page number (optional, default: 1, can't be negative).
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: >
+            Number of items per page (optional, default: 10, max: 100).
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+        - name: sortBy
+          in: query
+          description: >
+            Field to sort by (optional, default: modifiedOn).
+          required: false
+          schema:
+            type: string
+            default: modifiedOn
+            enum: [modifiedOn]
+        - name: sortOrder
+          in: query
+          description: >
+            Sort order (optional, default: desc).
+          required: false
+          schema:
+            type: string
+            default: desc
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Skill Types retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SkillType'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Details about the failed validation. 
+      security:
+        - studio_oauth2:
+            - studio_scope  
+    post:
+      summary: Create Skill Type
+      description: Create a new skill type.
+      tags:
+        - Skill Type    
+      operationId : createSkillType  
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillTypeUpdate'
+      responses:
+        '201':
+          description: Skill Type created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillType'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Details about the failed validation. 
+      security:
+        - studio_oauth2:
+            - studio_scope                      
+  /api/v1/skill-types/{id}:
+    patch:
+      summary: Update Skill Type by ID
+      description: Update a skill type by its unique ID.
+      tags:
+        - Skill Type        
+      operationId: updateSkillTypes      
+      parameters:
+        - name: id
+          in: path
+          description: ID of the skill type to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillType'
+      responses:
+        '200':
+          description: Skill Type updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillTypeUpdate'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Details about the failed validation.
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Skill Type with the specified ID not found.
+      security:
+        - studio_oauth2:
+            - studio_scope 
+    delete:
+      summary: Delete Skill Type by ID
+      tags:
+        - Skill Type      
+      description: Delete a skill type by its unique ID.
+      operationId: deleteSkillTypes       
+      parameters:
+        - name: id
+          in: path
+          description: ID of the skill type to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Skill Type deleted successfully
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Skill Type with the specified ID not found.
+      security:
+        - studio_oauth2:
+            - studio_scope 
+
+
+  /api/v1/libraries:
+    get:
+      summary: Get Libraries
+      tags:
+        - Library Items          
+      description: Retrieve a list of libraries with optional filtering and pagination.
+      operationId: getAllLibraries       
+      parameters:      
+        - name: page
+          in: query
+          description: >
+            Page number (optional, default: 1, can't be negative).
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: >
+            Number of items per page (optional, default: 10, max: 100).
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+        - name: sortBy
+          in: query
+          description: >
+            Field to sort by (optional, default: modifiedOn).
+          required: false
+          schema:
+            type: string
+            default: modifiedOn
+            enum: [modifiedOn]
+        - name: sortOrder
+          in: query
+          description: >
+            Sort order (optional, default: desc).
+          required: false
+          schema:
+            type: string
+            default: desc
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Libraries retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Library'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Details about the failed validation.
+      security:
+        - studio_oauth2:
+            - studio_scope   
+    post:
+      summary: Create Library
+      tags:
+        - Library Items      
+      description: Create a new library.
+      operationId: createLibrary      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Library'
+      responses:
+        '201':
+          description: Library created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Library'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Details about the failed validation. 
+      security:
+        - studio_oauth2:
+            - studio_scope    
+  /api/v1/libraries/{id}:
+    patch:
+      summary: Update a Library
+      operationId: updateLibrary      
+      tags:
+        - Library Items         
+      description: Update an existing library resource.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the library to update.
+          schema:
+            type: string
+      requestBody:
+        description: Library data to update.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Library'
+      responses:
+        '201':
+          description: Library updated successfully.
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The library with the specified ID was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.  
+      security:
+        - studio_oauth2:
+            - studio_scope  
+    delete:
+      summary: Delete a Library
+      description: Remove an existing library resource.
+      operationId: deleteLibrary      
+      tags:
+        - Library Items           
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the library to delete.
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Library deleted successfully.
+        '404':
+          description: Not Found. The library with the specified ID was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope 
+
+  /api/v1/projects/{project_id}/choreographs:
+    post:
+      summary: Create a Choreograph
+      description: Create a new choreograph within a specific project.
+      operationId: createChoreograpghMetadata   
+      tags:
+        - Choreograph        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project in which to create the choreograph.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The name of the Choreograph (mandatory, unique for a project,
+                    min: 1, max: 50, allowed: alphabets, numbers, 'space', 'underscore',
+                    'hyphen', case insensitive).                  
+                description:
+                  type: string
+                  description: >
+                    The description of the Choreograph (optional, min: 0, max: 250,
+                    allowed: everything). 
+      responses:
+        '201':
+          description: Choreograph created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the newly created Choreograph.
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project with the specified ID was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope           
+  
+    get:
+      summary: Get all  Choreographs for a Project
+      description: Retrieve a list of choreographs for a specific project.
+      tags:
+        - Choreograph 
+      operationId: getAllChoreographs       
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project to retrieve choreographs for.
+          schema:
+            type: string
+        - in: query
+          name: page
+          required: false
+          description: >
+            The page number for pagination (default: 0).
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: limit
+          required: false
+          description: >
+            The maximum number of choreographs to return per page (default: 10).
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - in: query
+          name: sortBy
+          required: false
+          description: >
+            Sort by field (default: modifiedOn).
+          schema:
+            type: string
+        - in: query
+          name: sortOrder
+          required: false
+          description: >
+            Sort order (default: desc).
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '201':
+          description: >
+            Successfully retrieved choreographs for the project.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Choreograph'
+        '404':
+          description: Not Found. The project with the specified ID was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.            
+      security:
+        - studio_oauth2:
+            - studio_scope             
+  /api/v1/projects/{project_id}/choreographs/{choreograph_id}/lock:
+    post:
+      summary: Lock a Choreograph
+      description: Lock a specific choreograph within a project.
+      tags:
+        - Choreograph 
+      operationId: lockChoreograph        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the choreograph.
+          schema:
+            type: string
+        - in: path
+          name: choreograph_id
+          required: true
+          description: The ID of the choreograph to lock.
+          schema:
+            type: string
+      requestBody:
+        description: Lock request payload.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockRequest'
+      responses:
+        '200':
+          description: Choreograph locked successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockResponse'
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project or choreograph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope 
+  /api/v1/projects/{project_id}/choreographs/{choreograph_id}/{action}:
+    put:
+      summary: Update a Choreograph
+      description: Update a specific choreograph within a project.
+      tags:
+        - Choreograph 
+      operationId: updateChoreograph        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the choreograph.
+          schema:
+            type: string
+        - in: path
+          name: choreograph_id
+          required: true
+          description: The ID of the choreograph to update.
+          schema:
+            type: string
+        - in: path
+          name: action
+          required: true
+          description: The action to perform ("draft" or "published").
+          schema:
+            type: string
+            enum:
+              - draft
+              - published
+      requestBody:
+        description: Update request payload.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChoreographUpdate'
+      responses:
+        '201':
+          description: Choreograph updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project or choreograph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.            
+      security:
+        - studio_oauth2:
+            - studio_scope 
+
+  /api/v1/projects/{project_id}/choreographs/{choreograph_id}:
+    patch:
+      summary: Update Choreograph Metadata
+      description: Update the metadata (name and description) of a specific choreograph within a project.
+      operationId: updateChoreographMetadata
+      tags:
+        - Choreograph       
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the choreograph.
+          schema:
+            type: string
+        - in: path
+          name: choreograph_id
+          required: true
+          description: The ID of the choreograph to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The name of the Choreograph (mandatory, unique for a project,
+                    min: 1, max: 50, allowed: alphabets, numbers, 'space', 'underscore',
+                    'hyphen', case insensitive).                  
+                description:
+                  type: string
+                  description: >
+                    The description of the Choreograph (optional, min: 0, max: 250,
+                    allowed: everything). 
+      responses:
+        '201':
+          description: Choreograph metadata updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project or choreograph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope           
+          
+    delete:
+      summary: Delete a Choreograph
+      description: Delete a specific choreograph within a project.
+      operationId: deleteChoreograph
+      tags:
+        - Choreograph        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the choreograph.
+          schema:
+            type: string
+        - in: path
+          name: choreograph_id
+          required: true
+          description: The ID of the choreograph to delete.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Choreograph deleted successfully.
+        '404':
+          description: Not Found. The project or choreograph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope           
+
+    get:
+      summary: Get Choreograph Details
+      description: Retrieve details of a specific choreograph within a project.
+      tags:
+        - Choreograph       
+      operationId: getChoreograph
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the choreograph.
+          schema:
+            type: string
+        - in: path
+          name: choreograph_id
+          required: true
+          description: The ID of the choreograph to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Choreograph details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChoreographDetails'
+        '404':
+          description: Not Found. The project or choreograph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server. 
+      security:
+        - studio_oauth2:
+            - studio_scope  
+            
+  /api/v1/projects/{project_id}/skills/dt:
+    post:
+      summary: Create a Decision Tree
+      description: Create a new Decision Tree within a specific project.
+      operationId: createdtMetadata   
+      tags:
+        - Decision Tree        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project in which to create the dt.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The name of the dt (mandatory, unique for a project,
+                    min: 1, max: 50, allowed: alphabets, numbers, 'space', 'underscore',
+                    'hyphen', case insensitive).                  
+                description:
+                  type: string
+                  description: >
+                    The description of the dt (optional, min: 0, max: 250,
+                    allowed: everything). 
+      responses:
+        '201':
+          description: dt created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the newly created dt.
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project with the specified ID was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope           
+  
+    get:
+      summary: Get all  dts for a Project
+      description: Retrieve a list of choreographs for a specific project.
+      tags:
+        - Decision Tree 
+      operationId: getAllDts       
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project to retrieve choreographs for.
+          schema:
+            type: string
+        - in: query
+          name: page
+          required: false
+          description: >
+            The page number for pagination (default: 0).
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: limit
+          required: false
+          description: >
+            The maximum number of dts to return per page (default: 10).
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - in: query
+          name: sortBy
+          required: false
+          description: >
+            Sort by field (default: modifiedOn).
+          schema:
+            type: string
+        - in: query
+          name: sortOrder
+          required: false
+          description: >
+            Sort order (default: desc).
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '201':
+          description: >
+            Successfully retrieved dts for the project.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/skillMetadataResponse'
+        '404':
+          description: Not Found. The project with the specified ID was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.            
+      security:
+        - studio_oauth2:
+            - studio_scope             
+  /api/v1/projects/{project_id}/dt/{dt_id}/lock:
+    post:
+      summary: Lock a dt
+      description: Lock a specific dt within a project.
+      tags:
+        - Decision Tree 
+      operationId: lockDt        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the dt.
+          schema:
+            type: string
+        - in: path
+          name: dt_id
+          required: true
+          description: The ID of the dt to lock.
+          schema:
+            type: string
+      requestBody:
+        description: Lock request payload.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockRequest'
+      responses:
+        '200':
+          description: dt locked successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockResponse'
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project or dt with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope 
+  /api/v1/projects/{project_id}/dt/{dt_id}/{action}:
+    put:
+      summary: Update a dt
+      description: Update a specific dt within a project.
+      tags:
+        - Decision Tree 
+      operationId: updateDt        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the dt.
+          schema:
+            type: string
+        - in: path
+          name: dt_id
+          required: true
+          description: The ID of the dt to update.
+          schema:
+            type: string
+        - in: path
+          name: action
+          required: true
+          description: The action to perform ("draft" or "published").
+          schema:
+            type: string
+            enum:
+              - draft
+              - published
+      requestBody:
+        description: Update request payload.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/skillDetails'
+      responses:
+        '201':
+          description: dt updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project or dt with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.            
+      security:
+        - studio_oauth2:
+            - studio_scope 
+
+  /api/v1/projects/{project_id}/dt/{dt_id}:
+    patch:
+      summary: Update dt Metadata
+      description: Update the metadata (name and description) of a specific dt within a project.
+      operationId: updateDtMetadata
+      tags:
+        - Decision Tree       
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the dt.
+          schema:
+            type: string
+        - in: path
+          name: dt_id
+          required: true
+          description: The ID of the dt to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The name of the dt (mandatory, unique for a project,
+                    min: 1, max: 50, allowed: alphabets, numbers, 'space', 'underscore',
+                    'hyphen', case insensitive).                  
+                description:
+                  type: string
+                  description: >
+                    The description of the dt (optional, min: 0, max: 250,
+                    allowed: everything). 
+      responses:
+        '201':
+          description: dt metadata updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project or dt with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope           
+          
+    delete:
+      summary: Delete a dt
+      description: Delete a specific dt within a project.
+      operationId: deleteDt
+      tags:
+        - Decision Tree        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the dt.
+          schema:
+            type: string
+        - in: path
+          name: dt_id
+          required: true
+          description: The ID of the dt to delete.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: dt deleted successfully.
+        '404':
+          description: Not Found. The project or dt with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope           
+
+    get:
+      summary: Get dt Details
+      description: Retrieve details of a specific dt within a project.
+      tags:
+        - Decision Tree       
+      operationId: getDt
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the dt.
+          schema:
+            type: string
+        - in: path
+          name: dt_id
+          required: true
+          description: The ID of the dt to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: dt details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/skillDetails'
+        '404':
+          description: Not Found. The project or dt with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server. 
+      security:
+        - studio_oauth2:
+            - studio_scope   
+
+  /api/v1/projects/{project_id}/skills/ig:
+    post:
+      summary: Create a Inference Graph
+      description: Create a new Inference Graph within a specific project.
+      operationId: createIGMetadata   
+      tags:
+        - Inference Graph        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project in which to create the Inference Graph.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The name of the Inference Graph (mandatory, unique for a project,
+                    min: 1, max: 50, allowed: alphabets, numbers, 'space', 'underscore',
+                    'hyphen', case insensitive).                  
+                description:
+                  type: string
+                  description: >
+                    The description of the Inference Graph (optional, min: 0, max: 250,
+                    allowed: everything). 
+      responses:
+        '201':
+          description: Inference Graph created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the newly created Inference Graph.
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project with the specified ID was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope           
+  
+    get:
+      summary: Get all ig's for a Project
+      description: Retrieve a list of Inference Graph for a specific project.
+      tags:
+        - Inference Graph 
+      operationId: getAllIgs      
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project to retrieve Inference Graph for.
+          schema:
+            type: string
+        - in: query
+          name: page
+          required: false
+          description: >
+            The page number for pagination (default: 0).
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: limit
+          required: false
+          description: >
+            The maximum number of dts to return per page (default: 10).
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - in: query
+          name: sortBy
+          required: false
+          description: >
+            Sort by field (default: modifiedOn).
+          schema:
+            type: string
+        - in: query
+          name: sortOrder
+          required: false
+          description: >
+            Sort order (default: desc).
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '201':
+          description: >
+            Successfully retrieved igs for the project.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/skillMetadataResponse'
+        '404':
+          description: Not Found. The project with the specified ID was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.            
+      security:
+        - studio_oauth2:
+            - studio_scope             
+  /api/v1/projects/{project_id}/ig/{ig_id}/lock:
+    post:
+      summary: Lock a Inference Graph
+      description: Lock a specific Inference Graph within a project.
+      tags:
+        - Inference Graph 
+      operationId: lockIg        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the Inference Graph.
+          schema:
+            type: string
+        - in: path
+          name: ig_id
+          required: true
+          description: The ID of the Inference Graph to lock.
+          schema:
+            type: string
+      requestBody:
+        description: Lock request payload.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockRequest'
+      responses:
+        '200':
+          description: Inference Graph locked successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockResponse'
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project or Inference Graph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope 
+  /api/v1/projects/{project_id}/ig/{ig_id}/{action}:
+    put:
+      summary: Update a Inference Graph
+      description: Update a specific Inference Graph within a project.
+      tags:
+        - Inference Graph 
+      operationId: updateIg       
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the Inference Graph.
+          schema:
+            type: string
+        - in: path
+          name: ig_id
+          required: true
+          description: The ID of the Inference Graph to update.
+          schema:
+            type: string
+        - in: path
+          name: action
+          required: true
+          description: The action to perform ("draft" or "published").
+          schema:
+            type: string
+            enum:
+              - draft
+              - published
+      requestBody:
+        description: Update request payload.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/skillDetails'
+      responses:
+        '201':
+          description: Inference Graph updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project or Inference Graph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.            
+      security:
+        - studio_oauth2:
+            - studio_scope 
+
+  /api/v1/projects/{project_id}/ig/{ig_id}:
+    patch:
+      summary: Update Inference Graph Metadata
+      description: Update the metadata (name and description) of a specific Inference Graph within a project.
+      operationId: updateIGMetadata
+      tags:
+        - Inference Graph       
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the Inference Graph.
+          schema:
+            type: string
+        - in: path
+          name: ig_id
+          required: true
+          description: The ID of the Inference Graph to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: >
+                    The name of the Inference Graph (mandatory, unique for a project,
+                    min: 1, max: 50, allowed: alphabets, numbers, 'space', 'underscore',
+                    'hyphen', case insensitive).                  
+                description:
+                  type: string
+                  description: >
+                    The description of the Inference Graph (optional, min: 0, max: 250,
+                    allowed: everything). 
+      responses:
+        '201':
+          description: Inference Graph metadata updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '404':
+          description: Not Found. The project or Inference Graph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope           
+          
+    delete:
+      summary: Delete a Inference Graph
+      description: Delete a specific Inference Graph within a project.
+      operationId: deleteIg
+      tags:
+        - Inference Graph        
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the Inference Graph.
+          schema:
+            type: string
+        - in: path
+          name: ig_id
+          required: true
+          description: The ID of the Inference Graph to delete.
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Inference Graph deleted successfully.
+        '404':
+          description: Not Found. The project or Inference Graph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope           
+
+    get:
+      summary: Get Inference Graph Details
+      description: Retrieve details of a specific Inference Graph within a project.
+      operationId: getIg
+      tags:
+        - Inference Graph          
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          description: The ID of the project containing the Inference Graph.
+          schema:
+            type: string
+        - in: path
+          name: ig_id
+          required: true
+          description: The ID of the Inference Graph to retrieve.
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Inference Graph details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/skillDetails'
+        '404':
+          description: Not Found. The project or Inference Graph with the specified IDs was not found.
+        '500':
+          description: Internal Server Error. Something went wrong on the server. 
+      security:
+        - studio_oauth2:
+            - studio_scope  
+
+  /version:
+    get:
+      summary: Get Application Version
+      description: Retrieve the version of the application.
+      tags:
+        - Miscellaneous        
+      operationId: getApplicationVersion
+      responses:
+        '201':
+          description: Application version retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                    description: The version of the application.
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+      security:
+        - studio_oauth2:
+            - studio_scope   
+            
+  /api/v1/notifications:
+    get:
+      summary: Get Notifications
+      description: Retrieve a list of notifications with optional filtering and pagination.
+      tags:
+        - Miscellaneous         
+      operationId: getNotifications
+      parameters:
+        - in: query
+          name: page
+          required: false
+          description: The page number for pagination. Default is 0.
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: limit
+          required: false
+          description: The maximum number of notifications to return. Default is 10.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - in: query
+          name: sortBy
+          required: false
+          description: The field to sort notifications by. Default is "createdOn".
+          schema:
+            type: string
+            enum:
+              - createdOn
+        - in: query
+          name: sortOrder
+          required: false
+          description: The sorting order. Default is "desc".
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '201':
+          description: Notifications retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationList'
+        '400':
+          description: Bad Request. Invalid input or validation error.
+        '500':
+          description: Internal Server Error. Something went wrong on the server. 
+      security:
+        - studio_oauth2:
+            - studio_scope           
+  
+components:
+  schemas:
+    Notification:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the notification.
+        title:
+          type: string
+          description: The title of the notification.
+        message:
+          type: string
+          description: The content message of the notification.
+        read:
+          type: boolean
+          description: Indicates whether the notification has been read.
+        deleted:
+          type: boolean
+          description: Indicates whether the notification has been deleted.
+        disabled:
+          type: boolean
+          description: Indicates whether the notification is disabled.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the notification was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: The date and time when the notification was last updated.
+        createdOn:
+          type: string
+          format: date-time
+          description: The date and time when the notification was created (alternative date format).
+        modifiedOn:
+          type: string
+          format: date-time
+          description: The date and time when the notification was last updated (alternative date format).
+        __v:
+          type: integer
+          description: The version of the notification object.
+
+    NotificationList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+          description: List of notifications.
+        totalCount:
+          type: integer
+          description: The total count of notifications.  
+    Status:
+      type: string
+      enum:
+        - draft
+        - published
+      description: >
+        The status of the Dt (Data Transformation). It can be "draft" or "published".  
+    skillDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of a skill .
+        tenantId:
+          type: string
+          description: The ID of the tenant.
+        projectId:
+          type: string
+          description: The ID of the project.
+        skillType:
+          $ref: '#/components/schemas/SkillType'
+        name:
+          type: string
+          description: The name of the Dt.
+        version:
+          type: string
+          description: The version of the Dt.
+        description:
+          type: string
+          description: The description of the Dt.
+        status:
+          $ref: '#/components/schemas/Status'
+        lockedBy:
+          type: string
+          description: The user who locked the Dt.
+        data:
+          type: object
+          description: Additional data for the Dt.
+        canvasData:
+          type: object
+          description: Data related to the Dt's canvas.  
+          
+    skillMetadataResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of a skill.
+        name:
+          type: string
+          description: >
+            The name of the dt  (mandatory, unique for a tenant, min: 1, max: 50,
+            allowed: alphabets, numbers, 'space', 'underscore', 'hyphen', case insensitive).
+        description:
+          type: string
+          description: >
+            The description of the dt (optional, min: 0, max: 250, allowed: everything).  
+    ChoreographDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of a choreograph.      
+        tenantId:
+          type: string
+          description: The ID of the tenant.
+        projectId:
+          type: string
+          description: The ID of the project.
+        name:
+          type: string
+          description: The name of the choreograph.
+        description:
+          type: string
+          description: The description of the choreograph.
+        version:
+          type: string
+          description: The version of the choreograph.
+        status:
+          type: string
+          description: The status of the choreograph.
+        lockedBy:
+          type: string
+          description: The user who locked the choreograph.
+        lockedAt:
+          type: string
+          format: date-time
+          description: The date and time when the choreograph was locked.
+        data:
+          type: object
+          description: Additional data for the choreograph.
+        canvasData:
+          type: object
+          description: Data related to the choreograph's canvas.  
+    ChoreographUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status of the choreograph.
+        lockedBy:
+          type: string
+          description: The user who locked the choreograph.
+        lockedAt:
+          type: string
+          format: date-time
+          description: The date and time when the choreograph was locked.
+        data:
+          type: object
+          description: Additional data for the choreograph.
+        canvasData:
+          type: object
+          description: Data related to the choreograph's canvas.  
+    LockRequest:
+      type: object
+      properties:
+        resourceType:
+          type: string
+          description: The type of resource to lock (e.g., "choreographs").
+    LockResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A message indicating the success of the lock operation.  
+    Choreograph:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of a choreograph.      
+        name:
+          type: string
+          description: The name of the choreograph.
+        description:
+          type: string
+          description: The description of the choreograph.
+        version:
+          type: string
+          description: The version of the choreograph.
+        status:
+          type: string
+          description: The status of the choreograph.
+        modifiedOn:
+          type: string
+          format: date-time
+          description: The date and time when the choreograph was last modified.  
+    Library:
+      type: object
+      properties:
+        libraryKind:
+          $ref: '#/components/schemas/LibraryKindEnum'
+        name:
+          type: string
+        notes:
+          type: string
+        tooltip:
+          type: string
+        inputCount:
+          type: integer
+        outputCount:
+          type: integer
+        inputs:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              label:
+                type: string
+        outputs:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              label:
+                type: string
+        inputDataType:
+          $ref: '#/components/schemas/OntologyDatatypeEnum'
+        outputDataType:
+          $ref: '#/components/schemas/OntologyDatatypeEnum'
+        code:
+          type: string
+        tenants:
+          type: array
+          items:
+            type: string
+    LibraryKindEnum:
+          enum:
+            - mappers
+            - validators
+            - transformers
+            - functions
+    OntologyDatatypeEnum:
+          type: string
+          enum:
+            - number  
+            - string
+            - boolean
+    SkillType:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        beta:
+          type: boolean
+        disabled:
+          type: boolean
+        remark:
+          type: string
+        testCase:
+          type: string
+        docsLink:
+          type: string
+        deleted:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        createdOn:
+          type: string
+        modifiedOn:
+          type: string
+        __v:
+          type: integer  
+    SkillTypeUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        beta:
+          type: boolean
+        remark:
+          type: string
+        testCase:
+          type: string
+        docsLink:
+          type: string
+        disabled:
+          type: boolean           
+    Project:
+        type: object
+        properties:
+          _id:
+            type: string
+            description: The unique identifier for the project.
+          tenantId:
+            type: string
+            description: The ID of the tenant associated with the project.
+          name:
+            type: string
+            description: The name of the project.
+          description:
+            type: string
+            description: A description of the project.
+          deleted:
+            type: boolean
+            description: Indicates whether the project has been deleted (true/false).
+          disabled:
+            type: boolean
+            description: Indicates whether the project is disabled (true/false).
+          createdAt:
+            type: string
+            format: date-time
+            description: The date and time when the project was created.
+          updatedAt:
+            type: string
+            format: date-time
+            description: The date and time when the project was last updated.
+          createdOn:
+            type: string
+            format: date-time
+            description: An alternative date and time when the project was created.
+          modifiedOn:
+            type: string
+            format: date-time
+            description: An alternative date and time when the project was last modified.
+          __v:
+            type: integer
+            description: The version number of the project object. 
+    OntologyNode:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the ontology node.
+        name:
+          type: string
+          description: >
+            The name of the ontology node (mandatory, unique for a tenant, min: 1, max: 50,
+            allowed: alphabets, numbers, 'space', 'underscore', 'hyphen', case insensitive).
+        description:
+          type: string
+          description: >
+            The description of the ontology node (optional, min: 0, max: 250, allowed: everything).
+        tags:
+          type: array
+          description: Optional tags associated with the ontology node.
+          items:
+            type: string  
+    OntologyUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        lockedBy:
+          type: string
+        lockedAt:
+          type: string
+        displayName:
+          type: string
+        dataType:
+          type: string
+        nodeType:
+          type: string
+        source:
+          type: object
+          properties:
+            type:
+              type: string
+            config:
+              type: object
+              properties:
+                question:
+                  type: string
+                displayDataType:
+                  type: string
+                allowedValues:
+                  type: array
+                  items:
+                    type: string
+                integrationType:
+                  type: string
+                integrationName:
+                  type: string
+                functionName:
+                  type: string
+                nodeList:
+                  type: array
+                  items:
+                    type: string
+        library:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              name:
+                type: string
+        canvasData:
+          type: object   
+          
+
+  securitySchemes:
+    studio_oauth2:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: https://ncp-iam.easygov.co.in/realms/ncp/protocol/openid-connect/token
+          scopes:
+            studio_scope: Studio Scope Description
