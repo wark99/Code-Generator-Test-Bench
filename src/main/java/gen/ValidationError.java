@@ -2,20 +2,6 @@ package gen;
 
 import java.util.List;
 
-public class HTTPValidationError {
-    private List<ValidationError> detail;
-
-    public List<ValidationError> getDetail() {
-        return detail;
-    }
-
-    public void setDetail(List<ValidationError> detail) {
-        this.detail = detail;
-    }
-}
-
-import java.util.List;
-
 public class ValidationError {
     private List<Object> loc;
     private String msg;
