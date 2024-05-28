@@ -31,29 +31,3 @@ public class ScoreController {
         // Implementation here
     }
 }
-
-@RestController
-@RequestMapping("/")
-public class UploadController {
-
-    @PostMapping("/upload/session")
-    public ResponseEntity<UploadSessionResponse> startUploadSession() {
-        // Implementation here
-    }
-
-    @PostMapping("/upload/generate-url")
-    public ResponseEntity<UploadURLResponse> generateUploadURL(@RequestParam String sessionID) {
-        // Implementation here
-    }
-}
-
-@RestController
-@RequestMapping("/")
-public class VerificationController {
-
-    @PostMapping("/verify")
-    public ResponseEntity<VerificationResponse> verifyConsumerFile(@RequestBody ConsumerFileForVerification consumerFile) {
-        // Implementation here
-    }
-}
-
