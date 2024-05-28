@@ -27,12 +27,3 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
 }
-
-class OrderMakeRequest {
-    private UUID cart_uuid;
-    private String email;
-    private String phone;
-
-    // Getters and setters
-}
-

@@ -26,25 +26,3 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 }
-
-class CartEditRequest {
-    private UUID uuid;
-    private List<CartItem> products;
-
-    // Getters and setters
-}
-
-class CartDeleteRequest {
-    private UUID uuid;
-    private List<Integer> products;
-
-    // Getters and setters
-}
-
-class CartItem {
-    private int id;
-    private int number;
-
-    // Getters and setters
-}
-

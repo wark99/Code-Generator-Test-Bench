@@ -20,28 +20,3 @@ public class UserController {
         return ResponseEntity.ok(new UserResponse(true, "User logged in", "token"));
     }
 }
-
-class UserRegistrationRequest {
-    private String name;
-    private String email;
-    private String phone;
-    private String password;
-
-    // Getters and setters
-}
-
-class UserLoginRequest {
-    private String email;
-    private String password;
-
-    // Getters and setters
-}
-
-class UserResponse {
-    private boolean status;
-    private String message;
-    private String token;
-
-    // Constructor, getters, and setters
-}
-

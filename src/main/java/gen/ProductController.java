@@ -20,29 +20,3 @@ public class ProductController {
         return ResponseEntity.ok(List.of(new Product()));
     }
 }
-
-class ProductFilterRequest {
-    private List<Integer> folders;
-    private PriceRange price;
-    private Dimension length;
-    private Dimension width;
-    private Dimension height;
-    private Dimension weight;
-
-    // Getters and setters
-}
-
-class PriceRange {
-    private Double min;
-    private Double max;
-
-    // Getters and setters
-}
-
-class Dimension {
-    private Double min;
-    private Double max;
-
-    // Getters and setters
-}
-
