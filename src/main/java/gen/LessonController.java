@@ -1,34 +1,14 @@
 package gen;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api")
-public class UserController {
-
-    // Assuming UserService is a service class handling User operations
-    private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers() {
-        List<User> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
-
-    @PostMapping("/users")
-    public ResponseEntity<User> addUser(@RequestBody User user) {
-        User newUser = userService.addUser(user);
-        return new ResponseEntity<>(newUser, HttpStatus.OK);
-    }
-}
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
@@ -59,29 +39,3 @@ public class LessonController {
         return new ResponseEntity<>(newEvaluation, HttpStatus.OK);
     }
 }
-
-public class User {
-    private Long id;
-    private String name;
-    private Integer age;
-
-    // getters and setters
-}
-
-public class Lesson {
-    private Long id;
-    private String subject;
-    private String date;
-
-    // getters and setters
-}
-
-public class Evaluation {
-    private Long id;
-    private Long userId;
-    private Long lessonId;
-    private Integer grade;
-
-    // getters and setters
-}
-
