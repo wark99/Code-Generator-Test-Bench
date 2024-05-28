@@ -1,20 +1,12 @@
 package uni.testbench.gen;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
-
-@RestController
-@RequestMapping("/attachments")
-public class AttachmentController {
-
-    @GetMapping("/{data_attachment_id}")
-    public ResponseEntity<GetDataAttachmentResponse> getDataAttachment(@PathVariable("data_attachment_id") String dataAttachmentId,
-                                                                       @RequestHeader(value = "Accept") String accept) {
-        // Implementation here
-        return ResponseEntity.ok().build();
-    }
-}
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/tokens")
@@ -29,4 +21,3 @@ public class TokenController {
         return ResponseEntity.ok().build();
     }
 }
-
