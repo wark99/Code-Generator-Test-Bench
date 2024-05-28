@@ -1,35 +1,15 @@
 package gen;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
-
-@RestController
-@RequestMapping("/measurement-events")
-public class MeasurementEventController {
-
-    @GetMapping
-    public List<MeasurementEvent> queryMeasurementEvents(@RequestParam(required = false) String since,
-                                                         @RequestParam(required = false) String until,
-                                                         @RequestParam(required = false) List<String> types,
-                                                         @RequestParam(required = false) Integer offset,
-                                                         @RequestParam(required = false) Integer limit) {
-        // Implement your logic here to query measurement events
-        return null;
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public MeasurementEvent createMeasurementEvent(@RequestBody CreateMeasurementEventRequest request) {
-        // Implement your logic here to create a measurement event
-        return null;
-    }
-
-    @GetMapping("/{id}")
-    public MeasurementEvent getMeasurementEvent(@PathVariable String id) {
-        // Implement your logic here to get a single measurement event
-        return null;
-    }
-}
 
 @RestController
 @RequestMapping("/measurement-webhooks")
@@ -72,4 +52,3 @@ public class MeasurementWebhookController {
         return null;
     }
 }
-
