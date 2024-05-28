@@ -26,38 +26,3 @@ public class Distribution {
     private String message;
     private Integer retries;
 }
-
-@Data
-public class Asset {
-    private Long id;
-    private String name;
-}
-
-@Data
-public class Account {
-    private Long id;
-    private String name;
-}
-
-@Data
-public class Channel {
-    private Long id;
-    private String name;
-}
-
-@Data
-@XmlRootElement(name = "fileTransfer")
-public class Transfer {
-    private Long id;
-    private String uri;
-    private String state;
-    private String message;
-}
-
-@Data
-public class ApiResponse {
-    private Integer code;
-    private String error;
-    private String message;
-}
-
