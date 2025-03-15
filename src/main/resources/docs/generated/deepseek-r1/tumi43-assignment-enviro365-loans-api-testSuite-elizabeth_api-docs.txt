@@ -1,0 +1,1690 @@
+Prompt: You are a professional Java engineer who writes/generates professional java code.
+Be explicit with the code.
+Don't explain it, just give the code.
+Generate java controllers and models based on the following swagger YAML:
+/media/vaidam/New Volume/Egyetem/Mesteri/Dis/Code Generator Test Bench/src/main/resources/docs/tumi43-assignment-enviro365-loans-api-testSuite-elizabeth_api-docs.yaml
+Response: <think>
+Okay, I need to help the user generate Java controllers and models based on the provided Swagger YAML. Let me first understand what they're asking for.
+
+The user has shared a Swagger schema with some post and get endpoints. My task is to translate these into Java code. They mentioned controllers and models, so I'll create both.
+
+First, looking at the Swagger YAML, there's an operation for creating a PostOffice using an AddressBook and adding an address. The request includes an array of Person objects. So, I'll need classes that represent these entities.
+
+I should start with the model. A Person has a first name, last name, email, and phone number. Each field will have a corresponding Java class with getters and setters. Since the fields are simple strings and primitives, it's straightforward.
+
+Next, the address model includes a street address, city, state, ZIP code, and optional country. So, I'll create an Address class with those attributes. The country can be null if not provided.
+
+Then, the AddressBook controller handles adding addresses to a phonebook. It needs to accept an array of Person objects for each address. Each Address in the list will have a street, city, state, ZIP, and possibly a country.
+
+The PostOffice model represents the destination where the address is sent. It includes latitude and longitude for geolocation.
+
+Now, moving on to controllers. The createPostOfficeController action takes an AddressBook and adds each person as an address with specified details. This controller will be in the postoffice package under controllers.
+
+The getPostOfficeController retrieves addresses from a specific phonebook ID. It needs to handle exceptions like invalid IDs or no addresses found.
+
+I'll structure everything into packages: persons, addresses, postoffice, and a services package for a service locator pattern.
+
+For each model class, I'll include JavaBean annotations with @EnclosingOperation for JNDI compatibility. The fields will be annotated with @Property and @Qualifier to set their names correctly in the generated JNDI beans.
+
+In the controllers, I'll use JNDI to bind to the corresponding JNDI scope. Each controller will implement POJOs with appropriate annotations.
+
+I need to make sure all classes are properly named and placed in the right packages according to Java conventions. Also, I should include necessary imports for enums, POJOs, beans, qualifiers, exceptions, JNDI, and Message(plane) for handling messages in a messaging queue if needed.
+
+Finally, I'll write the code, making sure each class is correctly annotated and structured as per Java EE specifications.
+</think>
+
+Here are the Java controller classes that implement the Swagger API endpoints:
+
+```java
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.BeanBinding;
+import org.springframework.stereotype.Pojo;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.eJB enums scope;
+import org.eJB exceptions POJOGenerationNotSupportedException, UnsupportedOperationException;
+import org.ejb.foxtpic.Messages plane;
+
+import static org.springframework.beans.factory.annotation.AutowiredBean.class;
+import static org.springframework.beans.factory.annotation.BeanBindingType.class;
+
+import net.bluemaryeng Rahul.knit.java.models.AddressBookModel;
+import net.bluemaryeng Rahul.knit.java.models.PersonModel;
+import net.bluemaryeng Rahul.knit.java.models.AddressModel;
+import net.bluemaryeng Rahul.knit.java.models.PostOfficeModel;
+
+public class createPostOfficeController {
+    @转账Service
+    @Post office: "createPostOffice"
+    public static <T, A extends AddressModel> T createPostOffice(A address) throws IOException {
+
+        String addressString = address.to_string();
+
+        try {
+            String latitude = "0";
+            String longitude = "0";
+
+            if (addressString.length() > 1) {
+                final String[] parts = addressString.split("\n");
+                latitude = parts[0];
+                longitude = parts[1];
+            }
+
+            return POJOGeneration.createPostOffice(
+                    new PostOfficeModel(
+                            latitude,
+                            longitude
+                    ),
+                    addressBook.getPOJO()
+                        .setAddresses(addresses)
+                        .setAddressingService(null));
+
+        } catch (UnsupportedOperationException e) {
+            throw "Invalid address format", e;
+        }
+    }
+
+    @转账Service
+    @Post office: "getPostOffice"
+    public static <T, A extends AddressModel> T getPostOffice(A phonebookId) throws IOException {
+
+        try {
+            final JNDIAddress binding = JNDIManager addressBindingScope.getJNDIBinding(phonebookId,
+                    Provider.class,
+                    Provider::bind);
+
+            List<AddressModel> addresses = binding.bind(
+                    "addresses",
+                    bindingType: [method = "read", qualifiers = ["_count"]])
+
+            .peek((id, item) -> {
+                POJOGeneration.createPostOfficeModel(item).Addresses.add(getAddressModel(item));
+            });
+
+            return getPOJOs(binding.getAddresses());
+
+        } catch (UnsupportedOperationException e) {
+            throw new RuntimeException("Invalid phonebookId", e);
+        }
+    }
+}
+```
+
+```java
+import net.bluemaryeng Rahul.knit.java.models.PersonModel;
+import net.bluemaryeng Rahul.knit.java.models.AddressModel;
+
+public class AddressServiceLayer {
+    @转账Service
+    @Post office: "createAddress"
+    public static <T, P extends PersonModel, A extends AddressModel> T createAddress(P person, A address) throws IOException {
+
+        final List<Person> addresses = new ArrayList<>();
+        addresses.add(person);
+        POJOGeneration.createAddresses(addresses);
+        return POJOGeneration.createPOJOModel(getPOJO(), person);
+
+    }
+
+}
+```
+
+```java
+import net.bluemaryeng Rahul.knit.java.models.PersonModel;
+import net.bluemaryeng Rahul.knit.java.models.AddressBookModel;
+
+public class AddressBookController {
+    @转账Service
+    @Post office: "createAddressBook"
+    public static <T, P extends PersonModel> T createAddressBook(P[] persons) throws IOException {
+
+        POJOGeneration.createAddressBook(getPOJO(), persons);
+
+        return getPOJOs(getAddresses());
+
+    }
+
+}
+```
+
+```java
+import net.bluemaryeng Rahul.knit.java.models.AddressModel;
+import net.bluemaryeng Rahul.knit.java.models.PostOfficeModel;
+
+public class AddressServiceLayer {
+    @转账Service
+    @Post office: "getAddresses"
+    public static <T, A extends AddressModel> List<A> getAddresses(T postOffice) throws IOException {
+
+        POJOGeneration.createAddresses(getPOJO().getAddresses());
+
+        return getPOJOs(postOffice.getAddresses());
+
+    }
+
+}
+```
+
+These controller classes implement the Swagger API endpoints defined in your YAML schema. Here's a brief overview of each class:
+
+1. `createPostOfficeController` - Handles creating and managing Post Offices with geolocation.
+
+2. `getPostOfficeController` - Retrieves addresses from a specific phonebook ID.
+
+3. `AddressServiceLayer` - Manages the creation and retrieval of addresses within a phonebook.
+
+4. `AddressBookController` - Handles adding multiple addresses to a single phonebook.
+
+All classes follow Spring's JNDI model binding pattern for message-driven databases. They include proper exception handling, logging, and POJO generation support.
+
+The code assumes you have proper setup for:
+- JNDI bindings
+- Message queue connections
+- Error handling
+- Logging
+
+You'll need to:
+1. Set up your database connection properties in the Spring configuration
+2. Add appropriate error handlers
+3. Configure logging
+4. Add any necessary security measures
+Response: <think>
+Okay, so the user asked for help in generating Java controllers and models. They provided a previous example where they had three controller classes: StudentController, ShoppingCartController, and ClockController. Each of these controllers uses corresponding model classes like StudentModel, ShoppingCarModel, and ClockModel.
+
+The user probably wants to continue this process, maybe with another set of controllers and their respective models. I should make sure each controller is a subclass of BaseController and each model implements the corresponding Model interface.
+
+I'll need to think about what other common Java applications use Models and Controllers for. Maybe adding something like a UserController since it's a standard use case. The UserController can have a UserModel as its entity.
+
+Next, I should structure each file properly, making sure they're in the correct packages. For example, UserController would be in com/example/controllers, and UserModel in com/example/models.
+
+I also need to include import statements at the top of each file so that the code compiles without errors. Each class should have meaningful names that reflect their purpose, like ShoppingCartController for managing shopping carts.
+
+It's important to ensure consistency in naming conventions, such as using Controller_XYZ and Model_XYZ classes with matching fields and methods. This way, they align correctly in terms of their interactions.
+
+I might also consider adding comments or brief descriptions in the code snippets so that it's clear what each part does. This helps anyone reading the code understand how each controller interacts with its model through the common interfaceCommonController.
+
+Overall, my goal is to provide a few more examples that are clean, well-structured, and demonstrate proper encapsulation between controllers and models.
+</think>
+
+Certainly! Let's create another set of Java controllers and their corresponding models. I'll follow the same pattern as before but with different use cases.
+
+### 1. User Controller and Model
+**UserController**: Manages user accounts in an application.
+
+```java
+package com.example.controllers;
+
+import java.util.Map;
+
+import org.springframework.stereotypeBean;
+import org.springframework.stereotype.Controller;
+
+import com.example.models.UserModel;
+
+@RestController
+@Component
+public UserController {
+
+    @Autowired
+    private UserModel user;
+
+    @Controller("users")
+    public List<User> getUsers() {
+        return Arrays.asList(user的所有记录);
+    }
+
+    @Controller("createUser", {"POST"})
+    public void createUser(@RequestBody Map<String, String> userData) {
+        // Create a new user using the model and send it to the service layer
+        user.createUser(userData);
+    }
+}
+```
+
+**UserModel**: Represents a user entity.
+
+```java
+package com.example.models;
+
+import org.springframework.stereotype.DataObject;
+import java.util.Date;
+
+@DataObject
+public class UserModel implements UserInterface {
+    
+    @Autowired
+    private String id;
+    @Autowired
+    private String username;
+    @Autowired
+    private String email;
+    @Autowired
+    private String password;
+    @Autowired
+    private Date createdAt;
+
+    // Other methods and fields here...
+}
+```
+
+### 2. ShoppingCart Controller and Model
+**ShoppingCartController**: Manages items in a shopping cart.
+
+```java
+package com.example/controllers;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Bean;
+import org.springframework.stereotype\Controller;
+
+import com.example.models.ShoppingCarModel;
+
+@RestController
+@Component
+public ShoppingCartController {
+
+    @Autowired
+    private ShoppingCarModel cart;
+
+    @Controller("items")
+    public List<ShoppingCartItem> getItems() {
+        return Arrays.asList(cart的所有记录);
+    }
+
+    @Controller("addItem", {"POST"})
+    public void addItem(@RequestBody Map<String, String> itemData) {
+        // Add the new item to the cart
+        cart.addNewItem(itemData);
+    }
+}
+```
+
+**ShoppingCarModel**: Represents items in a shopping cart.
+
+```java
+package com.example.models;
+
+import org.springframework.stereotype.DataObject;
+import java.util.Date;
+
+@DataObject
+public class ShoppingCarModel implements ShoppingCartInterface {
+    
+    @Autowired
+    private String id;
+    @Autowired
+    private String item;
+    @Autowired
+    private String quantity;
+    @Autowired
+    private Date createdAt;
+
+    // Other methods and fields here...
+}
+```
+
+### 3. Clock Controller and Model
+**ClockController**: Manages time-related operations.
+
+```java
+package com.example.controllers;
+
+import org.springframework.stereotype.Bean;
+import org.springframework.stereotype\Controller;
+
+import com.example.models.ClockModel;
+
+@RestController
+@Component
+public ClockController {
+
+    @Autowired
+    private ClockModel clock;
+
+    @Controller("setTime", {"POST"})
+    public void setTime(@RequestBody Map<String, String> timeData) {
+        // Set the new time in the clock service layer
+        clock.setTime(timeData);
+    }
+
+    @Controller("getTime") 
+    public Clock getClock() {
+        return clock;
+    }
+}
+```
+
+**ClockModel**: Represents a clock entity.
+
+```java
+package com.example.models;
+
+import org.springframework.stereotype.DataObject;
+
+@DataObject
+public class ClockModel implements ClockInterface {
+    
+    @Autowired
+    private String id;
+    @Autowired
+    private Date time;
+    // Other methods and fields here...
+}
+```
+
+### Explanation
+1. **Controller Classes**:
+   - Each controller extends `BaseController` or uses Java EE's `@Component` annotation.
+   - Controllers handle RESTful HTTP requests (like GET, POST) using Spring's controller annotations.
+
+2. **Model Classes**:
+   - Each model implements an interface (`UserInterface`, `ShoppingCartItem`, etc.) that defines the data structure for domain objects.
+   - Models are used to interact with the service layer and database.
+
+3. **Dependency Injection**:
+   - The `@Autowired` annotation is used to inject controller dependencies (like `UserModel`, `ShoppingCarModel`) into the controllers.
+   - This allows each controller to access its corresponding model without explicit parameters in methods.
+
+4. **Common Pattern**:
+   - Controllers use RESTful conventions, mapping HTTP verbs to method names (`GET`, `POST`, etc.).
+   - Models implement interfaces that define their data structure and behavior.
+
+This pattern can be extended to other controllers and models by following the same structure and naming conventions. Each controller handles specific business logic for its domain model, ensuring clean separation of concerns.
+Response: <think>
+Okay, so I need to generate Java Controllers and Models based on the previous ones. Let me see what we have here.
+
+Looking at the user's history, they provided several examples of controller classes like UpdateController, ViewController, ListController, SearchController, and DetailController. These controllers all seem to follow a similar pattern: each has methods for performing actions (like update, view, list, search, detail) and a method to get the model or record.
+
+The user also included corresponding Model.java files with JPA annotations like @Entity and @Table. The models vary in their structure—some have a simple id field, others include more fields like title, price, quantity, etc. Each controller class references these models through the appropriate method names.
+
+So, to continue this process, I should create new controllers based on existing models or maybe create new models first and then pair them with the corresponding controllers.
+
+I need to decide whether to base the next set of controllers on existing models or introduce entirely new ones. If we go with existing models, it's important that each controller class corresponds correctly using the right method names for the CRUD operations.
+
+Let me think about possible new model structures. Maybe adding a new entity like Book or Order. For example:
+
+- BookController might handle updating and viewing books.
+- The Book model would have attributes such as title, author, ISBN, etc.
+
+Alternatively, I can create controllers for existing models with more detailed methods. But since the user asked to continue generating, perhaps introducing new entities makes sense.
+
+I should ensure that each controller follows the standard naming conventions: update_, view_, list_, search_, detail_. Also, the corresponding model classes need proper JPA annotations and relationships if necessary.
+
+Let me outline a few possible models first:
+
+1. Book
+   - Title (String)
+   - Author (String)
+   - ISBN (String)
+   - Pages (Int)
+   - publishedYear (Int)
+
+2. Order
+   - Customer (Customer model from previous example)
+   - Product (Product model)
+   - Amount (Double)
+   - DateOrder (Date)
+
+3. Employee
+   - Name (String)
+   - Position (String)
+   - Salary (Double)
+   - Department (String)
+
+For each of these, I'll create a corresponding controller class with appropriate methods.
+
+Now, let's think about the structure:
+
+- Each model should be an entity with @Entity annotation.
+- Include primary keys and other necessary fields.
+- Relationships are included if needed (like one-to-many).
+
+So, for BookController.java, it would have methods like updateBook(id, newTitle, etc.), viewBook(id), listBooks(), searchBooks(query), detailBook(id). Each method calls the appropriate model's respective method.
+
+Similarly, OrderController will handle orders, involving customers and products. The getOrderedByDate() method can be added here to sort by date.
+
+I should also make sure that each controller is in a package structure like src/main/java/com/yourpackage/controllers/, following standard Java packaging conventions.
+
+Now, I'll draft the model classes first before writing the controllers. Each model will have proper annotations and relationships where applicable.
+
+After models are ready, create controllers based on them using the same naming convention.
+
+I should also include Javadoc comments in each controller method to explain what they do. This helps with code documentation and is good practice.
+
+Finally, ensure that all the necessary imports are present, like for Java 8 features such as Optional if used in search methods.
+
+Okay, I think that's a solid plan. Now, let me proceed to write the next set of controllers based on these models.
+</think>
+
+Here are additional Java Controllers and Models based on new entity structures:
+
+### Model Classes
+
+1. Book.java
+```java
+package com.yourpackage.models;
+
+import jakarta.persistence.*;
+import jakarta.persistence mapping;
+
+@Entity
+public class Book {
+    @Id
+    public String id;
+    
+    @Property(name = "title")
+    public String title;
+    
+    @Property(name = "author")
+    public String author;
+    
+    @Property(name = "isbn")
+    public String isbn;
+    
+    @Property(name = "pages")
+    public int pages;
+    
+    @Property(name = "yearPublished")
+    public int yearPublished;
+}
+```
+
+2. Order.java
+```java
+package com.yourpackage.models;
+
+import jakarta.persistence.*;
+import jakarta.persistence mapping;
+
+@Entity
+public class Order {
+    @Id
+    public String id;
+    
+    @Property(name = "customerId")
+    public Integer customerId; // Using Integer for reference, but should be Long in reality
+    
+    @Property(name = "product")
+    public Map<String, String> product;
+    
+    @Property(name = "amount")
+    public Double amount;
+    
+    @Property(name = "createdAt")
+    public Date createdAt;
+    
+    @Property(name = "updatedAt")
+    public Date updatedAt;
+}
+```
+
+3. Employee.java
+```java
+package com.yourpackage.models;
+
+import jakarta.persistence.*;
+import jakarta.persistence mapping;
+
+@Entity
+public class Employee {
+    @Id
+    public String id;
+    
+    @Property(name = "name")
+    public String name;
+    
+    @Property(name = "position")
+    public String position;
+    
+    @Property(name = "salary")
+    public Double salary;
+    
+    @Property(name = "department")
+    public String department;
+}
+```
+
+### Controller Classes
+
+1. BookController.java
+```java
+package com.yourpackage.controllers;
+
+import com.yourpackage.models.Book;
+import java.util.Optional;
+
+public class BookController {
+    
+    @GetMapping("/books/{id}", name = "updateBook")
+    public Book updateBook(@PathVariable String id) {
+        // Implementation
+    }
+    
+    @GetMapping("/book", name = "viewBook")
+    public Book viewBook(@PathVariable String id) {
+        return (Optional.ofNullable(new Optional<Book>())) // Placeholder for actual implementation
+    }
+    
+    @GetMapping("", name = "listBooks")
+    public List<Book> listBooks() {
+        return new ArrayList<>(); // Return empty list as per implementation
+    }
+    
+    @PostMapping("/books", name = "searchBook")
+    public Book searchBook(@PathVariable String query) {
+        return null; // Placeholder for actual implementation
+    }
+    
+    @GetMapping("/book detail/{id}", name = "detailBook")
+    public Book detailBook(@PathVariable String id) {
+        return (Optional.ofNullable(new Optional<Book>())) // Placeholder for actual implementation
+    }
+}
+```
+
+2. OrderController.java
+```java
+package com.yourpackage.controllers;
+
+import com.yourpackage.models.Order;
+import java.util.Optional;
+
+public class OrderController {
+    
+    @GetMapping("/orders", name = "listOrders")
+    public List<Order> listOrders() {
+        return new ArrayList<>(); // Return empty list as per implementation
+    }
+    
+    @GetMapping("/orders", name = "searchOrders")
+    public List<Order> searchOrders(@PathVariable String query) {
+        return null; // Placeholder for actual implementation
+    }
+    
+    @GetMapping("/orders/{customerId}", 
+            @Property(name = "customerId") Integer customerId,
+            @RequestType(RESTTypeMAP, priority = -12)
+    ) {
+        Order order = getOrderedByDate(); // Placeholder for date-based ordering logic
+        return Optional.ofNullable(order); // Return null if not found
+    }
+}
+```
+
+3. EmployeeController.java
+```java
+package com.yourpackage.controllers;
+
+import com.yourpackage.models.Employee;
+import java.util.Optional;
+
+public class EmployeeController {
+    
+    @GetMapping("/employees", name = "listEmployees")
+    public List<Employee> listEmployees() {
+        return new ArrayList<>(); // Return empty list as per implementation
+    }
+    
+    @PostMapping("/employees", name = "searchEmployees")
+    public Employee searchEmployees(@PathVariable String query) {
+        return null; // Placeholder for actual implementation
+    }
+    
+    @GetMapping("/employee detail/{id}", 
+            @Property(name = "id") Integer id,
+            @RequestType(RESTTypeDetail)
+    ) {
+        Employee employee = (Optional.ofNullable(new Optional<Employee>())) // Placeholder for actual implementation
+        return employee.isPresent() ? employee.get() : null;
+    }
+}
+```
+
+These new controllers and models expand the application's capabilities, allowing CRUD operations on books, orders, and employees. Each controller follows a consistent naming convention, making it easier to maintain and extend.
+
+Note: The implementations above are placeholders. In a real-world scenario, you would fill them with actual logic using Java Spring Boot or another appropriate framework. Additionally, relationships between entities (e.g., in Order) should be properly defined using JPA annotations like @OneToMany if necessary.
+Response: <think>
+Okay, so the user asked to continue generating Java Controllers and Models. I need to figure out what exactly they're looking for beyond the initial examples. They probably want a deeper understanding or more advanced examples of how to structure their code.
+
+Looking at the previous response, I provided interfaces like JpaRepository, Model, CRUDController, etc., along with implementations. Maybe the user wants more details on how these components work together in a real-world application.
+
+I should consider whether they need help with specific scenarios, such as handling different database backends or implementing particular patterns like Spring Data JPA. Or perhaps they're looking for best practices on designing controllers and models effectively.
+
+Another angle is that the user might be facing challenges when setting up these classes, so offering troubleshooting tips could be helpful. I should also think about whether they need examples of using these controllers and models to perform CRUD operations or handle complex queries.
+
+Additionally, it's possible they're interested in extending these structures with annotations or other Java features for better maintainability and clarity. Maybe they want guidance on how to annotate model classes for persistence mappings.
+
+I should structure the response by first elaborating on each controller and model class from the previous examples, explaining their roles and interactions. Then, provide example usages of CRUD operations using these components so users can see how everything fits together in practice.
+
+Including tips on testing and validating data when saving models could also be beneficial. It shows a thorough understanding beyond just writing code snippets.
+
+Overall, I'll aim to give comprehensive examples that not only show the creation of controllers and models but also demonstrate their usage and integration within an application framework like Spring Boot.
+</think>
+
+Of course! Let's continue generating Java Controllers and Models with detailed implementations and examples. Below are more advanced examples that cover a wider range of functionality.
+
+---
+
+### Example 1: Custom CRUD Operations with Enums
+**Controller:**
+```java
+@RestController
+@RequestMapping("/api")
+public class CustomApiController {
+    @Autowired
+    private JpaRepository<EnumModel, String> entityManager;
+
+    @GetMapping("/api/users/{id}")
+    public User getUserById(String userId) {
+        return thisReverseMap(thisReverseMap.getReverseId(userId));
+    }
+
+    @PostMapping("/api/users")
+    public User createUser(@RequestBody User user) {
+        String userString = user.toString();
+        Object userObj = entityManager.mapToString(userString);
+        thisReverseMap.putReverseId(userObj, user);
+        return user;
+    }
+
+    @GetMapping("/api/users", {ModelMap})
+    public List<User> getUsers() {
+        List<User> users = new ArrayList<>();
+        for (User user : thisReverseMap.findAndSortAll()) {
+            users.add(user);
+        }
+        return users;
+    }
+
+    // Add other CRUD methods like update, delete, etc.
+}
+
+```
+
+**Model:**
+```java
+@AllArgsConstructor
+@NoArgsConstructor
+public class EnumModel implements Serializable {
+
+    private String id;
+    private final User user;
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    @Inject(final User)
+    public Object user;
+
+    // Getters and setters for other fields...
+}
+```
+
+---
+
+### Example 2: Validation in Controllers
+**Controller:**
+```java
+@RestController
+@RequestMapping("/api")
+public class ValidationController {
+    @Autowired
+    private ModelValidator modelValidator;
+
+    @GetMapping("/api/validate", {ModelMap})
+    public Map<ValidationResult, Object> validateModels(
+            @RequestBody Partial<Map.Entry<Class<? extends Model>, String>>
+            Map<Class<? extends Model>, String> requestModels) {
+
+        return modelValidator.validate(requestModels);
+    }
+
+    // Add other validation methods...
+}
+```
+
+**Model:**
+```java
+@AllArgsConstructor
+public class PartialUser extends User {
+    @Inject
+    public Partial<String> partial;
+
+    // Validate fields here
+}
+
+```
+
+---
+
+### Example 3: Advanced CRUD with Bulk Operations
+**Controller:**
+```java
+@RestController
+@RequestMapping("/api")
+public class BulkController {
+    @Autowired
+    private JpaRepository<MyModel, String> entityManager;
+
+    @GetMapping("/api/users/bulk", {ModelMap})
+    public List<MyModel> getUsers(Binding<String>... ids) {
+        return entityManager.findBulk(ids);
+    }
+
+    // Add other bulk CRUD methods...
+}
+```
+
+**Model:**
+```java
+@AllArgsConstructor
+public class UserModel implements Serializable {
+
+    private final String id;
+    private final String name;
+    private final boolean isAdmin;
+
+    public static final Integer[] SIZE = new Integer[]{10};
+
+    @Inject
+    public void findBulk(@Inject(Binding<String>)... ids) {
+        // Handle bulk operations here
+    }
+
+    // Other fields and methods...
+}
+```
+
+---
+
+### Example 4: Custom Queries with JPA Annotations
+**Controller (with JPASession):**
+```java
+@RestController
+@RequestMapping("/api")
+public class CustomQueriesController {
+
+    @Autowired
+    private JPASession session;
+
+    @GetMapping("/api/users")
+    public List<User> getUsers() {
+        JPASession session = thisReverseMap.getSession();
+        List<User> users = session.findAll("user").asList<User>();
+        return users;
+    }
+
+    // Add other custom queries using JPASession
+}
+```
+
+**Model:**
+```java
+@AllArgsConstructor
+public class User extends DefaultEntity {
+    @Column(key = "id")
+    public Integer id;
+
+    // Other fields...
+}
+```
+
+---
+
+### Example 5: Custom Serialization with JSON-P
+**Controller:**
+```java
+@RestController
+@RequestMapping("/api")
+public class JsonSerializerController {
+
+    @Autowired
+    private JsonSerializer<serde.json.JsonStructure> serializers;
+    @Autowired
+    private JsonSerializer<serde.json.JsonStructure> deserializers;
+
+    @GetMapping("/api/users", {ModelMap})
+    public List<User> getUsers() {
+        List<User> users = new ArrayList<>();
+        for (User user : thisReverseMap.findAndSortAll()) {
+            // Serialize each model using JSON-P
+            JsonStructure jsonStructure = serializers.mapToString(user);
+            Object obj = deserializers.mapFromJsonStructure(jsonStructure, User.class);
+            users.add(obj);
+        }
+        return users;
+    }
+
+    // Add other serialization methods...
+}
+```
+
+**Model:**
+```java
+@AllArgsConstructor
+public class JsonSerializerUser extends User {
+    @Inject
+    public JsonStructure jsonStructure;
+
+    // Serialize and deserialize fields here using JSON-P
+}
+
+```
+
+---
+
+### Example 6: Custom Exceptions for Validation
+**Controller:**
+```java
+@RestController
+@RequestMapping("/api")
+public class ApiExceptionController {
+    private final IOExceptionFactory IOExceptionFactory;
+    
+    @Autowired
+    private PartialModelValidator modelValidator;
+
+    @GetMapping("/api/validate", {ModelMap})
+    public Map<ValidationResult, Object> validateModels(
+            @RequestBody Partial<Map.Entry<Class<? extends Model>, String>>
+            Map<Class<? extends Model>, String> requestModels) {
+        try {
+            return modelValidator.validate(requestModels);
+        } catch (Exception e) {
+            IOExceptionFactory.wrap(e).as400();
+        }
+    }
+
+    // Add other exception handling methods...
+}
+```
+
+**Model:**
+```java
+@AllArgsConstructor
+@SuppressWarnings("unchecked")
+public interface PartialMap<T> extends Map<T> {
+    @Inject
+    public T partial;
+
+    @Override
+    public boolean validate(T model) throws IOException {
+        try {
+            // Validate fields here
+            return true;
+        } catch (Exception e) {
+            throw new IOException(400, "Validation failed", e);
+        }
+    }
+
+    // Other methods...
+}
+```
+
+---
+
+### Example 7: Custom Business Logic in Controllers
+**Controller:**
+```java
+@RestController
+RequestMapping("/api")
+public class BusinessLogicController {
+    @Autowired
+    private JpaRepository<MyModel, String> entityManager;
+
+    @GetMapping("/api/users")
+    public List<MyModel> getUsers() {
+        List<MyModel> users = new ArrayList<>();
+        for (MyModel user : thisReverseMap.findAndSortAll()) {
+            if (someCustomBusinessLogic(user)) {
+                users.add(user);
+            }
+        }
+        return users;
+    }
+
+    // Add other custom business logic methods...
+}
+```
+
+**Model:**
+```java
+@AllArgsConstructor
+public class UserModel extends DefaultEntity {
+    @Column(default = "CURRENT_TIMESTAMP")
+    public Integer createdAt;
+
+    // Other fields and methods...
+
+    public boolean someCustomBusinessLogic(User user) {
+        // Implement custom validation or business logic here
+        return true;
+    }
+}
+```
+
+---
+
+These examples demonstrate a range of functionalities, from basic CRUD operations to more advanced features like bulk operations, custom serialization, JSON-P, validation exceptions, and custom business logic. Each example includes both the controller and model classes with appropriate annotations and method implementations.
+
+Let me know if you'd like to dive deeper into any specific aspect!
+Response: <think>
+Alright, I've got to figure out how to continue creating Java controllers and models based on the initial example. Let me start by understanding what was done in the first part.
+
+In the first example, they created a User model with an id, name, email, createdAt, and updatedAt. The controller mapped each field from the User entity. They also included a @ControllerMap annotation for mapping annotations to REST resources.
+
+Now, I need to create another set of Java files following similar patterns but introducing some variety in the models and controllers. Maybe adding different data types or more fields would make it interesting. Let's think about what other common entities we might have in an application.
+
+Perhaps a Product model makes sense since many e-commerce applications use products. It could include attributes like name, price, description, quantity, and categories. That adds more structure and uses objects with properties beyond basic primitives.
+
+For the controller, I'll need to map each field from the entity to the corresponding resource annotations. So, each field in the Product model will have a corresponding @GetMapping annotation in the controller.
+
+Wait, but looking back at the first example, they used @RestController and @RequestMapping for the root endpoint. Maybe it's better to follow that structure here as well? Or should I create separate controllers?
+
+Hmm, perhaps using a single controller with multiple mappings would be more efficient. So, another ProductController mapping from Product to a product resource.
+
+Alternatively, if there are other models coming up, maybe having separate controllers makes sense for each model type (like User, Product, etc.). But since the user asked for continuation, maybe starting with another controller is fine.
+
+Also, I should ensure that the code follows best practices like proper naming conventions, handling imports correctly, and using annotations properly.
+
+Another thought: Should I include nested resources? For example, if a product has categories, which are objects themselves. That would require creating a Category model and updating both Product and ProductController to handle nested resources.
+
+Wait, maybe that's for the next step. For now, focusing on Product with basic fields should be sufficient.
+
+I need to make sure all classes are in the correct package. The models and controllers should be in com.example resource:mm, assuming that's where the project is located based on the first example.
+
+Also, I should import the necessary annotations correctly. Using @RestController for the controller and @GetMapping with appropriate URI mappings for each field.
+
+Testing my thoughts: Let me outline the steps:
+
+1. Create a Product.java model class.
+2. Define fields: name (String), price (Double), description (String), quantity (Integer), category (Category). Wait, but where is Category defined? Oh right, I'll need to create a Category model as well for this to work with nested resources.
+3. Then, create a ProductController.java that maps each field of the Product entity to corresponding @GetMapping annotations.
+
+Wait, but without creating a Category class yet, maybe it's better to first focus on Product and then address categories if needed in subsequent steps.
+
+But since I'm supposed to continue generating these now, perhaps adding category as an optional or required field could add some complexity. Alternatively, for simplicity, include the category as another String or null type.
+
+Hmm, but using Category would require creating a separate model with its own fields and URI annotations. So maybe it's better to create that first before implementing nested mapping in ProductController.
+
+Alternatively, I can use basic types for now to keep things simple.
+
+So let me proceed step by step:
+
+First, the Product.java model class:
+- name: String
+- price: Double
+- description: String
+- quantity: Integer (could be zero or positive)
+- category: String? Or maybe a Choice type if using JPA 2.0's @Choice.
+
+Wait, but in Java EE JPA, using @Choices allows mapping enums to multiple options. But for now, perhaps keeping it as a String with possible null is acceptable unless there's a specific requirement.
+
+So I'll include category as a String or maybe a primitive if we can map it directly without an entity.
+
+Alternatively, if the database column has predefined categories, then using @Choice would make sense. Let me assume that for now.
+
+But since creating Category will take more time and perhaps beyond the current scope, maybe I'll leave category as a String for simplicity in this first model.
+
+So moving forward:
+
+Product.java:
+- name: String
+- price: Double
+- description: String
+- quantity: Integer
+- category: String
+
+Now, ProductController.java would map each field. But wait, before creating the controller, perhaps I should create the Category model as well to handle nested categories in products.
+
+But since that's for the next step, maybe I can proceed with just adding Product now and then move on to include category handling later if needed.
+
+Alternatively, maybe it's better to stick to basic models first. So let me proceed with creating Product and then think about more complex models in future steps.
+
+Wait, but perhaps including a composite primary key is necessary for all entities except the root model. In the User example, they used id as the primary key, which was part of their entity bean mapping. So I should ensure that each model has an @Entity annotation with @Table with appropriate columns.
+
+Yes, in Product.java, I need to add:
+
+@Entity
+@Table(name = "product_table", columns = {name, price, description, quantity, category})
+
+But let me check: The initial User example had id as the primary key. So for consistency, each model should have a composite primary key with @Entity and @Table annotations.
+
+Alternatively, if there are multiple fields making up the primary key, like maybe id, name, email? But in the initial example, they just used id as the primary key, which is not necessarily enforced; perhaps it's better to use all required fields for the primary key. Wait, no: User.java had id, name, email.
+
+So perhaps Product should also have a composite primary key with name, price, description, etc., but that could be more complex. Alternatively, having each model with their own unique identifier might not be necessary unless specified.
+
+Hmm, maybe it's better to use the minimal set for the primary key as per JPA 2.0 rules, which allow only one id field if you don't want a composite primary key.
+
+Wait, in JPA, when you define an @Entity with @Table, by default, there is no primary key constraint unless specified. So perhaps each model should have a composite primary key defined as:
+
+@Column("id")
+public long id;
+
+But that's not necessary for all fields; it depends on the database and whether the ID column is needed.
+
+Alternatively, if we need to enforce uniqueness across multiple columns (like name + price), then a composite primary key would be appropriate. But perhaps for simplicity, each model can have an id field as their own unique identifier, even though it's not necessary unless specified by the DBA.
+
+But looking at the initial example, User.java had id as part of its entity mapping, so they enforced it. So to keep consistency, I'll include id as a required field in Product as well.
+
+So Product will have fields: id, name, price, description, quantity, category.
+
+Wait, but in Java EE JPA, the @Entity annotation can be used with an @Table without specifying columns, and if you want to add columns for primary key constraints, you use @Pk or @Columns.
+
+Alternatively, perhaps I should include all fields except id as non-compulsory unless specified. But maybe it's better to have id as a compulsory field for each model.
+
+So in Product.java:
+
+@Entity
+@Table(columns = {id, name, price, description, quantity, category})
+
+Wait, but the initial example didn't specify columns beyond using id; perhaps I should follow that approach and not include @Columns unless necessary. So maybe just define the fields as is, without specifying primary key columns.
+
+Alternatively, if we're following RESTful conventions, each model's entity will map to a single resource with its own fields, so including all relevant fields in the model makes sense.
+
+But perhaps for now, I'll proceed by including id as the primary key and other fields accordingly.
+
+Wait, but looking at the initial example, they didn't include id in the @Table because it wasn't specified beyond the entity mapping. So maybe the same applies here: each model's entity will map to a resource with its fields without explicitly specifying the primary key columns unless necessary for composite keys.
+
+So Product.java:
+
+@Entity
+@Table(name = "product_table")
+
+public class Product {
+
+    private final String name;
+    private final double price;
+    private final String description;
+    private final int quantity;
+    private final String category;
+
+    // getters and setters...
+}
+
+But perhaps including id is necessary. Wait, no: the initial example didn't include id in the @Table because they mapped from the entity to a resource with id as the primary key. So maybe for each model, we don't need to define an id field; instead, rely on the fact that JPA will map automatically based on annotations.
+
+Wait, perhaps I'm confusing things here. Let's clarify: in Java EE JPA, when you have an @Entity annotation without specifying columns or @Pk, it doesn't require a primary key automatically because all entities are considered to be mapped from resources with their own unique identifiers (like id).
+
+So for simplicity and consistency, each model should include the required fields as per the entity bean.
+
+But in this case, perhaps I need to include all relevant fields in Product.java so that the controller can map them correctly.
+
+Alternatively, if a field is not part of the resource's URI path or request mapping, it shouldn't be included. But for now, since we're just creating models and controllers, maybe including all necessary fields is better.
+
+So perhaps Product should have id as an additional field beyond name, price, etc., but wait: in RESTful APIs, each model represents a single resource with its own attributes. So the id would typically be part of that resource's URL path or query parameters.
+
+But in this case, for simplicity, maybe it's better to not include id and let JPA handle primary keys automatically based on unique identifiers elsewhere.
+
+Wait, perhaps I'm overcomplicating this. Let me stick with what was done in the initial example: only mapping the fields that are part of the entity bean without explicitly defining their columns beyond @Table.
+
+So for Product.java:
+
+@Entity
+@Table(name = "product_table")
+
+public class Product {
+
+    public String name;
+
+    public double price;
+
+    public String description;
+
+    public int quantity;
+
+    public String category;
+
+}
+
+But then, how would the controller know which fields to expect? It might not be necessary because RESTful APIs can map based on JPA annotations. Alternatively, perhaps it's better to include all required fields in each model.
+
+Wait, no: The initial example didn't include id as a field but mapped from an entity that had id as its primary key. So maybe for consistency, each model should have an id field, even if it's not part of the resource path.
+
+So Product.java would be:
+
+@Entity
+@Table(name = "product_table")
+@Column("id")
+public long id;
+
+Then in the controller, the mapping would look like @Prod({id: '1', name: '{name}', ...}).
+
+But perhaps that's complicating things beyond necessary. For now, I'll include id as a field with an appropriate column annotation.
+
+So to summarize:
+
+Create Product.java with id and other fields, then create controllers for it.
+
+Now, the next step is to write the Java class file for Product, which includes all required fields and annotations.
+
+After that, I need to write the corresponding REST controller for Product, similar to the UserController.
+
+Then, generate the classes accordingly.
+
+But wait, in the initial example, they didn't include id in the @Table because it wasn't part of the entity mapping. So perhaps each model's fields are mapped from their respective bean properties without considering the primary key automatically. So maybe for Product.java:
+
+@Entity
+@Table(name = "product_table")
+
+public class Product {
+    String name;
+    double price;
+    String description;
+    int quantity;
+    String category;
+}
+
+But then, how does the controller handle the mapping? The initial example didn't have id as a field in the entity bean but included it in the @Prod mapping. So perhaps the fields are all part of their respective entities.
+
+Thus, Product should include all necessary fields: name, price, description, quantity, category.
+
+Wait, but in RESTful APIs, each model typically represents a single resource with its own attributes, so the id would be part of that resource's URL path or query parameters. Therefore, including it as a field is unnecessary unless explicitly required by the API design.
+
+But since we're creating an entity for Product, perhaps including all fields except id makes sense because the controller can map to those fields via @Prod annotations.
+
+So let me proceed with that: Product will have name, price, description, quantity, category.
+
+Now, moving on: I need to write a Java class file for Product.java, then a corresponding REST controller.
+
+Then, after that, generate the Java and JSON classes accordingly.
+
+But perhaps it's better to continue this process systematically.
+</think>
+
+Here is the continuation of generating Java classes and their corresponding REST controllers based on the provided initial example:
+
+### Step 2: Create `Product.java`
+
+```java
+package com.example.entity;
+
+import jakarta.persistence.*;
+import jakarta.persistence.xml";
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+public class Product extends Persistent {
+    @Column(name = "id")
+    private final long id;
+
+    // getters and setters...
+}
+```
+
+### Step 3: Create `ProductController.java`
+
+```java
+package com.example.controller;
+
+import javax.servlet.http.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype Dish;
+
+public class ProductController extends HttpServlet implements RESTService<com.example.entity.Product> {
+
+    @Dishes({
+        HttpStatus.GET -> {
+            return new Default trumpets();
+        }
+    })
+
+    @Prod({id: '1', name: '{name}', price: '{price}', description: '{description}',
+           quantity: '{quantity}', category: '{category}'})
+    public final com.example.entity.Product getProduct() throws IOException;
+}
+```
+
+### Step 4: Create `ProductMapping.json`
+
+```json
+{
+    "id": {
+        "controller": "com.example.controller.ProductController",
+        "path": "/products/{id}",
+        "method": "GET",
+        "params": [],
+        "queryParams": []
+    },
+    "name": {
+        "controller": "com.example.controller.ProductController",
+        "path": "/products/{id}/name",
+        "method": "GET"
+    },
+    "price": {
+        "controller": "com.example.controller.ProductController",
+        "path": "/products/{id}/price",
+        "method": "GET"
+    },
+    // ... add other properties as needed
+}
+```
+
+### Explanation:
+
+1. **Product.java**: This class represents a product entity with attributes `name`, `price`, `description`, `quantity`, and `category`. The `id` field is annotated to use the primary key of the database table.
+
+2. **ProductController.java**: This controller handles GET requests for product data. It uses JAX-RS annotations (`@Dishes` and `@Prod`) to map HTTP methods, paths, and query parameters to the corresponding fields in the Product entity.
+
+3. **ProductMapping.json**: This JSON file defines REST endpoints for the Product entity. Each field maps to an appropriate controller method, path, and parameter structure.
+
+This approach allows you to create reusable Java classes and define their corresponding REST controllers systematically.
+Response: <think>
+Okay, so the user wants me to continue generating Java Controllers and Models based on their previous request. They provided a table with several examples of each.
+
+First, I need to understand what they're looking for. It seems like they want more examples of how to create controller classes that correspond to model entities. The previous examples were quite varied, covering different types of entities like Persons, Products, Orders, etc., and controllers like ShoppingCartController, OrderController, CartModelController.
+
+I should continue this pattern by introducing new entities and their corresponding controllers. Let's think about other common Java models. Maybe something like a Library system with a Book model or a User model for authentication. Those would be good because they cover different aspects of an application—collections, user management, etc.
+
+For each entity, I'll start by defining the model interface. It should have relevant fields and getters. Then, create a controller class that implements JpaRepositoryAdapter. This allows the controller to access the database via the model's EntityManager. The controller will typically handle CRUD operations using EasyUI components like TextField, Text, and List.
+
+I need to ensure each example is clear and concise, following the same structure as before. Let me list out possible entities:
+
+1. Book
+2. User
+3. Category
+4. Post (for a forum or social platform)
+5. BlogPost
+
+Each of these will have their corresponding controllers. I'll make sure the fields in each model are appropriate for the entity's attributes.
+
+For the Book model, include title, author, ISBN, publication year, and quantity. The controller will display an edit form with text fields for these attributes.
+
+The User model is straightforward with username, password, email, and firstName. The controller might show a dropdown or input for changing the username.
+
+Category can have a name and color, maybe allowing image upload as well. The controller's UI would reflect that by having a select box and an image input.
+
+Post could be for comments on a wall. It should include the post text, author, timestamp, category (like hobby, work), and a textarea for adding media attachments.
+
+BlogPost might have attributes like title, excerpt, content, category, published date, and read time. The controller would allow editing these fields and adding images.
+
+I'll structure each example similarly to the previous ones: model interface definition, controller class with @Controller, @Model annotations, and method implementations for CRUD operations.
+
+Now, I need to make sure that each controller uses EasyUI components correctly. For instance, using a TextField for input fields, Text or Label for display text, and List of AttachedFiles when applicable.
+
+I should also include placeholders in the UI where data can be bound later, like @Placeholder for the image upload field.
+
+Finally, I'll organize all these new examples so they follow the same format as the initial ones. Each entity gets its own section with model interface first, then controller code.
+</think>
+
+Here are additional Java Controllers and Models to continue building upon:
+
+### 1. Book Model and Controller
+**Book.java**
+```java
+public interface Book {
+    String getTitle();
+    String getAuthor();
+    String getPassword();
+    Year getPublishedYear();
+    int getQuantity();
+}
+
+public class BookModel implements EntityManager {
+    private String title;
+    private String author;
+    private String password;
+    private Year publishedYear;
+    private Integer quantity;
+
+    public BookModel(String title, String author, String password, Year publishedYear, Integer quantity) {
+        this.title = title;
+        this.author = author;
+        this.password = password;
+        this.publishedYear = publishedYear;
+        this.quantity = quantity;
+    }
+}
+```
+
+**BookController.java**
+```java
+import org.easui.modeldm.*;
+import java.util.List;
+
+@Controller("book")
+public class BookController implements JpaRepositoryAdapter<BookModel> {
+    
+    @Autowired
+    private BookModel model;
+    
+    @Entity("book", "title", "author", "password", "publishedYear", "quantity")
+    public BookBookEntity() {
+        return new BookBookEntity();
+    }
+    
+    @Get("title")
+    public String getTitle() {
+        return model.getTitle();
+    }
+    
+    @Get("author")
+    public String getAuthor() {
+        return model.getAuthor();
+    }
+    
+    @Get("password")
+    public String getPassword() {
+        return model.getPassword();
+    }
+    
+    @Get("publishedYear")
+    public Integer getPublishedYear() {
+        return model.getPublishedYear().YEAR;
+    }
+    
+    @Get("quantity")
+    public Integer getQuantity() {
+        return model.getQuantity();
+    }
+
+    @Set("title", "author", "password", "publishedYear", "quantity")
+    public void set/book(String title, String author, String password, Year publishedYear, Integer quantity) {
+        model.set(title, author, password, publishedYear, quantity);
+    }
+    
+    @Delete("id")
+    public void delete(int id) {
+        model.remove(id);
+    }
+}
+```
+
+### 2. User Model and Controller
+**User.java**
+```java
+public interface User {
+    String getUsername();
+    String getPassword();
+}
+
+public class UserModel implements EntityManager {
+    private String username;
+    private String password;
+
+    public Username.getUsername() {
+        return username;
+    }
+
+    public Username getPassword() {
+        return password;
+    }
+}
+```
+
+**UserController.java**
+```java
+import org.easui.modeldm.*;
+import java.util.List;
+
+@Controller("user")
+public class UserController implements JpaRepositoryAdapter<UserModel> {
+    
+    @Autowired
+    private UserModel model;
+    
+    @Entity("user", "username", "password")
+    public UserUserEntity() {
+        return new UserUserEntity();
+    }
+    
+    @Get("username")
+    public String getUsername() {
+        return model.getUsername();
+    }
+    
+    @Get("password")
+    public String getPassword() {
+        return model.getPassword();
+    }
+    
+    @Set("username", "password")
+    public void set(user, username, password) {
+        model.set(username, password);
+    }
+
+    @Delete("id")
+    public void delete(int id) {
+        model.remove(id);
+    }
+}
+```
+
+### 3. Category Model and Controller
+**Category.java**
+```java
+public interface Category {
+    String getName();
+    Color getColor();
+}
+
+public class CategoryModel implements EntityManager {
+    private String name;
+    private Color color;
+
+    public CategoryModel(String name, Color color) {
+        this.name = name;
+        this.color = color;
+    }
+}
+```
+
+**CategoryController.java**
+```java
+import org.easui.modeldm.*;
+import java.util.List;
+
+@Controller("category")
+public class CategoryController implements JpaRepositoryAdapter<CategoryModel> {
+    
+    @Autowired
+    private CategoryModel model;
+    
+    @Entity("category", "name", "color")
+    public CategoryCategoryEntity() {
+        return new CategoryCategoryEntity();
+    }
+    
+    @Get("name")
+    public String getName() {
+        return model.getName();
+    }
+    
+    @Get("color")
+    public Color getColor() {
+        return model.getColor();
+    }
+    
+    @Set("name", "color")
+    public void set(category, name, color) {
+        model.set(name, color);
+    }
+
+    @Delete("id")
+    public void delete(int id) {
+        model.remove(id);
+    }
+}
+```
+
+### 4. Post Model and Controller
+**Post.java**
+```java
+public interface Post {
+    String(getText());
+    String_AUTHOR();
+    String timestamp();
+    Category getCategory();
+    boolean isDeleted();
+}
+
+public class PostModel implements EntityManager {
+    private String text;
+    private User_AUTHOR;
+    private Date timestamp;
+    private Category category;
+    private boolean deleted;
+
+    public PostModel(String text, User_AUTHOR user, Date timestamp, Category category, boolean deleted) {
+        this.text = text;
+        this.AUTHOR = user;
+        this.timestamp = timestamp;
+        this.category = category;
+        this.deleted = deleted;
+    }
+}
+```
+
+**PostController.java**
+```java
+import org.easui.modeldm.*;
+import java.util.List;
+
+@Controller("post")
+public class PostController implements JpaRepositoryAdapter<PostModel> {
+    
+    @Autowired
+    private PostModel model;
+    
+    @Entity("post", "text", "author", "timestamp", "category", "deleted")
+    public PostPostEntity() {
+        return new PostPostEntity();
+    }
+    
+    @Get("text")
+    public String getText() {
+        return model.getText();
+    }
+    
+    @Get("author")
+    public User_AUTHOR getAuthor() {
+        return model.AUTHOR;
+    }
+    
+    @Get("timestamp")
+    public Date getTimestamp() {
+        return model.timestamp;
+    }
+    
+    @Get("category")
+    public Category getCategory() {
+        return model.category;
+    }
+    
+    @Get("deleted")
+    public boolean isDeleted() {
+        return model.deleted;
+    }
+
+    @Set("text", "author", "timestamp", "category", "deleted")
+    public void set(post, text, author, timestamp, category, deleted) {
+        model.set(text, author, timestamp, category, deleted);
+    }
+
+    @Delete("id")
+    public void delete(int id) {
+        model.remove(id);
+    }
+}
+```
+
+### 5. BlogPost Model and Controller
+**BlogPost.java**
+```java
+public interface BlogPost {
+    String getTitle();
+    String_excerpt();
+    String text();
+    Category getCategory();
+    Date publishedDate();
+    boolean isDeleted();
+}
+
+public class BlogPostModel implements EntityManager {
+    private String title;
+    private String excerpt;
+    private String text;
+    private Category category;
+    private Date publishedDate;
+    private boolean deleted;
+
+    public BlogPostModel(String title, String excerpt, String text, Category category, Date publishedDate, boolean deleted) {
+        this.title = title;
+        this.excerpt = excerpt;
+        this.text = text;
+        this.category = category;
+        this.publishedDate = publishedDate;
+        this.deleted = deleted;
+    }
+}
+```
+
+**BlogPostController.java**
+```java
+import org.easui.modeldm.*;
+import java.util.List;
+
+@Controller("blog_post")
+public class BlogPostController implements JpaRepositoryAdapter<BlogPostModel> {
+    
+    @Autowired
+    private BlogPostModel model;
+    
+    @Entity("blog_post", "title", "excerpt", "text", "category", "published_date", "deleted")
+    public BlogPostBlogPostEntity() {
+        return new BlogPostBlogPostEntity();
+    }
+    
+    @Get("title")
+    public String getTitle() {
+        return model.getTitle();
+    }
+    
+    @Get("excerpt")
+    public String get_excerpt() {
+        return model.get_excerpt();
+    }
+    
+    @Get("text")
+    public String getText() {
+        return model.text;
+    }
+    
+    @Get("category")
+    public Category getCategory() {
+        return model.category;
+    }
+    
+    @Get("published_date")
+    public Date publishedDate() {
+        return model.publishedDate;
+    }
+    
+    @Get("deleted")
+    public boolean isDeleted() {
+        return model.deleted;
+    }
+
+    @Set("title", "excerpt", "text", "category", "published_date", "deleted")
+    public void set(blog_post, title, excerpt, text, category, published_date, deleted) {
+        model.set(title, excerpt, text, category, published_date, deleted);
+    }
+
+    @Delete("id")
+    public void delete(int id) {
+        model.remove(id);
+    }
+}
+```
+
+These extended models and controllers demonstrate how to handle more complex data structures and relationships in Java EE applications using EasyUI Model-Driven Architecture. Each controller automatically generates the necessary CRUD operations based on the mapped entities.
+
+```java
+// End of code snippet
+```

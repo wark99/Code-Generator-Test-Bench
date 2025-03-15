@@ -1,11 +1,15 @@
 #!/bin/bash
 
 MODEL="deepseek-r1"
-PROMPT="Generate an API client in Java respecting the specifications of the following Swagger YAML:"
+PROMPT="You are a professional Java engineer who writes/generates professional java code.
+Be explicit with the code.
+Don't explain it, just give the code.
+Generate java controllers and models based on the following swagger YAML:"
 
+PROMPT2="Continue generating java controllers and models."
 OLLAMA_URL="http://localhost:11434/api/generate"
 WORK_DIR="src/main/resources/docs"
-TARGET_DIR="$WORK_DIR/generated"
+TARGET_DIR="$WORK_DIR/generated/$MODEL"
 
 # Ensure output directory exists
 mkdir -p "$TARGET_DIR"
@@ -39,5 +43,28 @@ for FILE in "$WORK_DIR"/*.yaml; do
   echo "Prompt: $PROMPT" > "$OUTPUT_FILE"
   echo "$FILE_PATH" >> "$OUTPUT_FILE"
   echo "Response: $RESPONSE" >> "$OUTPUT_FILE"
+
+  for i in {1..5}; do
+    echo "Rerepeting $i"
+
+    # Create a temporary FILE for the JSON payload
+      JSON_TEMP=$(mktemp)
+
+      # Construct JSON safely
+      echo '{
+        "model": "'$MODEL'",
+        "prompt": '"$(jq -Rs . <<<"$PROMPT2")"',
+        "stream": false
+      }' > "$JSON_TEMP"
+
+      # Send request with JSON FILE and clean up response
+      RESPONSE=$(curl -X POST $OLLAMA_URL -H "Content-Type: application/json" --data @"$JSON_TEMP" | jq -r .response)
+
+      # Clean up temp FILE
+      rm -f "$JSON_TEMP"
+
+      # Save response
+      echo "Response: $RESPONSE" >> "$OUTPUT_FILE"
+  done
   echo "Generated: $OUTPUT_FILE"
 done
