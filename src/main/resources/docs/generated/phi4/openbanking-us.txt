@@ -1,0 +1,1971 @@
+Prompt: You are a professional Java engineer who writes/generates professional java code.
+Be explicit with the code.
+Don't explain it, just give the code.
+Generate java controllers and models based on the following swagger YAML:
+/media/vaidam/New Volume/Egyetem/Mesteri/Dis/Code Generator Test Bench/src/main/resources/docs/openbanking-us.yaml
+Response: Below is an example of how you might generate Java Spring Boot controllers and models from a Swagger (OpenAPI) YAML specification. This assumes we have a simple API for managing "Books" with basic CRUD operations.
+
+### Swagger YAML Example
+
+```yaml
+openapi: 3.0.1
+info:
+  title: Book Management API
+  version: v1
+paths:
+  /books:
+    get:
+      summary: List all books
+      responses:
+        '200':
+          description: A list of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+    post:
+      summary: Create a new book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '201':
+          description: Book created
+  /books/{id}:
+    get:
+      summary: Get a book by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+    delete:
+      summary: Delete a book by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Book deleted
+
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        author:
+          type: string
+```
+
+### Java Models (Book.java)
+
+```java
+package com.example.bookmanagement.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import java.util.UUID;
+
+@Entity
+public class Book {
+
+    @Id
+    private UUID id;
+    private String title;
+    private String author;
+
+    // Default constructor for JPA
+    public Book() {}
+
+    // Constructor with parameters
+    public Book(UUID id, String title, String author) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+    }
+
+    // Getters and setters
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+}
+```
+
+### Java Controller (BookController.java)
+
+```java
+package com.example.bookmanagement.controller;
+
+import com.example.bookmanagement.model.Book;
+import com.example.bookmanagement.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/books")
+public class BookController {
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    // List all books
+    @GetMapping
+    public ResponseEntity<List<Book>> getAllBooks() {
+        return ResponseEntity.ok(bookRepository.findAll());
+    }
+
+    // Create a new book
+    @PostMapping
+    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+        book.setId(UUID.randomUUID());  // Generate ID for the new book
+        Book savedBook = bookRepository.save(book);
+        return ResponseEntity.status(201).body(savedBook);
+    }
+
+    // Get a book by id
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable UUID id) {
+        return bookRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Delete a book by id
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBookById(@PathVariable UUID id) {
+        if (bookRepository.existsById(id)) {
+            bookRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
+```
+
+### Book Repository Interface (BookRepository.java)
+
+```java
+package com.example.bookmanagement.repository;
+
+import com.example.bookmanagement.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
+
+@Repository
+public interface BookRepository extends JpaRepository<Book, UUID> {
+}
+```
+
+This setup uses Spring Boot with JPA/Hibernate for persistence and assumes you have the necessary dependencies in your `pom.xml` or `build.gradle`. The controller handles HTTP requests and interacts with a repository that abstracts database operations.
+Response: Certainly! Below, I'll provide a simple example of Java classes for both a Model (representing an entity) and a Controller within the context of a Spring Boot application. For this example, let's assume we are creating a basic CRUD application to manage `Book` entities.
+
+### Book.java (Model)
+
+```java
+package com.example.library.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity // This annotation marks the class as an entity for JPA.
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String title;
+    private String author;
+    private Integer yearPublished;
+
+    // Default constructor needed by JPA
+    public Book() {
+    }
+
+    // Parameterized constructor for convenience
+    public Book(String title, String author, Integer yearPublished) {
+        this.title = title;
+        this.author = author;
+        this.yearPublished = yearPublished;
+    }
+
+    // Getters and setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public Integer getYearPublished() {
+        return yearPublished;
+    }
+
+    public void setYearPublished(Integer yearPublished) {
+        this.yearPublished = yearPublished;
+    }
+}
+```
+
+### BookRepository.java (Repository Interface)
+
+```java
+package com.example.library.repository;
+
+import com.example.library.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository // Marks the interface as a Spring repository.
+public interface BookRepository extends JpaRepository<Book, Long> {
+    // Standard CRUD methods are provided by JpaRepository.
+}
+```
+
+### BookController.java (Controller)
+
+```java
+package com.example.library.controller;
+
+import com.example.library.model.Book;
+import com.example.library.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController // Marks this class as a REST controller.
+@RequestMapping("/api/books") // Maps all methods to /api/books URL path.
+public class BookController {
+
+    private final BookRepository bookRepository;
+
+    @Autowired
+    public BookController(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        return bookRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public Book createBook(@RequestBody Book book) {
+        return bookRepository.save(book);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
+        return bookRepository.findById(id)
+                .map(existingBook -> {
+                    existingBook.setTitle(updatedBook.getTitle());
+                    existingBook.setAuthor(updatedBook.getAuthor());
+                    existingBook.setYearPublished(updatedBook.getYearPublished());
+                    final Book savedBook = bookRepository.save(existingBook);
+                    return ResponseEntity.ok(savedBook);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        return bookRepository.findById(id)
+                .map(book -> {
+                    bookRepository.delete(book);
+                    return ResponseEntity.noContent().<Void>build();
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+}
+```
+
+### Explanation
+
+- **Model (`Book.java`)**: Represents the data structure for books. It includes fields like `id`, `title`, `author`, and `yearPublished`. JPA annotations are used to map it to a database table.
+  
+- **Repository (`BookRepository.java`)**: Extends `JpaRepository`, providing CRUD operations for `Book`.
+
+- **Controller (`BookController.java`)**: Handles HTTP requests. It uses the `BookRepository` to perform operations on the data and responds with appropriate HTTP responses.
+
+This setup assumes you have a Spring Boot project configured with JPA and an in-memory database like H2, or any other SQL database. Adjustments may be needed based on your specific application requirements and configurations.
+Response: To continue generating Java controllers and models, we'll use a hypothetical example of a simple blog application. This will include a `Post` model and a corresponding `PostController`. The example assumes the use of Spring Boot for simplicity.
+
+### Post Model
+
+```java
+package com.example.blog.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.time.LocalDateTime;
+
+@Entity
+public class Post {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String title;
+    private String content;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    // Constructors, Getters and Setters
+
+    public Post() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Post(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+}
+```
+
+### Post Repository
+
+```java
+package com.example.blog.repository;
+
+import com.example.blog.model.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface PostRepository extends JpaRepository<Post, Long> {
+}
+```
+
+### Post Controller
+
+```java
+package com.example.blog.controller;
+
+import com.example.blog.model.Post;
+import com.example.blog.repository.PostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/posts")
+public class PostController {
+
+    @Autowired
+    private PostRepository postRepository;
+
+    // Create a new post
+    @PostMapping
+    public ResponseEntity<Post> createPost(@RequestBody Post post) {
+        Post savedPost = postRepository.save(post);
+        return ResponseEntity.ok(savedPost);
+    }
+
+    // Get all posts
+    @GetMapping
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
+    }
+
+    // Get a single post by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
+        return postRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Update an existing post
+    @PutMapping("/{id}")
+    public ResponseEntity<Post> updatePost(@PathVariable Long id, @RequestBody Post postDetails) {
+        return postRepository.findById(id)
+                .map(post -> {
+                    post.setTitle(postDetails.getTitle());
+                    post.setContent(postDetails.getContent());
+                    post.setUpdatedAt(LocalDateTime.now());
+
+                    final Post updatedPost = postRepository.save(post);
+                    return ResponseEntity.ok(updatedPost);
+                }).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Delete a post
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        return postRepository.findById(id)
+                .map(post -> {
+                    postRepository.delete(post);
+                    return ResponseEntity.noContent().build();
+                }).orElse(ResponseEntity.notFound().build());
+    }
+}
+```
+
+### Explanation
+
+- **Model (`Post`)**: Represents the blog post with fields for ID, title, content, and timestamps for creation and update.
+  
+- **Repository (`PostRepository`)**: Extends `JpaRepository` to provide CRUD operations on the `Post` entity.
+
+- **Controller (`PostController`)**: Handles HTTP requests to perform CRUD operations using methods mapped to specific endpoints. It uses dependency injection to access the repository layer.
+
+This setup provides a basic structure for handling blog posts in a Spring Boot application. You can extend this example with additional features like user authentication, comments, or more complex querying capabilities as needed.
+Response: Certainly! To continue with Java controllers and models, let's consider a simple application for managing users. We'll create a basic structure using Spring Boot, which is a popular framework for building web applications in Java.
+
+### Model: User.java
+
+```java
+package com.example.demo.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class User {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String email;
+    private String password; // In a real-world application, passwords should be hashed
+
+    public User() {}
+
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+```
+
+### Controller: UserController.java
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // Create a new user
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User savedUser = userRepository.save(user);
+        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+    }
+
+    // Get all users
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // Get a single user by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(user);
+    }
+
+    // Update an existing user
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setName(userDetails.getName());
+        user.setEmail(userDetails.getEmail());
+        user.setPassword(userDetails.getPassword());
+
+        final User updatedUser = userRepository.save(user);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    // Delete a user
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        userRepository.delete(user);
+        return ResponseEntity.noContent().build();
+    }
+}
+```
+
+### Repository: UserRepository.java
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    // Spring Data JPA will automatically implement this repository with CRUD operations.
+}
+```
+
+### Application Properties: application.properties
+
+To connect to a database, you'll need to configure your `application.properties` file. Here's an example for H2 Database:
+
+```properties
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+
+# Enable H2 Console
+spring.h2.console.enabled=true
+```
+
+### Explanation:
+
+- **Model (`User.java`)**: Represents the data structure for a user, including attributes like `id`, `name`, `email`, and `password`.
+- **Controller (`UserController.java`)**: Provides endpoints to create, read, update, and delete users.
+- **Repository (`UserRepository.java`)**: Interfaces with the database using Spring Data JPA. It provides CRUD operations without needing explicit implementations.
+- **Application Properties**: Configures the application to connect to an in-memory H2 database for simplicity.
+
+This setup is a basic example of how you might structure a simple Java web application using Spring Boot, focusing on managing user data.
+Response: Certainly! Below is an example of a Java Spring Boot application with a simple controller and model for managing `Book` entities. This includes the necessary components like a RESTful controller, a JPA entity model, and a repository interface.
+
+### Model: Book.java
+
+```java
+package com.example.demo.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "books")
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String title;
+    private String author;
+    private LocalDate publishedDate;
+    private String isbn;
+
+    // Constructors
+
+    public Book() {}
+
+    public Book(String title, String author, LocalDate publishedDate, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.publishedDate = publishedDate;
+        this.isbn = isbn;
+    }
+
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public LocalDate getPublishedDate() {
+        return publishedDate;
+    }
+
+    public void setPublishedDate(LocalDate publishedDate) {
+        this.publishedDate = publishedDate;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+}
+```
+
+### Repository: BookRepository.java
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> {
+    // Custom query methods can be defined here if needed.
+}
+```
+
+### Controller: BookController.java
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.Book;
+import com.example.demo.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    // Get all books
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    // Get a single book by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        return bookRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Create a new book
+    @PostMapping
+    public Book createBook(@RequestBody Book book) {
+        return bookRepository.save(book);
+    }
+
+    // Update an existing book
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
+        return bookRepository.findById(id)
+                .map(book -> {
+                    book.setTitle(bookDetails.getTitle());
+                    book.setAuthor(bookDetails.getAuthor());
+                    book.setPublishedDate(bookDetails.getPublishedDate());
+                    book.setIsbn(bookDetails.getIsbn());
+
+                    Book updatedBook = bookRepository.save(book);
+                    return ResponseEntity.ok(updatedBook);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Delete a book
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        return bookRepository.findById(id)
+                .map(book -> {
+                    bookRepository.delete(book);
+                    return ResponseEntity.ok().<Void>build();
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+}
+```
+
+### Explanation
+
+1. **Model (`Book.java`)**: This class represents the `Book` entity with attributes such as `id`, `title`, `author`, `publishedDate`, and `isbn`. It uses JPA annotations to map this class to a database table.
+
+2. **Repository (`BookRepository.java`)**: Extends `JpaRepository`, providing CRUD operations for the `Book` model without needing explicit implementation.
+
+3. **Controller (`BookController.java`)**: Manages HTTP requests related to books, offering endpoints for fetching all books, retrieving a specific book by ID, creating new books, updating existing ones, and deleting them.
+
+This structure follows standard Spring Boot conventions and leverages the power of JPA/Hibernate for ORM capabilities with minimal boilerplate code. You can expand this application by adding more entities, repositories, and controllers as needed.
+Response: Certainly! Below is an example of how you might structure a Java application using Spring Boot with separate controller and model components. This example includes a simple `UserController` for managing user data, along with a corresponding `User` model.
+
+### User Model
+
+First, we'll define the `User` entity as a JPA entity:
+
+```java
+package com.example.demo.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String email;
+
+    // Constructors, Getters and Setters
+
+    public User() {
+    }
+
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+```
+
+### User Repository
+
+Next, we'll create a repository interface to handle database operations:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    // Additional query methods can be defined here if needed
+}
+```
+
+### User Controller
+
+Now, we'll define the `UserController` to handle HTTP requests:
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // Get all users
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // Get user by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Create a new user
+    @PostMapping
+    public User createUser(@RequestBody User user) {
+        return userRepository.save(user);
+    }
+
+    // Update an existing user
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        Optional<User> existingUser = userRepository.findById(id);
+
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            user.setName(userDetails.getName());
+            user.setEmail(userDetails.getEmail());
+            userRepository.save(user);
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Delete a user
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
+```
+
+### Application Configuration
+
+Ensure you have the necessary dependencies in your `pom.xml` or `build.gradle`, including Spring Boot Starter Web, JPA, and an appropriate database connector.
+
+This setup provides a basic RESTful API for managing user data. You can expand it by adding more fields to the `User` model, additional endpoints, and custom query methods in the repository as needed.
+Response: Certainly! Below is an example of a simple Java Spring Boot application with a controller and model for managing a `Book` entity.
+
+### Book Model
+
+First, let's define the `Book` model:
+
+```java
+package com.example.demo.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String title;
+    private String author;
+    private String isbn;
+    private int pageCount;
+
+    // Constructors
+    public Book() {}
+
+    public Book(String title, String author, String isbn, int pageCount) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+        this.pageCount = pageCount;
+    }
+
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
+    }
+}
+```
+
+### Book Repository
+
+Next, create a repository interface for CRUD operations:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> {
+}
+```
+
+### Book Controller
+
+Finally, let's implement the `BookController`:
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.Book;
+import com.example.demo.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/books")
+public class BookController {
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    // Create a new book
+    @PostMapping
+    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+        Book savedBook = bookRepository.save(book);
+        return ResponseEntity.ok(savedBook);
+    }
+
+    // Get all books
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    // Get a single book by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+        return book.map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Update a book by ID
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
+        return bookRepository.findById(id).map(book -> {
+            book.setTitle(updatedBook.getTitle());
+            book.setAuthor(updatedBook.getAuthor());
+            book.setIsbn(updatedBook.getIsbn());
+            book.setPageCount(updatedBook.getPageCount());
+
+            Book savedBook = bookRepository.save(book);
+            return ResponseEntity.ok(savedBook);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Delete a book by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        return bookRepository.findById(id).map(book -> {
+            bookRepository.delete(book);
+            return ResponseEntity.ok().<Void>build();
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+}
+```
+
+### Explanation
+
+- **Model**: The `Book` class is a JPA entity with attributes such as `id`, `title`, `author`, `isbn`, and `pageCount`.
+  
+- **Repository**: `BookRepository` extends `JpaRepository`, providing CRUD operations for the `Book` model.
+
+- **Controller**: `BookController` handles HTTP requests to perform CRUD operations on books. It uses `BookRepository` for data access.
+
+This setup allows you to manage a collection of books through RESTful endpoints, making it easy to integrate with front-end applications or other services.
+Response: Certainly! Below is an example of a Java Spring Boot application with basic controller and model components. This example will include a simple `Book` entity, a corresponding repository interface for database operations, and a RESTful controller to handle HTTP requests.
+
+### Book Model
+
+First, let's define the `Book` model using JPA annotations:
+
+```java
+package com.example.bookstore.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String title;
+    private String author;
+    private int yearPublished;
+
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public int getYearPublished() {
+        return yearPublished;
+    }
+
+    public void setYearPublished(int yearPublished) {
+        this.yearPublished = yearPublished;
+    }
+}
+```
+
+### Book Repository
+
+Next, we define a repository interface for `Book`:
+
+```java
+package com.example.bookstore.repository;
+
+import com.example.bookstore.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> {
+    // Custom query methods can be added here if needed.
+}
+```
+
+### Book Controller
+
+Finally, let's create a RESTful controller to handle HTTP requests for `Book` operations:
+
+```java
+package com.example.bookstore.controller;
+
+import com.example.bookstore.model.Book;
+import com.example.bookstore.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    // Get all books
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    // Get a single book by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        return bookRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Create a new book
+    @PostMapping
+    public Book createBook(@RequestBody Book book) {
+        return bookRepository.save(book);
+    }
+
+    // Update an existing book
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
+        return bookRepository.findById(id)
+                .map(existingBook -> {
+                    existingBook.setTitle(updatedBook.getTitle());
+                    existingBook.setAuthor(updatedBook.getAuthor());
+                    existingBook.setYearPublished(updatedBook.getYearPublished());
+                    final Book savedBook = bookRepository.save(existingBook);
+                    return ResponseEntity.ok(savedBook);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Delete a book by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        if (bookRepository.existsById(id)) {
+            bookRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
+```
+
+### Explanation
+
+- **Model (`Book`)**: Represents the data structure for a book with basic attributes such as `id`, `title`, `author`, and `yearPublished`. It uses JPA annotations to define it as an entity.
+
+- **Repository (`BookRepository`)**: Extends `JpaRepository` providing CRUD operations and allows adding custom queries if necessary.
+
+- **Controller (`BookController`)**: Handles HTTP requests with endpoints for listing all books, retrieving a book by ID, creating, updating, and deleting books. It uses annotations like `@RestController`, `@RequestMapping`, `@GetMapping`, `@PostMapping`, `@PutMapping`, and `@DeleteMapping`.
+
+This setup provides a basic structure for managing `Book` entities using Spring Boot's powerful features such as JPA and RESTful principles.
+Response: To continue generating Java controllers and models, let's assume we're building a simple RESTful API for managing books. We'll create two main components: `Book` as the model and `BookController` as the controller.
+
+### Book Model
+
+The `Book` class will represent the data structure of a book with properties like id, title, author, and publication year.
+
+```java
+package com.example.bookstore.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String title;
+    
+    private String author;
+    
+    private int publicationYear;
+
+    // Constructors
+
+    public Book() {
+        // Default constructor
+    }
+
+    public Book(String title, String author, int publicationYear) {
+        this.title = title;
+        this.author = author;
+        this.publicationYear = publicationYear;
+    }
+
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public int getPublicationYear() {
+        return publicationYear;
+    }
+
+    public void setPublicationYear(int publicationYear) {
+        this.publicationYear = publicationYear;
+    }
+}
+```
+
+### Book Repository
+
+We'll need a repository interface to handle database operations. This will be an interface that extends `JpaRepository`.
+
+```java
+package com.example.bookstore.repository;
+
+import com.example.bookstore.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> {
+}
+```
+
+### Book Controller
+
+The `BookController` will handle HTTP requests related to books. It will use the `BookService` to perform operations.
+
+```java
+package com.example.bookstore.controller;
+
+import com.example.bookstore.model.Book;
+import com.example.bookstore.service.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+
+    @Autowired
+    private BookService bookService;
+
+    // Get all books
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookService.findAll();
+    }
+
+    // Get a single book by id
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Book book = bookService.findById(id);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(book);
+    }
+
+    // Create a new book
+    @PostMapping
+    public Book createBook(@RequestBody Book book) {
+        return bookService.save(book);
+    }
+
+    // Update an existing book
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
+        Book book = bookService.findById(id);
+
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        book.setTitle(bookDetails.getTitle());
+        book.setAuthor(bookDetails.getAuthor());
+        book.setPublicationYear(bookDetails.getPublicationYear());
+
+        final Book updatedBook = bookService.save(book);
+        return ResponseEntity.ok(updatedBook);
+    }
+
+    // Delete a book
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        Book book = bookService.findById(id);
+
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        bookService.delete(book);
+        return ResponseEntity.noContent().build();
+    }
+}
+```
+
+### Book Service
+
+Finally, let's create a service layer that interacts with the repository to perform CRUD operations.
+
+```java
+package com.example.bookstore.service;
+
+import com.example.bookstore.model.Book;
+import com.example.bookstore.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class BookService {
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    public List<Book> findAll() {
+        return bookRepository.findAll();
+    }
+
+    public Optional<Book> findById(Long id) {
+        return bookRepository.findById(id);
+    }
+
+    public Book save(Book book) {
+        return bookRepository.save(book);
+    }
+
+    public void delete(Book book) {
+        bookRepository.delete(book);
+    }
+}
+```
+
+This setup provides a basic structure for managing books using Spring Boot with RESTful APIs. Adjust the package names and configurations as per your project's requirements.
+Response: Certainly! Below are examples of Java controllers and models that might be part of a simple RESTful API using Spring Boot. This example will illustrate a basic CRUD (Create, Read, Update, Delete) application for managing "Books."
+
+### Book Model
+
+```java
+package com.example.demo.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String title;
+    private String author;
+    private Integer yearPublished;
+
+    // Constructors, Getters, and Setters
+
+    public Book() {}
+
+    public Book(String title, String author, Integer yearPublished) {
+        this.title = title;
+        this.author = author;
+        this.yearPublished = yearPublished;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public Integer getYearPublished() {
+        return yearPublished;
+    }
+
+    public void setYearPublished(Integer yearPublished) {
+        this.yearPublished = yearPublished;
+    }
+}
+```
+
+### Book Repository
+
+```java
+package com.example.demo.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.demo.model.Book;
+
+public interface BookRepository extends JpaRepository<Book, Long> {
+}
+```
+
+### Book Service
+
+```java
+package com.example.demo.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.model.Book;
+import com.example.demo.repository.BookRepository;
+
+@Service
+public class BookService {
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    public Optional<Book> getBookById(Long id) {
+        return bookRepository.findById(id);
+    }
+
+    public Book saveBook(Book book) {
+        return bookRepository.save(book);
+    }
+
+    public void deleteBook(Long id) {
+        bookRepository.deleteById(id);
+    }
+}
+```
+
+### Book Controller
+
+```java
+package com.example.demo.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.model.Book;
+import com.example.demo.service.BookService;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+
+    @Autowired
+    private BookService bookService;
+
+    // Get all books
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookService.getAllBooks();
+    }
+
+    // Get a single book by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Optional<Book> book = bookService.getBookById(id);
+        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Create a new book
+    @PostMapping
+    public Book createBook(@RequestBody Book book) {
+        return bookService.saveBook(book);
+    }
+
+    // Update an existing book
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
+        Optional<Book> bookOptional = bookService.getBookById(id);
+
+        if (bookOptional.isPresent()) {
+            Book updatedBook = bookOptional.get();
+            updatedBook.setTitle(bookDetails.getTitle());
+            updatedBook.setAuthor(bookDetails.getAuthor());
+            updatedBook.setYearPublished(bookDetails.getYearPublished());
+
+            return ResponseEntity.ok(bookService.saveBook(updatedBook));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Delete a book
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        Optional<Book> bookOptional = bookService.getBookById(id);
+        
+        if (bookOptional.isPresent()) {
+            bookService.deleteBook(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
+```
+
+### Explanation
+
+- **Model (`Book`)**: Represents the data structure. Annotates with JPA annotations to map it to a database table.
+  
+- **Repository (`BookRepository`)**: Extends `JpaRepository`, providing CRUD operations without needing to implement them.
+
+- **Service (`BookService`)**: Contains business logic and interacts with the repository.
+
+- **Controller (`BookController`)**: Handles HTTP requests, invoking methods from the service layer, and returning appropriate responses.
+
+This setup follows the typical Spring Boot project structure for a simple RESTful application.
+Response: Certainly! Below is an example of how you might structure Java Spring Boot applications with controllers and models for a simple CRUD (Create, Read, Update, Delete) application, such as managing a list of users.
+
+### User Model
+
+First, let's define the `User` model:
+
+```java
+package com.example.demo.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String email;
+    private int age;
+
+    // Constructors, getters and setters
+
+    public User() {
+        // Default constructor for JPA
+    }
+
+    public User(String name, String email, int age) {
+        this.name = name;
+        this.email = email;
+        this.age = age;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+}
+```
+
+### UserRepository Interface
+
+Next, define the `UserRepository` interface for data access:
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+}
+```
+
+### UserController
+
+Then create a controller to handle HTTP requests:
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // Create a new user
+    @PostMapping("/")
+    public User createUser(@RequestBody User user) {
+        return userRepository.save(user);
+    }
+
+    // Get all users
+    @GetMapping("/")
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // Get a single user by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+        return ResponseEntity.ok().body(user);
+    }
+
+    // Update a user
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+
+        user.setName(userDetails.getName());
+        user.setEmail(userDetails.getEmail());
+        user.setAge(userDetails.getAge());
+
+        final User updatedUser = userRepository.save(user);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    // Delete a user
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+
+        userRepository.delete(user);
+        return ResponseEntity.ok().build();
+    }
+}
+```
+
+### Exception Handling
+
+You'll also need a custom exception for when resources are not found:
+
+```java
+package com.example.demo.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException {
+
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}
+```
+
+### Application Properties
+
+Don't forget to configure your `application.properties` for database settings:
+
+```properties
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+```
+
+### Conclusion
+
+This setup provides a basic structure for managing users in a Spring Boot application. You can expand upon this by adding more complex business logic, validation, and security features as needed.

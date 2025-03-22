@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODEL="deepseek-r1"
+MODEL="qwen2.5-coder"
 PROMPT="You are a professional Java engineer who writes/generates professional java code.
 Be explicit with the code.
 Don't explain it, just give the code.
@@ -44,7 +44,7 @@ for FILE in "$WORK_DIR"/*.yaml; do
   echo "$FILE_PATH" >> "$OUTPUT_FILE"
   echo "Response: $RESPONSE" >> "$OUTPUT_FILE"
 
-  for i in {1..5}; do
+  for i in {1..10}; do
     echo "Rerepeting $i"
 
     # Create a temporary FILE for the JSON payload
