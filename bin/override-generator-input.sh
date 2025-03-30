@@ -2,9 +2,9 @@
 
 # Check if exactly one argument is provided
 if [ $# -ne 1 ]; then
-    filepath="./src/main/resources/api.yaml"
+    filepath="./src/main/resources/docs/api.yaml"
   else
-    filepath="./src/main/resources/$1"
+    filepath="./src/main/resources/docs/$1"
 fi
 
 echo "Using file: $filepath"
