@@ -9,7 +9,7 @@ fi
 
 echo "Using file: $filepath"
 
-mvn package -Dgenerator_inputfile="$filepath" -DskipTests
+mvn package -Dgenerator_inputfile="$filepath"
 
 if [ $? -ne 0 ]; then
     echo "Error while generating the code for $filepath"
