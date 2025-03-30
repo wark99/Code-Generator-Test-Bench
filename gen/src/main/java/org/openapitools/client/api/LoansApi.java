@@ -2,8 +2,8 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import org.openapitools.client.model.RestError;
-import org.openapitools.client.model.User;
+import org.openapitools.client.model.LoanRequest;
+import org.openapitools.client.model.LoanResponse;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,15 +26,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-30T15:48:26.965157448Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class UserApi {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-30T15:48:37.914018367Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+public class LoansApi {
     private ApiClient apiClient;
 
-    public UserApi() {
+    public LoansApi() {
         this(new ApiClient());
     }
 
-    public UserApi(ApiClient apiClient) {
+    public LoansApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -47,39 +47,31 @@ public class UserApi {
     }
 
     /**
-     * Create a user
-     * Creates a user.
-     * <p><b>200</b> - User created successfully.
-     * <p><b>304</b> - Not modified.
-     * <p><b>400</b> - Bad request.
-     * <p><b>404</b> - User not found.
-     * <p><b>500</b> - Server error.
-     * @param user The user (required)
-     * @return User
+     * Apply for a loan
+     * One loan application request supported in the body.
+     * <p><b>200</b> - OK
+     * @param loanRequest loanRequest (required)
+     * @return LoanResponse
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public User addUser(User user) throws RestClientException {
-        return addUserWithHttpInfo(user).getBody();
+    public LoanResponse applyForALoanUsingPOST(LoanRequest loanRequest) throws RestClientException {
+        return applyForALoanUsingPOSTWithHttpInfo(loanRequest).getBody();
     }
 
     /**
-     * Create a user
-     * Creates a user.
-     * <p><b>200</b> - User created successfully.
-     * <p><b>304</b> - Not modified.
-     * <p><b>400</b> - Bad request.
-     * <p><b>404</b> - User not found.
-     * <p><b>500</b> - Server error.
-     * @param user The user (required)
-     * @return ResponseEntity&lt;User&gt;
+     * Apply for a loan
+     * One loan application request supported in the body.
+     * <p><b>200</b> - OK
+     * @param loanRequest loanRequest (required)
+     * @return ResponseEntity&lt;LoanResponse&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<User> addUserWithHttpInfo(User user) throws RestClientException {
-        Object localVarPostBody = user;
+    public ResponseEntity<LoanResponse> applyForALoanUsingPOSTWithHttpInfo(LoanRequest loanRequest) throws RestClientException {
+        Object localVarPostBody = loanRequest;
         
-        // verify the required parameter 'user' is set
-        if (user == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'user' when calling addUser");
+        // verify the required parameter 'loanRequest' is set
+        if (loanRequest == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'loanRequest' when calling applyForALoanUsingPOST");
         }
         
 
@@ -99,7 +91,7 @@ public class UserApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<User> localReturnType = new ParameterizedTypeReference<User>() {};
-        return apiClient.invokeAPI("/users", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<LoanResponse> localReturnType = new ParameterizedTypeReference<LoanResponse>() {};
+        return apiClient.invokeAPI("/loans", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }
