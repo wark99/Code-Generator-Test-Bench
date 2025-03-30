@@ -57,10 +57,9 @@ import java.util.function.Supplier;
 import java.time.OffsetDateTime;
 
 import org.openapitools.client.auth.Authentication;
-import org.openapitools.client.auth.ApiKeyAuth;
-import org.openapitools.client.auth.OAuth;
+import org.openapitools.client.auth.HttpBearerAuth;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-30T15:37:00.934056556Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-30T15:37:11.863990102Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
@@ -85,7 +84,7 @@ public class ApiClient extends JavaTimeFormatter {
 
     private long waitTimeMillis = 10;
 
-    private String basePath = "https://petstore3.swagger.io/api/v3";
+    private String basePath = "http://localhost:5173/api/v1";
 
     private RestTemplate restTemplate;
 
@@ -116,8 +115,7 @@ public class ApiClient extends JavaTimeFormatter {
 
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<String, Authentication>();
-        authentications.put("petstore_auth", new OAuth());
-        authentications.put("api_key", new ApiKeyAuth("header", "api_key"));
+        authentications.put("auth_jwt", new HttpBearerAuth("bearer"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -201,53 +199,32 @@ public class ApiClient extends JavaTimeFormatter {
         return authentications.get(authName);
     }
 
-
-
     /**
-     * Helper method to set API key value for the first API key authentication.
+     * Helper method to set access token for the first Bearer authentication.
      *
-     * @param apiKey the API key
+     * @param bearerToken Bearer token
      */
-    public void setApiKey(String apiKey) {
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof ApiKeyAuth) {
-                ((ApiKeyAuth) auth).setApiKey(apiKey);
-                return;
-            }
-        }
-        throw new RuntimeException("No API key authentication configured!");
+    public void setBearerToken(String bearerToken) {
+        setBearerToken(() -> bearerToken);
     }
 
     /**
-     * Helper method to set API key prefix for the first API key authentication.
+     * Helper method to set the supplier of access tokens for Bearer authentication.
      *
-     * @param apiKeyPrefix API key prefix
+     * @param tokenSupplier The supplier of bearer tokens
      */
-    public void setApiKeyPrefix(String apiKeyPrefix) {
+    public void setBearerToken(Supplier<String> tokenSupplier) {
         for (Authentication auth : authentications.values()) {
-            if (auth instanceof ApiKeyAuth) {
-                ((ApiKeyAuth) auth).setApiKeyPrefix(apiKeyPrefix);
+            if (auth instanceof HttpBearerAuth) {
+                ((HttpBearerAuth) auth).setBearerToken(tokenSupplier);
                 return;
             }
         }
-        throw new RuntimeException("No API key authentication configured!");
+        throw new RuntimeException("No Bearer authentication configured!");
     }
 
 
-    /**
-     * Helper method to set access token for the first OAuth2 authentication.
-     *
-     * @param accessToken Access token
-     */
-    public void setAccessToken(String accessToken) {
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof OAuth) {
-                ((OAuth) auth).setAccessToken(accessToken);
-                return;
-            }
-        }
-        throw new RuntimeException("No OAuth2 authentication configured!");
-    }
+
 
 
     /**
