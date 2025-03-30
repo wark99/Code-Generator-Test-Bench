@@ -2,8 +2,11 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import java.time.OffsetDateTime;
-import org.openapitools.client.model.User;
+import org.openapitools.client.model.ErrorResponseObject;
+import org.openapitools.client.model.GetRecipesForEntity200Response;
+import org.openapitools.client.model.GetUserById200Response;
+import org.openapitools.client.model.GetUserFollowing200Response;
+import org.openapitools.client.model.UserProfile;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-30T11:15:46.846883588Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-03-30T11:15:57.155008189Z[Etc/UTC]", comments = "Generator version: 7.4.0")
 public class UserApi {
     private ApiClient apiClient;
 
@@ -47,27 +50,131 @@ public class UserApi {
     }
 
     /**
-     * Create user
-     * This can only be done by the logged in user.
-     * <p><b>0</b> - successful operation
-     * @param user Created user object (optional)
-     * @return User
+     * Follow a user
+     * 
+     * <p><b>200</b> - OK - returning new user profile
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * @param userId  (required)
+     * @return GetUserById200Response
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public User createUser(User user) throws RestClientException {
-        return createUserWithHttpInfo(user).getBody();
+    public GetUserById200Response followUser(Integer userId) throws RestClientException {
+        return followUserWithHttpInfo(userId).getBody();
     }
 
     /**
-     * Create user
-     * This can only be done by the logged in user.
-     * <p><b>0</b> - successful operation
-     * @param user Created user object (optional)
-     * @return ResponseEntity&lt;User&gt;
+     * Follow a user
+     * 
+     * <p><b>200</b> - OK - returning new user profile
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * @param userId  (required)
+     * @return ResponseEntity&lt;GetUserById200Response&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<User> createUserWithHttpInfo(User user) throws RestClientException {
-        Object localVarPostBody = user;
+    public ResponseEntity<GetUserById200Response> followUserWithHttpInfo(Integer userId) throws RestClientException {
+        Object localVarPostBody = null;
+        
+        // verify the required parameter 'userId' is set
+        if (userId == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'userId' when calling followUser");
+        }
+        
+        // create path and map variables
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        uriVariables.put("userId", userId);
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {  };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] { "auth_jwt" };
+
+        ParameterizedTypeReference<GetUserById200Response> localReturnType = new ParameterizedTypeReference<GetUserById200Response>() {};
+        return apiClient.invokeAPI("/users/{userId}/follow", HttpMethod.POST, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Get user&#39;s feed
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>400</b>
+     * @param type  (required)
+     * @return GetRecipesForEntity200Response
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public GetRecipesForEntity200Response getFeed(String type) throws RestClientException {
+        return getFeedWithHttpInfo(type).getBody();
+    }
+
+    /**
+     * Get user&#39;s feed
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>400</b>
+     * @param type  (required)
+     * @return ResponseEntity&lt;GetRecipesForEntity200Response&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<GetRecipesForEntity200Response> getFeedWithHttpInfo(String type) throws RestClientException {
+        Object localVarPostBody = null;
+        
+        // verify the required parameter 'type' is set
+        if (type == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'type' when calling getFeed");
+        }
+        
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        localVarQueryParams.putAll(apiClient.parameterToMultiValueMap(null, "type", type));
+        
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {  };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] { "auth_jwt" };
+
+        ParameterizedTypeReference<GetRecipesForEntity200Response> localReturnType = new ParameterizedTypeReference<GetRecipesForEntity200Response>() {};
+        return apiClient.invokeAPI("/feed", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Get own profile
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>403</b>
+     * @return GetUserById200Response
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public GetUserById200Response getMe() throws RestClientException {
+        return getMeWithHttpInfo().getBody();
+    }
+
+    /**
+     * Get own profile
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>403</b>
+     * @return ResponseEntity&lt;GetUserById200Response&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<GetUserById200Response> getMeWithHttpInfo() throws RestClientException {
+        Object localVarPostBody = null;
         
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
@@ -76,44 +183,152 @@ public class UserApi {
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
 
         final String[] localVarAccepts = { 
-            "application/json", "application/xml"
+            "application/json"
          };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json", "application/xml", "application/x-www-form-urlencoded"
+        final String[] localVarContentTypes = {  };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] { "auth_jwt" };
+
+        ParameterizedTypeReference<GetUserById200Response> localReturnType = new ParameterizedTypeReference<GetUserById200Response>() {};
+        return apiClient.invokeAPI("/users/me", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Get user profile
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>404</b>
+     * @param userId  (required)
+     * @return GetUserById200Response
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public GetUserById200Response getUserById(Integer userId) throws RestClientException {
+        return getUserByIdWithHttpInfo(userId).getBody();
+    }
+
+    /**
+     * Get user profile
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>404</b>
+     * @param userId  (required)
+     * @return ResponseEntity&lt;GetUserById200Response&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<GetUserById200Response> getUserByIdWithHttpInfo(Integer userId) throws RestClientException {
+        Object localVarPostBody = null;
+        
+        // verify the required parameter 'userId' is set
+        if (userId == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'userId' when calling getUserById");
+        }
+        
+        // create path and map variables
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        uriVariables.put("userId", userId);
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
          };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {  };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] { "auth_jwt" };
+
+        ParameterizedTypeReference<GetUserById200Response> localReturnType = new ParameterizedTypeReference<GetUserById200Response>() {};
+        return apiClient.invokeAPI("/users/{userId}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Get user&#39;s followers
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>400</b>
+     * @param userId  (required)
+     * @return GetUserFollowing200Response
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public GetUserFollowing200Response getUserFollowers(Integer userId) throws RestClientException {
+        return getUserFollowersWithHttpInfo(userId).getBody();
+    }
+
+    /**
+     * Get user&#39;s followers
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>400</b>
+     * @param userId  (required)
+     * @return ResponseEntity&lt;GetUserFollowing200Response&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<GetUserFollowing200Response> getUserFollowersWithHttpInfo(Integer userId) throws RestClientException {
+        Object localVarPostBody = null;
+        
+        // verify the required parameter 'userId' is set
+        if (userId == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'userId' when calling getUserFollowers");
+        }
+        
+        // create path and map variables
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        uriVariables.put("userId", userId);
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {  };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<User> localReturnType = new ParameterizedTypeReference<User>() {};
-        return apiClient.invokeAPI("/user", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<GetUserFollowing200Response> localReturnType = new ParameterizedTypeReference<GetUserFollowing200Response>() {};
+        return apiClient.invokeAPI("/users/{userId}/followers", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
     /**
-     * Creates list of users with given input array
-     * Creates list of users with given input array
-     * <p><b>200</b> - Successful operation
-     * <p><b>0</b> - successful operation
-     * @param user  (optional)
-     * @return User
+     * Get users being followed
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>400</b>
+     * @param userId  (required)
+     * @return GetUserFollowing200Response
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public User createUsersWithListInput(List<User> user) throws RestClientException {
-        return createUsersWithListInputWithHttpInfo(user).getBody();
+    public GetUserFollowing200Response getUserFollowing(Integer userId) throws RestClientException {
+        return getUserFollowingWithHttpInfo(userId).getBody();
     }
 
     /**
-     * Creates list of users with given input array
-     * Creates list of users with given input array
-     * <p><b>200</b> - Successful operation
-     * <p><b>0</b> - successful operation
-     * @param user  (optional)
-     * @return ResponseEntity&lt;User&gt;
+     * Get users being followed
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>400</b>
+     * @param userId  (required)
+     * @return ResponseEntity&lt;GetUserFollowing200Response&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<User> createUsersWithListInputWithHttpInfo(List<User> user) throws RestClientException {
-        Object localVarPostBody = user;
+    public ResponseEntity<GetUserFollowing200Response> getUserFollowingWithHttpInfo(Integer userId) throws RestClientException {
+        Object localVarPostBody = null;
         
+        // verify the required parameter 'userId' is set
+        if (userId == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'userId' when calling getUserFollowing");
+        }
+        
+        // create path and map variables
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        uriVariables.put("userId", userId);
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
@@ -121,7 +336,164 @@ public class UserApi {
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
 
         final String[] localVarAccepts = { 
-            "application/json", "application/xml"
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {  };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] { "auth_jwt" };
+
+        ParameterizedTypeReference<GetUserFollowing200Response> localReturnType = new ParameterizedTypeReference<GetUserFollowing200Response>() {};
+        return apiClient.invokeAPI("/users/{userId}/following", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Search for users
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>400</b>
+     * @param q  (optional)
+     * @return GetUserFollowing200Response
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public GetUserFollowing200Response searchUsers(String q) throws RestClientException {
+        return searchUsersWithHttpInfo(q).getBody();
+    }
+
+    /**
+     * Search for users
+     * 
+     * <p><b>200</b> - OK
+     * <p><b>400</b>
+     * @param q  (optional)
+     * @return ResponseEntity&lt;GetUserFollowing200Response&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<GetUserFollowing200Response> searchUsersWithHttpInfo(String q) throws RestClientException {
+        Object localVarPostBody = null;
+        
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        localVarQueryParams.putAll(apiClient.parameterToMultiValueMap(null, "q", q));
+        
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {  };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] {  };
+
+        ParameterizedTypeReference<GetUserFollowing200Response> localReturnType = new ParameterizedTypeReference<GetUserFollowing200Response>() {};
+        return apiClient.invokeAPI("/search/users", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Unfollow a user
+     * 
+     * <p><b>200</b> - OK - returning new user profile
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * @param userId  (required)
+     * @return GetUserById200Response
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public GetUserById200Response unfollowUser(Integer userId) throws RestClientException {
+        return unfollowUserWithHttpInfo(userId).getBody();
+    }
+
+    /**
+     * Unfollow a user
+     * 
+     * <p><b>200</b> - OK - returning new user profile
+     * <p><b>400</b>
+     * <p><b>404</b>
+     * @param userId  (required)
+     * @return ResponseEntity&lt;GetUserById200Response&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<GetUserById200Response> unfollowUserWithHttpInfo(Integer userId) throws RestClientException {
+        Object localVarPostBody = null;
+        
+        // verify the required parameter 'userId' is set
+        if (userId == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'userId' when calling unfollowUser");
+        }
+        
+        // create path and map variables
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        uriVariables.put("userId", userId);
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
+         };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {  };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] { "auth_jwt" };
+
+        ParameterizedTypeReference<GetUserById200Response> localReturnType = new ParameterizedTypeReference<GetUserById200Response>() {};
+        return apiClient.invokeAPI("/users/{userId}/follow", HttpMethod.DELETE, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+    }
+    /**
+     * Update user profile
+     * Can only update own profile
+     * <p><b>200</b> - OK
+     * <p><b>404</b>
+     * @param userId  (required)
+     * @param userProfile  (required)
+     * @return GetUserById200Response
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public GetUserById200Response updateUserById(Integer userId, UserProfile userProfile) throws RestClientException {
+        return updateUserByIdWithHttpInfo(userId, userProfile).getBody();
+    }
+
+    /**
+     * Update user profile
+     * Can only update own profile
+     * <p><b>200</b> - OK
+     * <p><b>404</b>
+     * @param userId  (required)
+     * @param userProfile  (required)
+     * @return ResponseEntity&lt;GetUserById200Response&gt;
+     * @throws RestClientException if an error occurs while attempting to invoke the API
+     */
+    public ResponseEntity<GetUserById200Response> updateUserByIdWithHttpInfo(Integer userId, UserProfile userProfile) throws RestClientException {
+        Object localVarPostBody = userProfile;
+        
+        // verify the required parameter 'userId' is set
+        if (userId == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'userId' when calling updateUserById");
+        }
+        
+        // verify the required parameter 'userProfile' is set
+        if (userProfile == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'userProfile' when calling updateUserById");
+        }
+        
+        // create path and map variables
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        uriVariables.put("userId", userId);
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "application/json"
          };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         final String[] localVarContentTypes = { 
@@ -129,245 +501,9 @@ public class UserApi {
          };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {  };
+        String[] localVarAuthNames = new String[] { "auth_jwt" };
 
-        ParameterizedTypeReference<User> localReturnType = new ParameterizedTypeReference<User>() {};
-        return apiClient.invokeAPI("/user/createWithList", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Delete user
-     * This can only be done by the logged in user.
-     * <p><b>400</b> - Invalid username supplied
-     * <p><b>404</b> - User not found
-     * @param username The name that needs to be deleted (required)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void deleteUser(String username) throws RestClientException {
-        deleteUserWithHttpInfo(username);
-    }
-
-    /**
-     * Delete user
-     * This can only be done by the logged in user.
-     * <p><b>400</b> - Invalid username supplied
-     * <p><b>404</b> - User not found
-     * @param username The name that needs to be deleted (required)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> deleteUserWithHttpInfo(String username) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'username' is set
-        if (username == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'username' when calling deleteUser");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("username", username);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/user/{username}", HttpMethod.DELETE, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Get user by user name
-     * 
-     * <p><b>200</b> - successful operation
-     * <p><b>400</b> - Invalid username supplied
-     * <p><b>404</b> - User not found
-     * @param username The name that needs to be fetched. Use user1 for testing.  (required)
-     * @return User
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public User getUserByName(String username) throws RestClientException {
-        return getUserByNameWithHttpInfo(username).getBody();
-    }
-
-    /**
-     * Get user by user name
-     * 
-     * <p><b>200</b> - successful operation
-     * <p><b>400</b> - Invalid username supplied
-     * <p><b>404</b> - User not found
-     * @param username The name that needs to be fetched. Use user1 for testing.  (required)
-     * @return ResponseEntity&lt;User&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<User> getUserByNameWithHttpInfo(String username) throws RestClientException {
-        Object localVarPostBody = null;
-        
-        // verify the required parameter 'username' is set
-        if (username == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'username' when calling getUserByName");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("username", username);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = { 
-            "application/json", "application/xml"
-         };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<User> localReturnType = new ParameterizedTypeReference<User>() {};
-        return apiClient.invokeAPI("/user/{username}", HttpMethod.GET, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Logs user into the system
-     * 
-     * <p><b>200</b> - successful operation
-     * <p><b>400</b> - Invalid username/password supplied
-     * @param username The user name for login (optional)
-     * @param password The password for login in clear text (optional)
-     * @return String
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public String loginUser(String username, String password) throws RestClientException {
-        return loginUserWithHttpInfo(username, password).getBody();
-    }
-
-    /**
-     * Logs user into the system
-     * 
-     * <p><b>200</b> - successful operation
-     * <p><b>400</b> - Invalid username/password supplied
-     * @param username The user name for login (optional)
-     * @param password The password for login in clear text (optional)
-     * @return ResponseEntity&lt;String&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<String> loginUserWithHttpInfo(String username, String password) throws RestClientException {
-        Object localVarPostBody = null;
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        localVarQueryParams.putAll(apiClient.parameterToMultiValueMap(null, "username", username));
-        localVarQueryParams.putAll(apiClient.parameterToMultiValueMap(null, "password", password));
-        
-
-        final String[] localVarAccepts = { 
-            "application/xml", "application/json"
-         };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<String> localReturnType = new ParameterizedTypeReference<String>() {};
-        return apiClient.invokeAPI("/user/login", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Logs out current logged in user session
-     * 
-     * <p><b>0</b> - successful operation
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void logoutUser() throws RestClientException {
-        logoutUserWithHttpInfo();
-    }
-
-    /**
-     * Logs out current logged in user session
-     * 
-     * <p><b>0</b> - successful operation
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> logoutUserWithHttpInfo() throws RestClientException {
-        Object localVarPostBody = null;
-        
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/user/logout", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
-    }
-    /**
-     * Update user
-     * This can only be done by the logged in user.
-     * <p><b>0</b> - successful operation
-     * @param username name that need to be deleted (required)
-     * @param user Update an existent user in the store (optional)
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public void updateUser(String username, User user) throws RestClientException {
-        updateUserWithHttpInfo(username, user);
-    }
-
-    /**
-     * Update user
-     * This can only be done by the logged in user.
-     * <p><b>0</b> - successful operation
-     * @param username name that need to be deleted (required)
-     * @param user Update an existent user in the store (optional)
-     * @return ResponseEntity&lt;Void&gt;
-     * @throws RestClientException if an error occurs while attempting to invoke the API
-     */
-    public ResponseEntity<Void> updateUserWithHttpInfo(String username, User user) throws RestClientException {
-        Object localVarPostBody = user;
-        
-        // verify the required parameter 'username' is set
-        if (username == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'username' when calling updateUser");
-        }
-        
-        // create path and map variables
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
-        uriVariables.put("username", username);
-
-        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
-        final HttpHeaders localVarHeaderParams = new HttpHeaders();
-        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
-
-        final String[] localVarAccepts = {  };
-        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json", "application/xml", "application/x-www-form-urlencoded"
-         };
-        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-        String[] localVarAuthNames = new String[] {  };
-
-        ParameterizedTypeReference<Void> localReturnType = new ParameterizedTypeReference<Void>() {};
-        return apiClient.invokeAPI("/user/{username}", HttpMethod.PUT, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<GetUserById200Response> localReturnType = new ParameterizedTypeReference<GetUserById200Response>() {};
+        return apiClient.invokeAPI("/users/{userId}", HttpMethod.PUT, uriVariables, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }
