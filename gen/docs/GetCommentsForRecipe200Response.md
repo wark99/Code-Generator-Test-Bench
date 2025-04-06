@@ -1,0 +1,23 @@
+
+
+# GetCommentsForRecipe200Response
+
+
+## Properties
+
+| Name | Type | Description | Notes |
+|------------ | ------------- | ------------- | -------------|
+|**status** | [**StatusEnum**](#StatusEnum) | Internal status code of the response. An HTTP 200 response with an internal 500 status code is an error response. Prioritize the inner status over the HTTP status. |  |
+|**data** | [**List&lt;Comment&gt;**](Comment.md) | An array of comments |  |
+
+
+
+## Enum: StatusEnum
+
+| Name | Value |
+|---- | -----|
+| _200 | &quot;200&quot; |
+| _201 | &quot;201&quot; |
+
+
+
