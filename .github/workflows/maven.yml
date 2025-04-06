@@ -25,14 +25,7 @@ jobs:
         java-version: '22'
         distribution: 'temurin'
         cache: maven
-    #- name: Clean up generated files
-    #  run: |
-    #    rm -rf ./gen/*
-    #- name: Build with Maven
-    #  run: |
-    #    chmod +x ./bin/override-generator-input.sh
-    #    ./bin/override-generator-input.sh ${{ github.event.inputs.generatorInputSpec }}
-    - name: Iterate over files in directory
+    - name: Generate code with OpenAPI Generator
       run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
@@ -48,10 +41,21 @@ jobs:
           git push origin $branch_name
           gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
         done
-    #- name: Commit and push changes
-    #  run: |
-    #    git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-    #    git config --global user.name "github-actions[bot]"
-    #    git add ./gen/*
-    #    git commit -m "Update generated files"
-    #    git push
+    - name: Extract code form AI generated output
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        chmod +x ./bin/code_extractor.sh
+        for AI_AGENT in ./src/main/resources/docs/generated/*; do
+          for file in $AI_AGENT/*.txt; do
+            rm -rf ./gen/*
+            branch_name=$AI_AGENT_$(basename $file .txt)
+            echo $branch_name
+            git checkout -b $branch_name
+            ./bin/code_extractor.sh $file
+            git add ./gen/*
+            git commit -m "Update generated files for $branch_name"
+            git push origin $branch_name
+            gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
+          done
+        done
