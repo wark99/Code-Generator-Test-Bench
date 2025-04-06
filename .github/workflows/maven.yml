@@ -31,11 +31,12 @@ jobs:
           git config --global user.name "github-actions[bot]"
           chmod +x ./bin/override-generator-input.sh
           for file in ./src/main/resources/docs/*.yaml; do
-            rm -rf ./gen
-            mkdir -p ./gen
             branch_name=$(basename $file .yaml)
             echo $branch_name
             git checkout -b $branch_name
+            rm -rf ./gen
+            git commit -m "Cleanup generated files"
+            git push origin $branch_name
             ./bin/override-generator-input.sh $branch_name.yaml
             git add ./
             git commit -m "Update generated files for $branch_name"
