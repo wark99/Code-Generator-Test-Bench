@@ -1,138 +1,538 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
-  contact:
-    email: apiteam@swagger.io
-  description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
-    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
-    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
-
-    _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
-
-    Some useful links:
-    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Swagger Petstore - OpenAPI 3.0
-  version: 1.0.11
+  description: This is the API specification for the Semantic Browse for Cuisines
+    application.
+  title: Semantic Cuisine
+  version: 1.0.3
 externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
+  description: Refer to the requirements
+  url: https://github.com/bounswe/bounswe2024group1/wiki/Requirements
 servers:
-- url: https://petstore3.swagger.io/api/v3
+- description: Development compose
+  url: http://localhost:5173/api/v1
+- description: Production-like compose
+  url: http://localhost:80/api/v1
+- description: Production
+  url: https://semantic-cuisine-wh4f2.ondigitalocean.app/api/v1
+- description: Staging
+  url: https://semantic-cuisine-staging-t3m52.ondigitalocean.app/api/v1
 tags:
-- description: Everything about your Pets
-  externalDocs:
-    description: Find out more
-    url: http://swagger.io
-  name: pet
-- description: Access to Petstore orders
-  externalDocs:
-    description: Find out more about our store
-    url: http://swagger.io
-  name: store
+- description: Operations about authentication
+  name: auth
+- description: Operations about dishes
+  name: dish
+- description: Operations about cuisines
+  name: cuisines
 - description: Operations about user
   name: user
+- description: Operations about recipes
+  name: recipe
 paths:
-  /pet:
+  /users/logout:
     post:
-      description: Add a new pet to the store
-      operationId: addPet
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Pet'
-        description: Create a new pet in the store
-        required: true
+      operationId: logout
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Pet'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: Successful operation
-        "405":
-          description: Invalid input
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-      summary: Add a new pet to the store
-      tags:
-      - pet
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-    put:
-      description: Update an existing pet by Id
-      operationId: updatePet
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Pet'
-        description: Update an existent pet in the store
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: Successful operation
+                $ref: '#/components/schemas/logout_200_response'
+          description: OK
         "400":
-          description: Invalid ID supplied
-        "404":
-          description: Pet not found
-        "405":
-          description: Validation exception
+          $ref: '#/components/responses/BadRequestResponse'
       security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-      summary: Update an existing pet
+      - auth_jwt: []
+      summary: User logout
       tags:
-      - pet
+      - auth
+      x-accepts: application/json
+  /users/verify-email:
+    post:
+      operationId: verifyEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/verifyEmail_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logout_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Verify user's email
+      tags:
+      - auth
       x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /pet/findByStatus:
+      x-accepts: application/json
+  /users/resend-verification-email:
+    post:
+      operationId: resendVerificationEmail
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logout_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      security:
+      - auth_jwt: []
+      summary: Resend verification email
+      tags:
+      - auth
+      x-accepts: application/json
+  /users/reset-password-request:
+    post:
+      description: A password reset link will be sent to the user's email if it exists.
+        The response must always be success (even if email does not exist). This is
+        to prevent email enumeration attacks.
+      operationId: resetPasswordRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resetPasswordRequest_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logout_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Request password reset
+      tags:
+      - auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/reset-password:
+    post:
+      operationId: resetPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resetPassword_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logout_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Reset password
+      tags:
+      - auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/signup:
+    post:
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        required: true
+      responses:
+        "201":
+          $ref: '#/components/responses/CreatedResponse'
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Register a new user
+      tags:
+      - auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/login:
+    post:
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/login_200_response'
+          description: OK
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+      summary: User login
+      tags:
+      - auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/{userId}:
     get:
-      description: Multiple status values can be provided with comma separated strings
-      operationId: findPetsByStatus
+      operationId: getUserById
       parameters:
-      - description: Status values that need to be considered for filter
-        explode: true
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserById_200_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - auth_jwt: []
+      summary: Get user profile
+      tags:
+      - user
+      x-accepts: application/json
+    put:
+      description: Can only update own profile
+      operationId: updateUserById
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserById_200_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - auth_jwt: []
+      summary: Update user profile
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/me:
+    get:
+      operationId: getMe
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserById_200_response'
+          description: OK
+        "403":
+          $ref: '#/components/responses/ForbiddenResponse'
+      security:
+      - auth_jwt: []
+      summary: Get own profile
+      tags:
+      - user
+      x-accepts: application/json
+  /users/{userId}/following:
+    get:
+      operationId: getUserFollowing
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserFollowing_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      security:
+      - auth_jwt: []
+      summary: Get users being followed
+      tags:
+      - user
+      x-accepts: application/json
+  /users/{userId}/followers:
+    get:
+      operationId: getUserFollowers
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserFollowing_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Get user's followers
+      tags:
+      - user
+      x-accepts: application/json
+  /users/{userId}/follow:
+    delete:
+      operationId: unfollowUser
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserById_200_response'
+          description: OK - returning new user profile
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - auth_jwt: []
+      summary: Unfollow a user
+      tags:
+      - user
+      x-accepts: application/json
+    post:
+      operationId: followUser
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserById_200_response'
+          description: OK - returning new user profile
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - auth_jwt: []
+      summary: Follow a user
+      tags:
+      - user
+      x-accepts: application/json
+  /search/users:
+    get:
+      operationId: searchUsers
+      parameters:
+      - explode: true
         in: query
-        name: status
+        name: q
         required: false
         schema:
-          default: available
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserFollowing_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Search for users
+      tags:
+      - user
+      x-accepts: application/json
+  /search/dishes:
+    get:
+      operationId: searchDishes
+      parameters:
+      - explode: true
+        in: query
+        name: q
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: cuisine
+        required: false
+        schema:
+          description: Comma separated list of cuisines
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: foodType
+        required: false
+        schema:
+          description: Comma separated list of food types
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchDishes_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Search for dishes
+      tags:
+      - dish
+      x-accepts: application/json
+  /dishes/{dishId}:
+    get:
+      operationId: getDishById
+      parameters:
+      - explode: false
+        in: path
+        name: dishId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getDishById_200_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get dish details
+      tags:
+      - dish
+      x-accepts: application/json
+  /cuisines/{cuisineId}:
+    get:
+      operationId: getCuisineById
+      parameters:
+      - explode: false
+        in: path
+        name: cuisineId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - explode: true
+        in: query
+        name: includeDishes
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getCuisineById_200_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get cuisine details
+      tags:
+      - cuisines
+      x-accepts: application/json
+  /cuisines/{cuisineId}/follow:
+    post:
+      operationId: followCuisine
+      parameters:
+      - explode: false
+        in: path
+        name: cuisineId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getCuisineById_200_response'
+          description: OK - returning cuisine details
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - auth_jwt: []
+      summary: Follow a cuisine
+      tags:
+      - cuisines
+      x-accepts: application/json
+  /recipes:
+    get:
+      operationId: getRecipesForEntity
+      parameters:
+      - explode: true
+        in: query
+        name: sort
+        required: false
+        schema:
           enum:
-          - available
-          - pending
-          - sold
+          - recent
+          - topRated
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: dishId
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: cuisineId
+        required: false
+        schema:
           type: string
         style: form
       responses:
@@ -140,303 +540,146 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Pet'
-                type: array
-            application/xml:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Pet'
-                type: array
-          description: successful operation
+                $ref: '#/components/schemas/getRecipesForEntity_200_response'
+          description: OK
         "400":
-          description: Invalid status value
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-      summary: Finds Pets by status
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: "Get recipes for dish, cuisine"
       tags:
-      - pet
-      x-accepts: "application/json,application/xml"
-  /pet/findByTags:
-    get:
-      description: "Multiple tags can be provided with comma separated strings. Use\
-        \ tag1, tag2, tag3 for testing."
-      operationId: findPetsByTags
-      parameters:
-      - description: Tags to filter by
-        explode: true
-        in: query
-        name: tags
-        required: false
-        schema:
-          items:
-            type: string
-          type: array
-        style: form
+      - recipe
+      x-accepts: application/json
+    post:
+      operationId: createRecipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRecipe'
+        required: true
       responses:
-        "200":
+        "201":
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Pet'
-                type: array
-            application/xml:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Pet'
-                type: array
-          description: successful operation
+                $ref: '#/components/schemas/createRecipe_201_response'
+          description: Created
         "400":
-          description: Invalid tag value
+          $ref: '#/components/responses/BadRequestResponse'
       security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-      summary: Finds Pets by tags
+      - auth_jwt: []
+      summary: Create a new recipe
       tags:
-      - pet
-      x-accepts: "application/json,application/xml"
-  /pet/{petId}:
+      - recipe
+      x-content-type: application/json
+      x-accepts: application/json
+  /recipes/{recipeId}:
     delete:
-      description: delete a pet
-      operationId: deletePet
+      operationId: deleteRecipeById
       parameters:
-      - description: ""
-        explode: false
-        in: header
-        name: api_key
-        required: false
-        schema:
-          type: string
-        style: simple
-      - description: Pet id to delete
-        explode: false
+      - explode: false
         in: path
-        name: petId
+        name: recipeId
         required: true
         schema:
-          format: int64
           type: integer
         style: simple
       responses:
-        "400":
-          description: Invalid pet value
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-      summary: Deletes a pet
-      tags:
-      - pet
-      x-accepts: application/json
-    get:
-      description: Returns a single pet
-      operationId: getPetById
-      parameters:
-      - description: ID of pet to return
-        explode: false
-        in: path
-        name: petId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: successful operation
-        "400":
-          description: Invalid ID supplied
+        "204":
+          $ref: '#/components/responses/OkResponse'
+          description: OK
+        "403":
+          $ref: '#/components/responses/ForbiddenResponse'
         "404":
-          description: Pet not found
+          $ref: '#/components/responses/NotFoundResponse'
       security:
-      - api_key: []
-      - petstore_auth:
-        - write:pets
-        - read:pets
-      summary: Find pet by ID
+      - auth_jwt: []
+      summary: Delete a recipe
       tags:
-      - pet
-      x-accepts: "application/json,application/xml"
-    post:
-      description: ""
-      operationId: updatePetWithForm
-      parameters:
-      - description: ID of pet that needs to be updated
-        explode: false
-        in: path
-        name: petId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      - description: Name of pet that needs to be updated
-        explode: true
-        in: query
-        name: name
-        required: false
-        schema:
-          type: string
-        style: form
-      - description: Status of pet that needs to be updated
-        explode: true
-        in: query
-        name: status
-        required: false
-        schema:
-          type: string
-        style: form
-      responses:
-        "405":
-          description: Invalid input
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-      summary: Updates a pet in the store with form data
-      tags:
-      - pet
+      - recipe
       x-accepts: application/json
-  /pet/{petId}/uploadImage:
-    post:
-      description: ""
-      operationId: uploadFile
-      parameters:
-      - description: ID of pet to update
-        explode: false
-        in: path
-        name: petId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      - description: Additional Metadata
-        explode: true
-        in: query
-        name: additionalMetadata
-        required: false
-        schema:
-          type: string
-        style: form
-      requestBody:
-        content:
-          application/octet-stream:
-            schema:
-              format: binary
-              type: string
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: successful operation
-      security:
-      - petstore_auth:
-        - write:pets
-        - read:pets
-      summary: uploads an image
-      tags:
-      - pet
-      x-content-type: application/octet-stream
-      x-accepts: application/json
-  /store/inventory:
     get:
-      description: Returns a map of status codes to quantities
-      operationId: getInventory
+      operationId: getRecipeById
+      parameters:
+      - explode: false
+        in: path
+        name: recipeId
+        required: true
+        schema:
+          type: integer
+        style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                additionalProperties:
-                  format: int32
-                  type: integer
-                type: object
-          description: successful operation
-      security:
-      - api_key: []
-      summary: Returns pet inventories by status
+                $ref: '#/components/schemas/createRecipe_201_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get recipe details
       tags:
-      - store
+      - recipe
       x-accepts: application/json
-  /store/order:
+  /recipes/{recipeId}/rating:
     post:
-      description: Place a new order in the store
-      operationId: placeOrder
+      operationId: rateRecipe
+      parameters:
+      - explode: false
+        in: path
+        name: recipeId
+        required: true
+        schema:
+          type: integer
+        style: simple
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Order'
+              $ref: '#/components/schemas/rateRecipe_request'
+        required: true
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
-          description: successful operation
-        "405":
-          description: Invalid input
-      summary: Place an order for a pet
+          $ref: '#/components/responses/OkResponse'
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      security:
+      - auth_jwt: []
+      summary: Rate a recipe
       tags:
-      - store
+      - recipe
       x-content-type: application/json
       x-accepts: application/json
-  /store/order/{orderId}:
+  /recipes/{recipeId}/bookmarks:
     delete:
-      description: For valid response try integer IDs with value < 1000. Anything
-        above 1000 or nonintegers will generate API errors
-      operationId: deleteOrder
+      operationId: unbookmarkRecipe
       parameters:
-      - description: ID of the order that needs to be deleted
-        explode: false
+      - explode: false
         in: path
-        name: orderId
+        name: recipeId
         required: true
         schema:
-          format: int64
           type: integer
         style: simple
       responses:
+        "204":
+          $ref: '#/components/responses/OkResponse'
+          description: OK
         "400":
-          description: Invalid ID supplied
-        "404":
-          description: Order not found
-      summary: Delete purchase order by ID
+          $ref: '#/components/responses/BadRequestResponse'
+      security:
+      - auth_jwt: []
+      summary: Unbookmark a recipe
       tags:
-      - store
+      - recipe
       x-accepts: application/json
     get:
-      description: For valid response try integer IDs with value <= 5 or > 10. Other
-        values will generate exceptions.
-      operationId: getOrderById
+      operationId: getBookmarkers
       parameters:
-      - description: ID of order that needs to be fetched
-        explode: false
+      - explode: false
         in: path
-        name: orderId
+        name: recipeId
         required: true
         schema:
-          format: int64
           type: integer
         style: simple
       responses:
@@ -444,468 +687,1351 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Order'
-          description: successful operation
-        "400":
-          description: Invalid ID supplied
+                $ref: '#/components/schemas/getUserFollowing_200_response'
+          description: OK
         "404":
-          description: Order not found
-      summary: Find purchase order by ID
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get users who bookmarked a recipe
       tags:
-      - store
-      x-accepts: "application/json,application/xml"
-  /user:
-    post:
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Created user object
-      responses:
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: successful operation
-      summary: Create user
-      tags:
-      - user
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /user/createWithList:
-    post:
-      description: Creates list of users with given input array
-      operationId: createUsersWithListInput
-      requestBody:
-        content:
-          application/json:
-            schema:
-              items:
-                $ref: '#/components/schemas/User'
-              type: array
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: Successful operation
-        default:
-          description: successful operation
-      summary: Creates list of users with given input array
-      tags:
-      - user
-      x-content-type: application/json
-      x-accepts: "application/json,application/xml"
-  /user/login:
-    get:
-      description: ""
-      operationId: loginUser
-      parameters:
-      - description: The user name for login
-        explode: true
-        in: query
-        name: username
-        required: false
-        schema:
-          type: string
-        style: form
-      - description: The password for login in clear text
-        explode: true
-        in: query
-        name: password
-        required: false
-        schema:
-          type: string
-        style: form
-      responses:
-        "200":
-          content:
-            application/xml:
-              schema:
-                type: string
-            application/json:
-              schema:
-                type: string
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              explode: false
-              schema:
-                format: int32
-                type: integer
-              style: simple
-            X-Expires-After:
-              description: date in UTC when token expires
-              explode: false
-              schema:
-                format: date-time
-                type: string
-              style: simple
-        "400":
-          description: Invalid username/password supplied
-      summary: Logs user into the system
-      tags:
-      - user
-      x-accepts: "application/json,application/xml"
-  /user/logout:
-    get:
-      description: ""
-      operationId: logoutUser
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-      summary: Logs out current logged in user session
-      tags:
-      - user
+      - recipe
       x-accepts: application/json
-  /user/{username}:
+    post:
+      operationId: bookmarkRecipe
+      parameters:
+      - explode: false
+        in: path
+        name: recipeId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          $ref: '#/components/responses/OkResponse'
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      security:
+      - auth_jwt: []
+      summary: Bookmark a recipe
+      tags:
+      - recipe
+      x-accepts: application/json
+  /recipes/{recipeId}/comments:
+    get:
+      operationId: getCommentsForRecipe
+      parameters:
+      - explode: false
+        in: path
+        name: recipeId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getCommentsForRecipe_200_response'
+          description: OK
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get comments for a recipe
+      tags:
+      - recipe
+      x-accepts: application/json
+    post:
+      operationId: addCommentToRecipe
+      parameters:
+      - explode: false
+        in: path
+        name: recipeId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addCommentToRecipe_request'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addCommentToRecipe_201_response'
+          description: Created
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      security:
+      - auth_jwt: []
+      summary: Add a comment to a recipe
+      tags:
+      - recipe
+      x-content-type: application/json
+      x-accepts: application/json
+  /recipes/{recipeId}/comments/{commentId}/upvote:
     delete:
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
+      operationId: removeUpvoteFromComment
       parameters:
-      - description: The name that needs to be deleted
-        explode: false
+      - explode: false
         in: path
-        name: username
+        name: recipeId
         required: true
         schema:
-          type: string
+          type: integer
         style: simple
-      responses:
-        "400":
-          description: Invalid username supplied
-        "404":
-          description: User not found
-      summary: Delete user
-      tags:
-      - user
-      x-accepts: application/json
-    get:
-      description: ""
-      operationId: getUserByName
-      parameters:
-      - description: 'The name that needs to be fetched. Use user1 for testing. '
-        explode: false
+      - explode: false
         in: path
-        name: username
+        name: commentId
         required: true
         schema:
-          type: string
+          type: integer
         style: simple
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: successful operation
+                $ref: '#/components/schemas/addCommentToRecipe_201_response'
+          description: OK - returns new comment after upvote removal
         "400":
-          description: Invalid username supplied
-        "404":
-          description: User not found
-      summary: Get user by user name
+          $ref: '#/components/responses/BadRequestResponse'
+      security:
+      - auth_jwt: []
+      summary: Remove upvote from a comment
       tags:
-      - user
-      x-accepts: "application/json,application/xml"
-    put:
-      description: This can only be done by the logged in user.
-      operationId: updateUser
+      - recipe
+      x-accepts: application/json
+    post:
+      operationId: upvoteComment
       parameters:
-      - description: name that need to be deleted
-        explode: false
+      - explode: false
         in: path
-        name: username
+        name: recipeId
         required: true
         schema:
-          type: string
+          type: integer
         style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Update an existent user in the store
+      - explode: false
+        in: path
+        name: commentId
+        required: true
+        schema:
+          type: integer
+        style: simple
       responses:
-        default:
-          description: successful operation
-      summary: Update user
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addCommentToRecipe_201_response'
+          description: OK - returns new comment after upvote
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      security:
+      - auth_jwt: []
+      summary: Upvote a comment
+      tags:
+      - recipe
+      x-accepts: application/json
+  /feed:
+    get:
+      operationId: getFeed
+      parameters:
+      - explode: true
+        in: query
+        name: type
+        required: true
+        schema:
+          enum:
+          - explore
+          - following
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getRecipesForEntity_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      security:
+      - auth_jwt: []
+      summary: Get user's feed
       tags:
       - user
-      x-content-type: application/json
       x-accepts: application/json
 components:
-  requestBodies:
-    Pet:
+  responses:
+    OkResponse:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Pet'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Pet'
-      description: Pet object that needs to be added to the store
-    UserArray:
+            $ref: '#/components/schemas/SuccessResponseObject'
+      description: OK
+    CreatedResponse:
       content:
         application/json:
           schema:
-            items:
-              $ref: '#/components/schemas/User'
-            type: array
-      description: List of user object
+            allOf:
+            - $ref: '#/components/schemas/SuccessResponseObject'
+            - properties:
+                status: {}
+      description: Created
+    BadRequestResponse:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/ErrorResponseObject'
+            - properties:
+                status: {}
+      description: Bad Request
+    UnauthorizedResponse:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/ErrorResponseObject'
+            - properties:
+                status: {}
+      description: Unauthorized
+    ForbiddenResponse:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/ErrorResponseObject'
+            - properties:
+                status: {}
+      description: Forbidden
+    NotFoundResponse:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/ErrorResponseObject'
+            - properties:
+                status: {}
+      description: Not Found
+    ConflictResponse:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/ErrorResponseObject'
+            - properties:
+                status: {}
+      description: Conflict
+    InternalServerErrorResponse:
+      content:
+        application/json:
+          schema:
+            properties:
+              status: {}
+              errors:
+                items:
+                  $ref: '#/components/schemas/ApiError'
+      description: Internal Server Error
   schemas:
-    Order:
+    UserRegistration:
       example:
-        petId: 198772
-        quantity: 7
-        id: 10
-        shipDate: 2000-01-23T04:56:07.000+00:00
-        complete: true
-        status: approved
+        firstName: firstName
+        lastName: lastName
+        country: country
+        password: password
+        bio: bio
+        email: email
+        username: username
       properties:
-        id:
-          example: 10
-          format: int64
-          type: integer
-        petId:
-          example: 198772
-          format: int64
-          type: integer
-        quantity:
-          example: 7
-          format: int32
-          type: integer
-        shipDate:
-          format: date-time
-          type: string
-        status:
-          description: Order Status
-          enum:
-          - placed
-          - approved
-          - delivered
-          example: approved
-          type: string
-        complete:
-          type: boolean
-      type: object
-      xml:
-        name: order
-    Customer:
-      properties:
-        id:
-          example: 100000
-          format: int64
-          type: integer
-        username:
-          example: fehguy
-          type: string
-        address:
-          items:
-            $ref: '#/components/schemas/Address'
-          type: array
-          xml:
-            name: addresses
-            wrapped: true
-      type: object
-      xml:
-        name: customer
-    Address:
-      properties:
-        street:
-          example: 437 Lytton
-          type: string
-        city:
-          example: Palo Alto
-          type: string
-        state:
-          example: CA
-          type: string
-        zip:
-          example: "94301"
-          type: string
-      type: object
-      xml:
-        name: address
-    Category:
-      example:
-        name: Dogs
-        id: 1
-      properties:
-        id:
-          example: 1
-          format: int64
-          type: integer
-        name:
-          example: Dogs
-          type: string
-      type: object
-      xml:
-        name: category
-    User:
-      example:
-        firstName: John
-        lastName: James
-        password: "12345"
-        userStatus: 1
-        phone: "12345"
-        id: 10
-        email: john@email.com
-        username: theUser
-      properties:
-        id:
-          example: 10
-          format: int64
-          type: integer
-        username:
-          example: theUser
-          type: string
-        firstName:
-          example: John
-          type: string
-        lastName:
-          example: James
-          type: string
         email:
-          example: john@email.com
+          type: string
+        username:
           type: string
         password:
-          example: "12345"
           type: string
-        phone:
-          example: "12345"
+        bio:
           type: string
-        userStatus:
-          description: User Status
-          example: 1
-          format: int32
-          type: integer
-      type: object
-      xml:
-        name: user
-    Tag:
-      example:
-        name: name
-        id: 0
-      properties:
-        id:
-          format: int64
-          type: integer
-        name:
+        firstName:
           type: string
-      type: object
-      xml:
-        name: tag
-    Pet:
-      example:
-        photoUrls:
-        - photoUrls
-        - photoUrls
-        name: doggie
-        id: 10
-        category:
-          name: Dogs
-          id: 1
-        tags:
-        - name: name
-          id: 0
-        - name: name
-          id: 0
-        status: available
-      properties:
-        id:
-          example: 10
-          format: int64
-          type: integer
-        name:
-          example: doggie
+        lastName:
           type: string
-        category:
-          $ref: '#/components/schemas/Category'
-        photoUrls:
-          items:
-            type: string
-            xml:
-              name: photoUrl
-          type: array
-          xml:
-            wrapped: true
-        tags:
-          items:
-            $ref: '#/components/schemas/Tag'
-          type: array
-          xml:
-            wrapped: true
-        status:
-          description: pet status in the store
-          enum:
-          - available
-          - pending
-          - sold
+        country:
           type: string
       required:
-      - name
-      - photoUrls
-      type: object
-      xml:
-        name: pet
-    ApiResponse:
+      - country
+      - email
+      - firstName
+      - lastName
+      - password
+      - username
+    UserLogin:
       example:
-        code: 0
-        type: type
-        message: message
+        password: password
+        usernameOrEmail: usernameOrEmail
       properties:
-        code:
-          format: int32
-          type: integer
-        type:
+        usernameOrEmail:
           type: string
+        password:
+          type: string
+      required:
+      - password
+      - usernameOrEmail
+    AuthToken:
+      example:
+        token: token
+      properties:
+        token:
+          type: string
+    UserProfile:
+      example:
+        recipes:
+        - images:
+          - https://openapi-generator.tech
+          - https://openapi-generator.tech
+          dish:
+            name: name
+            id: id
+            countries: countries
+          author:
+            profilePicture: https://openapi-generator.tech
+            name: name
+            recipeCount: 1
+            id: 4
+            followersCount: 7
+            selfFollowing: true
+            username: username
+          name: name
+          cookTime: 7
+          selfBookmarked: true
+          description: description
+          ratingsCount: 3
+          avgRating: 9.301444
+          id: 2
+          selfRating: 2
+        - images:
+          - https://openapi-generator.tech
+          - https://openapi-generator.tech
+          dish:
+            name: name
+            id: id
+            countries: countries
+          author:
+            profilePicture: https://openapi-generator.tech
+            name: name
+            recipeCount: 1
+            id: 4
+            followersCount: 7
+            selfFollowing: true
+            username: username
+          name: name
+          cookTime: 7
+          selfBookmarked: true
+          description: description
+          ratingsCount: 3
+          avgRating: 9.301444
+          id: 2
+          selfRating: 2
+        gender: male
+        bio: bio
+        selfFollowing: true
+        followingCount: 5
+        diets:
+        - diets
+        - diets
+        bookmarks:
+        - images:
+          - https://openapi-generator.tech
+          - https://openapi-generator.tech
+          dish:
+            name: name
+            id: id
+            countries: countries
+          author:
+            profilePicture: https://openapi-generator.tech
+            name: name
+            recipeCount: 1
+            id: 4
+            followersCount: 7
+            selfFollowing: true
+            username: username
+          name: name
+          cookTime: 7
+          selfBookmarked: true
+          description: description
+          ratingsCount: 3
+          avgRating: 9.301444
+          id: 2
+          selfRating: 2
+        - images:
+          - https://openapi-generator.tech
+          - https://openapi-generator.tech
+          dish:
+            name: name
+            id: id
+            countries: countries
+          author:
+            profilePicture: https://openapi-generator.tech
+            name: name
+            recipeCount: 1
+            id: 4
+            followersCount: 7
+            selfFollowing: true
+            username: username
+          name: name
+          cookTime: 7
+          selfBookmarked: true
+          description: description
+          ratingsCount: 3
+          avgRating: 9.301444
+          id: 2
+          selfRating: 2
+        profilePicture: https://openapi-generator.tech
+        name: name
+        recipeCount: 5
+        id: 6
+        followersCount: 1
+        username: username
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name:
+          type: string
+        bio:
+          type: string
+        followersCount:
+          type: integer
+        followingCount:
+          type: integer
+        gender:
+          enum:
+          - male
+          - female
+          - unknown
+          type: string
+        profilePicture:
+          format: uri
+          type: string
+        diets:
+          items:
+            type: string
+          type: array
+        recipeCount:
+          type: integer
+        selfFollowing:
+          type: boolean
+        bookmarks:
+          description: Only available when querying the current user's profile.
+          items:
+            $ref: '#/components/schemas/RecipeSummary'
+          type: array
+        recipes:
+          items:
+            $ref: '#/components/schemas/RecipeSummary'
+          type: array
+      required:
+      - bio
+      - followersCount
+      - id
+      - name
+      - profilePicture
+      - username
+    UserSummary:
+      example:
+        profilePicture: https://openapi-generator.tech
+        name: name
+        recipeCount: 1
+        id: 4
+        followersCount: 7
+        selfFollowing: true
+        username: username
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name:
+          type: string
+        followersCount:
+          type: integer
+        profilePicture:
+          format: uri
+          type: string
+        selfFollowing:
+          type: boolean
+        recipeCount:
+          type: integer
+      required:
+      - followersCount
+      - id
+      - name
+      - profilePicture
+      - recipeCount
+      - username
+    DishDetails:
+      example:
+        image: https://openapi-generator.tech
+        recipes:
+        - images:
+          - https://openapi-generator.tech
+          - https://openapi-generator.tech
+          dish:
+            name: name
+            id: id
+            countries: countries
+          author:
+            profilePicture: https://openapi-generator.tech
+            name: name
+            recipeCount: 1
+            id: 4
+            followersCount: 7
+            selfFollowing: true
+            username: username
+          name: name
+          cookTime: 7
+          selfBookmarked: true
+          description: description
+          ratingsCount: 3
+          avgRating: 9.301444
+          id: 2
+          selfRating: 2
+        - images:
+          - https://openapi-generator.tech
+          - https://openapi-generator.tech
+          dish:
+            name: name
+            id: id
+            countries: countries
+          author:
+            profilePicture: https://openapi-generator.tech
+            name: name
+            recipeCount: 1
+            id: 4
+            followersCount: 7
+            selfFollowing: true
+            username: username
+          name: name
+          cookTime: 7
+          selfBookmarked: true
+          description: description
+          ratingsCount: 3
+          avgRating: 9.301444
+          id: 2
+          selfRating: 2
+        name: name
+        description: description
+        ingredients: ingredients
+        cuisine:
+          name: name
+          id: 6
+        id: id
+        countries: countries
+        foodTypes: foodTypes
+        cuisines: cuisines
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          format: uri
+          type: string
+        countries:
+          type: string
+        cuisines:
+          type: string
+        ingredients:
+          type: string
+        foodTypes:
+          type: string
+        cuisine:
+          $ref: '#/components/schemas/CuisineSummary'
+        recipes:
+          description: Only returned when directly querying a dish.
+          items:
+            $ref: '#/components/schemas/RecipeSummary'
+          type: array
+      required:
+      - countries
+      - description
+      - id
+      - image
+      - name
+    CuisineDetails:
+      example:
+        image: https://openapi-generator.tech
+        isSelfFollowing: true
+        name: name
+        description: description
+        dishes:
+        - name: name
+          id: id
+          countries: countries
+        - name: name
+          id: id
+          countries: countries
+        id: id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          format: uri
+          type: string
+        isSelfFollowing:
+          type: boolean
+        dishes:
+          items:
+            $ref: '#/components/schemas/DishSummary'
+          type: array
+      required:
+      - description
+      - id
+      - image
+      - name
+    RecipeSummary:
+      example:
+        images:
+        - https://openapi-generator.tech
+        - https://openapi-generator.tech
+        dish:
+          name: name
+          id: id
+          countries: countries
+        author:
+          profilePicture: https://openapi-generator.tech
+          name: name
+          recipeCount: 1
+          id: 4
+          followersCount: 7
+          selfFollowing: true
+          username: username
+        name: name
+        cookTime: 7
+        selfBookmarked: true
+        description: description
+        ratingsCount: 3
+        avgRating: 9.301444
+        id: 2
+        selfRating: 2
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        cookTime:
+          description: Cook time in minutes
+          type: integer
+        images:
+          items:
+            format: uri
+            type: string
+          type: array
+        selfBookmarked:
+          type: boolean
+        avgRating:
+          format: float
+          type: number
+        ratingsCount:
+          type: integer
+        selfRating:
+          type: integer
+        dish:
+          $ref: '#/components/schemas/DishSummary'
+        author:
+          $ref: '#/components/schemas/UserSummary'
+      required:
+      - author
+      - cookTime
+      - description
+      - dish
+      - id
+      - images
+      - name
+      - ratingsCount
+    RecipeDetails:
+      example:
+        instructions:
+        - instructions
+        - instructions
+        images:
+        - https://openapi-generator.tech
+        - https://openapi-generator.tech
+        author:
+          profilePicture: https://openapi-generator.tech
+          name: name
+          recipeCount: 1
+          id: 4
+          followersCount: 7
+          selfFollowing: true
+          username: username
+        cookTime: 1.4658129805029452
+        selfBookmarked: true
+        description: description
+        cuisine:
+          name: name
+          id: 6
+        allergens:
+        - allergens
+        - allergens
+        dish:
+          name: name
+          id: id
+          countries: countries
+        name: name
+        ingredients:
+        - amount: amount
+          name: name
+        - amount: amount
+          name: name
+        ratingsCount: 2
+        avgRating: 5.637377
+        id: 6
+        selfRating: 7
+        servingSize: 5
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        instructions:
+          items:
+            type: string
+          type: array
+        ingredients:
+          items:
+            $ref: '#/components/schemas/RecipeDetails_ingredients_inner'
+          type: array
+        images:
+          items:
+            format: uri
+            type: string
+          type: array
+        cookTime:
+          type: number
+        servingSize:
+          type: integer
+        allergens:
+          items:
+            type: string
+          type: array
+        cuisine:
+          $ref: '#/components/schemas/CuisineSummary'
+        dish:
+          $ref: '#/components/schemas/DishSummary'
+        selfBookmarked:
+          type: boolean
+        avgRating:
+          format: float
+          type: number
+        ratingsCount:
+          type: integer
+        selfRating:
+          description: "The current user's rating for this recipe, if any."
+          type: integer
+        author:
+          $ref: '#/components/schemas/UserSummary'
+      required:
+      - allergens
+      - author
+      - cookTime
+      - description
+      - dish
+      - id
+      - images
+      - ingredients
+      - instructions
+      - name
+      - ratingsCount
+      - servingSize
+    NewRecipe:
+      example:
+        instructions:
+        - instructions
+        - instructions
+        images:
+        - ""
+        - ""
+        dishId: dishId
+        name: name
+        cookTime: 6.027456183070403
+        description: description
+        ingredients:
+        - ingredients
+        - ingredients
+        servingSize: 1
+        prepTime: 0.8008281904610115
+        allergens:
+        - allergens
+        - allergens
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        instructions:
+          items:
+            type: string
+          type: array
+        ingredients:
+          items:
+            type: string
+          type: array
+        images:
+          items:
+            format: binary
+            type: string
+          type: array
+        prepTime:
+          type: number
+        cookTime:
+          type: number
+        servingSize:
+          type: integer
+        allergens:
+          items:
+            type: string
+          type: array
+        dishId:
+          type: string
+      required:
+      - cookTime
+      - ingredients
+      - instructions
+      - name
+      - prepTime
+      - servingSize
+    CuisineSummary:
+      example:
+        name: name
+        id: 6
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+      - id
+      - name
+    DishSummary:
+      example:
+        name: name
+        id: id
+        countries: countries
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        countries:
+          type: string
+      required:
+      - id
+      - name
+    Comment:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        author:
+          profilePicture: https://openapi-generator.tech
+          name: name
+          recipeCount: 1
+          id: 4
+          followersCount: 7
+          selfFollowing: true
+          username: username
+        id: 6
+        recipeId: 1
+        content: content
+        upvoteCount: 5
+        hasSelfUpvoted: true
+      properties:
+        id:
+          type: integer
+        author:
+          $ref: '#/components/schemas/UserSummary'
+        recipeId:
+          type: integer
+        upvoteCount:
+          type: integer
+        content:
+          type: string
+        hasSelfUpvoted:
+          type: boolean
+        createdAt:
+          format: date-time
+          type: string
+      required:
+      - author
+      - content
+      - createdAt
+      - hasSelfUpvoted
+      - id
+      - recipeId
+      - upvoteCount
+    CommentArray:
+      description: An array of comments
+      items:
+        $ref: '#/components/schemas/Comment'
+      type: array
+    DishArray:
+      description: An array of dishes
+      items:
+        $ref: '#/components/schemas/DishDetails'
+      type: array
+    RecipeArray:
+      description: An array of recipes
+      items:
+        $ref: '#/components/schemas/RecipeDetails'
+      type: array
+    UserArray:
+      description: An array of users
+      items:
+        $ref: '#/components/schemas/UserSummary'
+      type: array
+    ApiResponse:
+      oneOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - $ref: '#/components/schemas/ErrorResponseObject'
+    ApiError:
+      properties:
         message:
           type: string
-      type: object
-      xml:
-        name: '##default'
+        field:
+          description: "If empty, indicates an error not related to any field."
+          type: string
+      required:
+      - message
+    SuccessResponseObject:
+      description: OK
+      properties:
+        status:
+          description: Internal status code of the response. An HTTP 200 response
+            with an internal 500 status code is an error response. Prioritize the
+            inner status over the HTTP status.
+          enum:
+          - 200
+          - 201
+          type: integer
+        data:
+          $ref: '#/components/schemas/SuccessResponseObject_data'
+      required:
+      - data
+      - status
+    ErrorResponseObject:
+      description: Response with errors
+      properties:
+        status:
+          description: Internal status code of the response. An HTTP 200 response
+            with an internal 500 status code is an error response. Prioritize the
+            inner status over the HTTP status.
+          enum:
+          - 400
+          - 401
+          - 403
+          - 404
+          - 409
+          - 500
+          type: number
+        errors:
+          items:
+            $ref: '#/components/schemas/ApiError'
+          type: array
+      required:
+      - errors
+      - status
+    logout_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            type: object
+      example:
+        data: "{}"
+        status: 0
+    verifyEmail_request:
+      properties:
+        token:
+          type: string
+      required:
+      - token
+    resetPasswordRequest_request:
+      properties:
+        email:
+          type: string
+      required:
+      - email
+    resetPassword_request:
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+      required:
+      - newPassword
+      - token
+    login_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/AuthToken'
+      example:
+        data:
+          token: token
+        status: 0
+    getUserById_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/UserProfile'
+      example:
+        data:
+          recipes:
+          - images:
+            - https://openapi-generator.tech
+            - https://openapi-generator.tech
+            dish:
+              name: name
+              id: id
+              countries: countries
+            author:
+              profilePicture: https://openapi-generator.tech
+              name: name
+              recipeCount: 1
+              id: 4
+              followersCount: 7
+              selfFollowing: true
+              username: username
+            name: name
+            cookTime: 7
+            selfBookmarked: true
+            description: description
+            ratingsCount: 3
+            avgRating: 9.301444
+            id: 2
+            selfRating: 2
+          - images:
+            - https://openapi-generator.tech
+            - https://openapi-generator.tech
+            dish:
+              name: name
+              id: id
+              countries: countries
+            author:
+              profilePicture: https://openapi-generator.tech
+              name: name
+              recipeCount: 1
+              id: 4
+              followersCount: 7
+              selfFollowing: true
+              username: username
+            name: name
+            cookTime: 7
+            selfBookmarked: true
+            description: description
+            ratingsCount: 3
+            avgRating: 9.301444
+            id: 2
+            selfRating: 2
+          gender: male
+          bio: bio
+          selfFollowing: true
+          followingCount: 5
+          diets:
+          - diets
+          - diets
+          bookmarks:
+          - images:
+            - https://openapi-generator.tech
+            - https://openapi-generator.tech
+            dish:
+              name: name
+              id: id
+              countries: countries
+            author:
+              profilePicture: https://openapi-generator.tech
+              name: name
+              recipeCount: 1
+              id: 4
+              followersCount: 7
+              selfFollowing: true
+              username: username
+            name: name
+            cookTime: 7
+            selfBookmarked: true
+            description: description
+            ratingsCount: 3
+            avgRating: 9.301444
+            id: 2
+            selfRating: 2
+          - images:
+            - https://openapi-generator.tech
+            - https://openapi-generator.tech
+            dish:
+              name: name
+              id: id
+              countries: countries
+            author:
+              profilePicture: https://openapi-generator.tech
+              name: name
+              recipeCount: 1
+              id: 4
+              followersCount: 7
+              selfFollowing: true
+              username: username
+            name: name
+            cookTime: 7
+            selfBookmarked: true
+            description: description
+            ratingsCount: 3
+            avgRating: 9.301444
+            id: 2
+            selfRating: 2
+          profilePicture: https://openapi-generator.tech
+          name: name
+          recipeCount: 5
+          id: 6
+          followersCount: 1
+          username: username
+        status: 0
+    getUserFollowing_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/UserArray'
+      example:
+        data: null
+        status: 0
+    searchDishes_200_response:
+      allOf:
+      - properties:
+          data:
+            $ref: '#/components/schemas/DishArray'
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      example:
+        data: "{}"
+        status: 0
+    getDishById_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/DishDetails'
+      example:
+        data:
+          image: https://openapi-generator.tech
+          recipes:
+          - images:
+            - https://openapi-generator.tech
+            - https://openapi-generator.tech
+            dish:
+              name: name
+              id: id
+              countries: countries
+            author:
+              profilePicture: https://openapi-generator.tech
+              name: name
+              recipeCount: 1
+              id: 4
+              followersCount: 7
+              selfFollowing: true
+              username: username
+            name: name
+            cookTime: 7
+            selfBookmarked: true
+            description: description
+            ratingsCount: 3
+            avgRating: 9.301444
+            id: 2
+            selfRating: 2
+          - images:
+            - https://openapi-generator.tech
+            - https://openapi-generator.tech
+            dish:
+              name: name
+              id: id
+              countries: countries
+            author:
+              profilePicture: https://openapi-generator.tech
+              name: name
+              recipeCount: 1
+              id: 4
+              followersCount: 7
+              selfFollowing: true
+              username: username
+            name: name
+            cookTime: 7
+            selfBookmarked: true
+            description: description
+            ratingsCount: 3
+            avgRating: 9.301444
+            id: 2
+            selfRating: 2
+          name: name
+          description: description
+          ingredients: ingredients
+          cuisine:
+            name: name
+            id: 6
+          id: id
+          countries: countries
+          foodTypes: foodTypes
+          cuisines: cuisines
+        status: 0
+    getCuisineById_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/CuisineDetails'
+      example:
+        data:
+          image: https://openapi-generator.tech
+          isSelfFollowing: true
+          name: name
+          description: description
+          dishes:
+          - name: name
+            id: id
+            countries: countries
+          - name: name
+            id: id
+            countries: countries
+          id: id
+        status: 0
+    getRecipesForEntity_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/RecipeArray'
+      example:
+        data: null
+        status: 0
+    createRecipe_201_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/RecipeDetails'
+      example:
+        data:
+          instructions:
+          - instructions
+          - instructions
+          images:
+          - https://openapi-generator.tech
+          - https://openapi-generator.tech
+          author:
+            profilePicture: https://openapi-generator.tech
+            name: name
+            recipeCount: 1
+            id: 4
+            followersCount: 7
+            selfFollowing: true
+            username: username
+          cookTime: 1.4658129805029452
+          selfBookmarked: true
+          description: description
+          cuisine:
+            name: name
+            id: 6
+          allergens:
+          - allergens
+          - allergens
+          dish:
+            name: name
+            id: id
+            countries: countries
+          name: name
+          ingredients:
+          - amount: amount
+            name: name
+          - amount: amount
+            name: name
+          ratingsCount: 2
+          avgRating: 5.637377
+          id: 6
+          selfRating: 7
+          servingSize: 5
+        status: 0
+    rateRecipe_request:
+      properties:
+        rating:
+          maximum: 5
+          minimum: 1
+          type: integer
+    getCommentsForRecipe_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/CommentArray'
+      example:
+        data: null
+        status: 0
+    addCommentToRecipe_request:
+      properties:
+        comment:
+          type: string
+    addCommentToRecipe_201_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/Comment'
+      example:
+        data:
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          author:
+            profilePicture: https://openapi-generator.tech
+            name: name
+            recipeCount: 1
+            id: 4
+            followersCount: 7
+            selfFollowing: true
+            username: username
+          id: 6
+          recipeId: 1
+          content: content
+          upvoteCount: 5
+          hasSelfUpvoted: true
+        status: 0
+    RecipeDetails_ingredients_inner:
+      example:
+        amount: amount
+        name: name
+      properties:
+        name:
+          type: string
+        amount:
+          type: string
+    SuccessResponseObject_data:
+      oneOf:
+      - type: object
+      - {}
   securitySchemes:
-    petstore_auth:
-      flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
-          scopes:
-            write:pets: modify pets in your account
-            read:pets: read your pets
-      type: oauth2
-    api_key:
-      in: header
-      name: api_key
-      type: apiKey
+    auth_jwt:
+      bearerFormat: JWT
+      description: A bearer token is used to authenticate a user.
+      scheme: bearer
+      type: http
 
