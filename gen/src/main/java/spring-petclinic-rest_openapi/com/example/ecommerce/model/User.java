@@ -1,11 +1,12 @@
-import java.util.Date;
+// User.java
 
-public class UserModel {
+package com.example.ecommerce.model;
+
+public class User {
 
     private Long id;
     private String name;
     private String email;
-    private Date createdDate;
 
     // Getters and setters
     public Long getId() {
@@ -30,14 +31,6 @@ public class UserModel {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
     }
 }
 
