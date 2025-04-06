@@ -5,15 +5,17 @@ public class User {
     private String name;
     private String email;
 
-    // Constructors, Getters, and Setters
+    // Default constructor
     public User() {}
 
+    // Parameterized constructor
     public User(Long id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;
     }
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }

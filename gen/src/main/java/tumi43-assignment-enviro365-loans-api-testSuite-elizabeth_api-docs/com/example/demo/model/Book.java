@@ -1,20 +1,23 @@
 package com.example.demo.model;
 
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class Book {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String title;
     private String author;
-    private int yearPublished;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date publicationDate;
 
     // Getters and Setters
 
@@ -42,12 +45,12 @@ public class Book {
         this.author = author;
     }
 
-    public int getYearPublished() {
-        return yearPublished;
+    public Date getPublicationDate() {
+        return publicationDate;
     }
 
-    public void setYearPublished(int yearPublished) {
-        this.yearPublished = yearPublished;
+    public void setPublicationDate(Date publicationDate) {
+        this.publicationDate = publicationDate;
     }
 }
 
