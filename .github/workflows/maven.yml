@@ -44,22 +44,24 @@ jobs:
             git push origin $branch_name
             gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
           done
-#    - name: Extract code form AI generated output
-#      run: |
-#        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-#        git config --global user.name "github-actions[bot]"
-#        chmod +x ./bin/code_extractor.sh
-#        for AI_AGENT in ./src/main/resources/docs/generated/*; do
-#          for file in $AI_AGENT/*.txt; do
-#            rm -rf ./gen
-#            mkdir -p ./gen
-#            branch_name="$(basename ${AI_AGENT})_$(basename $file .txt)"
-#            echo $branch_name
-#            git checkout -b $branch_name
-#            ./bin/code_extractor.sh $file
-#            git add ./
-#            git commit -m "Update generated files for $branch_name"
-#            git push origin $branch_name
-#            gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
-#          done
-#        done
+      - name: Extract code form AI generated output
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          chmod +x ./bin/code_extractor.sh
+          for AI_AGENT in ./src/main/resources/docs/generated/*; do
+            for file in $AI_AGENT/*.txt; do
+              branch_name="$(basename ${AI_AGENT})_$(basename $file .txt)"
+              echo $branch_name
+              git checkout -b $branch_name
+              git add ./
+              rm -rf ./gen
+              git commit -a -m "Cleanup generated files"
+              git push origin $branch_name
+              ./bin/code_extractor.sh $file
+              git add ./
+              git commit -a -m "Update generated files for $branch_name"
+              git push origin $branch_name
+              gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
+            done
+          done
