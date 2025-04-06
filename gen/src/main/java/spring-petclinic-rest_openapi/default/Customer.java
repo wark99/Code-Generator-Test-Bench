@@ -1,18 +1,14 @@
-// User.java
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.List;
-
-@Entity
-public class User {
-
-    @Id
+public class Customer {
     private Long id;
     private String name;
-    private String email;
+
+    public Customer(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -27,14 +23,6 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }
 
