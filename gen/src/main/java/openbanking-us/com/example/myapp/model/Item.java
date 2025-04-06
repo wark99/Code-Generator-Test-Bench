@@ -1,18 +1,18 @@
-package com.example.demo.model;
+package com.example.myapp.model;
 
-public class User {
+public class Item {
     private Long id;
     private String name;
-    private String email;
+    private double price;
 
-    // Default constructor
-    public User() {}
+    // Default Constructor
+    public Item() {}
 
-    // Parameterized constructor
-    public User(Long id, String name, String email) {
+    // Parameterized Constructor
+    public Item(Long id, String name, double price) {
         this.id = id;
         this.name = name;
-        this.email = email;
+        this.price = price;
     }
 
     // Getters and Setters
@@ -32,12 +32,12 @@ public class User {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public double getPrice() {
+        return price;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPrice(double price) {
+        this.price = price;
     }
 }
 

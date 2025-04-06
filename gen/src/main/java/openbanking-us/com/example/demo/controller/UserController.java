@@ -12,32 +12,25 @@ public class UserController {
 
     private List<User> users = new ArrayList<>();
 
-    // GET all users
     @GetMapping
     public List<User> getAllUsers() {
         return users;
     }
 
-    // GET a single user by ID
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        for (User user : users) {
-            if (user.getId().equals(id)) {
-                return user;
-            }
-        }
-        throw new RuntimeException("User not found");
-    }
-
-    // POST a new user
     @PostMapping
     public User createUser(@RequestBody User user) {
-        user.setId((long) users.size() + 1);
         users.add(user);
         return user;
     }
 
-    // PUT update an existing user
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return users.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         for (User user : users) {
@@ -47,10 +40,9 @@ public class UserController {
                 return user;
             }
         }
-        throw new RuntimeException("User not found");
+        return null;
     }
 
-    // DELETE a user
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         users.removeIf(user -> user.getId().equals(id));
