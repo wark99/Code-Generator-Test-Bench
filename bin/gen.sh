@@ -1,12 +1,10 @@
 #!/bin/bash
 
 MODEL="qwen2.5-coder"
-PROMPT="You are a professional Java engineer who writes/generates professional java code.
-Be explicit with the code.
-Don't explain it, just give the code.
-Generate java controllers and models based on the following swagger YAML:"
+PROMPT="You are a professional Java engineer who writes professional and explicit java code without any explanation.
+Generate java controllers, models and test based on the following swagger YAML:"
 
-PROMPT2="Continue generating java controllers and models."
+PROMPT2="Continue generating java controllers, models and test"
 OLLAMA_URL="http://localhost:11434/api/generate"
 WORK_DIR="src/main/resources/docs"
 TARGET_DIR="$WORK_DIR/generated/$MODEL"
