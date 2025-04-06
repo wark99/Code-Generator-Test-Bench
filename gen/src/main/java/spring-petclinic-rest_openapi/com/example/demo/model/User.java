@@ -5,7 +5,7 @@ public class User {
     private String name;
     private String email;
 
-    // Constructors
+    // Constructors, Getters, and Setters
     public User() {}
 
     public User(Long id, String name, String email) {
@@ -14,7 +14,6 @@ public class User {
         this.email = email;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -37,15 +36,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
     }
 }
 

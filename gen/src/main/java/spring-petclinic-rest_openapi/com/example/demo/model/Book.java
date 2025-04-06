@@ -1,22 +1,23 @@
 package com.example.demo.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     private String title;
     private String author;
     private int yearPublished;
 
-    // Constructors
-    public Book() {}
-
-    public Book(Long id, String title, String author, int yearPublished) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.yearPublished = yearPublished;
-    }
-
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -47,16 +48,6 @@ public class Book {
 
     public void setYearPublished(int yearPublished) {
         this.yearPublished = yearPublished;
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", yearPublished=" + yearPublished +
-                '}';
     }
 }
 

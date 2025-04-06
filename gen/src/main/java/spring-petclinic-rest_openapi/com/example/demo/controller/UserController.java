@@ -25,19 +25,20 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
-        return users.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        for (User user : users) {
+            if (user.getId().equals(id)) {
+                return user;
+            }
+        }
+        return null;
     }
 
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        for (User user : users) {
-            if (user.getId().equals(id)) {
-                user.setName(userDetails.getName());
-                user.setEmail(userDetails.getEmail());
-                return user;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId().equals(id)) {
+                users.set(i, userDetails);
+                return userDetails;
             }
         }
         return null;
