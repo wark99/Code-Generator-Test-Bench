@@ -1,20 +1,20 @@
-# UserApi
+# LoansApi
 
-All URIs are relative to *http://localhost:9966/petclinic/api*
+All URIs are relative to *http://localhost:8080*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**addUser**](UserApi.md#addUser) | **POST** /users | Create a user |
+| [**applyForALoanUsingPOST**](LoansApi.md#applyForALoanUsingPOST) | **POST** /loans | Apply for a loan |
 
 
 
-## addUser
+## applyForALoanUsingPOST
 
-> User addUser(user)
+> LoanResponse applyForALoanUsingPOST(loanRequest)
 
-Create a user
+Apply for a loan
 
-Creates a user.
+One loan application request supported in the body.
 
 ### Example
 
@@ -24,20 +24,20 @@ import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
 import org.openapitools.client.models.*;
-import org.openapitools.client.api.UserApi;
+import org.openapitools.client.api.LoansApi;
 
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost:9966/petclinic/api");
+        defaultClient.setBasePath("http://localhost:8080");
 
-        UserApi apiInstance = new UserApi(defaultClient);
-        User user = new User(); // User | The user
+        LoansApi apiInstance = new LoansApi(defaultClient);
+        LoanRequest loanRequest = new LoanRequest(); // LoanRequest | loanRequest
         try {
-            User result = apiInstance.addUser(user);
+            LoanResponse result = apiInstance.applyForALoanUsingPOST(loanRequest);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling UserApi#addUser");
+            System.err.println("Exception when calling LoansApi#applyForALoanUsingPOST");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
@@ -52,11 +52,11 @@ public class Example {
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **user** | [**User**](User.md)| The user | |
+| **loanRequest** | [**LoanRequest**](LoanRequest.md)| loanRequest | |
 
 ### Return type
 
-[**User**](User.md)
+[**LoanResponse**](LoanResponse.md)
 
 ### Authorization
 
@@ -71,9 +71,5 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | User created successfully. |  * ETag - An ID for this version of the response. <br>  |
-| **304** | Not modified. |  * ETag - An ID for this version of the response. <br>  |
-| **400** | Bad request. |  -  |
-| **404** | User not found. |  -  |
-| **500** | Server error. |  -  |
+| **200** | OK |  -  |
 
