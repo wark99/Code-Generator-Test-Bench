@@ -1,31 +1,21 @@
 package com.example.demo.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-@Entity
 public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private String email;
 
-    // Constructors, getters, and setters
+    // Default Constructor
+    public User() {}
 
-    public User() {
-    }
-
-    public User(String name, String email) {
+    // Parameterized Constructor
+    public User(Long id, String name, String email) {
+        this.id = id;
         this.name = name;
         this.email = email;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -48,6 +38,15 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
 
