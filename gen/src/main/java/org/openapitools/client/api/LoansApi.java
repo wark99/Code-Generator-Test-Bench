@@ -2,7 +2,8 @@ package org.openapitools.client.api;
 
 import org.openapitools.client.ApiClient;
 
-import org.openapitools.client.model.RestError;
+import org.openapitools.client.model.LoanRequest;
+import org.openapitools.client.model.LoanResponse;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,15 +26,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-04-06T12:47:32.593091780Z[Etc/UTC]", comments = "Generator version: 7.4.0")
-public class FailingApi {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-04-06T12:47:42.970745509Z[Etc/UTC]", comments = "Generator version: 7.4.0")
+public class LoansApi {
     private ApiClient apiClient;
 
-    public FailingApi() {
+    public LoansApi() {
         this(new ApiClient());
     }
 
-    public FailingApi(ApiClient apiClient) {
+    public LoansApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -46,29 +47,32 @@ public class FailingApi {
     }
 
     /**
-     * Always fails
-     * Produces sample error response.
-     * <p><b>200</b> - Never returned.
-     * <p><b>304</b> - Not modified.
-     * <p><b>400</b> - Bad request.
-     * @return String
+     * Apply for a loan
+     * One loan application request supported in the body.
+     * <p><b>200</b> - OK
+     * @param loanRequest loanRequest (required)
+     * @return LoanResponse
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public String failingRequest() throws RestClientException {
-        return failingRequestWithHttpInfo().getBody();
+    public LoanResponse applyForALoanUsingPOST(LoanRequest loanRequest) throws RestClientException {
+        return applyForALoanUsingPOSTWithHttpInfo(loanRequest).getBody();
     }
 
     /**
-     * Always fails
-     * Produces sample error response.
-     * <p><b>200</b> - Never returned.
-     * <p><b>304</b> - Not modified.
-     * <p><b>400</b> - Bad request.
-     * @return ResponseEntity&lt;String&gt;
+     * Apply for a loan
+     * One loan application request supported in the body.
+     * <p><b>200</b> - OK
+     * @param loanRequest loanRequest (required)
+     * @return ResponseEntity&lt;LoanResponse&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public ResponseEntity<String> failingRequestWithHttpInfo() throws RestClientException {
-        Object localVarPostBody = null;
+    public ResponseEntity<LoanResponse> applyForALoanUsingPOSTWithHttpInfo(LoanRequest loanRequest) throws RestClientException {
+        Object localVarPostBody = loanRequest;
+        
+        // verify the required parameter 'loanRequest' is set
+        if (loanRequest == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'loanRequest' when calling applyForALoanUsingPOST");
+        }
         
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
@@ -77,15 +81,17 @@ public class FailingApi {
         final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
 
         final String[] localVarAccepts = { 
-            "text/plain", "application/json"
+            "application/json"
          };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = {  };
+        final String[] localVarContentTypes = { 
+            "application/json"
+         };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<String> localReturnType = new ParameterizedTypeReference<String>() {};
-        return apiClient.invokeAPI("/oops", HttpMethod.GET, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        ParameterizedTypeReference<LoanResponse> localReturnType = new ParameterizedTypeReference<LoanResponse>() {};
+        return apiClient.invokeAPI("/loans", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }
