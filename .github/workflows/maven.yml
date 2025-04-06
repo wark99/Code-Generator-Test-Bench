@@ -34,14 +34,16 @@ jobs:
           rm -rf ./gen
           mkdir -p ./gen
           branch_name=$(basename $file .yaml)
-          echo $branch_name
+          echo "Processing $branch_name"
           git checkout -b $branch_name
           ./bin/override-generator-input.sh $branch_name.yaml
           git add ./
           git commit -m "Update generated files for $branch_name"
           git push origin $branch_name
           gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
-          git reset
+          # Reset the working directory back to the initial state
+          git checkout origin/develop
+          git reset --hard
         done
 #    - name: Extract code form AI generated output
 #      run: |
@@ -53,13 +55,15 @@ jobs:
 #            rm -rf ./gen
 #            mkdir -p ./gen
 #            branch_name="$(basename ${AI_AGENT})_$(basename $file .txt)"
-#            echo $branch_name
+#            echo "Processing $branch_name"
 #            git checkout -b $branch_name
 #            ./bin/code_extractor.sh $file
 #            git add ./
 #            git commit -m "Update generated files for $branch_name"
 #            git push origin $branch_name
 #            gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
-#            git reset
+#            # Reset the working directory back to the initial state
+#            git checkout origin/develop
+#            git reset --hard
 #          done
 #        done
