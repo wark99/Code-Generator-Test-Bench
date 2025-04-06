@@ -48,10 +48,12 @@ jobs:
           
             git add ./
             git commit -m "Update generated files for $branch_name"
-            
+            hash=$(git log -1 --format=%H)
+            git cherry-pick $hash --strategy=recursive --strategy-option=theirs
             git push origin $branch_name
             
             gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
+            
             # Reset the working directory back to the initial state
             git checkout $initial_branch
             git reset --hard
