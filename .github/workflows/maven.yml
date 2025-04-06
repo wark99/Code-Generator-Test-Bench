@@ -30,33 +30,17 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           chmod +x ./bin/override-generator-input.sh
-          
-          # Save the current branch to use later for checkout
-          initial_branch=$(git symbolic-ref --short HEAD)
-  
           for file in ./src/main/resources/docs/*.yaml; do
             rm -rf ./gen
             mkdir -p ./gen
             branch_name=$(basename $file .yaml)
-            echo "Processing $branch_name"
-            
-            # Create a new branch based on the current branch without checking it out
-            git branch $branch_name $initial_branch
-            
-            # Run the OpenAPI generator script
+            echo $branch_name
+            git checkout -b $branch_name
             ./bin/override-generator-input.sh $branch_name.yaml
-          
             git add ./
             git commit -m "Update generated files for $branch_name"
-            hash=$(git log -1 --format=%H)
-            git cherry-pick $hash --strategy=recursive --strategy-option=theirs
             git push origin $branch_name
-            
             gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
-            
-            # Reset the working directory back to the initial state
-            git checkout $initial_branch
-            git reset --hard
           done
 #    - name: Extract code form AI generated output
 #      run: |
