@@ -1,0 +1,3178 @@
+openapi: 3.1.0
+info:
+  description: This is the API specification for the Programming Languages Forum
+  title: Programming Languages Forum
+  version: 1.0.0
+externalDocs:
+  description: Refer to the requirements
+  url: https://github.com/bounswe/bounswe2024group1/wiki/Requirements
+servers:
+- description: Development compose
+  url: http://localhost:5173/api/v1
+- description: Production-like compose
+  url: http://localhost:80/api/v1
+tags:
+- description: Authentication operations
+  name: auth
+- description: User-related operations
+  name: users
+- description: Question-related operations
+  name: questions
+- description: Answer-related operations
+  name: answers
+- description: Tag-related operations
+  name: tags
+- description: Profile-related operations
+  name: profiles
+- description: Search operations
+  name: search
+- description: Feed-related operations
+  name: feed
+paths:
+  /auth/signup:
+    post:
+      operationId: signUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/signUp_201_response'
+          description: User successfully registered
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Register a new user
+      tags:
+      - auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /auth/login:
+    post:
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/signUp_201_response'
+          description: Successful login
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+      summary: User login
+      tags:
+      - auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /auth/logout:
+    post:
+      operationId: logout
+      responses:
+        "200":
+          description: Successful logout
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+      security:
+      - bearerAuth: []
+      summary: User logout
+      tags:
+      - auth
+      x-accepts: application/json
+  /auth/verify-email:
+    post:
+      operationId: verifyEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/verifyEmail_request'
+        required: true
+      responses:
+        "200":
+          description: Email successfully verified
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Verify user's email
+      tags:
+      - auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /auth/reset-password:
+    post:
+      operationId: resetPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resetPassword_request'
+        required: true
+      responses:
+        "200":
+          description: Password reset email sent
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Reset user's password
+      tags:
+      - auth
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/{userId}:
+    get:
+      operationId: getUserProfile
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserProfile_200_response'
+          description: Successful response
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get user profile
+      tags:
+      - users
+      x-accepts: application/json
+    put:
+      operationId: updateUserProfile
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserProfile_200_response'
+          description: Profile successfully updated
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "403":
+          $ref: '#/components/responses/ForbiddenResponse'
+      security:
+      - bearerAuth: []
+      summary: Update user profile
+      tags:
+      - users
+      x-content-type: application/json
+      x-accepts: application/json
+  /users/me:
+    get:
+      operationId: getMe
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserProfile_200_response'
+          description: OK
+        "403":
+          $ref: '#/components/responses/ForbiddenResponse'
+      security:
+      - auth_jwt: []
+      summary: Get own profile
+      tags:
+      - user
+      x-accepts: application/json
+  /users/{userId}/follow:
+    post:
+      operationId: followUser
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Successfully followed the user
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Follow a user
+      tags:
+      - users
+      x-accepts: application/json
+  /users/{userId}/unfollow:
+    delete:
+      operationId: unfollowUser
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Successfully unfollowed the user
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Unfollow a user
+      tags:
+      - users
+      x-accepts: application/json
+  /users/{userId}/followers:
+    get:
+      operationId: getUserFollowers
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserFollowers_200_response'
+          description: Successful response
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get user's followers
+      tags:
+      - users
+      x-accepts: application/json
+  /users/{userId}/following:
+    get:
+      operationId: getUserFollowing
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUserFollowers_200_response'
+          description: Successful response
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get users being followed
+      tags:
+      - users
+      x-accepts: application/json
+  /questions:
+    post:
+      operationId: createQuestion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewQuestion'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createQuestion_201_response'
+          description: Question successfully created
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+      security:
+      - bearerAuth: []
+      summary: Create a new question
+      tags:
+      - questions
+      x-content-type: application/json
+      x-accepts: application/json
+  /questions/{questionId}:
+    delete:
+      operationId: deleteQuestion
+      parameters:
+      - explode: false
+        in: path
+        name: questionId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: Question successfully deleted
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "403":
+          $ref: '#/components/responses/ForbiddenResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Delete a question
+      tags:
+      - questions
+      x-accepts: application/json
+    get:
+      operationId: getQuestionDetails
+      parameters:
+      - explode: false
+        in: path
+        name: questionId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createQuestion_201_response'
+          description: Successful response
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get question details
+      tags:
+      - questions
+      x-accepts: application/json
+    put:
+      operationId: updateQuestion
+      parameters:
+      - explode: false
+        in: path
+        name: questionId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateQuestion'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createQuestion_201_response'
+          description: Question successfully updated
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "403":
+          $ref: '#/components/responses/ForbiddenResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Update a question
+      tags:
+      - questions
+      x-content-type: application/json
+      x-accepts: application/json
+  /questions/{questionId}/upvote:
+    post:
+      operationId: upvoteQuestion
+      parameters:
+      - explode: false
+        in: path
+        name: questionId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Question successfully rated
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Upvote a question
+      tags:
+      - questions
+      x-accepts: application/json
+  /questions/{questionId}/downvote:
+    post:
+      operationId: downvoteQuestion
+      parameters:
+      - explode: false
+        in: path
+        name: questionId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Question successfully downvoted
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Downvote a question
+      tags:
+      - questions
+      x-accepts: application/json
+  /questions/{id}/vote-difficulty:
+    post:
+      operationId: rateQuestion
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DifficultyLevelRequestDto'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rateQuestion_200_response'
+          description: OK
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "403":
+          $ref: '#/components/responses/ForbiddenResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Rate a question's level of difficulty.
+      tags:
+      - questions
+      x-content-type: application/json
+      x-accepts: application/json
+  /questions/bookmarked:
+    get:
+      operationId: getBookmarkedQuestions
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getBookmarkedQuestions_200_response'
+          description: Bookmarked questions retrieved successfully
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+      security:
+      - bearerAuth: []
+      summary: Get bookmarked questions
+      tags:
+      - questions
+      x-accepts: application/json
+  /questions/{questionId}/bookmarks:
+    delete:
+      operationId: removeQuestionBookmark
+      parameters:
+      - explode: false
+        in: path
+        name: questionId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Bookmark successfully removed
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Remove bookmark from a question
+      tags:
+      - questions
+      x-accepts: application/json
+    post:
+      operationId: bookmarkQuestion
+      parameters:
+      - explode: false
+        in: path
+        name: questionId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Question successfully bookmarked
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Bookmark a question
+      tags:
+      - questions
+      x-accepts: application/json
+  /questions/{questionId}/answers:
+    get:
+      operationId: getQuestionAnswers
+      parameters:
+      - explode: false
+        in: path
+        name: questionId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getQuestionAnswers_200_response'
+          description: Successful response
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get answers for a question
+      tags:
+      - answers
+      x-accepts: application/json
+    post:
+      operationId: createAnswer
+      parameters:
+      - explode: false
+        in: path
+        name: questionId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewAnswer'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createAnswer_201_response'
+          description: Answer successfully created
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Create a new answer
+      tags:
+      - answers
+      x-content-type: application/json
+      x-accepts: application/json
+  /answers/{answerId}:
+    delete:
+      operationId: deleteAnswer
+      parameters:
+      - explode: false
+        in: path
+        name: answerId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: Answer successfully deleted
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "403":
+          $ref: '#/components/responses/ForbiddenResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Delete an answer
+      tags:
+      - answers
+      x-accepts: application/json
+    put:
+      operationId: updateAnswer
+      parameters:
+      - explode: false
+        in: path
+        name: answerId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAnswer'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createAnswer_201_response'
+          description: Answer successfully updated
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "403":
+          $ref: '#/components/responses/ForbiddenResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Update an answer
+      tags:
+      - answers
+      x-content-type: application/json
+      x-accepts: application/json
+  /answers/{answerId}/downvote:
+    post:
+      operationId: downvoteAnswer
+      parameters:
+      - explode: false
+        in: path
+        name: answerId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Answer successfully upvoted
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Downvote an answer
+      tags:
+      - answers
+      x-accepts: application/json
+  /answers/{answerId}/upvote:
+    post:
+      operationId: upvoteAnswer
+      parameters:
+      - explode: false
+        in: path
+        name: answerId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Answer successfully upvoted
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Upvote an answer
+      tags:
+      - answers
+      x-accepts: application/json
+  /tags:
+    post:
+      operationId: createTag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTag'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createTag_201_response'
+          description: Tag successfully created
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+      security:
+      - bearerAuth: []
+      summary: Create a new tag
+      tags:
+      - tags
+      x-content-type: application/json
+      x-accepts: application/json
+  /tags/{tagId}:
+    get:
+      operationId: getTagDetails
+      parameters:
+      - explode: false
+        in: path
+        name: tagId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createTag_201_response'
+          description: Successful response
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      summary: Get tag details
+      tags:
+      - tags
+      x-accepts: application/json
+  /tags/{tagId}/follow:
+    delete:
+      operationId: unfollowTag
+      parameters:
+      - explode: false
+        in: path
+        name: tagId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Successfully unfollowed the tag
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Unfollow a tag
+      tags:
+      - tags
+      x-accepts: application/json
+    post:
+      operationId: followTag
+      parameters:
+      - explode: false
+        in: path
+        name: tagId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          description: Successfully followed the tag
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+      security:
+      - bearerAuth: []
+      summary: Follow a tag
+      tags:
+      - tags
+      x-accepts: application/json
+  /search/questions:
+    get:
+      operationId: searchQuestions
+      parameters:
+      - description: Search query
+        explode: true
+        in: query
+        name: q
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: Comma-separated list of tag IDs
+        explode: true
+        in: query
+        name: tags
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filter by difficulty level
+        explode: true
+        in: query
+        name: difficulty
+        required: false
+        schema:
+          $ref: '#/components/schemas/DifficultyLevel'
+        style: form
+      - description: Page number
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          type: integer
+        style: form
+      - description: Number of items per page
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          default: 20
+          type: integer
+        style: form
+      - description: Sorting type
+        explode: true
+        in: query
+        name: sortBy
+        required: false
+        schema:
+          default: recommended
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchQuestions_200_response'
+          description: Successful response
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Search questions
+      tags:
+      - search
+      x-accepts: application/json
+  /search/users:
+    get:
+      operationId: searchUsers
+      parameters:
+      - description: Search query
+        explode: true
+        in: query
+        name: q
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: Page number
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          type: integer
+        style: form
+      - description: Number of items per page
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          default: 20
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchUsers_200_response'
+          description: Successful response
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Search users
+      tags:
+      - search
+      x-accepts: application/json
+  /search/tags:
+    get:
+      operationId: searchTags
+      parameters:
+      - description: Search query
+        explode: true
+        in: query
+        name: q
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: Page number
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          type: integer
+        style: form
+      - description: Number of items per page
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          default: 20
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchTags_200_response'
+          description: Successful response
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+      summary: Search tags
+      tags:
+      - search
+      x-accepts: application/json
+  /feed:
+    get:
+      operationId: getUserFeed
+      parameters:
+      - description: Feed type
+        explode: true
+        in: query
+        name: type
+        required: true
+        schema:
+          enum:
+          - recent
+          - topRated
+          - recommended
+          type: string
+        style: form
+      - description: Page number
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 1
+          type: integer
+        style: form
+      - description: Number of items per page
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          default: 20
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchQuestions_200_response'
+          description: Successful response
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+      security:
+      - bearerAuth: []
+      summary: Get user feed
+      tags:
+      - feed
+      x-accepts: application/json
+  /execute-code:
+    post:
+      operationId: executeCode
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CodeExecution'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/executeCode_200_response'
+          description: Code successfully executed
+        "400":
+          $ref: '#/components/responses/BadRequestResponse'
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
+        "429":
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      security:
+      - bearerAuth: []
+      summary: Execute a code snippet
+      tags:
+      - code-execution
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  responses:
+    BadRequestResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponseObject'
+      description: Bad Request
+    UnauthorizedResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponseObject'
+      description: Unauthorized
+    ForbiddenResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponseObject'
+      description: Forbidden
+    NotFoundResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponseObject'
+      description: Not Found
+    TooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponseObject'
+      description: Too Many Requests
+  schemas:
+    DifficultyLevelRequestDto:
+      example:
+        difficulty: EASY
+      properties:
+        difficulty:
+          enum:
+          - EASY
+          - MEDIUM
+          - HARD
+          type: string
+    QuestionRateResponseDto:
+      example:
+        easyCount: 1
+        questionId: 6
+        mediumCount: 5
+        hardCount: 5
+        totalCount: 2
+      properties:
+        questionId:
+          format: int64
+          type: integer
+        easyCount:
+          format: int64
+          type: integer
+        mediumCount:
+          format: int64
+          type: integer
+        hardCount:
+          format: int64
+          type: integer
+        totalCount:
+          format: int64
+          type: integer
+    ExperienceLevel:
+      enum:
+      - BEGINNER
+      - INTERMEDIATE
+      - ADVANCED
+      type: string
+    NewTag:
+      example:
+        name: name
+        description: description
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+      - description
+      - name
+    TagType:
+      enum:
+      - PROGRAMMING_LANGUAGE
+      - PROGRAMMING_PARADIGM
+      - COMPUTER_SCIENCE_TERM
+      - SOFTWARE_LIBRARY
+      - USER_DEFINED
+      type: string
+    UserRegistration:
+      example:
+        firstName: firstName
+        lastName: lastName
+        country: country
+        password: password
+        experienceLevel: null
+        email: email
+        username: username
+      properties:
+        username:
+          type: string
+        email:
+          format: email
+          type: string
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        country:
+          type: string
+        experienceLevel:
+          $ref: '#/components/schemas/ExperienceLevel'
+      required:
+      - country
+      - email
+      - experienceLevel
+      - firstName
+      - lastName
+      - password
+      - username
+    UserLogin:
+      example:
+        password: password
+        usernameOrEmail: usernameOrEmail
+      properties:
+        usernameOrEmail:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - usernameOrEmail
+    AuthToken:
+      example:
+        token: token
+      properties:
+        token:
+          type: string
+    UserProfile:
+      example:
+        questionCount: 2
+        lastName: lastName
+        country: country
+        answers:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          question:
+            difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          rating: 4
+          id: 9
+          selfVoted: 0
+          content: content
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+          upvoteCount: 1
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          question:
+            difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          rating: 4
+          id: 9
+          selfVoted: 0
+          content: content
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+          upvoteCount: 1
+        questions:
+        - difficulty: null
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          answerCount: 4
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          id: 1
+          viewCount: 5
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          upvoteCount: 7
+        - difficulty: null
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          answerCount: 4
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          id: 1
+          viewCount: 5
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          upvoteCount: 7
+        bio: bio
+        reputationPoints: 1
+        selfFollowing: true
+        followingCount: 5
+        firstName: firstName
+        experienceLevel: null
+        answerCount: 7
+        id: 6
+        followersCount: 5
+        email: email
+        username: username
+        followedTags:
+        - questionCount: 6
+          name: name
+          tagType: null
+          photo: http://example.com/aeiou
+          id: id
+        - questionCount: 6
+          name: name
+          tagType: null
+          photo: http://example.com/aeiou
+          id: id
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        bio:
+          type: string
+        country:
+          type: string
+        reputationPoints:
+          type: integer
+        followersCount:
+          type: integer
+        followingCount:
+          type: integer
+        selfFollowing:
+          type: boolean
+        questionCount:
+          type: integer
+        experienceLevel:
+          $ref: '#/components/schemas/ExperienceLevel'
+        answerCount:
+          type: integer
+        answers:
+          items:
+            $ref: '#/components/schemas/AnswerDetails'
+          type: array
+        questions:
+          items:
+            $ref: '#/components/schemas/QuestionSummary'
+          type: array
+        followedTags:
+          items:
+            $ref: '#/components/schemas/TagSummary'
+          type: array
+    UserProfileUpdate:
+      example:
+        country: country
+        experienceLevel: null
+        bio: bio
+      properties:
+        bio:
+          type: string
+        country:
+          type: string
+        experienceLevel:
+          $ref: '#/components/schemas/ExperienceLevel'
+    UserSummary:
+      example:
+        profilePicture: http://example.com/aeiou
+        name: name
+        id: 3
+        reputationPoints: 2
+        username: username
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        reputationPoints:
+          type: integer
+        profilePicture:
+          format: url
+          type: string
+        name:
+          type: string
+      required:
+      - id
+      - name
+      - profilePicture
+      - reputationPoints
+      - username
+    DifficultyLevel:
+      enum:
+      - EASY
+      - MEDIUM
+      - HARD
+      type: string
+    NewQuestion:
+      example:
+        difficulty: null
+        tagIds:
+        - 0.8008281904610115
+        - 0.8008281904610115
+        title: title
+        content: content
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        tagIds:
+          items:
+            type: number
+          type: array
+        difficulty:
+          $ref: '#/components/schemas/DifficultyLevel'
+      required:
+      - content
+      - difficulty
+      - title
+    UpdateQuestion:
+      example:
+        title: title
+        content: content
+        tags:
+        - 0.8008281904610115
+        - 0.8008281904610115
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        tags:
+          items:
+            type: number
+          type: array
+    QuestionDetails:
+      example:
+        author:
+          profilePicture: http://example.com/aeiou
+          name: name
+          id: 3
+          reputationPoints: 2
+          username: username
+        bookmarked: true
+        selfDifficultyVote: null
+        dislikeCount: 5
+        likeCount: 1
+        hardCount: 2
+        title: title
+        content: content
+        tags:
+        - questionCount: 6
+          name: name
+          tagType: null
+          photo: http://example.com/aeiou
+          id: id
+        - questionCount: 6
+          name: name
+          tagType: null
+          photo: http://example.com/aeiou
+          id: id
+        commentCount: 5
+        difficulty: null
+        easyCount: 9
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        mediumCount: 3
+        id: 6
+        viewCount: 2
+        selfVoted: 0
+        updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        author:
+          $ref: '#/components/schemas/UserSummary'
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        tags:
+          items:
+            $ref: '#/components/schemas/TagSummary'
+          type: array
+        likeCount:
+          type: integer
+        dislikeCount:
+          type: integer
+        difficulty:
+          $ref: '#/components/schemas/DifficultyLevel'
+        commentCount:
+          type: integer
+        viewCount:
+          type: integer
+        bookmarked:
+          type: boolean
+        selfVoted:
+          maximum: 1
+          minimum: -1
+          type: integer
+        selfDifficultyVote:
+          $ref: '#/components/schemas/DifficultyLevel'
+        easyCount:
+          type: integer
+        mediumCount:
+          type: integer
+        hardCount:
+          type: integer
+      required:
+      - author
+      - bookmarked
+      - commentCount
+      - content
+      - createdAt
+      - createdAt
+      - difficulty
+      - difficulty
+      - dislikeCount
+      - easyCount
+      - hardCount
+      - id
+      - likeCount
+      - mediumCount
+      - selfDifficultyVote
+      - selfVoted
+      - tags
+      - title
+      - updatedAt
+    QuestionSummary:
+      example:
+        difficulty: null
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        downvoteCount: 1
+        answerCount: 4
+        author:
+          profilePicture: http://example.com/aeiou
+          name: name
+          id: 3
+          reputationPoints: 2
+          username: username
+        id: 1
+        viewCount: 5
+        title: title
+        content: content
+        tags:
+        - questionCount: 6
+          name: name
+          tagType: null
+          photo: http://example.com/aeiou
+          id: id
+        - questionCount: 6
+          name: name
+          tagType: null
+          photo: http://example.com/aeiou
+          id: id
+        upvoteCount: 7
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        author:
+          $ref: '#/components/schemas/UserSummary'
+        createdAt:
+          format: date-time
+          type: string
+        difficulty:
+          $ref: '#/components/schemas/DifficultyLevel'
+        tags:
+          items:
+            $ref: '#/components/schemas/TagSummary'
+          type: array
+        upvoteCount:
+          type: integer
+        downvoteCount:
+          type: integer
+        answerCount:
+          type: integer
+        viewCount:
+          type: integer
+      required:
+      - answerCount
+      - createdAt
+      - difficulty
+      - downvoteCount
+      - id
+      - tags
+      - title
+      - upvoteCount
+    NewAnswer:
+      example:
+        content: content
+      properties:
+        content:
+          type: string
+      required:
+      - content
+    UpdateAnswer:
+      example:
+        content: content
+      properties:
+        content:
+          type: string
+    AnswerDetails:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        downvoteCount: 1
+        question:
+          difficulty: null
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          answerCount: 4
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          id: 1
+          viewCount: 5
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          upvoteCount: 7
+        author:
+          profilePicture: http://example.com/aeiou
+          name: name
+          id: 3
+          reputationPoints: 2
+          username: username
+        rating: 4
+        id: 9
+        selfVoted: 0
+        content: content
+        updatedAt: 2000-01-23T04:56:07.000+00:00
+        upvoteCount: 1
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        author:
+          $ref: '#/components/schemas/UserSummary'
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        rating:
+          type: integer
+        selfVoted:
+          maximum: 1
+          minimum: -1
+          type: integer
+        upvoteCount:
+          type: integer
+        downvoteCount:
+          type: integer
+        question:
+          $ref: '#/components/schemas/QuestionSummary'
+      required:
+      - author
+      - content
+      - createdAt
+      - id
+      - question
+      - rating
+      - updatedAt
+    TagDetails:
+      example:
+        questionCount: 1
+        tagId: 6
+        author: author
+        description: description
+        highlightedQuestions:
+        - difficulty: null
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          answerCount: 4
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          id: 1
+          viewCount: 5
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          upvoteCount: 7
+        - difficulty: null
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          answerCount: 4
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          id: 1
+          viewCount: 5
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          upvoteCount: 7
+        officialWebsite: http://example.com/aeiou
+        logoImage: http://example.com/aeiou
+        fileExtension: fileExtension
+        following: true
+        name: name
+        tagType: null
+        stackExchangeTag: stackExchangeTag
+        inceptionYear: inceptionYear
+        followerCount: 5
+        relatedQuestions: ""
+      properties:
+        tagId:
+          type: integer
+        name:
+          type: string
+        tagType:
+          $ref: '#/components/schemas/TagType'
+        description:
+          type: string
+        questionCount:
+          type: integer
+        followerCount:
+          type: integer
+        following:
+          type: boolean
+        highlightedQuestions:
+          items:
+            $ref: '#/components/schemas/QuestionSummary'
+          type: array
+        logoImage:
+          description: For Programming Language tags
+          format: url
+          type: string
+        author:
+          description: For Programming Language tags
+          type: string
+        inceptionYear:
+          description: For Programming Language tags
+          type: string
+        fileExtension:
+          description: For Programming Language tags
+          type: string
+        officialWebsite:
+          description: For Programming Language tags
+          format: url
+          type: string
+        stackExchangeTag:
+          description: "Available for Programming Language, Programming Paradigm and\
+            \ Computer Science Term tags"
+          type: string
+        relatedQuestions:
+          items:
+            $ref: '#/components/schemas/QuestionSummary'
+      required:
+      - description
+      - logoImage
+      - name
+      - officialWebsite
+      - tagId
+    TagSummary:
+      example:
+        questionCount: 6
+        name: name
+        tagType: null
+        photo: http://example.com/aeiou
+        id: id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        tagType:
+          $ref: '#/components/schemas/TagType'
+        questionCount:
+          type: integer
+        photo:
+          format: url
+          type: string
+    Profile:
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        bio:
+          type: string
+        reputationPoints:
+          type: integer
+        followersCount:
+          type: integer
+        followingCount:
+          type: integer
+        selfFollowing:
+          type: boolean
+        questionCount:
+          type: integer
+        questions:
+          items:
+            $ref: '#/components/schemas/QuestionSummary'
+          type: array
+        answerCount:
+          type: integer
+        answers:
+          items:
+            $ref: '#/components/schemas/AnswerDetails'
+          type: array
+        tags:
+          items:
+            $ref: '#/components/schemas/TagSummary'
+          type: array
+    UpdateProfile:
+      properties:
+        bio:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+    CodeExecution:
+      example:
+        input: input
+        code: code
+        language: c
+      properties:
+        code:
+          description: The code snippet to be executed
+          type: string
+        language:
+          description: The programming language of the code snippet
+          enum:
+          - c
+          - csharp
+          - cpp
+          - go
+          - java
+          - javascript
+          - python3
+          type: string
+        input:
+          description: Optional input for the code execution
+          type: string
+      required:
+      - code
+      - language
+    ExecutionResult:
+      example:
+        output: output
+        executionTime: 6.027456183070403
+        errors: errors
+        status: success
+      properties:
+        output:
+          description: The standard output of the code execution
+          type: string
+        errors:
+          description: Any error messages or standard error output
+          type: string
+        executionTime:
+          description: The time taken to execute the code in milliseconds
+          type: number
+        status:
+          description: The status of the code execution
+          enum:
+          - success
+          - error
+          - timeout
+          type: string
+    Error:
+      description: Error
+      properties:
+        errorMessage:
+          type: string
+        stackTrace:
+          type: string
+    SuccessResponseObject:
+      description: OK
+      properties:
+        status:
+          description: Internal status code of the response. An HTTP 200 response
+            with an internal 500 status code is an error response. Prioritize the
+            inner status over the HTTP status.
+          enum:
+          - 200
+          - 201
+          type: integer
+        data:
+          $ref: '#/components/schemas/SuccessResponseObject_data'
+      required:
+      - data
+      - status
+    ErrorResponseObject:
+      description: Response with errors
+      properties:
+        status:
+          description: Internal status code of the response. An HTTP 200 response
+            with an internal 500 status code is an error response. Prioritize the
+            inner status over the HTTP status.
+          enum:
+          - 400
+          - 401
+          - 403
+          - 404
+          - 409
+          - 500
+          type: number
+        error:
+          $ref: '#/components/schemas/Error'
+      required:
+      - status
+    signUp_201_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/AuthToken'
+      example:
+        data:
+          token: token
+        status: 0
+    verifyEmail_request:
+      properties:
+        token:
+          type: string
+      required:
+      - token
+    resetPassword_request:
+      properties:
+        email:
+          format: email
+          type: string
+      required:
+      - email
+    getUserProfile_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/UserProfile'
+      example:
+        data:
+          questionCount: 2
+          lastName: lastName
+          country: country
+          answers:
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            question:
+              difficulty: null
+              createdAt: 2000-01-23T04:56:07.000+00:00
+              downvoteCount: 1
+              answerCount: 4
+              author:
+                profilePicture: http://example.com/aeiou
+                name: name
+                id: 3
+                reputationPoints: 2
+                username: username
+              id: 1
+              viewCount: 5
+              title: title
+              content: content
+              tags:
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              upvoteCount: 7
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            rating: 4
+            id: 9
+            selfVoted: 0
+            content: content
+            updatedAt: 2000-01-23T04:56:07.000+00:00
+            upvoteCount: 1
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            question:
+              difficulty: null
+              createdAt: 2000-01-23T04:56:07.000+00:00
+              downvoteCount: 1
+              answerCount: 4
+              author:
+                profilePicture: http://example.com/aeiou
+                name: name
+                id: 3
+                reputationPoints: 2
+                username: username
+              id: 1
+              viewCount: 5
+              title: title
+              content: content
+              tags:
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              upvoteCount: 7
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            rating: 4
+            id: 9
+            selfVoted: 0
+            content: content
+            updatedAt: 2000-01-23T04:56:07.000+00:00
+            upvoteCount: 1
+          questions:
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          bio: bio
+          reputationPoints: 1
+          selfFollowing: true
+          followingCount: 5
+          firstName: firstName
+          experienceLevel: null
+          answerCount: 7
+          id: 6
+          followersCount: 5
+          email: email
+          username: username
+          followedTags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+        status: 0
+    getUserFollowers_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            items:
+              $ref: '#/components/schemas/UserSummary'
+            type: array
+      example:
+        data:
+        - profilePicture: http://example.com/aeiou
+          name: name
+          id: 3
+          reputationPoints: 2
+          username: username
+        - profilePicture: http://example.com/aeiou
+          name: name
+          id: 3
+          reputationPoints: 2
+          username: username
+        status: 0
+    createQuestion_201_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/QuestionDetails'
+      example:
+        data:
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          bookmarked: true
+          selfDifficultyVote: null
+          dislikeCount: 5
+          likeCount: 1
+          hardCount: 2
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          commentCount: 5
+          difficulty: null
+          easyCount: 9
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          mediumCount: 3
+          id: 6
+          viewCount: 2
+          selfVoted: 0
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+        status: 0
+    rateQuestion_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/QuestionRateResponseDto'
+      example:
+        data:
+          easyCount: 1
+          questionId: 6
+          mediumCount: 5
+          hardCount: 5
+          totalCount: 2
+        status: 0
+    getBookmarkedQuestions_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            items:
+              $ref: '#/components/schemas/QuestionSummary'
+            type: array
+      example:
+        data:
+        - difficulty: null
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          answerCount: 4
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          id: 1
+          viewCount: 5
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          upvoteCount: 7
+        - difficulty: null
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          answerCount: 4
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          id: 1
+          viewCount: 5
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          upvoteCount: 7
+        status: 0
+    getQuestionAnswers_200_response_allOf_data:
+      example:
+        totalPages: 6
+        items:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          question:
+            difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          rating: 4
+          id: 9
+          selfVoted: 0
+          content: content
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+          upvoteCount: 1
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          question:
+            difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          rating: 4
+          id: 9
+          selfVoted: 0
+          content: content
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+          upvoteCount: 1
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AnswerDetails'
+          type: array
+        totalPages:
+          type: integer
+    getQuestionAnswers_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/getQuestionAnswers_200_response_allOf_data'
+      example:
+        data:
+          totalPages: 6
+          items:
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            question:
+              difficulty: null
+              createdAt: 2000-01-23T04:56:07.000+00:00
+              downvoteCount: 1
+              answerCount: 4
+              author:
+                profilePicture: http://example.com/aeiou
+                name: name
+                id: 3
+                reputationPoints: 2
+                username: username
+              id: 1
+              viewCount: 5
+              title: title
+              content: content
+              tags:
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              upvoteCount: 7
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            rating: 4
+            id: 9
+            selfVoted: 0
+            content: content
+            updatedAt: 2000-01-23T04:56:07.000+00:00
+            upvoteCount: 1
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            question:
+              difficulty: null
+              createdAt: 2000-01-23T04:56:07.000+00:00
+              downvoteCount: 1
+              answerCount: 4
+              author:
+                profilePicture: http://example.com/aeiou
+                name: name
+                id: 3
+                reputationPoints: 2
+                username: username
+              id: 1
+              viewCount: 5
+              title: title
+              content: content
+              tags:
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              upvoteCount: 7
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            rating: 4
+            id: 9
+            selfVoted: 0
+            content: content
+            updatedAt: 2000-01-23T04:56:07.000+00:00
+            upvoteCount: 1
+        status: 0
+    createAnswer_201_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/AnswerDetails'
+      example:
+        data:
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          question:
+            difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          rating: 4
+          id: 9
+          selfVoted: 0
+          content: content
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+          upvoteCount: 1
+        status: 0
+    createTag_201_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/TagDetails'
+      example:
+        data:
+          questionCount: 1
+          tagId: 6
+          author: author
+          description: description
+          highlightedQuestions:
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          officialWebsite: http://example.com/aeiou
+          logoImage: http://example.com/aeiou
+          fileExtension: fileExtension
+          following: true
+          name: name
+          tagType: null
+          stackExchangeTag: stackExchangeTag
+          inceptionYear: inceptionYear
+          followerCount: 5
+          relatedQuestions: ""
+        status: 0
+    searchQuestions_200_response_allOf_data:
+      example:
+        totalItems: 6
+        totalPages: 5
+        currentPage: 1
+        items:
+        - difficulty: null
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          answerCount: 4
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          id: 1
+          viewCount: 5
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          upvoteCount: 7
+        - difficulty: null
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          downvoteCount: 1
+          answerCount: 4
+          author:
+            profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          id: 1
+          viewCount: 5
+          title: title
+          content: content
+          tags:
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          - questionCount: 6
+            name: name
+            tagType: null
+            photo: http://example.com/aeiou
+            id: id
+          upvoteCount: 7
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/QuestionSummary'
+          type: array
+        totalItems:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+    searchQuestions_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/searchQuestions_200_response_allOf_data'
+      example:
+        data:
+          totalItems: 6
+          totalPages: 5
+          currentPage: 1
+          items:
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+        status: 0
+    searchUsers_200_response_allOf_data:
+      example:
+        totalItems: 6
+        totalPages: 5
+        currentPage: 1
+        items:
+        - profilePicture: http://example.com/aeiou
+          name: name
+          id: 3
+          reputationPoints: 2
+          username: username
+        - profilePicture: http://example.com/aeiou
+          name: name
+          id: 3
+          reputationPoints: 2
+          username: username
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/UserSummary'
+          type: array
+        totalItems:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+    searchUsers_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/searchUsers_200_response_allOf_data'
+      example:
+        data:
+          totalItems: 6
+          totalPages: 5
+          currentPage: 1
+          items:
+          - profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+          - profilePicture: http://example.com/aeiou
+            name: name
+            id: 3
+            reputationPoints: 2
+            username: username
+        status: 0
+    searchTags_200_response_allOf_data:
+      example:
+        totalItems: 6
+        totalPages: 5
+        currentPage: 1
+        items:
+        - questionCount: 1
+          tagId: 6
+          author: author
+          description: description
+          highlightedQuestions:
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          officialWebsite: http://example.com/aeiou
+          logoImage: http://example.com/aeiou
+          fileExtension: fileExtension
+          following: true
+          name: name
+          tagType: null
+          stackExchangeTag: stackExchangeTag
+          inceptionYear: inceptionYear
+          followerCount: 5
+          relatedQuestions: ""
+        - questionCount: 1
+          tagId: 6
+          author: author
+          description: description
+          highlightedQuestions:
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          - difficulty: null
+            createdAt: 2000-01-23T04:56:07.000+00:00
+            downvoteCount: 1
+            answerCount: 4
+            author:
+              profilePicture: http://example.com/aeiou
+              name: name
+              id: 3
+              reputationPoints: 2
+              username: username
+            id: 1
+            viewCount: 5
+            title: title
+            content: content
+            tags:
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            - questionCount: 6
+              name: name
+              tagType: null
+              photo: http://example.com/aeiou
+              id: id
+            upvoteCount: 7
+          officialWebsite: http://example.com/aeiou
+          logoImage: http://example.com/aeiou
+          fileExtension: fileExtension
+          following: true
+          name: name
+          tagType: null
+          stackExchangeTag: stackExchangeTag
+          inceptionYear: inceptionYear
+          followerCount: 5
+          relatedQuestions: ""
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TagDetails'
+          type: array
+        totalItems:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+    searchTags_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/searchTags_200_response_allOf_data'
+      example:
+        data:
+          totalItems: 6
+          totalPages: 5
+          currentPage: 1
+          items:
+          - questionCount: 1
+            tagId: 6
+            author: author
+            description: description
+            highlightedQuestions:
+            - difficulty: null
+              createdAt: 2000-01-23T04:56:07.000+00:00
+              downvoteCount: 1
+              answerCount: 4
+              author:
+                profilePicture: http://example.com/aeiou
+                name: name
+                id: 3
+                reputationPoints: 2
+                username: username
+              id: 1
+              viewCount: 5
+              title: title
+              content: content
+              tags:
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              upvoteCount: 7
+            - difficulty: null
+              createdAt: 2000-01-23T04:56:07.000+00:00
+              downvoteCount: 1
+              answerCount: 4
+              author:
+                profilePicture: http://example.com/aeiou
+                name: name
+                id: 3
+                reputationPoints: 2
+                username: username
+              id: 1
+              viewCount: 5
+              title: title
+              content: content
+              tags:
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              upvoteCount: 7
+            officialWebsite: http://example.com/aeiou
+            logoImage: http://example.com/aeiou
+            fileExtension: fileExtension
+            following: true
+            name: name
+            tagType: null
+            stackExchangeTag: stackExchangeTag
+            inceptionYear: inceptionYear
+            followerCount: 5
+            relatedQuestions: ""
+          - questionCount: 1
+            tagId: 6
+            author: author
+            description: description
+            highlightedQuestions:
+            - difficulty: null
+              createdAt: 2000-01-23T04:56:07.000+00:00
+              downvoteCount: 1
+              answerCount: 4
+              author:
+                profilePicture: http://example.com/aeiou
+                name: name
+                id: 3
+                reputationPoints: 2
+                username: username
+              id: 1
+              viewCount: 5
+              title: title
+              content: content
+              tags:
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              upvoteCount: 7
+            - difficulty: null
+              createdAt: 2000-01-23T04:56:07.000+00:00
+              downvoteCount: 1
+              answerCount: 4
+              author:
+                profilePicture: http://example.com/aeiou
+                name: name
+                id: 3
+                reputationPoints: 2
+                username: username
+              id: 1
+              viewCount: 5
+              title: title
+              content: content
+              tags:
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              - questionCount: 6
+                name: name
+                tagType: null
+                photo: http://example.com/aeiou
+                id: id
+              upvoteCount: 7
+            officialWebsite: http://example.com/aeiou
+            logoImage: http://example.com/aeiou
+            fileExtension: fileExtension
+            following: true
+            name: name
+            tagType: null
+            stackExchangeTag: stackExchangeTag
+            inceptionYear: inceptionYear
+            followerCount: 5
+            relatedQuestions: ""
+        status: 0
+    executeCode_200_response:
+      allOf:
+      - $ref: '#/components/schemas/SuccessResponseObject'
+      - properties:
+          data:
+            $ref: '#/components/schemas/ExecutionResult'
+      example:
+        data:
+          output: output
+          executionTime: 6.027456183070403
+          errors: errors
+          status: success
+        status: 0
+    SuccessResponseObject_data:
+      oneOf:
+      - type: object
+      - {}
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+
