@@ -1,0 +1,136 @@
+Generate java controllers and models based on the following swagger yaml:
+
+openapi: 3.1.0
+info:
+  version: '0.2'
+  title: Websitebuilder public API
+  description: |
+    Public WSB API for third party clients.  
+    Prefix: `/api/pub/vX`.
+
+servers:
+  - url: https://websitebuilder.one.com/api/pub/v1
+  - url: https://websitebuilder.hostnet.nl/api/pub/v1
+  - url: https://websitebuilder.checkdomain.de/api/pub/v1
+
+paths:
+  /brands:
+    get:
+      summary: "Get brands list"
+
+      description: |
+        Brands discovery endpoint.  
+        Requires special `root` client acccess token
+
+      parameters:
+        - name: env
+          in: query
+          schema:
+            type: string
+            enum: [prod,staging,phase,next,test]
+            default: prod
+
+      responses:
+        200:
+          description: "Success"
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brand'
+
+        401:
+          description: "Unauthorized"
+        
+        403:
+          description: "Forbidden"
+        
+        500:
+          "description": "Internal Server Error. Contact devs"
+
+      tags:
+      - Brands
+
+  /brands/{codeName}:
+    get:
+      summary: "Get information for specific brand"
+
+      parameters:
+        - name: codeName
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [onecom, hostnet, checkdomain]
+
+      responses:
+          200:
+            description: "Success"
+
+            content:
+              "application/json":
+                schema:
+                  $ref: '#/components/schemas/Brand'
+
+      tags:
+      - Brands
+
+  /sso/{domainName}:
+    post:
+      summary: "Generate WSB SSO for a domain"
+
+      parameters:
+        - name: domainName
+          in: path
+          required: true
+          schema:
+            type: string
+            examples: ['foo.bar']
+
+      responses:
+        200:
+          description: "Success"
+
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  ssoUrl:
+                    type: string
+                    examples: ["https://websitebuilder.hostnet.nl/sso?tkn=;lksaj;dlkfajs"]
+                  expirationTime:
+                    type: number
+                    description: "SSO url expiration UNIX timestamp in milliseconds"
+                    examples: [1618388591058]
+
+      tags: ['WSB']
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  
+  schemas:
+    Brand:
+      type: object
+      properties:
+        codeName:
+          type: string
+          enum: [onecom, hostnet, checkdomain]
+          examples:
+            - hostnet
+
+        wsbApiUri:
+          type: object
+          properties:
+            hostname:
+              type: string
+              examples:
+                - websitebuilder.hostnet.nl
+            baseUrl:
+              type: string
+              examples:
+                - https://websitebuilder.hostnet.nl/api/pub/v1

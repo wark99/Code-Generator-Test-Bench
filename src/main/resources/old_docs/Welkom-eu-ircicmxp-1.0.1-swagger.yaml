@@ -1,0 +1,181 @@
+openapi: 3.1.0
+info:
+  title: IRCI SCSE
+  description: |-
+    API privée permettant de récupérer les fiches contacts scannées par les commerciaux de votre entreprise sur les salons.
+
+    L'authentification au service se fait par token, envoyé sur demande.
+
+  contact:
+    email: mathieu@welkom.eu
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.1
+servers:
+  - url: https://europe-west1-mndirci.cloudfunctions.net
+tags:
+  - name: salon
+    description: Informations sur les salons Solutions CSE
+  - name: contact
+    description: Fiche contact scannée
+paths:
+  /listSalonsByYear:
+    post:
+      tags:
+        - salon
+      summary: Liste des salons avec identifiant suivant les années
+      operationId: listSalonsByYear
+      parameters:
+        - name: year
+          in: query
+          description: Année de référence pour les salons retournés.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Salon'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /listContactsBySalonId:
+    post:
+      tags:
+        - contact
+      summary: Liste des fiches contacts pour le salon demandé.
+      operationId: listContactsBySalonId
+      parameters:
+        - name: salonId
+          in: query
+          description: Identifiant de salon de référence pour récupérer les fiches contact associées.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Compte exposant introuvable
+components:
+  schemas:
+    Salon:
+      type: object
+      properties:
+        id:
+          type: string
+          examples: ["10584"]
+        city:
+          type: string
+          examples: ["Nancy"]
+        year:
+          type: string
+          examples: ["2023"]
+        semester:
+          type: string
+          enum: 
+            - S1
+            - S2
+    Contact:
+      type: object
+      properties:
+        id:
+          type: string
+          examples: ["1696493454278"]
+        company:
+          type: object
+          properties:
+            name: 
+              type: string
+              examples: ["RAISON SOCIALE SA"]
+            address:
+              type: object
+              properties:
+                street:
+                  type: string
+                  examples: ["11 rue du Port"]
+                extra:
+                  type: string
+                  examples: ["BP 950"]
+                zipcode:
+                  type: string
+                  examples: ["29000"]
+                city:
+                  type: string
+                  examples: ["QUIMPER"]
+            workforce:
+              type: string
+              examples: ["de 200 à 299"]
+            type:
+              type: string
+              examples: ["CSE"]
+            phone:
+              type: string
+              examples: ["0105040302"]
+        ce:
+          type: object
+          properties:
+            phone:
+              type: string
+              examples: ["0105040302"]
+            email:
+              type: string
+              examples: ["ce@mail.fr"]
+        visitor:
+          type: object
+          properties:
+            firstname:
+              type: string
+              examples: ["Prénom"]
+            lastname:
+              type: string
+              examples: ["NOM DE FAMILLE"]
+            jobTitle:
+              type: string
+              examples: ["Directeur des achats"]
+            phone:
+              type: string
+              examples: ["0605040302"]
+            email:
+              type: string
+              examples: ["visiteur@mail.fr"]
+        comment:
+          type: string
+          examples: ["Déjà client contacter le service achats en début d'année prochaine."]
+        tags:
+          type: array
+          items:
+            type: string
+          examples: ["Produit A", "Produit C", "Client"]
+        from:
+          type: string
+          examples: ["Nom du Commercial"]
+        timestamp:
+          type: number
+          examples: [1696493454278]
+  requestBodies:
+    Contact:
+      description: Fiche contact scannée par le commercial sur son stand
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Contact'
+  responses:
+    UnauthorizedError:
+      description: JWT Bearer token manquant ou invalide
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

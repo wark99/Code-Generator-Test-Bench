@@ -2,22 +2,66 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master", "develop" ]
+    branches: [ "master", "develop", "*" ]
   pull_request:
-    branches: [ "master", "develop" ]
+    branches: [ "master", "develop" , "*"]
+  workflow_dispatch:
+    inputs:
+      generatorInputSpec:
+        description: 'OpenAPI document to generate code from'
+        required: true
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build:
-
+  Run-OpenAPI-Generator:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        java-version: '22'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn clean install
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '22'
+          distribution: 'temurin'
+          cache: maven
+      - name: Generate code with OpenAPI Generator
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          chmod +x ./bin/override-generator-input.sh
+          for file in ./src/main/resources/docs/*.yaml; do
+            branch_name=$(basename $file .yaml)
+            echo $branch_name
+            git checkout -b $branch_name
+            git add ./
+            rm -rf ./gen
+            git commit -a -m "Cleanup generated files"
+            git push origin $branch_name
+            ./bin/override-generator-input.sh $branch_name.yaml
+            git add ./
+            git commit -a -m "Update generated files for $branch_name"
+            git push origin $branch_name
+            gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
+          done
+      - name: Extract code form AI generated output
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          chmod +x ./bin/code_extractor.sh
+          for AI_AGENT in ./src/main/resources/docs/generated/*; do
+            for file in $AI_AGENT/*.txt; do
+              branch_name="$(basename ${AI_AGENT})_$(basename $file .txt)"
+              echo $branch_name
+              git checkout -b $branch_name
+              git add ./
+              rm -rf ./gen
+              git commit -a -m "Cleanup generated files"
+              git push origin $branch_name
+              ./bin/code_extractor.sh $file
+              git add ./
+              git commit -a -m "Update generated files for $branch_name"
+              git push origin $branch_name
+              gh pr create --base develop --head $branch_name --title "Update generated files for $branch_name" --body "This PR updates the generated files for $branch_name"
+            done
+          done

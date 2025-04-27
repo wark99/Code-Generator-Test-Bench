@@ -1,0 +1,2583 @@
+Prompt: You are a professional Java engineer who writes professional and explicit java code without any explanation.
+Generate java controllers, models and test based on the following swagger YAML:
+/home/vaidam/Egyetem/Mesteri/Dis/Code Generator Test Bench/src/main/resources/docs/tumi43-assignment-enviro365-loans-api-testSuite-elizabeth_api-docs.yaml
+Response: ```yaml
+swagger: '2.0'
+info:
+  title: Sample API
+  description: A sample API to demonstrate Swagger annotations
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: Get all users
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+  /users/{id}:
+    get:
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+```
+
+### Model (`User.java`)
+
+```java
+package com.example.demo.model;
+
+public class User {
+    private int id;
+    private String name;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+
+### Controller (`UserController.java`)
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private List<User> users = new ArrayList<>();
+
+    public UserController() {
+        users.add(new User(1, "John Doe"));
+        users.add(new User(2, "Jane Doe"));
+    }
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return users;
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable int id) {
+        return users.stream()
+                    .filter(user -> user.getId() == id)
+                    .findFirst()
+                    .orElse(null);
+    }
+}
+```
+
+### Test (`UserControllerTest.java`)
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UserController userController;
+
+    @BeforeEach
+    public void setUp() {
+        User user1 = new User(1, "John Doe");
+        User user2 = new User(2, "Jane Doe");
+
+        when(userController.getAllUsers()).thenReturn(List.of(user1, user2));
+        when(userController.getUserById(1)).thenReturn(user1);
+        when(userController.getUserById(2)).thenReturn(user2);
+    }
+
+    @Test
+    public void testGetAllUsers() throws Exception {
+        mockMvc.perform(get("/users"))
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(jsonPath("$.length()").value(2));
+    }
+
+    @Test
+    public void testGetUserById() throws Exception {
+        mockMvc.perform(get("/users/1"))
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(jsonPath("$.id").value(1))
+               .andExpect(jsonPath("$.name").value("John Doe"));
+    }
+
+    @Test
+    public void testGetUserByIdNotFound() throws Exception {
+        mockMvc.perform(get("/users/3"))
+               .andExpect(status().isNotFound());
+    }
+}
+```
+Response: Sure! Below is an example of how you might structure a simple Java application with a RESTful API using Spring Boot, including a model, controller, and some basic tests.
+
+### Project Structure
+```
+my-spring-boot-app/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/example/demo/
+│   │   │       ├── DemoApplication.java
+│   │   │       ├── controller/
+│   │   │       │   └── ItemController.java
+│   │   │       ├── model/
+│   │   │       │   └── Item.java
+│   │   │       └── repository/
+│   │   │           └── ItemRepository.java
+│   │   └── resources/
+│   │       └── application.properties
+│   └── test/
+│       ├── java/
+│       │   └── com/example/demo/
+│       │       ├── controller/
+│       │       │   └── ItemControllerTest.java
+│       │       └── model/
+│       │           └── ItemTest.java
+│       └── resources/
+├── pom.xml
+```
+
+### 1. `DemoApplication.java`
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+### 2. `Item.java` (Model)
+```java
+package com.example.demo.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Item {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private double price;
+
+    // Constructors, Getters, and Setters
+
+    public Item() {
+    }
+
+    public Item(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+}
+```
+
+### 3. `ItemRepository.java` (Repository)
+```java
+package com.example.demo.repository;
+
+import com.example.demo.model.Item;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ItemRepository extends JpaRepository<Item, Long> {
+}
+```
+
+### 4. `ItemController.java` (Controller)
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.Item;
+import com.example.demo.repository.ItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/items")
+public class ItemController {
+
+    @Autowired
+    private ItemRepository itemRepository;
+
+    @GetMapping
+    public List<Item> getAllItems() {
+        return itemRepository.findAll();
+    }
+
+    @PostMapping
+    public Item createItem(@RequestBody Item item) {
+        return itemRepository.save(item);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Item> getItemById(@PathVariable Long id) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        if (optionalItem.isPresent()) {
+            return ResponseEntity.ok(optionalItem.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item itemDetails) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        if (optionalItem.isPresent()) {
+            Item item = optionalItem.get();
+            item.setName(itemDetails.getName());
+            item.setPrice(itemDetails.getPrice());
+            return ResponseEntity.ok(itemRepository.save(item));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        if (optionalItem.isPresent()) {
+            itemRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
+```
+
+### 5. `ItemControllerTest.java` (Tests)
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.Item;
+import com.example.demo.repository.ItemRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(ItemController.class)
+public class ItemControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private ItemRepository itemRepository;
+
+    private Item sampleItem;
+
+    @BeforeEach
+    public void setUp() {
+        sampleItem = new Item("Sample Item", 19.99);
+    }
+
+    @Test
+    public void testGetAllItems() throws Exception {
+        when(itemRepository.findAll()).thenReturn(List.of(sampleItem));
+
+        mockMvc.perform(get("/api/items"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name").value("Sample Item"))
+                .andExpect(jsonPath("$[0].price").value(19.99));
+    }
+
+    @Test
+    public void testCreateItem() throws Exception {
+        when(itemRepository.save(any(Item.class))).thenReturn(sampleItem);
+
+        mockMvc.perform(post("/api/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Sample Item\",\"price\":19.99}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Sample Item"))
+                .andExpect(jsonPath("$.price").value(19.99));
+    }
+
+    @Test
+    public void testGetItemById() throws Exception {
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(sampleItem));
+
+        mockMvc.perform(get("/api/items/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Sample Item"))
+                .andExpect(jsonPath("$.price").value(19.99));
+    }
+
+    @Test
+    public void testUpdateItem() throws Exception {
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(sampleItem));
+        sampleItem.setName("Updated Sample Item");
+        when(itemRepository.save(any(Item.class))).thenReturn(sampleItem);
+
+        mockMvc.perform(put("/api/items/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Updated Sample Item\",\"price\":19.99}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Updated Sample Item"))
+                .andExpect(jsonPath("$.price").value(19.99));
+    }
+
+    @Test
+    public void testDeleteItem() throws Exception {
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(sampleItem));
+
+        mockMvc.perform(delete("/api/items/1"))
+                .andExpect(status().isNoContent());
+    }
+}
+```
+
+### 6. `ItemTest.java` (Model Tests)
+```java
+package com.example.demo.model;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ItemTest {
+
+    private Item sampleItem;
+
+    @BeforeEach
+    public void setUp() {
+        sampleItem = new Item("Sample Item", 19.99);
+    }
+
+    @Test
+    public void testGettersAndSetters() {
+        assertEquals("Sample Item", sampleItem.getName());
+        assertEquals(19.99, sampleItem.getPrice());
+
+        sampleItem.setName("Updated Sample Item");
+        sampleItem.setPrice(29.99);
+
+        assertEquals("Updated Sample Item", sampleItem.getName());
+        assertEquals(29.99, sampleItem.getPrice());
+    }
+
+    @Test
+    public void testToString() {
+        assertNotNull(sampleItem.toString());
+    }
+}
+```
+
+### 7. `application.properties`
+```properties
+# Database configuration (optional if using an in-memory database for testing)
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+# H2 Console Configuration
+spring.h2.console.enabled=true
+```
+
+### 8. `pom.xml`
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.5</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.example</groupId>
+    <artifactId>demo</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>demo</name>
+    <description>Demo project for Spring Boot</description>
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+This setup includes a basic Spring Boot application with JPA, H2 in-memory database for testing, and some unit tests. You can customize this further based on your requirements.
+Response: Sure! I can help you generate Java code for a basic RESTful API using Spring Boot, which includes Controllers, Models, and Test cases.
+
+### 1. Model (Java Class)
+
+Let's create a simple `User` model:
+
+```java
+package com.example.demo.model;
+
+public class User {
+    private Long id;
+    private String name;
+    private String email;
+
+    // Constructors
+    public User() {}
+
+    public User(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+}
+```
+
+### 2. Controller (Java Class)
+
+Next, let's create a `UserController`:
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private List<User> users = new ArrayList<>();
+
+    // Create a user
+    @PostMapping("/")
+    public User createUser(@RequestBody User user) {
+        users.add(user);
+        return user;
+    }
+
+    // Get all users
+    @GetMapping("/")
+    public List<User> getAllUsers() {
+        return users;
+    }
+
+    // Get a single user by ID
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return users.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    // Update a user
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        User user = getUserById(id);
+        if (user != null) {
+            user.setName(userDetails.getName());
+            user.setEmail(userDetails.getEmail());
+        }
+        return user;
+    }
+
+    // Delete a user
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        users.removeIf(user -> user.getId().equals(id));
+    }
+}
+```
+
+### 3. Test Cases (Java Class)
+
+Finally, let's write some test cases for our `UserController` using JUnit and Spring Boot Test:
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UserService userService; // Assuming we have a UserService
+
+    private User user1, user2;
+
+    @BeforeEach
+    public void setUp() {
+        user1 = new User(1L, "John Doe", "john@example.com");
+        user2 = new User(2L, "Jane Doe", "jane@example.com");
+
+        when(userService.getAllUsers()).thenReturn(List.of(user1, user2));
+        when(userService.getUserById(1L)).thenReturn(user1);
+    }
+
+    @Test
+    public void testGetAllUsers() throws Exception {
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].name", is("John Doe")))
+                .andExpect(jsonPath("$[0].email", is("john@example.com")))
+                .andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1].name", is("Jane Doe")))
+                .andExpect(jsonPath("$[1].email", is("jane@example.com")));
+    }
+
+    @Test
+    public void testGetUserById() throws Exception {
+        mockMvc.perform(get("/users/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("John Doe")))
+                .andExpect(jsonPath("$.email", is("john@example.com")));
+    }
+
+    @Test
+    public void testCreateUser() throws Exception {
+        User newUser = new User(null, "New User", "newuser@example.com");
+
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"New User\",\"email\":\"newuser@example.com\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name", is("New User")))
+                .andExpect(jsonPath("$.email", is("newuser@example.com")));
+    }
+
+    @Test
+    public void testUpdateUser() throws Exception {
+        User updatedUser = new User(1L, "Updated John Doe", "updatedjohn@example.com");
+
+        mockMvc.perform(put("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Updated John Doe\",\"email\":\"updatedjohn@example.com\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Updated John Doe")))
+                .andExpect(jsonPath("$.email", is("updatedjohn@example.com")));
+    }
+
+    @Test
+    public void testDeleteUser() throws Exception {
+        mockMvc.perform(delete("/users/1"))
+                .andExpect(status().isOk());
+    }
+}
+```
+
+### 4. UserService (MockBean)
+
+Since we are using `@WebMvcTest`, the actual service layer is not being tested here, but if you want to include it in your test case, you can create a mock implementation:
+
+```java
+package com.example.demo.service;
+
+import com.example.demo.model.User;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class UserService {
+
+    private List<User> users = new ArrayList<>();
+
+    public User getUserById(Long id) {
+        return users.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<User> getAllUsers() {
+        return users;
+    }
+
+    public User createUser(User user) {
+        user.setId((long) (users.size() + 1));
+        users.add(user);
+        return user;
+    }
+
+    public User updateUser(User user) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId().equals(user.getId())) {
+                users.set(i, user);
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public void deleteUser(Long id) {
+        users.removeIf(user -> user.getId().equals(id));
+    }
+}
+```
+
+### 5. Application.java
+
+Finally, let's create a basic Spring Boot application entry point:
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+This setup provides a simple RESTful API with basic CRUD operations for a `User` entity. The test cases ensure that the endpoints work as expected.
+
+You can run this application using an IDE or from the command line:
+
+```sh
+mvn spring-boot:run
+```
+
+And you should be able to interact with your API at `http://localhost:8080/users`.
+Response: Sure! I can help you generate a simple Java controller, model, and test class using Spring Boot. Let's assume we're creating a basic REST API for managing "Books."
+
+### 1. Model (Book.java)
+
+First, let's define the `Book` model.
+
+```java
+package com.example.demo.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String title;
+    private String author;
+    private int yearPublished;
+
+    // Constructors, Getters and Setters
+
+    public Book() {
+    }
+
+    public Book(Long id, String title, String author, int yearPublished) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.yearPublished = yearPublished;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public int getYearPublished() {
+        return yearPublished;
+    }
+
+    public void setYearPublished(int yearPublished) {
+        this.yearPublished = yearPublished;
+    }
+}
+```
+
+### 2. Repository (BookRepository.java)
+
+Next, let's create a repository interface to interact with the database.
+
+```java
+package com.example.demo.repository;
+
+import com.example.demo.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BookRepository extends JpaRepository<Book, Long> {
+}
+```
+
+### 3. Controller (BookController.java)
+
+Now, let's create a controller to handle HTTP requests.
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.Book;
+import com.example.demo.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    @PostMapping
+    public Book createBook(@RequestBody Book book) {
+        return bookRepository.save(book);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+
+        if (book.isPresent()) {
+            return ResponseEntity.ok(book.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
+        Optional<Book> book = bookRepository.findById(id);
+
+        if (book.isPresent()) {
+            Book updatedBook = book.get();
+            updatedBook.setTitle(bookDetails.getTitle());
+            updatedBook.setAuthor(bookDetails.getAuthor());
+            updatedBook.setYearPublished(bookDetails.getYearPublished());
+
+            return ResponseEntity.ok(bookRepository.save(updatedBook));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+
+        if (book.isPresent()) {
+            bookRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
+```
+
+### 4. Test (BookControllerTest.java)
+
+Finally, let's write a simple test for the `BookController`.
+
+```java
+package com.example.demo.controller;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.example.demo.model.Book;
+import com.example.demo.repository.BookRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+@WebMvcTest(BookController.class)
+public class BookControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private BookRepository bookRepository;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetAllBooks() throws Exception {
+        // Arrange
+        Book book = new Book(1L, "Book Title", "Author Name", 2023);
+        when(bookRepository.findAll()).thenReturn(List.of(book));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/books"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.size()").value(1))
+               .andExpect(jsonPath("$[0].id").value(1L))
+               .andExpect(jsonPath("$[0].title").value("Book Title"))
+               .andExpect(jsonPath("$[0].author").value("Author Name"))
+               .andExpect(jsonPath("$[0].yearPublished").value(2023));
+    }
+
+    @Test
+    public void testCreateBook() throws Exception {
+        // Arrange
+        Book book = new Book(null, "New Book", "New Author", 2024);
+        when(bookRepository.save(any(Book.class))).thenReturn(book);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonInput = objectMapper.writeValueAsString(book);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/books")
+               .contentType(MediaType.APPLICATION_JSON)
+               .content(jsonInput))
+               .andExpect(status().isCreated())
+               .andExpect(jsonPath("$.id").value(1L))
+               .andExpect(jsonPath("$.title").value("New Book"))
+               .andExpect(jsonPath("$.author").value("New Author"))
+               .andExpect(jsonPath("$.yearPublished").value(2024));
+    }
+}
+```
+
+### 5. Application (DemoApplication.java)
+
+Finally, let's create the main application class.
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+### Summary
+
+This example demonstrates how to create a simple REST API for managing books using Spring Boot. It includes:
+
+1. A `Book` model with JPA annotations.
+2. A `BookRepository` interface for database operations.
+3. A `BookController` class to handle HTTP requests.
+4. A test class to ensure the controller works as expected.
+
+You can run this application and access the API at `http://localhost:8080/api/books`.
+Response: Sure! Below is an example of a simple Spring Boot application with a controller, model, and test for managing users.
+
+### Model (User.java)
+```java
+package com.example.demo.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String email;
+
+    // Constructors
+    public User() {}
+
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+```
+
+### Controller (UserController.java)
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    // Get all users
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    // Create a new user
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.createUser(user);
+        return ResponseEntity.status(201).body(createdUser);
+    }
+
+    // Get a single user by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    // Update an existing user
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        User updatedUser = userService.updateUser(id, userDetails);
+        if (updatedUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    // Delete a user
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        boolean deleted = userService.deleteUser(id);
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+}
+```
+
+### Service (UserService.java)
+```java
+package com.example.demo.service;
+
+import com.example.demo.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UserService {
+
+    private List<User> users = new ArrayList<>();
+
+    @Transactional
+    public User createUser(User user) {
+        users.add(user);
+        return user;
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> getAllUsers() {
+        return users;
+    }
+
+    @Transactional(readOnly = true)
+    public User getUserById(Long id) {
+        Optional<User> userOptional = users.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst();
+        return userOptional.orElse(null);
+    }
+
+    @Transactional
+    public User updateUser(Long id, User userDetails) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId().equals(id)) {
+                users.set(i, userDetails);
+                return userDetails;
+            }
+        }
+        return null;
+    }
+
+    @Transactional
+    public boolean deleteUser(Long id) {
+        Optional<User> userOptional = users.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst();
+        if (userOptional.isPresent()) {
+            users.remove(userOptional.get());
+            return true;
+        }
+        return false;
+    }
+}
+```
+
+### Test (UserControllerTest.java)
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import com.example.demo.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UserService userService;
+
+    private User testUser;
+
+    @BeforeEach
+    public void setUp() {
+        testUser = new User(1L, "John Doe", "john.doe@example.com");
+    }
+
+    @Test
+    public void shouldCreateUser() throws Exception {
+        when(userService.createUser(any(User.class))).thenReturn(testUser);
+
+        mockMvc.perform(post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"John Doe\",\"email\":\"john.doe@example.com\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("John Doe"))
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+    }
+
+    @Test
+    public void shouldReturnAllUsers() throws Exception {
+        when(userService.getAllUsers()).thenReturn(List.of(testUser));
+
+        mockMvc.perform(get("/api/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].name").value("John Doe"))
+                .andExpect(jsonPath("$[0].email").value("john.doe@example.com"));
+    }
+
+    @Test
+    public void shouldGetUserById() throws Exception {
+        when(userService.getUserById(1L)).thenReturn(testUser);
+
+        mockMvc.perform(get("/api/users/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("John Doe"))
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+    }
+
+    @Test
+    public void shouldUpdateUser() throws Exception {
+        when(userService.updateUser(1L, any(User.class))).thenReturn(testUser);
+
+        mockMvc.perform(put("/api/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Jane Doe\",\"email\":\"jane.doe@example.com\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("Jane Doe"))
+                .andExpect(jsonPath("$.email").value("jane.doe@example.com"));
+    }
+
+    @Test
+    public void shouldDeleteUser() throws Exception {
+        when(userService.deleteUser(1L)).thenReturn(true);
+
+        mockMvc.perform(delete("/api/users/1"))
+                .andExpect(status().isNoContent());
+    }
+}
+```
+
+This example includes a simple user management system with basic CRUD operations. The `UserService` class handles business logic, while the `UserController` and `UserControllerTest` classes handle HTTP requests and responses.
+Response: Sure! Let's walk through creating a simple Java application with a controller, model, and tests using Spring Boot.
+
+### Step 1: Create the Project
+
+First, let's create a new Spring Boot project. You can use Spring Initializr (https://start.spring.io/) to generate it quickly.
+
+- **Project:** Maven Project
+- **Language:** Java
+- **Spring Boot:** Latest stable version
+- **Project Metadata:**
+  - **Group:** com.example
+  - **Artifact:** demo
+  - **Name:** demo
+  - **Description:** Demo project for Spring Boot
+  - **Package name:** com.example.demo
+  - **Packaging:** Jar
+  - **Java:** 11 or later
+- **Dependencies:**
+  - Spring Web
+
+Click "Generate" to download the ZIP file, unzip it, and open it in your favorite IDE (e.g., IntelliJ IDEA, Eclipse).
+
+### Step 2: Create the Model
+
+Create a simple model class representing a user.
+
+**src/main/java/com/example/demo/model/User.java**
+
+```java
+package com.example.demo.model;
+
+public class User {
+    private Long id;
+    private String name;
+    private String email;
+
+    // Constructors
+    public User() {}
+
+    public User(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+```
+
+### Step 3: Create the Controller
+
+Create a controller to handle HTTP requests.
+
+**src/main/java/com/example/demo/controller/UserController.java**
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+import java.util.List;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private List<User> users = Arrays.asList(
+        new User(1L, "John Doe", "john.doe@example.com"),
+        new User(2L, "Jane Smith", "jane.smith@example.com")
+    );
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        return users.stream()
+            .filter(user -> user.getId().equals(id))
+            .findFirst()
+            .orElse(null);
+    }
+}
+```
+
+### Step 4: Create the Tests
+
+Create unit tests for the controller.
+
+**src/test/java/com/example/demo/controller/UserControllerTest.java**
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    public void testGetUserById() throws Exception {
+        mockMvc.perform(get("/users/1")
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1L))
+            .andExpect(jsonPath("$.name").value("John Doe"))
+            .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+    }
+
+    @Test
+    public void testGetUserByIdNotFound() throws Exception {
+        mockMvc.perform(get("/users/3")
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+}
+```
+
+### Step 5: Run the Application
+
+You can run the application by executing the `DemoApplication` class.
+
+**src/main/java/com/example/demo/DemoApplication.java**
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+Run the application, and you should be able to access the user details via `http://localhost:8080/users/1`.
+
+### Conclusion
+
+This example demonstrates creating a simple Java Spring Boot application with a model, controller, and tests. The controller handles HTTP GET requests for retrieving user information, and the tests ensure that the controller behaves as expected.
+Response: Sure! To provide you with a complete example of a Java controller, model, and test, let's consider a simple scenario: a RESTful API for managing a list of books.
+
+### Model (Book.java)
+The `Book` class represents the data structure of a book.
+
+```java
+package com.example.demo.model;
+
+import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import org.springframework.format.annotation.DateTimeFormat;
+
+@Entity
+public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String title;
+    private String author;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date publicationDate;
+
+    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public Date getPublicationDate() {
+        return publicationDate;
+    }
+
+    public void setPublicationDate(Date publicationDate) {
+        this.publicationDate = publicationDate;
+    }
+}
+```
+
+### Controller (BookController.java)
+The `BookController` class handles HTTP requests for the book resource.
+
+```java
+package com.example.demo.controller;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.model.Book;
+import com.example.demo.service.BookService;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+    @Autowired
+    private BookService bookService;
+
+    @GetMapping
+    public ResponseEntity<List<Book>> getAllBooks() {
+        List<Book> books = bookService.getAllBooks();
+        return ResponseEntity.ok(books);
+    }
+
+    @PostMapping
+    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+        Book savedBook = bookService.createBook(book);
+        return ResponseEntity.status(201).body(savedBook);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Book book = bookService.getBookById(id);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(book);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
+        Book updatedBook = bookService.updateBook(id, bookDetails);
+        if (updatedBook == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedBook);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        boolean deleted = bookService.deleteBook(id);
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+}
+```
+
+### Service (BookService.java)
+The `BookService` class contains the business logic for managing books.
+
+```java
+package com.example.demo.service;
+
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.example.demo.model.Book;
+import com.example.demo.repository.BookRepository;
+
+@Service
+public class BookService {
+    @Autowired
+    private BookRepository bookRepository;
+
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    public Book createBook(Book book) {
+        return bookRepository.save(book);
+    }
+
+    public Book getBookById(Long id) {
+        Optional<Book> optionalBook = bookRepository.findById(id);
+        return optionalBook.orElse(null);
+    }
+
+    public Book updateBook(Long id, Book bookDetails) {
+        Optional<Book> optionalBook = bookRepository.findById(id);
+        if (optionalBook.isPresent()) {
+            Book existingBook = optionalBook.get();
+            existingBook.setTitle(bookDetails.getTitle());
+            existingBook.setAuthor(bookDetails.getAuthor());
+            existingBook.setPublicationDate(bookDetails.getPublicationDate());
+            return bookRepository.save(existingBook);
+        }
+        return null;
+    }
+
+    public boolean deleteBook(Long id) {
+        Optional<Book> optionalBook = bookRepository.findById(id);
+        if (optionalBook.isPresent()) {
+            bookRepository.delete(optionalBook.get());
+            return true;
+        }
+        return false;
+    }
+}
+```
+
+### Repository (BookRepository.java)
+The `BookRepository` interface extends Spring Data JPA's `JpaRepository`, providing CRUD operations for the `Book` entity.
+
+```java
+package com.example.demo.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.demo.model.Book;
+
+public interface BookRepository extends JpaRepository<Book, Long> {
+}
+```
+
+### Test (BookControllerTest.java)
+The `BookControllerTest` class uses JUnit and Spring Boot's testing utilities to test the `BookController`.
+
+```java
+package com.example.demo.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.example.demo.model.Book;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+public class BookControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private BookService bookService;
+
+    private List<Book> books;
+
+    @BeforeEach
+    public void setUp() {
+        books = Arrays.asList(
+            new Book(1L, "Book One", "Author One", new Date()),
+            new Book(2L, "Book Two", "Author Two", new Date())
+        );
+    }
+
+    @Test
+    public void testGetAllBooks() throws Exception {
+        when(bookService.getAllBooks()).thenReturn(books);
+
+        mockMvc.perform(get("/api/books"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.size()").value(2));
+    }
+
+    @Test
+    public void testCreateBook() throws Exception {
+        Book book = new Book(null, "New Book", "Author New", new Date());
+        when(bookService.createBook(any(Book.class))).thenReturn(new Book(3L, "New Book", "Author New", new Date()));
+
+        mockMvc.perform(post("/api/books")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(book)))
+               .andExpect(status().isCreated())
+               .andExpect(jsonPath("$.id").value(3));
+    }
+
+    @Test
+    public void testGetBookById() throws Exception {
+        when(bookService.getBookById(1L)).thenReturn(new Book(1L, "Book One", "Author One", new Date()));
+
+        mockMvc.perform(get("/api/books/1"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.id").value(1));
+    }
+
+    @Test
+    public void testUpdateBook() throws Exception {
+        Book book = new Book(1L, "Updated Book", "Updated Author", new Date());
+        when(bookService.updateBook(1L, any(Book.class))).thenReturn(new Book(1L, "Updated Book", "Updated Author", new Date()));
+
+        mockMvc.perform(put("/api/books/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(book)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.id").value(1));
+    }
+
+    @Test
+    public void testDeleteBook() throws Exception {
+        when(bookService.deleteBook(1L)).thenReturn(true);
+
+        mockMvc.perform(delete("/api/books/1"))
+               .andExpect(status().isNoContent());
+    }
+}
+```
+
+### Summary
+- **Model (`Book.java`)**: Represents the data structure for a book.
+- **Controller (`BookController.java`)**: Handles HTTP requests for the book resource.
+- **Service (`BookService.java`)**: Contains business logic for managing books.
+- **Repository (`BookRepository.java`)**: Provides CRUD operations for the `Book` entity.
+- **Test (`BookControllerTest.java`)**: Uses JUnit and Spring Boot's testing utilities to test the `BookController`.
+
+You can further expand this example based on your specific requirements, such as adding more fields to the `Book` model or implementing additional business logic in the service layer.
+Response: Sure! Let's create a simple example of a Java application using Spring Boot that includes Controllers, Models, and Tests.
+
+### 1. Model: User.java
+
+```java
+package com.example.demo.model;
+
+public class User {
+    private Long id;
+    private String name;
+    private String email;
+
+    // Constructors
+    public User() {}
+
+    public User(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+}
+```
+
+### 2. Controller: UserController.java
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private List<User> users = new ArrayList<>();
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return users;
+    }
+
+    @PostMapping
+    public User addUser(@RequestBody User user) {
+        users.add(user);
+        return user;
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return users.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId().equals(id)) {
+                users.set(i, user);
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        users.removeIf(u -> u.getId().equals(id));
+    }
+}
+```
+
+### 3. Test: UserControllerTest.java
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    public void setUp() {
+        // Setup data if needed
+    }
+
+    @Test
+    public void testGetAllUsers() throws Exception {
+        User user1 = new User(1L, "John Doe", "john.doe@example.com");
+        User user2 = new User(2L, "Jane Smith", "jane.smith@example.com");
+
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].name").value("John Doe"))
+                .andExpect(jsonPath("$[1].email").value("jane.smith@example.com"));
+    }
+
+    @Test
+    public void testAddUser() throws Exception {
+        User user = new User(null, "Alice Johnson", "alice.johnson@example.com");
+        String jsonRequest = "{\"name\":\"Alice Johnson\",\"email\":\"alice.johnson@example.com\"}";
+
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRequest))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Alice Johnson"))
+                .andExpect(jsonPath("$.email").value("alice.johnson@example.com"));
+    }
+
+    @Test
+    public void testGetUserById() throws Exception {
+        User user = new User(1L, "Bob Brown", "bob.brown@example.com");
+        mockMvc.perform(get("/users/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Bob Brown"))
+                .andExpect(jsonPath("$.email").value("bob.brown@example.com"));
+    }
+
+    @Test
+    public void testUpdateUser() throws Exception {
+        User user = new User(1L, "Charlie Davis", "charlie.davis@example.com");
+        String jsonRequest = "{\"name\":\"Charlie Davis\",\"email\":\"charlie.davis@example.com\"}";
+
+        mockMvc.perform(put("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRequest))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Charlie Davis"))
+                .andExpect(jsonPath("$.email").value("charlie.davis@example.com"));
+    }
+
+    @Test
+    public void testDeleteUser() throws Exception {
+        User user = new User(1L, "David Evans", "david.evans@example.com");
+        mockMvc.perform(delete("/users/1"))
+                .andExpect(status().isNoContent());
+    }
+}
+```
+
+### 4. Application.java
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+This example provides a basic RESTful API for managing users. It includes models, controllers, and tests using Spring Boot and JUnit 5. The `UserControllerTest` uses MockMvc to simulate HTTP requests and verify the responses.
+
+You can run this application by executing `DemoApplication.java`.
+Response: Sure! Below is an example of how you can generate Java code for a simple Spring Boot application, including a controller, a model, and a basic unit test.
+
+### 1. Model (User.java)
+
+```java
+package com.example.demo.model;
+
+public class User {
+    private Long id;
+    private String name;
+    private String email;
+
+    // Constructors
+    public User() {}
+
+    public User(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    // toString method
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+}
+```
+
+### 2. Controller (UserController.java)
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    private List<User> users = new ArrayList<>();
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return users;
+    }
+
+    @PostMapping
+    public User addUser(@RequestBody User user) {
+        users.add(user);
+        return user;
+    }
+}
+```
+
+### 3. Unit Test (UserControllerTest.java)
+
+```java
+package com.example.demo.controller;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.example.demo.model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UserController userController;
+
+    @BeforeEach
+    public void setUp() {
+        User user = new User(1L, "John Doe", "john.doe@example.com");
+        List<User> userList = new ArrayList<>();
+        userList.add(user);
+        when(userController.getAllUsers()).thenReturn(userList);
+    }
+
+    @Test
+    public void testGetAllUsers() throws Exception {
+        mockMvc.perform(get("/api/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1))
+                .andExpect(jsonPath("$[0].name").value("John Doe"));
+    }
+
+    @Test
+    public void testAddUser() throws Exception {
+        User newUser = new User(null, "Jane Doe", "jane.doe@example.com");
+        String userJson = "{\"name\":\"Jane Doe\",\"email\":\"jane.doe@example.com\"}";
+
+        mockMvc.perform(post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Jane Doe"));
+    }
+}
+```
+
+### Explanation:
+
+1. **Model (`User.java`)**:
+   - This class represents a user with `id`, `name`, and `email`.
+   - It includes standard Java beans properties, constructors, getters, setters, and a `toString()` method.
+
+2. **Controller (`UserController.java`)**:
+   - This controller handles HTTP requests for users.
+   - It provides two endpoints: one to get all users and another to add a new user.
+
+3. **Unit Test (`UserControllerTest.java`)**:
+   - This test class uses Spring's `@WebMvcTest` annotation to test the `UserController`.
+   - It mocks the controller methods using Mockito and performs mock web requests to verify the behavior of the endpoints.
+   - The tests check if the correct HTTP status codes are returned and if the responses match expected values.
+
+You can run these classes as part of a Spring Boot application, and you will have a basic REST API for managing users.
+Response: Sure! Below is an example of a simple Java application using Spring Boot that includes a controller, a model, and a test.
+
+### Model
+
+Let's start with the `User` model:
+
+```java
+package com.example.demo.model;
+
+public class User {
+    private Long id;
+    private String name;
+    private String email;
+
+    // Constructors
+    public User() {}
+
+    public User(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+```
+
+### Controller
+
+Next, let's create a `UserController`:
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private List<User> users = new ArrayList<>();
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return users;
+    }
+
+    @PostMapping
+    public User createUser(@RequestBody User user) {
+        users.add(user);
+        return user;
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return users.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+}
+```
+
+### Test
+
+Finally, let's write some tests for the `UserController` using JUnit and Spring Boot Test:
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UserController userController;
+
+    @BeforeEach
+    public void setUp() {
+        User mockUser = new User(1L, "John Doe", "john.doe@example.com");
+        when(userController.getAllUsers()).thenReturn(List.of(mockUser));
+    }
+
+    @Test
+    public void testGetAllUsers() throws Exception {
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].name").value("John Doe"))
+                .andExpect(jsonPath("$[0].email").value("john.doe@example.com"));
+    }
+
+    @Test
+    public void testCreateUser() throws Exception {
+        User newUser = new User(null, "Jane Doe", "jane.doe@example.com");
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Jane Doe\",\"email\":\"jane.doe@example.com\"}"))
+                .andExpect(status().isCreated());
+    }
+}
+```
+
+### Summary
+
+This example demonstrates a basic Spring Boot application with a `User` model, a `UserController`, and tests for the controller. The `UserController` handles GET and POST requests to manage users. The tests use JUnit and Spring Boot Test to verify that the controller behaves as expected.
+
+Feel free to expand this example by adding more features, such as user deletion, updating, or integrating with a database.
+Response: Sure! Let's create a simple Java application with Spring Boot that includes a controller, model, and test. We'll use Maven as our build tool.
+
+### Step 1: Create the Project
+
+First, create a new Spring Boot project using [Spring Initializr](https://start.spring.io/). Choose the following options:
+
+- **Project:** Maven Project
+- **Language:** Java
+- **Spring Boot:** Latest stable version (e.g., 2.7.5)
+- **Project Metadata:**
+  - **Group:** com.example
+  - **Artifact:** demo
+  - **Name:** demo
+  - **Description:** Demo project for Spring Boot
+  - **Package name:** com.example.demo
+- **Packaging:** Jar
+- **Java:** 11 or later
+
+Add the following dependencies:
+
+- **Spring Web**
+
+Click "Generate" to download the project. Extract the downloaded zip file.
+
+### Step 2: Project Structure
+
+The generated project structure should look like this:
+
+```
+demo/
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/demo/
+│   │   │   ├── DemoApplication.java
+│   │   │   ├── controller/
+│   │   │   │   └── HelloController.java
+│   │   │   ├── model/
+│   │   │   │   └── User.java
+│   │   ├── resources/
+│   │   │   ├── application.properties
+│   │   ├── test/java/com/example/demo/
+│   │   │   └── DemoApplicationTests.java
+├── pom.xml
+```
+
+### Step 3: Model - User.java
+
+Create a `User` model in the `model` package:
+
+```java
+package com.example.demo.model;
+
+public class User {
+    private Long id;
+    private String name;
+    private String email;
+
+    // Default constructor
+    public User() {}
+
+    // Parameterized constructor
+    public User(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+```
+
+### Step 4: Controller - HelloController.java
+
+Create a `HelloController` in the `controller` package:
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.model.User;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+public class HelloController {
+
+    @GetMapping("/hello")
+    public User sayHello(@RequestParam(value = "name", defaultValue = "World") String name) {
+        User user = new User(1L, name, "example@example.com");
+        return user;
+    }
+}
+```
+
+### Step 5: Test - HelloControllerTest.java
+
+Create a test for the `HelloController` in the `test/java/com/example/demo/` directory:
+
+```java
+package com.example.demo;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.example.demo.controller.HelloController;
+import com.example.demo.model.User;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+@WebMvcTest(HelloController.class)
+public class HelloControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private HelloController helloController;
+
+    @Test
+    public void shouldReturnDefaultMessage() throws Exception {
+        User user = new User(1L, "World", "example@example.com");
+        Mockito.when(helloController.sayHello("World")).thenReturn(user);
+
+        mockMvc.perform(get("/api/hello")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(result -> assertThat(result.getResponse().getContentAsString()).contains("\"name\":\"World\""));
+    }
+}
+```
+
+### Step 6: Run the Application
+
+Navigate to the project root directory and run:
+
+```sh
+./mvnw spring-boot:run
+```
+
+You should see the application start up. You can then access `http://localhost:8080/api/hello` in your browser or use a tool like Postman to test the endpoint.
+
+### Step 7: Test the Application
+
+Run the tests using:
+
+```sh
+./mvnw test
+```
+
+If everything is set up correctly, you should see all tests passing.
+
+This simple example demonstrates how to create a basic REST controller with a model and corresponding unit test in a Spring Boot application.

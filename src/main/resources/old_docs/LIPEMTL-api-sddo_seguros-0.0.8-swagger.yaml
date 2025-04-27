@@ -1,0 +1,1443 @@
+openapi: 3.1.0
+info:
+  title: API SDDO - Seguros
+  description: Contrato de API referente aos recursos de gestão de sinistros e seguros que atendem como fonte de dados para o SDDO.
+  version:  0.0.8
+  contact:
+    email: filipe.xavier@sennatech.com.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: https://hostname-dev.sennatech.com.br/api/sddo/insurance/v1
+    description: DEV
+  - url: https://hostname-uat.sennatech.com.br/api/sddo/insurance/v1
+    description: HML
+  - url: https://hostname.sennatech.com.br/api/sddo/insurance/v1
+    description: PRD
+tags:
+  - name: Usuários
+    description: Recursos gestão de usuários
+  - name: Clientes
+    description: Recursos gestão de clientes
+  - name: Coberturas
+    description: Recursos gestão de coberturas
+  - name: Cotação
+    description: Recursos gestão de cotações
+  - name: Pagamento
+    description: Recursos gestão de pagamentos
+  - name: Emissão
+    description: Recursos gestão de emissões
+  - name: Apólices
+    description: Recursos gestão de apólices
+paths:
+  /users:
+    get:
+      tags:
+        - Usuários
+      summary: Lista todos os usuários cadastrados
+      description: Lista todos os usuários cadastrados
+      operationId: get-users
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUsersResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+    post:
+      tags:
+        - Usuários
+      summary: Cadastra novo usuário
+      description: Cadastra novo usuário
+      operationId: post-users
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      requestBody: 
+        description: Recebe um evento 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /users-validation/{hash}:
+    get:
+      tags:
+        - Usuários
+      summary: Valida acesso do cliente com base no usuário e senha criptografados
+      description: Valida acesso do cliente com base no usuário e senha criptografados
+      operationId: get-users-validation
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: hash
+          required: true
+          description: base64(user:pass)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /users/{documentNumber}:
+    get:
+      tags:
+        - Usuários
+      summary: Consulta detalhes de usuário por e-mail
+      description: Consulta detalhes de usuário por e-mail
+      operationId: get-users-by-email
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: documentNumber
+          required: true
+          description: Número de documento do usuário
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+    put:
+      tags:
+        - Usuários
+      summary: Atualiza usuário
+      description: Atualiza usuário
+      operationId: put-users
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: documentNumber
+          required: true
+          description: Número de documento do usuário
+          schema:
+            type: string
+      requestBody: 
+        description: Recebe um evento 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'        
+        required: true
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+    delete:
+      tags:
+        - Usuários
+      summary: Remove usuários
+      description: remove usuário
+      operationId: delete-users
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: documentNumber
+          required: true
+          description: Número de documento do usuário
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /users/password/{documentNumber}:
+    put:
+      tags: 
+        - Usuários
+      summary: Atualiza senha de usuário
+      description: Atualiza senha de usuário
+      operationId: put-user-password
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: header
+          name: documentNumber
+          required: true
+          description: Número de documento do usuário
+          schema:
+            type: string
+      requestBody:  
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /users/password/recovery:
+    post:
+      tags: 
+        - Usuários
+      summary: Solicita recuperação de senha de usuário
+      description: Solicita recuperação de senha de usuário
+      operationId: post-user-password-recovery
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      requestBody:  
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordRecovery'
+        required: true
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /users/password/recovery/{hash}:
+    put:
+      tags: 
+        - Usuários
+      summary: Efetua a atualização de senha por fluxo de recuperação
+      description: Efetua a atualização de senha por fluxo de recuperação
+      operationId: put-user-password-recovery
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: hash
+          schema:
+            type: string
+      requestBody:  
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePasswordRecovery'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /users/password/hash-validation/{hash}:
+    get:
+      tags: 
+        - Usuários
+      summary: Efetua a validação do hash de recuperação de senha
+      description: Efetua a validação do hash de recuperação de senha
+      operationId: put-user-password-hash-validation
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: hash
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /customers:
+    get:
+      tags:
+        - Clientes
+      summary: Lista todos os clientes cadastrados
+      description: Lista todos os usuários cadastrados
+      operationId: get-customers
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCustomersResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+    post:
+      tags:
+        - Clientes
+      summary: Cadastra novo cliente
+      description: Cadastra novo cliente
+      operationId: post-customers
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      requestBody: 
+        description: Recebe um evento 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        required: true
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /customers/{documentNumber}:
+    get:
+      tags:
+        - Clientes
+      summary: Consulta detalhes de usuário por número de documento
+      description: Consulta detalhes de usuário por número de documento
+      operationId: get-customers-by-documentNumber
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: documentNumber
+          required: true
+          description: Documento de identificação do cliente
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+    put:
+      tags:
+        - Clientes
+      summary: Atualiza cliente
+      description: Atualiza cliente
+      operationId: put-customers
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      requestBody: 
+        description: Recebe um evento 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutCustomerRequest'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /customers-validation/{hash}:
+    get:
+      tags:
+        - Clientes
+      summary: Valida acesso do cliente com base no usuário e senha criptografados
+      description: Valida acesso do cliente com base no usuário e senha criptografados
+      operationId: get-customers-validation
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: hash
+          required: true
+          description: base64(user:pass)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /customers/password/{documentNumber}:
+    put:
+      tags: 
+        - Clientes
+      summary: Atualiza senha de cliente
+      description: Atualiza senha de cliente
+      operationId: put-customer-password
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: header
+          name: documentNumber
+          required: true
+          description: Número de documento do cliente
+          schema:
+            type: string
+      requestBody:  
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /customers/password/recovery:
+    post:
+      tags: 
+        - Clientes
+      summary: Solicita recuperação de senha de usuário
+      description: Solicita recuperação de senha de usuário
+      operationId: post-customers-password-recovery
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      requestBody:  
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordRecovery'
+        required: true
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /customers/password/recovery/{hash}:
+    put:
+      tags: 
+        - Clientes
+      summary: Efetua a atualização de senha por fluxo de recuperação
+      description: Efetua a atualização de senha por fluxo de recuperação
+      operationId: put-customers-password-recovery
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: hash
+          schema:
+            type: string
+      requestBody:  
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePasswordRecovery'
+        required: true
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /customers/password/hash-validation/{hash}:
+    get:
+      tags: 
+        - Clientes
+      summary: Efetua a validação do hash de recuperação de senha
+      description: Efetua a validação do hash de recuperação de senha
+      operationId: put-customers-password-hash-validation
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: hash
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /coverages:
+    get:
+      tags: 
+        - Coberturas
+      summary: Consulta coberturas existentes
+      description: Consulta coberturas existentes
+      operationId: get-coverages
+      parameters:
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/Coverages'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+    post:
+      tags: 
+        - Coberturas
+      summary: Cadastra coberturas novas
+      description: Cadastra coberturas novas
+      operationId: post-coverages
+      parameters:
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      requestBody: 
+        content: 
+          application/json: 
+            schema:
+              $ref: '#/components/schemas/CoverageRequest'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /coverages/{code}:
+    put:
+      tags: 
+        - Coberturas
+      summary: Atualiza coberturas existentes
+      description: Atualiza coberturas existentes
+      operationId: put-coverages
+      parameters:
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: code
+          required: true
+          description: Código de cobertura
+          schema:
+            type: string
+      requestBody: 
+        content: 
+          application/json: 
+            schema:
+              $ref: '#/components/schemas/CoverageRequest'
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+    delete:
+      tags: 
+        - Coberturas
+      summary: Remove coberturas existentes
+      description: Remove coberturas existentes
+      operationId: delete-coverages
+      parameters:
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: code
+          required: true
+          description: Código de cobertura
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /coverages/{policy}:
+    get:
+      tags: 
+        - Coberturas
+      summary: Consulta coberturas de uma apólice
+      description: Consulta coberturas de uma apólice
+      operationId: get-coverages-by-policy
+      parameters:
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: policy
+          required: true
+          description: Número e apólice
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/Coverages'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /quotation:
+    post:
+      tags: 
+        - Cotação
+      summary: Efetua cotação de seguro
+
+    
+      description: Efetua cotação de seguro
+      operationId: post-quotation
+      parameters:
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      requestBody: 
+        content: 
+          application/json: 
+            schema:
+              $ref: '#/components/schemas/QuotationRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/QuotationResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error     
+  /issuances:
+    post:
+      tags: 
+        - Emissão
+      summary: Efetua emissão de seguro
+      description: Efetua emissão de seguro
+      operationId: post-issuance
+      parameters:
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      requestBody: 
+        content: 
+          application/json: 
+            schema:
+              $ref: '#/components/schemas/IssuanceRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/IssuanceResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error     
+  /payments:
+    post:
+      tags: 
+        - Pagamento
+      summary: Efetua emissão de seguro
+      description: Efetua emissão de seguro
+      operationId: post-payment
+      parameters:
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+      requestBody: 
+        content: 
+          application/json: 
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error     
+  /policies/{documentNumber}:
+    get:
+      tags:
+        - Apólices
+      summary: Consulta de apólices por cliente
+      description: Consulta de apólices por cliente
+      operationId: get-policies-by-documentNumber
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: documentNumber
+          required: true
+          description: Número de documento do usuário
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/PoliciesResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+  /policies/{policyNumber}:
+    get:
+      tags:
+        - Apólices
+      summary: Consulta de detalhes e apólice
+      description: Consulta de detalhes e apólice
+      operationId: get-policies-details
+      parameters: 
+        - in: header
+          name: Ocp-Apim-Subscription-Key
+          required: true
+          description: Api-Key
+          schema:
+            type: string
+        - in: path
+          name: documentNumber
+          required: true
+          description: Número da apólice
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/PolicyDetailsResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server error
+components:
+  schemas:
+    User:
+      description: Objeto de usuário
+      type: object
+      properties:
+          documentNumber:
+            type: string
+            examples: 
+              - 11111111111
+          name: 
+            type: string
+            examples: 
+              - José do teste
+          birthdate: 
+            type: string
+            format: date
+            examples: 
+              - 1997-01-01
+          email: 
+            type: string
+            examples: 
+              - jose.teste@teste.com.br
+          profile: 
+            type: string
+            examples: 
+              - administrator
+          password: 
+            type: string
+            examples: 
+              - H7suIa##89a
+    GetUsersResponse:
+      type: array
+      items: 
+        $ref: '#/components/schemas/GetUserResponse'
+    GetUserResponse:
+      type: object
+      properties: 
+        name: 
+          type: string
+          examples: 
+            - José do teste
+        email: 
+          type: string
+          examples: 
+            - José.teste@teste.com.br
+        documentNumber:
+            type: string
+            examples: 
+              - 11111111111
+    Customer:
+      type: object
+      properties:
+        documentNumber: 
+          type: string
+          examples: 
+            - 11111111111
+        name: 
+          type: string
+          examples: 
+            - José do Teste
+        birthdate: 
+          type: string
+          format: date
+          examples: 
+            - 1992-01-01
+        gender: 
+          type: string
+          examples: 
+            - M
+            - F
+        login: 
+          type: string
+          examples: 
+            - teste
+        password: 
+          type: string
+          examples: 
+            - fjUyga&6569wwq
+        email: 
+          type: string
+          examples: 
+            - joao.teste@teste.com.br
+        areaCode: 
+          type: string
+          examples: 
+            - 11
+        phone: 
+          type: string
+          examples: 
+            - 912341234
+        address:
+            $ref: '#/components/schemas/Address'
+    Address:
+      type: object
+      properties:
+        street: 
+          type: string
+          examples: 
+            - Rua dos testes
+        number: 
+          type: string
+          examples: 
+            - S/N
+        neighbourhood: 
+          type: string
+          examples: 
+            - Vila dos teste
+        city: 
+          type: string
+          examples: 
+            - São paulo
+        state: 
+          type: string
+          examples: 
+            - SP
+        country: 
+          type: string
+          examples: 
+            - Brasil
+        zipcode: 
+          type: string
+          examples: 
+            - 12345123
+    GetCustomersResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/GetCustomerResponse'
+    GetCustomerResponse:
+      type: object
+      properties:
+        documentNumber:
+          type: string
+          examples:
+            - 11111111111
+        name:
+          type: string
+          examples:
+            - José do teste
+    PutCustomerRequest:
+      type: object
+      properties:
+        name: 
+          type: string
+          examples: 
+            - José do Teste
+        birthdate: 
+          type: string
+          format: date
+          examples: 
+            - 1992-01-01
+        gender: 
+          type: string
+          examples: 
+            - M
+            - F
+        user: 
+          type: string
+          examples: 
+            - teste
+        password: 
+          type: string
+          examples: 
+            - fjUyga&6569wwq
+        email: 
+          type: string
+          examples: 
+            - joao.teste@teste.com.br
+        areaCode: 
+          type: string
+          examples: 
+            - 11
+        phone: 
+          type: string
+          examples: 
+            - 912341234
+        address:
+            $ref: '#/components/schemas/Address'
+    Coverages:
+      type: array
+      items:
+        $ref: '#/components/schemas/Coverage'
+    Coverage:
+      type: object
+      description: Objeto de cobertura
+      properties:
+        code: 
+          type: integer
+          examples: 
+            - 1
+        type:
+          type: string
+          examples: 
+            - Residencial
+        name: 
+          type: string
+          examples: 
+            - Danos elétricos
+        description: 
+          type: string
+          examples: 
+            - Danos elétricos
+        amount: 
+          type: number
+          examples: 
+            - 100.2
+        sumInsured:
+          type: number
+          examples:
+            - 50000
+        required:
+          type: boolean
+          examples:
+            - true
+    CoverageRequest:
+      type: object
+      description: Objeto de cobertura
+      properties:
+        type:
+          type: string
+          examples: 
+            - Residencial
+        name: 
+          type: string
+          examples:
+            - Danos elétricos
+        description: 
+          type: string
+          examples:
+            - Danos elétricos
+        amount: 
+          type: number
+          examples: 
+            - 1000.2
+        sumInsured:
+          type: number
+          examples:
+            - 50000
+        required:
+          type: boolean
+          examples: 
+            - true
+    QuotationRequest:
+      type: object
+      properties:
+        coverages: 
+          type: array
+          items:
+            $ref: '#/components/schemas/CoverageId'
+        insuredAddress: 
+          $ref: '#/components/schemas/Address'
+    CoverageId: 
+      type: object
+      properties: 
+        code: 
+          type: integer
+          format: int32
+          examples: 
+            - 1
+        name:
+          type: string
+          examples:
+            - Danos elétricos
+        amount:
+          type: string
+          examples:
+            - 20.00
+    QuotationResponse:
+      type: object
+      properties:
+        number:
+          type: string 
+          examples:
+            - "00000000000000000001"
+        amount:
+          type: number
+          examples: 
+            - 260.30
+    IssuanceRequest:
+      type: object
+      properties:
+          coverages:
+            type: array
+            items:
+              $ref: '#/components/schemas/Coverage'
+          documentNumber:
+            type: string
+            examples:
+              - 11111111111
+          paymentId:
+            type: string
+            examples:
+              - 1
+          insuredAddress: 
+            $ref: '#/components/schemas/Address'
+    IssuanceResponse:
+      type: object
+      properties:
+        policy:
+          type: object
+          properties:
+            number:
+              type: integer
+              examples:
+                - 1
+            validity:
+              type: object
+              properties:
+                start: 
+                  type: string
+                  examples: 
+                    - 2022-01-01
+                end: 
+                  type: string
+                  examples: 
+                    - 2023-01-01
+            insuredAddress:
+              $ref: '#/components/schemas/Address'
+            amount:
+              type: number
+              examples: 
+                - 200.1
+            coverages:
+                $ref: '#/components/schemas/Coverages'
+        holder:
+          $ref: '#/components/schemas/Holder'
+        
+    Holder:
+      type: object
+      properties:
+        documentNumber: 
+          type: string
+          examples: 
+            - 11111111111
+        name: 
+          type: string
+          examples: 
+            - José do Teste
+        birthdate: 
+          type: string
+          format: date
+          examples: 
+            - 1992-01-01
+        gender: 
+          type: string
+          examples: 
+            - M
+            - F
+        email: 
+          type: string
+          examples: 
+            - joao.teste@teste.com.br
+        areaCode: 
+          type: string
+          examples: 
+            - 11
+        phone: 
+          type: string
+          examples: 
+            - 912341234
+        address:
+            $ref: '#/components/schemas/Address'
+    PaymentRequest:
+      type: object
+      properties:
+        amount: 
+          type: number
+          examples: 
+          - 200.1
+        cardToken: 
+          type: string
+          examples: 
+            - shuha7307665sdafuh1676s=
+        document: 
+          type: string
+          examples: 
+            - 12312312312
+        installments: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/Installments'
+    Installments:
+      type: object
+      properties: 
+        number: 
+          type: integer
+          format: int32
+          examples: 
+            - 1
+        amount: 
+          type: number
+          examples: 
+            - 200.1
+    PaymentResponse:
+        type: object
+        properties:
+          transactionId:
+            type: string
+            examples:
+              - 1sha719dndgq52198dnqt165
+          id:
+            type: integer
+            examples:
+              - 1
+          amount:
+            type: integer
+            examples: 
+              - 200.1
+    ChangePassword:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+          examples: 
+            - 123456
+        newPassword:
+          type: string
+          examples:
+            - 12343434
+    PasswordRecovery:
+      type: object
+      properties:
+        email: 
+          type: string
+          examples:
+            - testes@testes.com.br
+    UpdatePasswordRecovery:
+      type: object
+      properties:
+        newPassword: 
+          type: string
+          examples:
+            - 123456
+    PoliciesResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/PolicyResponse'
+    PolicyResponse:
+      type: object
+      properties:
+        number:
+          type: number
+          examples:
+            - 12345
+        documentNumber:
+          type: string
+          examples:
+            - 99999999999
+        amount:
+          type: number
+          examples: 
+            - 200.90
+        validity:
+          $ref: '#/components/schemas/Validity'
+    Validity:
+      type: object
+      properties:
+        start: 
+          type: string
+          examples:
+            - 2023-01-01
+        end: 
+          type: string
+          examples:
+            - 2024-01-01
+    PolicyDetailsResponse:
+      type: object
+      properties:
+        number:
+          type: number
+          examples:
+            - 12345
+        documentNumber:
+          type: string
+          examples:
+            - 99999999999
+        amount:
+          type: number
+          examples: 
+            - 200.90
+        paymentId:
+          type: integer
+          examples:
+            - 1A7G9S6320FJS7
+        coverages:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoverageId'
+            
+        validity:
+          $ref: '#/components/schemas/Validity'
+        insuredAddress:
+            $ref: '#/components/schemas/Address'
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+  requestBodies:
+    User:
+      description: Objeto de evento
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
